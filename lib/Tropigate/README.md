@@ -1,8 +1,3 @@
-#Setup
-`./install`
+## Tropigate
 
-#Running
-`./tropigate FILENAME [OUTFILENAME]`
-
-#To Stop Injection
-`TROP_DO_INJECT=NO ./tropigate FILENAME`
+Acorn extension which will parse and rewrite JavaScript with ExpoSE additions like symbolic, assert, and assume into standard JavScript.
