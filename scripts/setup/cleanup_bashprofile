@@ -1,0 +1,4 @@
+#!/bin/bash -e
+mv ~/.bash_profile ~/.bash_profile_exp_tmp
+sed "s/.*#EXPOSE_ENTRY//g" < ~/.bash_profile_exp_tmp > ~/.bash_profile
+rm ~/.bash_profile_exp_tmp

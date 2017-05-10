@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>ExpoSE Dashboard</title>
+      <!-- Stylesheets -->
+      <link rel="stylesheet" href="css/photon.min.css">
+      <link rel="stylesheet" href="css/eui.css">
+      <!-- Javascript -->
+      <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+      <script src="js/jquery.js" charset="utf-8"></script>
+      <!-- Insert this line after script imports -->
+      <script>if (window.module) module = window.module;</script>
+      <script>
+         const output = require('./js/output');
+         const runner = require('./js/runner');
+         const summary = require('./js/summary');
+         const view = require('./js/view');
+         const graph = require('./js/graph');
+      </script>
+   </head>
+   <body>
+      <div class="window">
+         <!-- Your app's content goes inside .window-content -->
+         <div class="window-content">
+            <div class="pane-group">
+               <div class="pane pane-sm sidebar">
+                  <nav style="margin-top: 10px;" class="nav-group">
+                     <a onclick="view.load('execute');">
+                     <span class="nav-group-item">
+                     <span class="icon icon-info"></span>
+                     Execute
+                     </span>
+                     </a>
+                     <a onclick="view.load('testcases');">
+                     <span class="nav-group-item">
+                     <span class="icon icon-infinity"></span>
+                     Test Cases
+                     </span>
+                     </a>
+                     <a onclick="view.load('output');">
+                     <span class="nav-group-item">
+                     <span class="icon icon-doc-text"></span>
+                     Output
+                     </span>
+                     </a>
+                     <a onclick="view.load('errors');">
+                     <span class="nav-group-item">
+                     <span class="icon icon-alert"></span>
+                     Errors
+                     </span>
+                     </a>
+                     <a onclick="view.load('analyze');">
+                     <span class="nav-group-item">
+                     <span class="icon icon-folder"></span>
+                     Graphs
+                     </span>
+                     </a>
+                  </nav>
+               </div>
+               <div id="execute_pane" class="pane">
+                     <header class="toolbar toolbar-header">
+                        <div style="padding: 10px" align="center">
+                           <button id="cancelbtn" class="btn btn-large btn-default" onclick="runner.kill();">Cancel</button>
+                           <button id="runbtn" class="btn btn-large btn-default" onclick="runner.runExpoSE();">Analyze File</button>
+                           <button id="loadbtn" class="btn btn-large btn-default" onclick="output.loadOutput();">Load Previous</button>
+                           <div id="timer" class="nav-group-item">
+                           </div>
+                        </div>
+                     </header>
+                     <div class="" id="summary">
+                        <table class="table-striped">
+                           <thead>
+                              <tr>
+                                 <th>Metrics</th>
+                                 <th></th>
+                              </tr>
+                           </thead>
+                           <tbody id="summary_body">
+                           </tbody>
+                        </table>
+                     </div>
+                     <hr class="nomargin"/>
+                     <div class="flex" id="execute_results">
+                        <table class="table-striped">
+                           <thead>
+                              <tr>
+                                 <th>File Name</th>
+                                 <th>Coverage (%)</th>
+                                 <th>Found Blocks</th>
+                                 <th>Total Blocks</th>
+                              </tr>
+                           </thead>
+                           <tbody id="results_body">
+                           </tbody>
+                        </table>
+                     </div>
+                  <footer class="toolbar toolbar-footer">
+                     <div style="padding: 10px" align="center">
+                        <button class="btn btn-large btn-default" onclick="output.saveOutput();">Save</button>
+                     </div>
+                  </footer>
+               </div>
+               <div id="output_pane" class="pane">
+                  <div id="execution_output">
+                     <table class="table-striped">
+                        <thead>
+                           <tr>
+                              <th>Output</th>
+                           </tr>
+                        </thead>
+                        <tbody id="output_body">
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div id="testcases_pane" class="pane">
+                  <div id="testcases_output">
+                     <table class="table-striped">
+                        <thead>
+                           <tr>
+                              <th>Replay</th>
+                              <th>Test Case</th>
+                              <th>Time</th>
+                              <th>Error Count</th>
+                           </tr>
+                        </thead>
+                        <tbody id="testcases_body">
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div id="errors_pane" class="pane">
+                  <div id="execution_errors">
+                     <table class="table-striped">
+                        <thead>
+                           <tr>
+                              <th>Replay</th>
+                              <th>Test Case</th>
+                              <th>Error</th>
+                           </tr>
+                        </thead>
+                        <tbody id="errors_body">
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div id="analyze_pane" class="pane">
+                  <header class="toolbar toolbar-header">
+                     <div style="padding: 10px" align="center">
+                        <button class="btn btn-large btn-default" onclick="graph.savePng();">To PNG</button>
+                        <button class="btn btn-large btn-default" onclick="graph.saveTex();">To Tex</button>
+                     </div>
+                  </header>
+                  <div id="graph_content">
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <script>
+         summary(null);
+      </script>
+   </body>
+</html>

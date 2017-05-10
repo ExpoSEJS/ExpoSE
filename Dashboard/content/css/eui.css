@@ -1,0 +1,69 @@
+.graph {
+	width: 100%;
+	display: flex;
+}
+
+.nomargin {
+	margin: 0;
+}
+
+.pane {
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.flex {
+	flex: 1;
+}
+
+
+#summary, #execute_results {
+	width: 100%;
+	max-width: 100%;
+	overflow-y: auto;  
+}
+
+#cancelbtn {
+	display: none;
+}
+
+#analyze_pane {
+	display: none;
+}
+
+#output_pane {
+	display: none;
+}
+
+#errors_pane {
+	display: none;
+}
+
+#testcases_pane {
+	display: none;
+}
+
+.toolbar-footer {
+	min-height: 50px;
+}
+
+#execution_output {
+	width: 100%;
+	max-width: 100%;
+	height: 100%;
+	display: block;
+	overflow-y: auto;
+}
+
+#execution_output td {
+	white-space: normal;
+}
+
+#graph_content {
+	width: 100%;
+}
+
+#timer {
+	display: inline;
+}

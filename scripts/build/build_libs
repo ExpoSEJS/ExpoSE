@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+#(./scripts/build/build lib/Annotations src bin)
+
+#if [ $? -ne 0 ]; then
+#	echo "Annotations failed to build"
+#	exit 1
+#fi
+
+(./scripts/build/build lib/Mocker src bin)
+
+if [ $? -ne 0 ]; then
+	echo "Mocker failed to build"
+	exit 1
+fi
+
+(./scripts/build/build lib/S$ src bin)
+
+if [ $? -ne 0 ]; then
+	echo "S$ failed to build"
+	exit 1
+fi
+
+(./scripts/build/build lib/Tropigate src bin)
+
+if [ $? -ne 0 ]; then
+	echo "Tropigate failed to build"
+	exit 1
+fi
+
+exit 0

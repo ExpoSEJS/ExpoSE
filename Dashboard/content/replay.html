@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Replay</title>
+      <!-- Stylesheets -->
+      <link rel="stylesheet" href="css/photon.min.css">
+      <link rel="stylesheet" href="css/eui.css">
+      <!-- Javascript -->
+      <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+      <script src="js/jquery.js" charset="utf-8"></script>
+      <!-- Insert this line after script imports -->
+      <script>if (window.module) module = window.module;</script>
+      <script>
+         const view = require('./js/view');
+         const Replay = require('./js/replay');
+         const cwindow = require('electron').remote.getCurrentWindow();
+         Replay(cwindow.replayFile, cwindow.replayInput);
+      </script>
+   </head>
+   <body>
+      <div class="window">
+         <div class="window-content">
+            <div class="pane-group">
+               <div style="display: flex;" id="output_pane" class="pane">
+                  <div id="execution_output">
+                     <table class="table-striped">
+                        <thead>
+                           <tr>
+                              <th>Output</th>
+                           </tr>
+                        </thead>
+                        <tbody id="output_body">
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

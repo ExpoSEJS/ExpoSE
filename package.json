@@ -1,0 +1,11 @@
+{
+  "name": "expose",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "author": "Blake Loring",
+  "scripts": {
+    "start": "export PATH=$PATH:$(pwd) && cd Dashboard && npm start",
+    "postinstall": "./expoSE setup"
+  }
+}

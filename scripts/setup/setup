@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+echo "Setting up for Node"
+node --version
+
+echo "Installing pre-commit"
+cp ./scripts/pre-push .git/hooks/
+
+echo "Setting Up Packages"
+./scripts/setup/setup_packages
+
+touch ~/.bash_profile
+
+echo "Cleaning previous installations"
+./scripts/setup/cleanup_bashprofile
+
+echo "Installing into PATH"
+./scripts/setup/install_bashprofile
+
+echo "Re-sourcing bash profile"
+source ~/.bash_profile
+
+exit 0

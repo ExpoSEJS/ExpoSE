@@ -1,0 +1,27 @@
+#!/bin/bash -e
+
+./scripts/build/build_libs
+
+if [ $? -ne 0 ]; then
+	exit 1
+fi
+
+#Set the log level to 1 if it isn't already set
+if [ -z ${EXPOSE_LOG_LEVEL+x} ]; then
+	EXPOSE_LOG_LEVEL="1"
+fi
+
+#Build the thread distributor
+(./scripts/build/build Distributor src bin)
+
+#Build the actual analyser
+(EXPOSE_LOG_LEVEL=$EXPOSE_LOG_LEVEL ./scripts/build/strip Analyser src bin)
+(./scripts/build/build Analyser bin bin)
+(./scripts/build/bundle  Analyser "bin/Analyser.js" "bin/bundle.js")
+
+if [ $? -ne "0" ]; then
+	echo "Analyser failed to build"
+	exit 1
+fi
+
+exit $?

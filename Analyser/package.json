@@ -1,0 +1,24 @@
+{
+  "name": "ExpoSE",
+  "version": "0.0.2",
+  "description": "Symbolic Execution for JavaScript",
+  "author": "Blake Loring <blake_l@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
+  "readme": "README.md",
+  "dependencies": {
+    "browserify": "^14.1.0",
+    "jalangi": "git+https://github.com/Samsung/jalangi2.git",
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git"
+  },
+  "scripts": {
+    "postinstall": "./postinstall"
+  },
+  "license": "Apache",
+  "main": "src/SymbolicExecution.js",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-plugin-strip-function-call": "^1.0.2",
+    "babel-preset-babili": "0.0.9",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13"
+  }
+}

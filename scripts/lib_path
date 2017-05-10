@@ -1,0 +1,2 @@
+#!/bin/bash -e
+echo "$(cd lib; pwd)/$(basename "$1")"

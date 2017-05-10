@@ -1,0 +1,31 @@
+#!/bin/bash
+echo "set term $7"
+echo "set output '$3'"
+echo "set grid"
+
+echo "set ylabel 'Coverage (\\%)'"
+echo "set xlabel ''"
+echo "set xrange [0:${5}]"
+echo "set yrange [0:100]"
+echo "set title '$4'"
+
+echo "set multiplot"
+
+echo "set size 1, 0.625"
+echo "set origin 0.0,0.325"
+
+echo "plot'$1' w lines lw 2.5 lc 'red' title ''"
+
+echo "unset yrange"
+echo "set size 1, 0.375"
+echo "set origin 0.0,0.0"
+
+echo "set title ''"
+
+echo "set yrange [:${6}]"
+echo "set ylabel 'Test / s'"
+echo "set xlabel 'Time (s)'"
+echo "plot '$2' w fillsteps fs solid 0.3 noborder lt 1 title '', '$2' with steps lt 1 lw 1 title ''"
+echo "unset multiplot"
+
+echo "exit"

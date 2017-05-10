@@ -1,0 +1,10 @@
+#!/bin/bash -e
+if [ -z ${NO_CLEANUP} ]; then
+  ./scripts/setup/cleanup $1
+fi
+
+echo "Setting up $1"
+
+cd $1
+echo "Pulling Dependancies"
+CC=clang CXX=clang++ npm install

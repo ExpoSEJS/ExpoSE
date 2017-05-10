@@ -1,0 +1,8 @@
+#!/bin/bash -e
+(./scripts/setup/setup_pkg lib/Mocker mocker.json)
+(./scripts/setup/setup_pkg lib/S$ symbols.json)
+(./scripts/setup/setup_pkg lib/Tropigate tropigate.json)
+(./scripts/setup/setup_pkg Analyser analyser.json)
+(./scripts/setup/setup_pkg Tester tester.json)
+(./scripts/setup/setup_pkg Distributor distributor.json)
+(./scripts/setup/setup_pkg Dashboard)

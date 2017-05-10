@@ -1,0 +1,6 @@
+#!/bin/bash
+cd $1
+echo "Bundling $1/$2 into $3"
+
+#TODO: Refactor out all these hardcoded node modules paths
+./node_modules/browserify/bin/cmd.js -u=z3javascript -u=process -u=electron --node $2 --outfile $3

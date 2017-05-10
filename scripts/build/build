@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+cd $1
+mkdir -p $3
+node node_modules/babel-cli/bin/babel --presets es2015,stage-0 -d $3 $2/
+exit $?

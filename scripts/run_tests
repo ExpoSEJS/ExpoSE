@@ -1,0 +1,15 @@
+#!/bin/bash -e
+./scripts/build/build_tester
+
+if [ $? -ne 0 ]; then
+	exit 1
+fi
+
+if [ -z $TESTS_MAX_CONCURRENT ]; then
+	export TESTS_MAX_CONCURRENT=30
+fi
+
+node --version
+node ./Tester/bin/TestRunner.js --concurrent "$TESTS_MAX_CONCURRENT" ./tests/
+
+exit $?

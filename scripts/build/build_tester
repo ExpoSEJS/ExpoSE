@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+(./scripts/build/build Tester src bin)
+
+if [ $? -ne "0" ]; then
+	echo "Tester failed to build"
+	exit 1
+fi
