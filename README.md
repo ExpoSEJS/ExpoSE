@@ -1,6 +1,6 @@
 ## ExpoSE.js
 
-A simple symbolic execution engine for JavaScript, built using _Jalangi 2_.
+A symbolic execution engine for JavaScript, built using _Jalangi 2_.
 
 ### Installation
 
@@ -57,7 +57,7 @@ $ EXPOSE_LOG_LEVEL=1 expoSE test target/hello.js
 
 `EXPOSE_PRINT_PATHS` - Print the output of each test case to stdout
 
-`EXPOSE_LOG_LEVEL` - Level from 0 (None) to 3 (HIGH)
+`EXPOSE_LOG_LEVEL` - Level from 0 (None) to 3 (High)
 
 `EXPOSE_MAX_CONCURRENT` - The maximum number of test cases that can run concurrently
 
