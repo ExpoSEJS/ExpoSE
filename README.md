@@ -25,9 +25,7 @@ In most cases cases the ExpoSE GUI. The UI provides detailed test case informati
 ```sh
 $ npm start
 ```
-
 or
-
 ```sh
 $ expoSE ui
 ```
