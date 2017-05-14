@@ -1,3 +1,3 @@
-#Distributor
+## Distributor
 
-Role is to schedule test process execution
+Schedules test execution, invokes analyser, performs path selection & aggregates coverage information
