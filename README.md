@@ -66,4 +66,4 @@ $ EXPOSE_LOG_LEVEL=1 expoSE test target/hello.js
 
 `NO_CLEANUP` - When executing `expoSE setup` don't clean existing installation
 
-NOTE: Logging instructions are removed from the output at compile time so this command conflicts with EXPOSE_LOG_LEVEL being changed
+NOTE: To improve performance logging instructions are removed from the output at compile time and so will not be updated if `NO_COMPILE` is set.
