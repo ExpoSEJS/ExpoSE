@@ -14,7 +14,7 @@ $ npm install
 
 from the command line.
 
-Note: no administrator privileges are required, but the environment assumes either Mac OS X or a standard(ish) Linux distribution.
+Note: no administrator privileges are required, but the environment assumes either a standard(ish) Linux distribution with bash or OS X.
 
 This will also add ExpoSE to your path, restarting your terminal should allow expoSE to be executed from anywhere.
 
