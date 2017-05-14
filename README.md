@@ -36,13 +36,19 @@ $ expoSE ui
 
 All basic ExpoSE functionality is exposed through the expoSE CLI script.
 
+Example:
+
+```sh
+$ expoSE test ./tests/integers/infoflow
+```
+
 Valid Options:
 
-`setup` - Clean and instantiates the environment (Called by NPM install).
-`test` - Symbolically execute a Node.js program.
-`ui` - Launch the ExpoSE Dashboard
-`replay` - Replay a test case with a specific input.
-`test_suite` - Run the pre-push test suite.
+* `setup` - Clean and instantiates the environment (Called by NPM install).
+* `test` - Symbolically execute a Node.js program.
+* `ui` - Launch the ExpoSE Dashboard
+* `replay` - Replay a test case with a specific input.
+* `test_suite` - Run the pre-push test suite.
 
 ### Configuration
 
