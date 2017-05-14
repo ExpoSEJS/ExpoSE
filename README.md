@@ -1,6 +1,6 @@
 ## ExpoSE.js
 
-A simple symbolic execution engine for JavaScript, built using _Jalangi 2_.
+A simple symbolic execution engine for JavaScript.
 
 ### Installation
 
@@ -20,32 +20,29 @@ This will also add ExpoSE to your path, restarting your terminal should allow ex
 
 ### ExpoSE GUI
 
-Start the ExpoSE dashboard with
+In most cases cases the ExpoSE GUI. The UI provides detailed test case information, easy replay and coverage graphs. Start the ExpoSE dashboard with
 
 ```sh
 $ npm start
 ```
 
-### ExpoSE CLI
-
-All basic ExpoSE functionality is exposed through the expoSE CLI script. Valid options are `setup`, `test`, `replay` and `test_suite`.
-
-`setup` sets up the environment and pulls most dependencies.
-`test` symbolically executes a given test.
-`replay` replays a test case with a specific input.
-Finally `test_suite` is used to test whether any changes break the interpreter.
-
-### Run without rebuilding
-
-The environment flag NO_COMPILE=1 will make the expoSE script stop recompiling the entire framework between runs (Useful if no source changes are being made)
-
-Example:
+or
 
 ```sh
-$ NO_COMPILE=1 expoSE target/hello.js
+$ expoSE ui
 ```
 
-NOTE: Logging instructions are removed from the output at compile time so this command conflicts with EXPOSE_LOG_LEVEL being changed
+### ExpoSE CLI
+
+All basic ExpoSE functionality is exposed through the expoSE CLI script.
+
+Valid Options:
+
+`setup` - Clean and instantiates the environment (Called by NPM install).
+`test` - Symbolically execute a Node.js program.
+`ui` - Launch the ExpoSE Dashboard
+`replay` - Replay a test case with a specific input.
+`test_suite` - Run the pre-push test suite.
 
 ### Configuration
 
@@ -54,6 +51,8 @@ All environment flags work both with the ExpoSE Dashboard and ExpoSE CLI. Typica
 ```sh
 $ EXPOSE_LOG_LEVEL=1 expoSE test target/hello.js
 ```
+
+`NO_COMPILE` - Don't rebuild ExpoSE before executing scripts
 
 `EXPOSE_PRINT_PATHS` - Print the output of each test case to stdout
 
@@ -65,10 +64,6 @@ $ EXPOSE_LOG_LEVEL=1 expoSE test target/hello.js
 
 `EXPOSE_MAX_PATHS` - The maximum number of test cases to execute
 
-### Setup without Cleanup
+`NO_CLEANUP` - When executing `expoSE setup` don't clean existing installation
 
-In some rare cases you may want to rerun setup without the cleanup script executing. The environment flag NO_CLEANUP=1 can be used to force this.
-
-```sh
-$ NO_CLEANUP=1 ./expoSE setup
-```
+NOTE: Logging instructions are removed from the output at compile time so this command conflicts with EXPOSE_LOG_LEVEL being changed

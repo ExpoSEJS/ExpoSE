@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "author": "Blake Loring",
   "scripts": {
-    "start": "export PATH=$PATH:$(pwd) && cd Dashboard && npm start",
+    "start": "./expoSE ui",
     "postinstall": "./expoSE setup"
   }
 }
