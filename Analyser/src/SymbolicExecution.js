@@ -98,7 +98,8 @@ class SymbolicExecution {
     }
 
     _isSpecialFunction(f) {
-        return f.name !== 'toString' && !!this._specialFunctions[f.name];
+        //TODO: This is legacy way of  modelling stuff, Models now does all this much better. Replace all this crap
+        return f && f.name !== 'toString' && !!this._specialFunctions[f.name];
     }
 
     _invokeFunAnnotations(result) {

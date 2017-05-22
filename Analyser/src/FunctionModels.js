@@ -29,11 +29,12 @@ function BuildModels() {
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        this.state.symbolicConditional(in_regex);
-
         regex.assertions.forEach(binder => this.state.pushBinder(binder));
         this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
         
+        //Must come after binders
+        this.state.symbolicConditional(in_regex);
+
         if (result) {
             result = result.map((current_c, idx) =>
                 typeof current_c == 'string' ? new ConcolicValue(current_c, regex.captures[idx]) : undefined
