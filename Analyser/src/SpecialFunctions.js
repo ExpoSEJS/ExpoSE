@@ -6,7 +6,6 @@ import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 import NotAnErrorException from './NotAnErrorException';
-import {MarkSafeNative} from './Utilities/IsNative';
 
 export default {
     wrapSymbolic: function(state, args) {
@@ -23,10 +22,6 @@ export default {
 
     notAnErrorException: function(state, args) {
         return NotAnErrorException;
-    },
-
-    markSafeNative: function(state, args) {
-        MarkSafeNative(args[0]);
     },
     
     clone: function(state, args) {

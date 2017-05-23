@@ -7,6 +7,9 @@ import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 
+const find = Array.prototype.find;
+const map = Array.prototype.map;
+
 function BuildModels() {
     let models = {};
 
@@ -31,8 +34,8 @@ function BuildModels() {
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        //regex.assertions.forEach(binder => this.state.pushBinder(binder));
-        //this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
+        regex.assertions.forEach(binder => this.state.pushBinder(binder));
+        this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
         
         //Must come after binders
         this.state.symbolicConditional(in_regex);
@@ -56,22 +59,24 @@ function BuildModels() {
     function symbolicHook(condition, hook) {
         return function(f, base, args, result) {
 
-            //Add the methods from Array needed onto the arguments special array type
-            args.map = Array.prototype.map;
-            args.find = Array.prototype.find;
+            result = f.apply(this.state.getConcrete(base), map.call(args, arg => this.state.getConcrete(arg)));
 
-            result = f.apply(this.state.getConcrete(base), args.map(arg => this.state.getConcrete(arg)));
-
-            Log.logMid('Symbolic Testing ' + f.name + ' with ' + ObjectHelper.asString(args));
+            Log.logMid(`Symbolic Testing ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)} and initial result ${ObjectHelper.asString(result)}`);
 
             if (condition(this, f, base, args, result)) {
-                Log.logMid('Symbolically modelling ' + f.name);
                 result = hook(this, f, base, args, result);
             }
 
-            Log.logMid('Result ' + ObjectHelper.asString(result));
+            Log.logMid(`Result: ${'' + result}`);
 
             return result;
+        };
+    }
+
+    function NoOp() {
+        return function(f, base, args, result) {
+            Log.logMid(`NoOp ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)}`);
+            return f.apply(base, args);
         };
     }
 
@@ -112,7 +117,7 @@ function BuildModels() {
     );
 
     models[String.prototype.concat] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || args.find(arg => c.state.isSymbolic(arg)),
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) || find.call(args, arg => c.state.isSymbolic(arg)),
         (c, _f, base, args, result) => new ConcolicValue(result, c.ctx.mkSeqConcat([c.state.asSymbolic(base)].concat(args.map(arg => c.state.asSymbolic(arg)))))
     );
 
@@ -162,13 +167,15 @@ function BuildModels() {
         }
     );
 
-    models[Array.prototype.push] = symbolicHook(
-        () => true,
-        (c, f, base, args, result) => {
-            return f.apply(base, args);
-        }
-    )
-    
+    models[Array.prototype.push] = NoOp();
+    models[Array.prototype.keys] = NoOp();
+    models[Array.prototype.concat] = NoOp();
+    models[Array.prototype.forEach] = NoOp();
+    models[Array.prototype.slice] = NoOp();
+    models[Array.prototype.filter] = NoOp();
+    models[Array.prototype.map] = NoOp();
+    models[Array.prototype.shift] = NoOp();
+
     models[String.prototype.toLowerCase] = function(f, base, args, result) {
         result = f.apply(this.state.getConcrete(base));
         

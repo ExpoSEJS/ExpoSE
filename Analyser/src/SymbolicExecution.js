@@ -91,7 +91,6 @@ class SymbolicExecution {
         this._specialFunctions['__make__symbolic__'] = SpecialFunctions.makeSymbolic;
         this._specialFunctions['__wrap__'] = SpecialFunctions.wrap;
         this._specialFunctions['__clone__'] = SpecialFunctions.clone;
-        this._specialFunctions['__mark_safe_native__'] = SpecialFunctions.markSafeNative;
         this._specialFunctions['__not__error_exp__'] = SpecialFunctions.notAnErrorException;
         this._specialFunctions['__get__rider__'] = SpecialFunctions.getRider;
         this._specialFunctions['__set__rider__'] = SpecialFunctions.setRider;
