@@ -142,7 +142,7 @@ class SymbolicExecution {
         f = this.state.getConcrete(f);
 
         if (!(Models[f]) && IsNativeCached(f)) {
-            Log.logMid("Concrete function " + ObjectHelper.asString(f) + " concretizing all inputs");
+            Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
             Log.logHigh(ObjectHelper.asString(base) + " " + ObjectHelper.asString(args));
 
             base = this.state.getConcrete(base);

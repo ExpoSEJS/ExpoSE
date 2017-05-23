@@ -127,7 +127,7 @@ class SymbolicState {
     alternatives() {
         let childInputs = [];
 
-        if (this.input._bound >= this.pathCondition.length) {
+        if (this.input._bound > this.pathCondition.length) {
             Log.log('Bound > PathCondition');
             Log.log('Warning: This path has diverged');
         }
