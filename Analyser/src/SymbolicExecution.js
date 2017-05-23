@@ -3,7 +3,7 @@
 "use strict";
 
 /**
- * DART-style symbolic execution engine by Johannes Kinder, Blake Loring (c) 2015
+ * DART-style symbolic execution engine by Johannes Kinder, Blake Loring 2015
  *
  * Based on Jalangi2 ananlysisCallbackTemplate.js by Koushik Sen
  */
@@ -21,12 +21,12 @@ import {IsNativeCached} from './Utilities/IsNative';
 import Models from './FunctionModels';
 import External from './External';
 
-//Electron can't resolve external librarys directly. The External packages makes that transparent
+//Electron can't resolve external library's directly. The External packages makes that transparent
 const Z3 = External('z3javascript');
 const Tropigate = External('Tropigate');
 
 //60s default timeout
-const DEFAULT_CONTEXT_TIMEOUT = 60000;
+const DEFAULT_CONTEXT_TIMEOUT = 60000 * 5;
 
 class SymbolicExecution {
 

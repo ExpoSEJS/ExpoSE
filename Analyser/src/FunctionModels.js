@@ -27,7 +27,9 @@ function BuildModels() {
         return new ConcolicValue(in_c, in_s);
     }
 
-    function RegexMatch(regex, real, string, result) {
+    function RegexMatch(real, string, result) {
+
+        let regex = Z3.Regex(c.ctx, real);
 
         console.log(`RegexMatch ${JSON.stringify(regex)} ${regex.ast} ${string} ${real}`);
 
@@ -136,12 +138,12 @@ function BuildModels() {
 
     models[String.prototype.match] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
-        (c, _f, base, args, result) => RegexMatch.call(c, Z3.Regex(c.ctx, args[0]), args[0], base, result)
+        (c, _f, base, args, result) => RegexMatch.call(c, args[0], base, result)
     );
 
     models[RegExp.prototype.exec] = symbolicHook(
         (c, _f, base, args, _r) => base instanceof RegExp && c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => RegexMatch.call(c, Z3.Regex(c.ctx, base), base, args[0], result)
+        (c, _f, base, args, result) => RegexMatch.call(c, base, args[0], result)
     );
 
     models[RegExp.prototype.test] = symbolicHook( 
@@ -175,6 +177,10 @@ function BuildModels() {
     models[Array.prototype.filter] = NoOp();
     models[Array.prototype.map] = NoOp();
     models[Array.prototype.shift] = NoOp();
+    models[Array.prototype.unshift] = NoOp();
+    models[Array.prototype.fill] = NoOp();
+
+    //TODO: I need a model for indexOf
 
     models[String.prototype.toLowerCase] = function(f, base, args, result) {
         result = f.apply(this.state.getConcrete(base));

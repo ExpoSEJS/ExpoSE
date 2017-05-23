@@ -302,7 +302,7 @@ class SymbolicState {
                 if (typeof left_c == "string") {
                     result = this.ctx.mkSeqConcat([left_s, right_s]);
                 } else {
-            	   result = this.ctx.mkAdd(left_s, right_s);
+            	    result = this.ctx.mkAdd(left_s, right_s);
                 }
                 break;
             case "-":

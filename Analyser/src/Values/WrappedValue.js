@@ -3,10 +3,7 @@
 "use strict";
 
 import ArrayHelper from '../Utilities/ArrayHelper';
- 
-/**
- * Wrapped (shadow-value) class by Blake Loring (c) 2015
- */
+
 class WrappedValue {
 
     constructor(concrete) {
@@ -101,7 +98,7 @@ WrappedValue.wrap = val => val instanceof WrappedValue ? val : new WrappedValue(
  * limitations under the License.
  */
 // Author: Koushik Sen
-// ES6 Translation: Blake Loring
+// ES6 Translation / Prototype Chain: Blake Loring
 
 class ConcolicValue extends WrappedValue {
     
