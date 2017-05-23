@@ -7,6 +7,9 @@ import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 
+const find = Array.prototype.find;
+const map = Array.prototype.map;
+
 function BuildModels() {
     let models = {};
 
@@ -26,14 +29,17 @@ function BuildModels() {
 
     function RegexMatch(regex, real, string, result) {
 
+        console.log(`RegexMatch ${JSON.stringify(regex)} ${regex.ast} ${string} ${real}`);
+
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        this.state.symbolicConditional(in_regex);
-
         regex.assertions.forEach(binder => this.state.pushBinder(binder));
         this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
         
+        //Must come after binders
+        this.state.symbolicConditional(in_regex);
+
         if (result) {
             result = result.map((current_c, idx) =>
                 typeof current_c == 'string' ? new ConcolicValue(current_c, regex.captures[idx]) : undefined
@@ -53,21 +59,24 @@ function BuildModels() {
     function symbolicHook(condition, hook) {
         return function(f, base, args, result) {
 
-            //Add the methods from Array needed onto the arguments special array type
-            args.map = Array.prototype.map;
-            args.find = Array.prototype.find;
+            result = f.apply(this.state.getConcrete(base), map.call(args, arg => this.state.getConcrete(arg)));
 
-            result = f.apply(this.state.getConcrete(base), args.map(arg => this.state.getConcrete(arg)));
+            Log.logMid(`Symbolic Testing ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)} and initial result ${ObjectHelper.asString(result)}`);
 
-            Log.logMid('Symbolic Testing ' + f.name + ' with ' + this);
-
-            //TODO: Bind might be imperformant
             if (condition(this, f, base, args, result)) {
-                Log.logMid('Symbolically modelling ' + f.name);
                 result = hook(this, f, base, args, result);
             }
 
+            Log.logMid(`Result: ${'' + result}`);
+
             return result;
+        };
+    }
+
+    function NoOp() {
+        return function(f, base, args, result) {
+            Log.logMid(`NoOp ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)}`);
+            return f.apply(base, args);
         };
     }
 
@@ -108,7 +117,7 @@ function BuildModels() {
     );
 
     models[String.prototype.concat] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || args.find(arg => c.state.isSymbolic(arg)),
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) || find.call(args, arg => c.state.isSymbolic(arg)),
         (c, _f, base, args, result) => new ConcolicValue(result, c.ctx.mkSeqConcat([c.state.asSymbolic(base)].concat(args.map(arg => c.state.asSymbolic(arg)))))
     );
 
@@ -125,19 +134,19 @@ function BuildModels() {
         }
     );
 
-    models[String.prototype.test] = symbolicHook( 
-        (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]), result)
-    );
-
     models[String.prototype.match] = symbolicHook(
-        (c, _f, base, _a, _r) => c.state.isSymbolic(base),
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
         (c, _f, base, args, result) => RegexMatch.call(c, Z3.Regex(c.ctx, args[0]), args[0], base, result)
     );
 
-    models[String.prototype.exec] = symbolicHook(
-        (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
+    models[RegExp.prototype.exec] = symbolicHook(
+        (c, _f, base, args, _r) => base instanceof RegExp && c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => RegexMatch.call(c, Z3.Regex(c.ctx, base), base, args[0], result)
+    );
+
+    models[RegExp.prototype.test] = symbolicHook( 
+        (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
+        (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]), result)
     );
 
     models[String.prototype.replace] = symbolicHook(
@@ -157,7 +166,16 @@ function BuildModels() {
             return new ConcolicValue(result, c.state.getSymbolic(base));
         }
     );
-    
+
+    models[Array.prototype.push] = NoOp();
+    models[Array.prototype.keys] = NoOp();
+    models[Array.prototype.concat] = NoOp();
+    models[Array.prototype.forEach] = NoOp();
+    models[Array.prototype.slice] = NoOp();
+    models[Array.prototype.filter] = NoOp();
+    models[Array.prototype.map] = NoOp();
+    models[Array.prototype.shift] = NoOp();
+
     models[String.prototype.toLowerCase] = function(f, base, args, result) {
         result = f.apply(this.state.getConcrete(base));
         

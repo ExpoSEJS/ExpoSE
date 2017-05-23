@@ -91,14 +91,14 @@ class SymbolicExecution {
         this._specialFunctions['__make__symbolic__'] = SpecialFunctions.makeSymbolic;
         this._specialFunctions['__wrap__'] = SpecialFunctions.wrap;
         this._specialFunctions['__clone__'] = SpecialFunctions.clone;
-        this._specialFunctions['__mark_safe_native__'] = SpecialFunctions.markSafeNative;
         this._specialFunctions['__not__error_exp__'] = SpecialFunctions.notAnErrorException;
         this._specialFunctions['__get__rider__'] = SpecialFunctions.getRider;
         this._specialFunctions['__set__rider__'] = SpecialFunctions.setRider;
     }
 
     _isSpecialFunction(f) {
-        return f.name !== 'toString' && !!this._specialFunctions[f.name];
+        //TODO: This is legacy way of  modelling stuff, Models now does all this much better. Replace all this crap
+        return f && f.name !== 'toString' && !!this._specialFunctions[f.name];
     }
 
     _invokeFunAnnotations(result) {
@@ -141,7 +141,7 @@ class SymbolicExecution {
         f = this.state.getConcrete(f);
 
         if (!(Models[f]) && IsNativeCached(f)) {
-            Log.logMid("Concrete function " + ObjectHelper.asString(f) + " concretizing all inputs");
+            Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
             Log.logHigh(ObjectHelper.asString(base) + " " + ObjectHelper.asString(args));
 
             base = this.state.getConcrete(base);

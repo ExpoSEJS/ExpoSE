@@ -24,14 +24,6 @@ function isNative(value) {
 let nativeCache = {};
 
 /**
- * Override a method in the nativeCache to a specific state (safe, not safe)
- * TODO: Now that FunctionModels exists, that would probably be a better place
- */
-function MarkSafeNative(fn, safe) {
-    nativeCache[fn] = safe;
-}
-
-/**
  * Check nativeCache to see if method has been cached
  * If miss, isNative, store, return
  * Else return cache
@@ -46,4 +38,4 @@ function IsNativeCached(value) {
     }
 }
 
-export {MarkSafeNative, IsNativeCached};
+export {IsNativeCached};

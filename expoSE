@@ -31,6 +31,9 @@ if [ "$1" == "test" ]; then
 elif [ "$1" == "ui" ]; then
 	NO_COMPILE=1 ./scripts/start_ui
 	exit $?
+elif [ "$1" == "uic" ]; then
+	./scripts/start_ui
+	exit $?
 elif [ "$1" == "replay" ]; then
 	source ./scripts/expose_env
 	./scripts/play $TARGET_REAL_PATH "${@:3}"

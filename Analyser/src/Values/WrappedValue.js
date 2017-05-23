@@ -104,6 +104,7 @@ WrappedValue.wrap = val => val instanceof WrappedValue ? val : new WrappedValue(
 // ES6 Translation: Blake Loring
 
 class ConcolicValue extends WrappedValue {
+    
     constructor(concrete, symbolic) {
         super(concrete);
         this.symbolic = symbolic;

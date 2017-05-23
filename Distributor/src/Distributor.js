@@ -39,7 +39,7 @@ if (process.argv.length >= 3) {
         analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play')
     };
 
-    console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.concurrent + ' max paths: ' + options.maxPaths);
+    console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.maxConcurrent + ' max paths: ' + options.maxPaths);
 
     let start = microtime.now();
 
