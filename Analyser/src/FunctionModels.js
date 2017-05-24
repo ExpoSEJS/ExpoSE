@@ -29,7 +29,7 @@ function BuildModels() {
 
     function RegexMatch(real, string, result) {
 
-        let regex = Z3.Regex(c.ctx, real);
+        let regex = Z3.Regex(this.ctx, real);
 
         console.log(`RegexMatch ${JSON.stringify(regex)} ${regex.ast} ${string} ${real}`);
 
