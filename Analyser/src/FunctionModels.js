@@ -38,8 +38,8 @@ function BuildModels() {
         this.state.symbolicConditional(in_regex);
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        regex.assertions.forEach(binder => this.state.pushBinder(binder));
-        this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
+        //regex.assertions.forEach(binder => this.state.pushBinder(binder));
+        //this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
         
         if (result) {
             result = result.map((current_c, idx) =>
