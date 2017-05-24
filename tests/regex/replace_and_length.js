@@ -2,10 +2,12 @@
 
 "use strict";
 
-if ((symbolic X initial '') == 'HELLO WORLD') {}
+var x = symbolic X initial '';
 
-assert 1 == 5;
+if (x == 'HELLO WORLD') {
 
-if ((symbolic HI initial 'hello').replace(/hello/g, '') === '') {
+}
+
+if (x.length > 4 && x.replace(/hello/g, '') === '') {
 	console.log('Aah');
 }

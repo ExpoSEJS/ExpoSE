@@ -38,12 +38,12 @@ function BuildModels() {
         this.state.symbolicConditional(in_regex);
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        //regex.assertions.forEach(binder => this.state.pushBinder(binder));
-        //this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
+        regex.assertions.forEach(binder => this.state.pushBinder(binder));
+        this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
         
         if (result) {
             result = result.map((current_c, idx) =>
-                typeof current_c == 'string' ? new ConcolicValue(current_c, regex.captures[idx]) : undefined
+                typeof current_c == 'string' ? current_c : undefined
             )
         }
 
@@ -150,12 +150,20 @@ function BuildModels() {
         (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]), result)
     );
 
+    //Replace model for replace regex by string. Does not model replace with callback.
     models[String.prototype.replace] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
         (c, _f, base, args, result) => {
             Log.log('TODO: Awful String.prototype.replace model will reduce search space');
+
+            let test = c.state.getConcrete(base) === result;
+
+            Log.logMid(`Replace test = ${test}`);
+
             let regex = Z3.Regex(c.ctx, args[0]);
-            c.state.pushBinder(c.ctx.mkNot(c.ctx.mkSeqInRe(c.state.getSymbolic(base), regex.ast)));
+
+            let baseInRe = c.ctx.mkSeqInRe(c.state.getSymbolic(base), regex.ast);
+            test ? c.state.pushNot(baseInRe) : c.state.pushCondition(baseInRe);
             return new ConcolicValue(result, c.state.getSymbolic(base));
         }
     );

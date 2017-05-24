@@ -5,7 +5,8 @@
 var q = symbolic q initial '';
 
 if (/^--.+=/.test(q)) {
-    
+    assert q[0] == '-';
+    assert q[q.length - 1] = '=';
 }
 
 console.log('Path Finished');

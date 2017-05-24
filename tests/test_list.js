@@ -54,11 +54,13 @@ function buildTestList() {
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
 
-    /*
     //Regex
-    //buildTest('regex/hello_regex.js', 2, 0);
-    //buildTest('regex/hello_regex2.js', 4, 0);
-    */
+    buildTest('regex/anchors.js', 2, 0);
+
+    buildTest('regex/test_three_deep.js', 6, 0);
+
+    buildTest('regex/replace_and_length.js', 5, 0);
+    buildTest('regex/replace_and_length.js', 3, 0);
 
     //Async
     buildTest('async/settimeout.js', 3, 1);

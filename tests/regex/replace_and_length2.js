@@ -2,9 +2,9 @@
 
 "use strict";
 
-var a = symbolic HI initial 'hi';
+var x = symbolic X initial '';
 
-if (a.length > 0 && a !== 'hello' && a.replace('h...o', '') === '') {
-	assert a.length != 0;
-	console.log('A length: ' + a.length);
+if (x.length > 0 && x !== 'hello' && x.replace('h...o', '') === '') {
+	assert x.length != 0;
+	console.log('A length: ' + x.length);
 }
