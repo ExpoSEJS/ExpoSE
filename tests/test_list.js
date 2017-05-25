@@ -57,7 +57,7 @@ function buildTestList() {
     //Regex
     buildTest('regex/anchors.js', 2, 0);
 
-    buildTest('regex/test_three_deep.js', 6, 0);
+    buildTest('regex/test_three_deep.js', 7, 3);
 
     buildTest('regex/replace_and_length.js', 5, 0);
     buildTest('regex/replace_and_length.js', 3, 0);
