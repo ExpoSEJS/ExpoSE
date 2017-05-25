@@ -57,7 +57,14 @@ function buildTestList() {
     //Regex
     buildTest('regex/anchors.js', 2, 0);
 
-    buildTest('regex/test_three_deep.js', 7, 3);
+    buildTest('regex/primatives/simple_one.js', 2, 0);
+    buildTest('regex/primatives/simple_two.js', 2, 1);
+
+    buildTest('regex/primatives/klene_plus_one.js', 3, 1);
+    buildTest('regex/primatives/klene_plus_two.js', 3, 1);
+    buildTest('regex/primatives/klene_plus_two.js', 2, 0);
+
+    //buildTest('regex/test_three_deep.js', 7, 3);
 
     buildTest('regex/replace_and_length.js', 5, 0);
     buildTest('regex/replace_and_length.js', 3, 0);
