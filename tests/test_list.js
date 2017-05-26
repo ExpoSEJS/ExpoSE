@@ -55,16 +55,20 @@ function buildTestList() {
     buildTest('strings/warning.js', 4, 0);
 
     //Regex
-    buildTest('regex/anchors.js', 2, 0);
+    buildTest('regex/primatives/anchors_one.js', 3, 1);
+    buildTest('regex/primatives/anchors_two.js', 5, 2);
 
     buildTest('regex/primatives/simple_one.js', 2, 0);
     buildTest('regex/primatives/simple_two.js', 2, 1);
 
     buildTest('regex/primatives/klene_plus_one.js', 3, 1);
     buildTest('regex/primatives/klene_plus_two.js', 3, 1);
-    buildTest('regex/primatives/klene_plus_two.js', 2, 0);
+    buildTest('regex/primatives/klene_plus_three.js', 2, 0);
 
-    buildTest('regex/primatives/klene_plus_rw_one.js', 2, 1);
+    buildTest('regex/primatives/kleene_star_two.js', 3, 2);
+    buildTest('regex/primatives/kleene_star_three.js', 2, 1);
+
+    buildTest('regex/primatives/primative_rw_github.js', 2, 1);
 
     //buildTest('regex/test_three_deep.js', 7, 3);
 
