@@ -64,6 +64,8 @@ function buildTestList() {
     buildTest('regex/primatives/klene_plus_two.js', 3, 1);
     buildTest('regex/primatives/klene_plus_two.js', 2, 0);
 
+    buildTest('regex/primatives/klene_plus_rw_one.js', 2, 1);
+
     //buildTest('regex/test_three_deep.js', 7, 3);
 
     buildTest('regex/replace_and_length.js', 5, 0);
