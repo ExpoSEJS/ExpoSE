@@ -32,12 +32,17 @@ function DoesntMatch(l, r) {
     }
 }
 
-function CloneRelace(list, item, n) {
+function CloneReplace(list, item, n) {
     let clone = list.slice(0);
     clone[clone.indexOf(item)] = n;
     return clone;
 }
 
+function CloneRemove(list, item) {
+    let c = list.slice(0);
+    c.splice(list.indexOf(item), 1);
+    return c;
+}
 
 function BuildModels() {
     let models = {};
@@ -70,8 +75,9 @@ function BuildModels() {
         let string_s = this.state.asSymbolic(string);
 
         function CheckCorrect(model) {
-            let real_match = Origin.exec(model.eval(string_s).asConstant());
+            let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
+            console.log(`Check Correct ${real_match} ${sym_match} ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
             return real_match && !Exists(real_match, sym_match, DoesntMatch);
         }
 
@@ -90,20 +96,19 @@ function BuildModels() {
                 Log.logMid('Refinements Enabled - Adding checks');
 
                 let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-                    let query_list = query.exprs.concat([ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant())))]);
-                    return new Z3.Query(query_list, query.checks);
+                    let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
+                    return [new Z3.Query(query.exprs.slice(0).concat([not]), query.checks)];
                 });
 
                 let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
                     //CheckCorrect will check model has a proper match
-                    let real_match = Origin.exec(model.eval(string_s).asConstant()).map(match => match || '');
-                    let query_list = regex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
-                    let next_checks = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, (query, model) => []));
+                    let real_match = real.exec(model.eval(string_s).asConstant()).map(match => match || '');
+                    let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
+                    let next_checks = CloneRemove(query.checks, CheckFixed);
                     return [new Z3.Query(query.exprs.concat(query_list), next_checks)];
                 });
 
                 this.state.pushCheck(CheckFixed);
-                this.state.pushCheck(NotMatch);
             } else {
                 Log.log('Refinements disabled - Potential loss of precision');
             }
