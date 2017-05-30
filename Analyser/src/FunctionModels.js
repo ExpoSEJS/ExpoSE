@@ -80,6 +80,7 @@ function BuildModels() {
 
             if (CAPTURES_ENABLED && REFINEMENTS_ENABLED) {
                 Log.logMid('Refinements Enabled - Adding checks');
+                Log.log('TODO: Currently if two refinements are needed CheckFixed can accidentally drop the second');
 
                 let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
                     console.log(model.eval(symbolic).asConstant());

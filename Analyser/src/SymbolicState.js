@@ -198,19 +198,9 @@ class SymbolicState {
     }
 
     _checkSat(clause) {
-
-        let result;
-
-        this.slv.push();
-        {
-            this.slv.assert(clause);
-            Log.logMid('Solver: ' + this.slv.toString());
-            let model = this.slv.getModel();
-            result = model ? this.getSolution(model) : undefined;
-        }
-        this.slv.pop();
-
-        return result;
+        let nextQuery = new Z3.Query([clause], this.checks);
+        let model = nextQuery.getModel(this.slv);
+        return model ? this.getSolution(model) : undefined;
     }
 
     isSymbolic(val) {
