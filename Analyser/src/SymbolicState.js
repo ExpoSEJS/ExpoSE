@@ -21,8 +21,6 @@ class SymbolicState {
         this.inputSymbols = {};
 
         this.pathCondition = [];
-
-        //Shadows PC with lists of Check objects for each PC
         this.checks = [];
 
         this.errors = [];
@@ -35,9 +33,12 @@ class SymbolicState {
     addError(error) {
         this.errors.push(error);
     }
+
+    pushCheck(check) {
+        this.checks.push(check);
+    }
     
-    pushCondition(cnd, binder, checks) {
-        this.checks.push(checks || []);
+    pushCondition(cnd, binder) {
     	this.pathCondition.push({
             ast: cnd,
             binder: false

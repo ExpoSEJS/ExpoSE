@@ -1,14 +1,43 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake_l@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
-
 "use strict";
 
 import ObjectHelper from './Utilities/ObjectHelper';
 import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
-import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
+import {
+    WrappedValue,
+    ConcolicValue
+} from './Values/WrappedValue';
 
 const find = Array.prototype.find;
 const map = Array.prototype.map;
+
+
+function Exists(array1, array2, pred) {
+
+    for (let i = 0; i < array1.length; i++) {
+        if (pred(array1[i], array2[i])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function DoesntMatch(l, r) {
+    if (l === undefined) {
+        return r !== '';
+    } else {
+        return l !== r;
+    }
+}
+
+function CheckCorrect(model) {
+    let real_match = Origin.exec(model.eval(symbolic).asConstant());
+    let sym_match = TestRegex.captures.map(cap => model.eval(cap).asConstant());
+    return real_match && !Exists(real_match, sym_match, DoesntMatch);
+}
+
 
 function BuildModels() {
     let models = {};
@@ -20,14 +49,13 @@ function BuildModels() {
     }
 
     function RegexTest(regex, real, string) {
-
         let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
-
         return new ConcolicValue(in_c, in_s);
     }
 
     const CAPTURES_ENABLED = true;
+    const REFINEMENTS_ENABLED = true;
 
     function RegexMatch(real, string, result) {
 
@@ -38,13 +66,47 @@ function BuildModels() {
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
         this.state.symbolicConditional(in_regex);
-        
+
         if (result) {
 
             if (CAPTURES_ENABLED) {
+                Log.logMid('Captures Enabled - Adding Implications');
                 //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
                 regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
                 this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
+            } else {
+                Log.log('Captures Disable - Potential loss of precision');
+            }
+
+            if (CAPTURES_ENABLED && REFINEMENTS_ENABLED) {
+                Log.logMid('Refinements Enabled - Adding checks');
+
+                let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
+                    console.log(model.eval(symbolic).asConstant());
+                    let query_list = query.exprs.concat([ctx.mkNot(ctx.mkEq(symbolic, ctx.mkString(model.eval(symbolic).asConstant())))]);
+                    return new Z3.Query(query_list, query.checks);
+                });
+
+                let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
+                    let real_match = Origin.exec(model.eval(symbolic).asConstant());
+
+                    if (!real_match) {
+                        return [];
+                    } else {
+                        real_match = Origin.exec(model.eval(symbolic).asConstant()).map(match => match || '');
+                        console.log(`Here ${real_match.length} in ${TestRegex.captures.length}`);
+                        TestRegex.captures.forEach((x, idx) => {
+                            console.log(`${x} => ${real_match[idx]}`);
+                        });
+                        let query_list = TestRegex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
+                        return [new Z3.Query(query.exprs.concat(query_list), [Z3.Check(CheckCorrect, (query, model) => [])])];
+                    }
+                });
+
+                this.state.pushCheck(NotMatch);
+                this.state.pushCheck(CheckFixed);
+            } else {
+                Log.log('Refinements disabled - Potential loss of precision');
             }
 
             result = result.map((current_c, idx) => {
@@ -154,7 +216,7 @@ function BuildModels() {
         (c, _f, base, args, result) => RegexMatch.call(c, base, args[0], result)
     );
 
-    models[RegExp.prototype.test] = symbolicHook( 
+    models[RegExp.prototype.test] = symbolicHook(
         (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]), result)
     );
@@ -200,7 +262,7 @@ function BuildModels() {
 
     models[String.prototype.toLowerCase] = function(f, base, args, result) {
         result = f.apply(this.state.getConcrete(base));
-        
+
         if (this.state.isSymbolic(base)) {
             Log.log('TODO: Awful String.prototype.toLowerCase model will reduce search space');
             base = this._concretizeToString(base);
