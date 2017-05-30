@@ -32,12 +32,6 @@ function DoesntMatch(l, r) {
     }
 }
 
-function CheckCorrect(model) {
-    let real_match = Origin.exec(model.eval(symbolic).asConstant());
-    let sym_match = TestRegex.captures.map(cap => model.eval(cap).asConstant());
-    return real_match && !Exists(real_match, sym_match, DoesntMatch);
-}
-
 
 function BuildModels() {
     let models = {};
@@ -67,6 +61,14 @@ function BuildModels() {
 
         this.state.symbolicConditional(in_regex);
 
+        let string_s = this.state.asSymbolic(string);
+
+        function CheckCorrect(model) {
+            let real_match = Origin.exec(model.eval(string_s).asConstant());
+            let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
+            return real_match && !Exists(real_match, sym_match, DoesntMatch);
+        }
+
         if (result) {
 
             if (CAPTURES_ENABLED) {
@@ -83,23 +85,19 @@ function BuildModels() {
                 Log.log('TODO: Currently if two refinements are needed CheckFixed can accidentally drop the second');
 
                 let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-                    console.log(model.eval(symbolic).asConstant());
-                    let query_list = query.exprs.concat([ctx.mkNot(ctx.mkEq(symbolic, ctx.mkString(model.eval(symbolic).asConstant())))]);
+                    let query_list = query.exprs.concat([ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant())))]);
                     return new Z3.Query(query_list, query.checks);
                 });
 
                 let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
-                    let real_match = Origin.exec(model.eval(symbolic).asConstant());
+                    Log.log('WARNING: Over-approx may occur when using CheckFixed AS-IS (TODO)');
+                    let real_match = Origin.exec(model.eval(string_s).asConstant());
 
                     if (!real_match) {
                         return [];
                     } else {
-                        real_match = Origin.exec(model.eval(symbolic).asConstant()).map(match => match || '');
-                        console.log(`Here ${real_match.length} in ${TestRegex.captures.length}`);
-                        TestRegex.captures.forEach((x, idx) => {
-                            console.log(`${x} => ${real_match[idx]}`);
-                        });
-                        let query_list = TestRegex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
+                        real_match = real_match.map(match => match || '');
+                        let query_list = regex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
                         return [new Z3.Query(query.exprs.concat(query_list), [Z3.Check(CheckCorrect, (query, model) => [])])];
                     }
                 });
