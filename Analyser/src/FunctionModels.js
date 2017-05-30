@@ -88,15 +88,13 @@ function BuildModels() {
 
             if (CAPTURES_ENABLED && REFINEMENTS_ENABLED) {
                 Log.logMid('Refinements Enabled - Adding checks');
-                Log.log('TODO: Currently if two refinements are needed CheckFixed can accidentally drop the second');
-
+                
                 let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
                     let query_list = query.exprs.concat([ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant())))]);
                     return new Z3.Query(query_list, query.checks);
                 });
 
                 let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
-                    Log.log('WARNING: Over-approx may occur when using CheckFixed AS-IS (TODO)');
                     let real_match = Origin.exec(model.eval(string_s).asConstant());
 
                     if (!real_match) {
