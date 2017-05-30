@@ -27,6 +27,8 @@ function BuildModels() {
         return new ConcolicValue(in_c, in_s);
     }
 
+    const CAPTURES_ENABLED = true;
+
     function RegexMatch(real, string, result) {
 
         let regex = Z3.Regex(this.ctx, real);
@@ -36,15 +38,22 @@ function BuildModels() {
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
         this.state.symbolicConditional(in_regex);
-
-        //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
         
         if (result) {
-            result = result.map((current_c, idx) =>
-                typeof current_c == 'string' ? current_c : undefined
-            )
+
+            if (CAPTURES_ENABLED) {
+                //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
+                regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
+                this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
+            }
+
+            result = result.map((current_c, idx) => {
+                if (typeof current_c == 'string') {
+                    return CAPTURES_ENABLED ? new ConcolicValue(current_c, regex.captures[idx]) : current_c;
+                } else {
+                    return undefined;
+                }
+            });
         }
 
         return result;
