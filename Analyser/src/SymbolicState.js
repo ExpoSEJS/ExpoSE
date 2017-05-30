@@ -130,6 +130,8 @@ class SymbolicState {
             this.slv.assert(this.pathCondition[i].ast);
         }
 
+        this.slv.push();
+
         for (let i = this.input._bound; i < this.pathCondition.length; i++) {
             
             if (!this.pathCondition[i].binder) {
@@ -138,7 +140,7 @@ class SymbolicState {
             
             //Push the current thing we're looking at to the solver
             this.slv.assert(this.pathCondition[i].ast);
-            console.log('Asserted ' + this.pathCondition[i].ast.toString());
+            this.slv.push();
         }
 
         this.slv.reset();
@@ -198,8 +200,7 @@ class SymbolicState {
     }
 
     _checkSat(clause) {
-        let nextQuery = new Z3.Query([clause], this.checks);
-        let model = nextQuery.getModel(this.slv);
+        let model = (new Z3.Query([clause], this.checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
 
