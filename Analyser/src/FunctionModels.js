@@ -32,6 +32,12 @@ function DoesntMatch(l, r) {
     }
 }
 
+function CloneRelace(list, item, n) {
+    let clone = list.slice(0);
+    clone[clone.indexOf(item)] = n;
+    return clone;
+}
+
 
 function BuildModels() {
     let models = {};
@@ -98,7 +104,8 @@ function BuildModels() {
                     } else {
                         real_match = real_match.map(match => match || '');
                         let query_list = regex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
-                        return [new Z3.Query(query.exprs.concat(query_list), [Z3.Check(CheckCorrect, (query, model) => [])])];
+                        let next_checks = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, (query, model) => []));
+                        return [new Z3.Query(query.exprs.concat(query_list), next_checks)];
                     }
                 });
 
