@@ -22,6 +22,9 @@ class SymbolicState {
 
         this.pathCondition = [];
 
+        //Shadows PC with lists of Check objects for each PC
+        this.checks = [];
+
         this.errors = [];
     }
 
@@ -32,20 +35,9 @@ class SymbolicState {
     addError(error) {
         this.errors.push(error);
     }
-
-    /**
-     * Push a binder condition to the PC,
-     * Binder conditions are just conditions that must be true for a PC to hold
-     * And are not negated to build new paths
-     */
-    pushBinder(cnd) {
-        this.pathCondition.push({
-            ast: cnd,
-            binder: true
-        });
-    }
     
-    pushCondition(cnd) {
+    pushCondition(cnd, binder, checks) {
+        this.checks.push(checks || []);
     	this.pathCondition.push({
             ast: cnd,
             binder: false

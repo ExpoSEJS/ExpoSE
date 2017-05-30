@@ -38,8 +38,8 @@ function BuildModels() {
         this.state.symbolicConditional(in_regex);
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        regex.assertions.forEach(binder => this.state.pushBinder(binder));
-        this.state.pushBinder(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)));
+        regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
+        this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
         
         if (result) {
             result = result.map((current_c, idx) =>
@@ -196,7 +196,7 @@ function BuildModels() {
             Log.log('TODO: Awful String.prototype.toLowerCase model will reduce search space');
             base = this._concretizeToString(base);
             let azRegex = Z3.Regex(this.ctx, /^[^A-Z]+$/);
-            this.state.pushBinder(this.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast));
+            this.state.pushCondition(this.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast), true);
             result = new ConcolicValue(result, this.state.getSymbolic(base));
         }
 
