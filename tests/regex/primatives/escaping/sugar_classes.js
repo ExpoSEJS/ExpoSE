@@ -1,19 +1,31 @@
 var x = symbolic X initial '';
 
-if (/^[^abcd]$/.test(x)) {
-	if (x == 'c' || x == 'a') throw 'Unreachable';
-	if (x == '') throw 'Unreachable';
-	if (x == 'e' || x == 'p') throw 'Reachable';
+if (/^\d$/.test(x)) {
+	var is_digit = (x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9');
+	if (!is_digit) throw 'Unreachable';
+	throw 'Reachable';
 }
 
-if (/^[^a-z]*$/.test(x)) {
-	if (x == 'abcdef' || x == '123abc') throw 'Unreachable';
-	if (x == '') throw 'Reachable';
-	if (x == '12345' || x == '1$"£"!%^32131') throw 'Reachable';
+if (/^\D$/.test(x)) {
+	var is_digit = (x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9');
+	if (is_digit) throw 'Unreachable';
+	throw 'Reachable';
 }
 
-if (/^[^0-9]+$/.test(x)) {
-	if (x == '12345' || x == '12ab34') throw 'Unreachable';
-	if (x == 'abc') throw 'Reachable';
-	if (x == '') throw 'Unreachable';
+if (/^\w$/.test(x)) {
+	if (/^\s$/.test(x)) throw 'Unreachable';
+	if (/^\d$/.test(x)) throw 'Reachable';
+	if (/^\D$/.test(x)) throw 'Reachable';
+	if (/^[a-z]$/.test(x)) throw 'Reachable';
+	if (/^[A-Z]$/.test(x)) throw 'Reachable';
+	if (x == '_') throw 'Reachable';
+}
+
+if (/^\W$/.test(x)) {
+	if (/^\s$/.test(x)) throw 'Reachable';
+	if (/^\d$/.test(x)) throw 'Unreachable';
+	if (/^\D$/.test(x)) throw 'Unreachable';
+	if (/^[a-z]$/.test(x)) throw 'Unreachable';
+	if (/^[A-Z]$/.test(x)) throw 'Unreachable';
+	if (x == '_') throw 'Unreachable';
 }
