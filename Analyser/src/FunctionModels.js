@@ -104,8 +104,8 @@ function BuildModels() {
                     //CheckCorrect will check model has a proper match
                     let real_match = real.exec(model.eval(string_s).asConstant()).map(match => match || '');
                     let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
-                    let next_checks = CloneRemove(query.checks, CheckFixed);
-                    return [new Z3.Query(query.exprs.concat(query_list), next_checks)];
+                    let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
+                    return [new Z3.Query(query.exprs.concat(query_list), next_list)];
                 });
 
                 this.state.pushCheck(CheckFixed);
