@@ -17,7 +17,7 @@ echo "Cleaning previous installations"
 echo "Installing into PATH"
 ./scripts/setup/install_bashprofile
 
-echo "Re-sourcing bash profile"
-source ~/.bash_profile
+#echo "Re-sourcing bash profile"
+#source ~/.bash_profile
 
 exit 0
