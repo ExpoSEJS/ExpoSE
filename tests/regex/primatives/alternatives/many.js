@@ -21,9 +21,10 @@ if (/^(a|b|c)(c|d)([a-z]|[0-9])$/.test(q)) {
 	}
 
 } else {
-	throw 'Reachable';
 
 	if (q == 'ac5') {
 		throw 'Unreachable';
 	}
+
+	throw 'Reachable';
 }
