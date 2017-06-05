@@ -6,5 +6,5 @@ fi
 echo "Setting up $1"
 
 cd $1
-echo "Pulling Dependancies"
+echo "Pulling Dependencies"
 CC=clang CXX=clang++ npm install
