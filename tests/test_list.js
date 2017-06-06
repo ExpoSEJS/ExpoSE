@@ -54,6 +54,7 @@ function buildTestList() {
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
 
+    /*
     //Regex
     buildTest('regex/primatives/anchors_one.js', 3, 1);
     buildTest('regex/primatives/anchors_two.js', 5, 2);
@@ -74,6 +75,7 @@ function buildTestList() {
 
     buildTest('regex/replace_and_length.js', 5, 0);
     buildTest('regex/replace_and_length.js', 3, 0);
+    */
 
     //Async
     buildTest('async/settimeout.js', 3, 1);
