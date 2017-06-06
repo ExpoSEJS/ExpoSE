@@ -41,7 +41,7 @@ if (/^he+?l+?l+?o_wor+?l+?d+?$/.test(x)) {
 	throw 'Reachable';
 }
 
-if (/^h+?/.test(x)) {
+if (/^h+?$/.test(x)) {
 
 	if (/^[^h]+$/.test(x)) {
 		throw 'Unreachable';
