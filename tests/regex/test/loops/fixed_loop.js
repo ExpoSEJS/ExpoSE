@@ -1,4 +1,4 @@
-//Simple test of Term {Min, Max}
+//Simple test of Term {X}
 
 var x = symbolic X initial '';
 
