@@ -49,3 +49,17 @@ if (/^h+?$/.test(x)) {
 
 	throw 'Reachable';
 }
+
+if (/^z+?$/.test(x)) {
+	assume x.length < 5;
+	
+	for (var i = 0; i < x.length; i++) {
+		if (x[i] != 'z') {
+			throw 'Unreachable';
+		}
+	}
+
+	throw 'Reachable';
+}
+
+throw 'Reachable';

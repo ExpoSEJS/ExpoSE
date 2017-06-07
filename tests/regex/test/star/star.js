@@ -6,7 +6,7 @@ if (/^he*llo_world*$/.test(x)) {
 	if (x == '') throw 'Unreachable';
 }
 
-if (/(hello)*(world)*/.test(x)) {
+if (/^(hello)*(world)*$/.test(x)) {
 	if (x == '') throw 'Reachable';
 	if (x == 'hellohelloworld') throw 'Reachable';
 	if (x == 'd') throw 'Unreachable';
