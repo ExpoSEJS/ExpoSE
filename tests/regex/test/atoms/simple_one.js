@@ -1,5 +1,6 @@
 var x = symbolic X initial '';
 
 if (/^a$/.test(x)) {
-	assert x == 'a';
+	if (x == 'a') throw 'Reachable';
+	throw 'Unreachable';
 }
