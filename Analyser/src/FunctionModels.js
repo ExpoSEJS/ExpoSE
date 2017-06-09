@@ -135,7 +135,7 @@ function BuildModels() {
     function symbolicHook(condition, hook) {
         return function(f, base, args, result) {
 
-            let result = undefined;
+            result = undefined;
             let thrown = undefined;
 
             //Defer throw until after hook has run
