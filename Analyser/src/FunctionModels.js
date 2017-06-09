@@ -135,7 +135,15 @@ function BuildModels() {
     function symbolicHook(condition, hook) {
         return function(f, base, args, result) {
 
-            result = f.apply(this.state.getConcrete(base), map.call(args, arg => this.state.getConcrete(arg)));
+            let result = undefined;
+            let thrown = undefined;
+
+            //Defer throw until after hook has run
+            try {
+                result = f.apply(this.state.getConcrete(base), map.call(args, arg => this.state.getConcrete(arg)));
+            } catch (e) {
+                thrown = e;
+            }
 
             Log.logMid(`Symbolic Testing ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)} and initial result ${ObjectHelper.asString(result)}`);
 
@@ -143,7 +151,11 @@ function BuildModels() {
                 result = hook(this, f, base, args, result);
             }
 
-            Log.logMid(`Result: ${'' + result}`);
+            Log.logMid(`Result: ${'' + result} Thrown: ${'' + thrown}`);
+
+            if (thrown) {
+                throw e;
+            }
 
             return result;
         };
