@@ -263,6 +263,29 @@ function BuildModels() {
         }
     );
 
+    models[Number.prototype.toFixed] = symbolicHook(
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
+        (c, _f, base, args, result) => {
+            let toFix = c.state.asSymbolic(base);
+            let requiredDigits = c.state.asSymbolic(args[0]);
+            let gte0 = c.ctx.mkGe(requiredDigits, c.state.asSymbolic(0));
+            let lte20 = c.ctx.mkLe(requiredDigits, c.state.asSymbolic(20));
+            let validRequiredDigitsSymbolic = c.ctx.mkAnd(lte20, gte0);
+            const validRequiredDigits = c.state.getConcrete(args[0]) >= 0 && c.state.getConcrete(args[0]) <= 20;
+
+            c.state.symbolicConditional(new ConcolicValue(validRequiredDigits, validRequiredDigitsSymbolic));
+
+            if (validRequiredDigits) {
+                const pow = c.ctx.mkPower(c.state.asSymbolic(10), requiredDigits)
+                const symbolicValue = c.ctx.mkDiv(c.ctx.mkInt2Real(c.ctx.mkReal2Int(c.ctx.mkMul(pow, toFix))), c.state.asSymbolic(10.0))
+                return new ConcolicValue(result, symbolicValue);
+            }
+            else {
+                // f.Apply() will throw
+            }
+        }
+    );
+
     models[Array.prototype.push] = NoOp();
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
