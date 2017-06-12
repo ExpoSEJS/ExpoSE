@@ -17,7 +17,7 @@ import Log from './Utilities/Log';
 import Coverage from './Coverage';
 import ArrayHelper from './Utilities/ArrayHelper';
 import NotAnErrorException from './NotAnErrorException';
-import {IsNativeCached} from './Utilities/IsNative';
+import {isNative} from './Utilities/IsNative';
 import Models from './FunctionModels';
 import External from './External';
 
@@ -64,14 +64,14 @@ class SymbolicExecution {
     }
 
     _uncaughtException(e) {
-        
+
         //Ignore NotAnErrorException
         if (e instanceof NotAnErrorException) {
             return;
         }
 
         Log.log(this._generateErrorOutput(e));
-        
+
         this.state.addError({
             error: '' + e,
             stack: e.stack
@@ -140,7 +140,10 @@ class SymbolicExecution {
     _invokeFunPreConcretize(f, base, args) {
         f = this.state.getConcrete(f);
 
-        if (!(Models[f]) && IsNativeCached(f)) {
+
+        let modelled = !!Models[f] || this._isSpecialFunction(f);
+
+        if (!modelled && isNative(f)) {
             Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
             Log.logHigh(ObjectHelper.asString(base) + " " + ObjectHelper.asString(args));
 
@@ -159,16 +162,16 @@ class SymbolicExecution {
             f: f,
             base: base,
             args: args,
-            skip: (f == RegExp.prototype.test) || this._isSpecialFunction(f)
+            skip: modelled
         };
     }
 
     invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
         Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
-        
+
         this._callStack.push({
             f: f,
-            base: base, 
+            base: base,
             args: args
         });
 
@@ -403,7 +406,7 @@ class SymbolicExecution {
         } else {
             Log.log(exitString);
         }
-    
+
         return {
             wrappedExceptionVal: wrappedExceptionVal,
             isBacktrack: false
