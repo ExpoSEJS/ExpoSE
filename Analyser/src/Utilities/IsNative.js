@@ -15,7 +15,7 @@ var reNative = RegExp('^' +
     .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 );
 
-function isNative(value) {
+function isNativeCore(value) {
     var type = typeof value;
     return type == 'function' ? reNative.test(fnToString.call(value)) :
         (value && type == 'object' && reHostCtor.test(toString.call(value))) || false;
@@ -28,14 +28,14 @@ let nativeCache = {};
  * If miss, isNative, store, return
  * Else return cache
  */
-function IsNativeCached(value) {
+function isNative(value) {
     if (nativeCache[value] !== undefined) {
         return nativeCache[value];
     } else {
-        let result = isNative(value);
+        let result = isNativeCore(value);
         nativeCache[value] = result;
         return result;
     }
 }
 
-export {IsNativeCached};
+export {isNative};
