@@ -90,6 +90,7 @@ function BuildModels() {
         this.state.symbolicConditional(in_regex);
 
         if (result != -1) {
+            AddChecks(regex, real, string_s);
             return new ConcolicValue(result, regex.startIndex); 
         } else {
             return -1;
