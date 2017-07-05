@@ -90,7 +90,7 @@ function BuildModels() {
         this.state.symbolicConditional(in_regex);
 
         if (result != -1) {
-            AddChecks(regex, real, string_s);
+            AddChecks.call(this, regex, real, this.state.asSymbolic(string));
             return new ConcolicValue(result, regex.startIndex); 
         } else {
             return -1;
@@ -137,6 +137,9 @@ function BuildModels() {
                     return undefined;
                 }
             });
+
+            result.index = new ConcolicValue(result.index, regex.startIndex);
+            result.input = string;
         }
 
         return result;
