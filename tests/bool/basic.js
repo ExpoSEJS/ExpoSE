@@ -7,7 +7,7 @@ var B = symbolic B initial true;
 
 if (A) {
 	if (B) {
-		assert false;
+		throw 'Ouch';
 	}
 } else {
 	if (B) {

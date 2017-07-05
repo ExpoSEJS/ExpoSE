@@ -1,0 +1,1 @@
+//Test modeling of looped references to open capture groups (Local captures)

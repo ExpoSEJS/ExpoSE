@@ -53,10 +53,47 @@ function BuildModels() {
         }
     }
 
+    function AddChecks(regex, real, string_s) {
+
+        function CheckCorrect(model) {
+            let real_match = real.exec(model.eval(string_s).asConstant());
+            let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
+            console.log(`Check Correct ${real_match} ${sym_match} ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
+            return real_match && !Exists(real_match, sym_match, DoesntMatch);
+        }
+
+        let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
+            let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
+            return [new Z3.Query(query.exprs.slice(0).concat([not]), query.checks)];
+        });
+
+        let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
+            //CheckCorrect will check model has a proper match
+            let real_match = real.exec(model.eval(string_s).asConstant()).map(match => match || '');
+            let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
+            let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
+            return [new Z3.Query(query.exprs.concat(query_list), next_list)];
+        });
+
+        this.state.pushCheck(CheckFixed);
+    }
+
     function RegexTest(regex, real, string) {
         let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
         return new ConcolicValue(in_c, in_s);
+    }
+
+    function RegexSearch(real, string, result) {
+        let regex = Z3.Regex(this.ctx, real);
+        let in_regex = RegexTest.apply(this, [regex, real, string, result]);
+        this.state.symbolicConditional(in_regex);
+
+        if (result != -1) {
+            return new ConcolicValue(result, regex.startIndex); 
+        } else {
+            return -1;
+        }
     }
 
     const CAPTURES_ENABLED = true;
@@ -74,13 +111,6 @@ function BuildModels() {
 
         let string_s = this.state.asSymbolic(string);
 
-        function CheckCorrect(model) {
-            let real_match = real.exec(model.eval(string_s).asConstant());
-            let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
-            console.log(`Check Correct ${real_match} ${sym_match} ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
-            return real_match && !Exists(real_match, sym_match, DoesntMatch);
-        }
-
         if (result) {
 
             if (CAPTURES_ENABLED) {
@@ -94,21 +124,7 @@ function BuildModels() {
 
             if (CAPTURES_ENABLED && REFINEMENTS_ENABLED) {
                 Log.logMid('Refinements Enabled - Adding checks');
-
-                let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-                    let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
-                    return [new Z3.Query(query.exprs.slice(0).concat([not]), query.checks)];
-                });
-
-                let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
-                    //CheckCorrect will check model has a proper match
-                    let real_match = real.exec(model.eval(string_s).asConstant()).map(match => match || '');
-                    let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
-                    let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
-                    return [new Z3.Query(query.exprs.concat(query_list), next_list)];
-                });
-
-                this.state.pushCheck(CheckFixed);
+                AddChecks.call(this, regex, real, string_s);
             } else {
                 Log.log('Refinements disabled - Potential loss of precision');
             }
@@ -220,6 +236,11 @@ function BuildModels() {
             c.state.getSymbolic(result).FORCE_EQ_TO_INT = true;
             return result;
         }
+    );
+
+    models[String.prototype.search] = symbolicHook(
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
+        (c, _f, base, args, result) => RegexSearch.call(c, args[0], base, result)
     );
 
     models[String.prototype.match] = symbolicHook(
