@@ -90,7 +90,9 @@ function BuildModels() {
         this.state.symbolicConditional(in_regex);
 
         if (result != -1) {
-            AddChecks.call(this, regex, real, this.state.asSymbolic(string));
+            //TODO: Checks on RegexSearch
+            console.log('WARN: Unimpl - Checks on regex search');
+            //AddChecks.call(this, regex, real, this.state.asSymbolic(string));
             return new ConcolicValue(result, regex.startIndex); 
         } else {
             return -1;

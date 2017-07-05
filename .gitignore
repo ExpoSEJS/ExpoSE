@@ -26,3 +26,4 @@ libz3*
 .babelrc
 Dashboard/tmp/*
 tmp/
+package-lock.json
