@@ -4,6 +4,7 @@
 import ObjectHelper from './Utilities/ObjectHelper';
 import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
+import Config from './Config';
 import {
     WrappedValue,
     ConcolicValue
@@ -11,7 +12,6 @@ import {
 
 const find = Array.prototype.find;
 const map = Array.prototype.map;
-
 
 function Exists(array1, array2, pred) {
 
@@ -81,6 +81,16 @@ function BuildModels() {
     function RegexTest(regex, real, string) {
         let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
+
+        if (regex.backreferences) {
+            if (Config.backreferencesEnabled) {
+                Log.log('Backreferences in RE - Forcing implier');
+                this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
+            } else {
+                Log.log('WARN: Backreferences disabled in a regex that requires them, very unlikely to generate a good result');
+            }
+        }
+
         return new ConcolicValue(in_c, in_s);
     }
 
@@ -99,9 +109,6 @@ function BuildModels() {
         }
     }
 
-    const CAPTURES_ENABLED = true;
-    const REFINEMENTS_ENABLED = true;
-
     function RegexMatch(real, string, result) {
 
         let regex = Z3.Regex(this.ctx, real);
@@ -116,16 +123,16 @@ function BuildModels() {
 
         if (result) {
 
-            if (CAPTURES_ENABLED) {
+            if (Config.capturesEnabled) {
                 Log.logMid('Captures Enabled - Adding Implications');
                 //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
                 regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
+                this.state.pushCondition(this.ctx.mkEq(regex.implier, string));
             } else {
                 Log.log('Captures Disable - Potential loss of precision');
             }
 
-            if (CAPTURES_ENABLED && REFINEMENTS_ENABLED) {
+            if (Config.capturesEnabled && Config.refinementsEnabled) {
                 Log.logMid('Refinements Enabled - Adding checks');
                 AddChecks.call(this, regex, real, string_s);
             } else {
