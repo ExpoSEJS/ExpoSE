@@ -58,8 +58,8 @@ function BuildModels() {
         function CheckCorrect(model) {
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
-            console.log(`Check Correct ${real_match} ${sym_match} ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
-            return real_match && !Exists(real_match, sym_match, DoesntMatch);
+            console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
+            return !real_match || !Exists(real_match, sym_match, DoesntMatch);
         }
 
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
@@ -127,7 +127,7 @@ function BuildModels() {
                 Log.logMid('Captures Enabled - Adding Implications');
                 //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
                 regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkEq(regex.implier, string));
+                this.state.pushCondition(this.ctx.mkEq(regex.implier, string_s));
             } else {
                 Log.log('Captures Disable - Potential loss of precision');
             }
@@ -141,7 +141,7 @@ function BuildModels() {
 
             result = result.map((current_c, idx) => {
                 if (typeof current_c == 'string') {
-                    return CAPTURES_ENABLED ? new ConcolicValue(current_c, regex.captures[idx]) : current_c;
+                    return Config.capturesEnabled ? new ConcolicValue(current_c, regex.captures[idx]) : current_c;
                 } else {
                     return undefined;
                 }
