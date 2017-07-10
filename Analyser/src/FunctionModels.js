@@ -272,8 +272,7 @@ function BuildModels() {
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.
-    //TODO: Move polyfill in here
-    /*models[String.prototype.replace] = symbolicHook(
+    models[String.prototype.replace] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
         (c, _f, base, args, result) => {
             Log.log('TODO: Awful String.prototype.replace model will reduce search space');
@@ -288,7 +287,7 @@ function BuildModels() {
             test ? c.state.pushNot(baseInRe) : c.state.pushCondition(baseInRe);
             return new ConcolicValue(result, c.state.getSymbolic(base));
         }
-    );*/
+    );
 
     models[String.prototype.trim] = symbolicHook(
         (c, _f, base, _a, _r) => c.state.isSymbolic(base),
