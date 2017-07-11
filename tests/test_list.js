@@ -62,9 +62,9 @@ function buildTestList() {
     buildTest('regex/test/atoms/simple_two.js', 2, 1);
 
 
-    buildTest('regex/test/assertions/star.js', 7, 7);
-    buildTest('regex/test/assertions/star_online.js', 11, 10);
-    buildTest('regex/test/assertions/lazy.js', 7, 7);
+    buildTest('regex/test/star/star.js', 7, 7);
+    buildTest('regex/test/star/star_online.js', 11, 10);
+    buildTest('regex/test/star/lazy.js', 7, 7);
 
     //buildTest('regex/test/anchors/left.js', 5, 5); //TODO: This has more tests than it should
     //buildTest('regex/test/anchors/none.js', 6, 6); //TODO: This has more tests than it should
