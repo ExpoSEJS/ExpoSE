@@ -14,3 +14,5 @@ if (/--.+=$/.test(q)) {
 
 	throw 'Reachable';
 }
+
+throw 'Reachable';

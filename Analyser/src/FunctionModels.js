@@ -56,6 +56,7 @@ function BuildModels() {
     function AddChecks(regex, real, string_s) {
 
         function CheckCorrect(model) {
+            console.log('CHK');
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
             //console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
@@ -83,9 +84,10 @@ function BuildModels() {
         let in_c = real.test(this.state.getConcrete(string));
 
         if (regex.backreferences) {
-            if (Config.backreferencesEnabled) {
+            if (Config.backreferencesEnabled && in_c) {
                 Log.log('Backreferences in RE - Forcing implier');
-                this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
+                regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
+                this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
             } else {
                 Log.log('WARN: Backreferences disabled in a regex that requires them, very unlikely to generate a good result');
             }
@@ -127,7 +129,7 @@ function BuildModels() {
                 Log.logMid('Captures Enabled - Adding Implications');
                 //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
                 regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkEq(regex.implier, string_s));
+                this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
             } else {
                 Log.log('Captures Disable - Potential loss of precision');
             }
