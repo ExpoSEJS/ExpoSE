@@ -58,14 +58,14 @@ function buildTestList() {
     buildTest('regex/test/alternatives/many.js', 4, 4);
     buildTest('regex/test/alternatives/exhaustive_simple.js', 5, 5);
 
-    buildTest('regex/test/atoms/simple_one.js', 4, 2); //TODO: This has more tests than it should
-    buildTest('regex/test/atoms/simple_two.js', 4, 2); //TODO: This has more tests than it should
+    buildTest('regex/test/atoms/simple_one.js', 2, 1);
+    buildTest('regex/test/atoms/simple_two.js', 2, 1);
 
 
-    buildTest('regex/test/anchors/left.js', 5, 5); //TODO: This has more tests than it should
-    buildTest('regex/test/anchors/none.js', 6, 6); //TODO: This has more tests than it should
+    //buildTest('regex/test/anchors/left.js', 5, 5); //TODO: This has more tests than it should
+    //buildTest('regex/test/anchors/none.js', 6, 6); //TODO: This has more tests than it should
 
-    buildTest('regex/test/assertions/arbitrary_ahead.js', 4, 4); //TODO: This has more tests than it should
+    buildTest('regex/test/assertions/arbitrary_ahead.js', 3, 3);
 
     /*
     //Regex
