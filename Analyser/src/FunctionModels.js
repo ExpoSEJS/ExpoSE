@@ -56,7 +56,6 @@ function BuildModels() {
     function AddChecks(regex, real, string_s) {
 
         function CheckCorrect(model) {
-            console.log('CHK');
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
             //console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
@@ -84,10 +83,11 @@ function BuildModels() {
         let in_c = real.test(this.state.getConcrete(string));
 
         if (regex.backreferences) {
-            if (Config.backreferencesEnabled && in_c) {
+            if (Config.backreferencesEnabled) {
                 Log.log('Backreferences in RE - Forcing implier');
                 regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
+                let force_eq_implier = this.ctx.mkEq(this.state.getSymbolic(string), regex.implier);
+                this.state.pushCondition(this.ctx.mkImplies(in_s, force_eq_implier), true);
             } else {
                 Log.log('WARN: Backreferences disabled in a regex that requires them, very unlikely to generate a good result');
             }
