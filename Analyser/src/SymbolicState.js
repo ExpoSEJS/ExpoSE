@@ -41,7 +41,7 @@ class SymbolicState {
     pushCondition(cnd, binder) {
     	this.pathCondition.push({
             ast: cnd,
-            binder: false
+            binder: binder || false
         });
     }
 
@@ -68,7 +68,7 @@ class SymbolicState {
      * Roll PC into a single AND'ed PC
      */
     _simplifyPC(pc) {
-        return pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)).simplify();
+        return pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)); //.simplify();
     }
 
     /**
@@ -98,7 +98,7 @@ class SymbolicState {
     }
 
     _buildPC(childInputs, i) {
-        let newPC = this.ctx.mkNot(this.pathCondition[i].ast).simplify();
+        let newPC = this.ctx.mkNot(this.pathCondition[i].ast); //.simplify();
         Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable');
         
         let solution = this._checkSat(newPC);
@@ -140,6 +140,7 @@ class SymbolicState {
             
             //Push the current thing we're looking at to the solver
             this.slv.assert(this.pathCondition[i].ast);
+
             this.slv.push();
         }
 

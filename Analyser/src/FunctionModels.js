@@ -56,9 +56,10 @@ function BuildModels() {
     function AddChecks(regex, real, string_s) {
 
         function CheckCorrect(model) {
+            console.log('CHK');
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
-            console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
+            //console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
             return !real_match || !Exists(real_match, sym_match, DoesntMatch);
         }
 
@@ -83,7 +84,7 @@ function BuildModels() {
         let in_c = real.test(this.state.getConcrete(string));
 
         if (regex.backreferences) {
-            if (Config.backreferencesEnabled) {
+            if (Config.backreferencesEnabled && in_c) {
                 Log.log('Backreferences in RE - Forcing implier');
                 regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
                 this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
@@ -101,7 +102,6 @@ function BuildModels() {
         this.state.symbolicConditional(in_regex);
 
         if (result != -1) {
-            //TODO: Checks on RegexSearch
             AddChecks.call(this, regex, real, this.state.asSymbolic(string));
             return new ConcolicValue(result, regex.startIndex); 
         } else {
@@ -113,7 +113,7 @@ function BuildModels() {
 
         let regex = Z3.Regex(this.ctx, real);
 
-        console.log(`RegexMatch ${JSON.stringify(regex)} ${regex.ast} ${string} ${real}`);
+        //console.log(`RegexMatch ${JSON.stringify(regex)} ${regex.ast} ${string} ${real}`);
 
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
@@ -127,7 +127,7 @@ function BuildModels() {
                 Log.logMid('Captures Enabled - Adding Implications');
                 //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
                 regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkEq(regex.implier, string_s));
+                this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
             } else {
                 Log.log('Captures Disable - Potential loss of precision');
             }
@@ -272,8 +272,7 @@ function BuildModels() {
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.
-    //TODO: Move polyfill in here
-    /*models[String.prototype.replace] = symbolicHook(
+    models[String.prototype.replace] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
         (c, _f, base, args, result) => {
             Log.log('TODO: Awful String.prototype.replace model will reduce search space');
@@ -288,7 +287,7 @@ function BuildModels() {
             test ? c.state.pushNot(baseInRe) : c.state.pushCondition(baseInRe);
             return new ConcolicValue(result, c.state.getSymbolic(base));
         }
-    );*/
+    );
 
     models[String.prototype.trim] = symbolicHook(
         (c, _f, base, _a, _r) => c.state.isSymbolic(base),
@@ -297,6 +296,20 @@ function BuildModels() {
             return new ConcolicValue(result, c.state.getSymbolic(base));
         }
     );
+
+    models[String.prototype.toLowerCase] = function(f, base, args, result) {
+        result = f.apply(this.state.getConcrete(base));
+
+        if (this.state.isSymbolic(base)) {
+            Log.log('TODO: Awful String.prototype.toLowerCase model will reduce search space');
+            base = this._concretizeToString(base);
+            let azRegex = Z3.Regex(this.ctx, /^[^A-Z]+$/);
+            this.state.pushCondition(this.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast), true);
+            result = new ConcolicValue(result, this.state.getSymbolic(base));
+        }
+
+        return result;
+    };
 
     models[Number.prototype.toFixed] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
@@ -334,22 +347,6 @@ function BuildModels() {
     models[Array.prototype.shift] = NoOp();
     models[Array.prototype.unshift] = NoOp();
     models[Array.prototype.fill] = NoOp();
-
-    //TODO: I need a model for indexOf
-
-    models[String.prototype.toLowerCase] = function(f, base, args, result) {
-        result = f.apply(this.state.getConcrete(base));
-
-        if (this.state.isSymbolic(base)) {
-            Log.log('TODO: Awful String.prototype.toLowerCase model will reduce search space');
-            base = this._concretizeToString(base);
-            let azRegex = Z3.Regex(this.ctx, /^[^A-Z]+$/);
-            this.state.pushCondition(this.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast), true);
-            result = new ConcolicValue(result, this.state.getSymbolic(base));
-        }
-
-        return result;
-    };
 
     return models;
 }

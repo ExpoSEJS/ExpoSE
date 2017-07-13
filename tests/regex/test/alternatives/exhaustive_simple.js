@@ -9,3 +9,5 @@ if (/^(a|b|hello|dog)$/.test(x)) {
 	if (x == 'dog') throw 'Reachable';
 	throw 'Unreachable';
 }
+
+throw 'Reachable';

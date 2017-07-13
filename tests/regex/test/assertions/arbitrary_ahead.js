@@ -19,4 +19,15 @@ if (re2.test(x)) {
 	}
 }
 
+var re3 = /^b(?=b).$/;
+
+if (re3.test(x)) {
+	
+	if (re3 != 'bb') {
+		throw 'Unreachable';
+	}
+
+	throw 'Reachable';
+}
+
 throw 'Reachable';

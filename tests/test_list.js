@@ -54,6 +54,26 @@ function buildTestList() {
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
 
+    buildTest('regex/test/alternatives/simple.js', 4, 4);
+    buildTest('regex/test/alternatives/many.js', 4, 4);
+    buildTest('regex/test/alternatives/exhaustive_simple.js', 5, 5);
+
+    buildTest('regex/test/atoms/simple_one.js', 2, 1);
+    buildTest('regex/test/atoms/simple_two.js', 2, 1);
+
+
+    buildTest('regex/test/star/star.js', 7, 7);
+    buildTest('regex/test/star/star_online.js', 11, 10);
+    buildTest('regex/test/star/lazy.js', 7, 7);
+
+    buildTest('regex/test/plus/plus.js', 12, 11);
+    buildTest('regex/test/plus/lazy.js', 12, 11);
+
+    //buildTest('regex/test/anchors/left.js', 5, 5); //TODO: This has more tests than it should
+    //buildTest('regex/test/anchors/none.js', 6, 6); //TODO: This has more tests than it should
+
+    buildTest('regex/test/assertions/arbitrary_ahead.js', 3, 3);
+
     /*
     //Regex
     buildTest('regex/primatives/anchors_one.js', 3, 1);

@@ -3,8 +3,6 @@
 var q = symbolic q initial '';
 
 if (/^a|b|c$/.test(q)) {
-	
-	throw 'Reachable';
 
 	var isCorrect = q == 'a' || q == 'b' || q == 'c';
 
@@ -12,6 +10,19 @@ if (/^a|b|c$/.test(q)) {
 		throw 'Unreachable';
 	}
 
+	if (q == 'a') {
+		throw 'Reachable';
+	}
+
+	if (q == 'b') {
+		throw 'Unreachable';
+	}
+
+	if (q == 'c') {
+		throw 'Reachable';
+	}
+
+	throw 'Unreachable';
 } else {
 	throw 'Reachable';
 }
