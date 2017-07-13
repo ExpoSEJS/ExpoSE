@@ -63,7 +63,7 @@ function buildTestList() {
 
 
     buildTest('regex/test/star/star.js', 7, 7);
-    buildTest('regex/test/star/star_online.js', 11, 10);
+    buildTest('regex/test/star/star_online.js', 12, 11);
     buildTest('regex/test/star/lazy.js', 7, 7);
 
     buildTest('regex/test/plus/plus.js', 12, 11);
