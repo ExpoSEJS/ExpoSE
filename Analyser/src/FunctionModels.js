@@ -63,7 +63,7 @@ function BuildModels() {
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
         regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
+        this.state.pushCondition(this.ctx.mkEq(string_s, regex.implier), true);
     }
 
     function EnableRefinements(regex, real, string_s) {
