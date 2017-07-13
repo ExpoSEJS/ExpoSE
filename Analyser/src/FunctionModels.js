@@ -54,6 +54,7 @@ function BuildModels() {
     }
 
     function EnableCaptures(regex, real, string_s) {
+        
         if (!Config.capturesEnabled) {
             Log.log('Captures disabled - potential loss of precision');
         }
@@ -77,7 +78,6 @@ function BuildModels() {
         function CheckCorrect(model) {
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
-            //console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
             return !real_match || !Exists(real_match, sym_match, DoesntMatch);
         }
 
@@ -102,13 +102,7 @@ function BuildModels() {
         let in_c = real.test(this.state.getConcrete(string));
 
         if (regex.backreferences) {
-            if (Config.backreferencesEnabled && in_c) {
-                Log.log('Backreferences in RE - Forcing implier');
-                regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
-            } else {
-                Log.log('WARN: Backreferences disabled in a regex that requires them, very unlikely to generate a good result');
-            }
+            EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
         }
 
         return new ConcolicValue(in_c, in_s);
@@ -126,8 +120,6 @@ function BuildModels() {
     function RegexMatch(real, string, result) {
 
         let regex = Z3.Regex(this.ctx, real);
-
-        //console.log(`RegexMatch ${JSON.stringify(regex)} ${regex.ast} ${string} ${real}`);
 
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
