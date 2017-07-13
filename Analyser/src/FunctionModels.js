@@ -55,6 +55,13 @@ function BuildModels() {
 
     function AddChecks(regex, real, string_s) {
 
+        if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
+            Log.log('Refinements disabled - potential accuracy loss');
+            return;
+        }
+        
+        Log.logMid('Refinements Enabled - Adding checks');
+
         function CheckCorrect(model) {
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
@@ -99,6 +106,7 @@ function BuildModels() {
         let regex = Z3.Regex(this.ctx, real);
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
         let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
+        AddChecks.call(this, regex, real, string);
         return new ConcolicValue(result, search_in_re);
     }
 
@@ -125,12 +133,7 @@ function BuildModels() {
                 Log.log('Captures Disable - Potential loss of precision');
             }
 
-            if (Config.capturesEnabled && Config.refinementsEnabled) {
-                Log.logMid('Refinements Enabled - Adding checks');
-                AddChecks.call(this, regex, real, string_s);
-            } else {
-                Log.log('Refinements disabled - Potential loss of precision');
-            }
+            AddChecks.call(this, regex, real, string_s);
 
             result = result.map((current_c, idx) => {
                 if (typeof current_c == 'string') {
