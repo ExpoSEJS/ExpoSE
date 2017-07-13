@@ -53,7 +53,19 @@ function BuildModels() {
         }
     }
 
-    function AddChecks(regex, real, string_s) {
+    function EnableCaptures(regex, real, string_s) {
+        if (!Config.capturesEnabled) {
+            Log.log('Captures disabled - potential loss of precision');
+        }
+
+        Log.logMid('Captures Enabled - Adding Implications');
+
+        //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
+        regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
+        this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
+    }
+
+    function EnableRefinements(regex, real, string_s) {
 
         if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
             Log.log('Refinements disabled - potential accuracy loss');
@@ -106,7 +118,8 @@ function BuildModels() {
         let regex = Z3.Regex(this.ctx, real);
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
         let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
-        AddChecks.call(this, regex, real, string);
+        EnableCaptures.call(this, regex, real, string);
+        EnableRefinements.call(this, regex, real, string);
         return new ConcolicValue(result, search_in_re);
     }
 
@@ -124,16 +137,8 @@ function BuildModels() {
 
         if (result) {
 
-            if (Config.capturesEnabled) {
-                Log.logMid('Captures Enabled - Adding Implications');
-                //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-                regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
-            } else {
-                Log.log('Captures Disable - Potential loss of precision');
-            }
-
-            AddChecks.call(this, regex, real, string_s);
+            EnableCaptures.call(this, regex, real, string);
+            EnableRefinements.call(this, regex, real, string_s);
 
             result = result.map((current_c, idx) => {
                 if (typeof current_c == 'string') {
