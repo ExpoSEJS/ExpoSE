@@ -85,6 +85,7 @@ function BuildModels() {
         if (regex.backreferences) {
             if (Config.backreferencesEnabled) {
                 Log.log('Backreferences in RE - Forcing implier');
+                regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
                 this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(this.state.getSymbolic(string), regex.ast), this.ctx.mkEq(this.state.getSymbolic(string), regex.implier)), true);
             } else {
                 Log.log('WARN: Backreferences disabled in a regex that requires them, very unlikely to generate a good result');
@@ -101,8 +102,7 @@ function BuildModels() {
 
         if (result != -1) {
             //TODO: Checks on RegexSearch
-            console.log('WARN: Unimpl - Checks on regex search');
-            //AddChecks.call(this, regex, real, this.state.asSymbolic(string));
+            AddChecks.call(this, regex, real, this.state.asSymbolic(string));
             return new ConcolicValue(result, regex.startIndex); 
         } else {
             return -1;
