@@ -8,10 +8,10 @@ if (nl != -1) {
 
 	console.log('B is ' + b);
 	
-	if (nl = 3) {
+	if (nl == 3) {
 		throw 'Unreachable';
 	}
-	
+
 	if (x == 'a') throw 'Reachable';
 	if (x == 'b') throw 'Reachable';
 

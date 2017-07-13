@@ -81,7 +81,7 @@ function buildTestList() {
 
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/alt.js', 3, 3);
-    buildTest('regex/search/no_at_start.js', 3, 3);
+    buildTest('regex/search/not_at_start.js', 3, 3);
     buildTest('regex/search/test_at_start.js', 5, 5);
 
     /*
