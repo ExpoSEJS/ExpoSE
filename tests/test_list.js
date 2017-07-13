@@ -61,6 +61,8 @@ function buildTestList() {
     buildTest('regex/test/atoms/simple_one.js', 2, 1);
     buildTest('regex/test/atoms/simple_two.js', 2, 1);
 
+    buildTest('regex/test/escaping/ranges.js', 8, 8);
+    buildTest('regex/test/escaping/negative_ranges.js', 9, 9);
 
     buildTest('regex/test/star/star.js', 7, 7);
     buildTest('regex/test/star/star_online.js', 12, 11);
