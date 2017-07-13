@@ -243,10 +243,7 @@ function BuildModels() {
         (c, _f, base, args, result) => {
             let off = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
             off = c.ctx.mkRealToInt(off);
-
-            //TODO: Rewrite this better
             result = new ConcolicValue(result, c.ctx.mkSeqIndexOf(c.state.asSymbolic(base), c.state.asSymbolic(c._concretizeToString(args[0])), off));
-            c.state.getSymbolic(result).FORCE_EQ_TO_INT = true;
             return result;
         }
     );

@@ -39,7 +39,7 @@ function handleOutput(src) {
         }
 
         done.jobs.forEach(x => {
-            view.testcase(JSON.stringify(x.input), (x.time / 1000 / 1000), x.errors.length, replay.bind(this, x.input));
+            view.testcase(JSON.stringify(x.input), (x.time / 1000 / 1000), x.alternatives.length, x.errors.length, replay.bind(this, x.input));
         });
 
         done.jobs.forEach(x => {
