@@ -56,7 +56,6 @@ function BuildModels() {
     function AddChecks(regex, real, string_s) {
 
         function CheckCorrect(model) {
-            console.log('CHK');
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
             //console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
@@ -99,14 +98,8 @@ function BuildModels() {
     function RegexSearch(real, string, result) {
         let regex = Z3.Regex(this.ctx, real);
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
-        this.state.symbolicConditional(in_regex);
-
-        if (result != -1) {
-            AddChecks.call(this, regex, real, this.state.asSymbolic(string));
-            return new ConcolicValue(result, regex.startIndex); 
-        } else {
-            return -1;
-        }
+        let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
+        return new ConcolicValue(result, search_in_re);
     }
 
     function RegexMatch(real, string, result) {
