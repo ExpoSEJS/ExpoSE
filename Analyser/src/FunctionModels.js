@@ -112,8 +112,8 @@ function BuildModels() {
         let regex = Z3.Regex(this.ctx, real);
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
         let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
-        EnableCaptures.call(this, regex, real, string);
-        EnableRefinements.call(this, regex, real, string);
+        EnableCaptures.call(this, regex, real, this.state.getSymbolic(string));
+        EnableRefinements.call(this, regex, real, this.state.getSymbolic(string));
         return new ConcolicValue(result, search_in_re);
     }
 
@@ -129,7 +129,7 @@ function BuildModels() {
 
         if (result) {
 
-            EnableCaptures.call(this, regex, real, string);
+            EnableCaptures.call(this, regex, real, string_s);
             EnableRefinements.call(this, regex, real, string_s);
 
             result = result.map((current_c, idx) => {

@@ -78,6 +78,11 @@ function buildTestList() {
 
     buildTest('regex/test/backreferences/closed.js', 2, 2);
 
+
+    buildTest('regex/search/simple.js', 2, 2);
+    buildTest('regex/search/alt.js', 3, 3);
+    buildTest('regex/search/no_at_start.js', 3, 3);
+
     /*
     //Regex
     buildTest('regex/primatives/anchors_one.js', 3, 1);
