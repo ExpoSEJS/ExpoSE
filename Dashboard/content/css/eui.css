@@ -67,3 +67,104 @@
 #timer {
 	display: inline;
 }
+
+:host {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+main {
+  position: relative;
+  display: flex;
+  flex-flow: row;
+  width: 100%;
+  height: 100%;
+}
+
+/**
+ * Navigation
+ */
+
+sidebar {
+  background: #4a4949;
+  position: relative;
+  width: 180px;
+  overflow: auto;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+  z-index: 100;
+}
+
+sidebar header {
+  padding: 20px 0;
+}
+
+sidebar header + hr {
+  margin-top: -1px;
+}
+
+sidebar h1 {
+  margin: 0px 28px 0px 55px;
+  line-height: 1;
+}
+
+sidebar nav {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+sidebar nav .external-link-icon {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+}
+
+sidebar nav x-button {
+  width: calc(100% + 5px);
+  margin-left: -5px;
+  padding: 8px 30px;
+  --ripple-background: white;
+}
+
+sidebar nav x-button x-label {
+  font-size: 15px;
+}
+
+#hide-sidebar-button {
+  position: absolute;
+  top: 18px;
+  left: 11px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+}
+
+#show-sidebar-button {
+  position: absolute;
+  top: 20px;
+  left: 11px;
+  z-index: 10;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+}
+
+#views {
+    min-width: 20px;
+    min-height: 20px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    flex: 1;
+    /* background: linear-gradient(to bottom, hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) + 5%)), hsl(var(--accent-color-h), var(--accent-color-s), calc(var(--accent-color-l) - 5%)) ); */
+}
+
+#views .view {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	flex: 1;
+	position: relative;
+}
