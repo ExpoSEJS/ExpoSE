@@ -31,7 +31,8 @@
          const graph = require('./js/graph');
       </script>
 
-      <link rel="stylesheet" href="css/eui.css"/>
+      <link rel="stylesheet" href="css/eui.css">
+      <link rel="stylesheet" href="css/table.css">
       <main>
 
         <x-button id="show-sidebar-button" icon="menu" skin="textured">
@@ -86,8 +87,8 @@
                            </div>
                         </div>
                      </header>
-                     <div class="" id="summary">
-                        <table>
+                     <div class="table table-responsive-vertical shadow-z-1" id="summary">
+                        <table class="table table-hover table-mc-light-blue">
                            <thead>
                               <tr>
                                  <th>Metrics</th>
@@ -98,9 +99,8 @@
                            </tbody>
                         </table>
                      </div>
-                     <hr/>
-                     <div class="flex" id="execute_results">
-                        <table class="table-striped">
+                     <div class="flex table table-responsive-vertical shadow-z-1" id="execute_results">
+                        <table class="table table-hover table-mc-light-blue">
                            <thead>
                               <tr>
                                  <th>File Name</th>
@@ -175,10 +175,6 @@
                </x-card>
             </div>
           </div>
-
-          <script>
-            $(function() { summary(null); });
-          </script>
       </main>
     </template>
   `;
