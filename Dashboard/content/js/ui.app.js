@@ -44,11 +44,11 @@
           </x-button>
           <x-button id="test_case_btn" skin="nav">
               <x-icon name="build"></x-icon>
-              <x-label>Test Case</x-label>
+              <x-label>Tests</x-label>
           </x-button>
           <x-button id="error_log_btn" skin="nav">
               <x-icon name="error"></x-icon>
-              <x-label>Error Log</x-label>
+              <x-label>Errors</x-label>
           </x-button>
           <x-button id="output_btn" skin="nav">
               <x-icon name="highlight"></x-icon>
@@ -70,8 +70,9 @@
               <div id="execute_pane" class="view">
                      <header class="toolbar toolbar-header">
                         <div align="center" style="padding: 10px">
-                           <x-buttons>
-                            <x-button id="cancelbtn" class="hidden" onclick="runner.kill();"><x-icon name="create"></x-icon><x-label>Kill</x-label></x-button>
+                           <x-button id="cancelbtn" class="hidden" onclick="runner.kill();"><x-icon name="create"></x-icon><x-label>Kill</x-label></x-button>
+  
+                          <x-buttons>
                             <x-button id="runbtn"><x-icon name="create"></x-icon> <x-label>Analyze</x-label></x-button>
                             <x-button id="loadbtn" onclick="output.loadOutput();"><x-icon name="file-upload"></x-icon><x-label>Load</x-label></x-button>
                            </x-buttons>
