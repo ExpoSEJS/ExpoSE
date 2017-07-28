@@ -13,7 +13,7 @@
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="xel/stylesheets/material.theme.css" data-vulcanize>
+      <link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css" data-vulcanize>
 
       <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
       
