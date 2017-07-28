@@ -39,7 +39,7 @@
           </x-button>
 
           <x-button id="execute_btn" skin="nav">
-              <x-icon name="build"></x-icon>
+              <x-icon name="directions-run"></x-icon>
               <x-label>Execute</x-label>
           </x-button>
           <x-button id="test_case_btn" skin="nav">
@@ -79,7 +79,7 @@
                            </div>
                         </div>
                      </header>
-                     <div class="table table-responsive-vertical shadow-z-1" id="summary">
+                     <div class="table floating_table table-responsive-vertical shadow-z-1" id="summary">
                         <table class="table table-hover table-mc-light-blue">
                            <thead>
                               <tr>
@@ -91,7 +91,7 @@
                            </tbody>
                         </table>
                      </div>
-                     <div class="flex table table-responsive-vertical shadow-z-1" id="execute_results">
+                     <div class="flex floating_table table table-responsive-vertical shadow-z-1" id="execute_results">
                         <table class="table table-hover table-mc-light-blue">
                            <thead>
                               <tr>
@@ -151,7 +151,7 @@
                      </table>
                     </div>
 
-               <x-card id="analyze_pane" class="pane hidden">
+               <div id="analyze_pane" class="pane floating_table hidden">
                   <header class="toolbar toolbar-header">
                      <div style="padding: 10px" align="center">
                         <button class="btn btn-large btn-default" onclick="graph.savePng();">To PNG</button>
@@ -160,7 +160,7 @@
                   </header>
                   <div id="graph_content">
                   </div>
-               </x-card>
+               </div>
             </div>
           </div>
       </main>
