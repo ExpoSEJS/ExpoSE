@@ -13,15 +13,15 @@ const view = require('./view');
 let current_output_src;
 let current_summary;
 
-function handleOutput(src) {
+function handleOutput(src, page) {
 
 	current_output_src = src;
 
-	view.clear();
+	view.clear(page);
 
 	//Clear and add all lines of output to out
 	src.split('\n').forEach(x=> {
-		view.out('' + x);
+		view.out('' + x, page);
 	});
 
 	let done = Parser(src);
@@ -29,30 +29,30 @@ function handleOutput(src) {
 	current_summary = done;
 
     if (!done) {
-    	view.error('Error', 'No JSON');
-    	view.result('Error No JSON');
+    	view.error('Error', 'No JSON', page);
+    	view.result('Error No JSON', page);
     } else {
-        summary(done);
+        summary(done, page);
 
         function replay(input) {
         	Replay(done.source, JSON.stringify(input));
         }
 
         done.jobs.forEach(x => {
-            view.testcase(JSON.stringify(x.input), (x.time / 1000 / 1000), x.errors.length, replay.bind(this, x.input));
+            view.testcase(JSON.stringify(x.input), (x.time / 1000 / 1000), x.errors.length, replay.bind(this, x.input), page);
         });
 
         done.jobs.forEach(x => {
             x.errors.forEach(r => {
-            	view.error(JSON.stringify(x.input), '' + r.error, replay.bind(this, x.input));
+            	view.error(JSON.stringify(x.input), '' + r.error, replay.bind(this, x.input), page);
             });
         });
 
         done.coverage.forEach(x => {
-        	view.result(x.file, x.data.found, x.data.total, x.percentage);
+        	view.result(x.file, x.data.found, x.data.total, x.percentage, page);
         });
 
-        graph(done);
+        graph(page, done);
     }
 }
 

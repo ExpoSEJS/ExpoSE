@@ -2,35 +2,21 @@
 
 "use strict";
 
-function view(page) {
-	$('#execute_pane').hide();
-	$('#analyze_pane').hide();
-	$('#output_pane').hide();
-	$('#testcases_pane').hide();
-	$('#errors_pane').hide();
-	$('#' + page + '_pane').show();
+function clearViews(page) {
+	page['#output_body'].innerHTML = '';
+	page['#results_body'].innerHTML = '';
+	page['#errors_body'].innerHTML = '';
+	page['#testcases_body'].innerHTML = '';
+	page['#graph_content'].innerHTML = '';
 }
 
-function clearViews() {
-	let output_v = $('#output_body');
-	let results_v = $('#results_body');
-	let errors_v = $('#errors_body');
-	let testcases_v = $('#testcases_body');
-	let graph_content = $('#graph_content');
-	output_v.html('');
-	results_v.html('');
-	errors_v.html('');
-	testcases_v.html('');
-	graph_content.html('');
-}
-
-function addOut(v) {
-	let output = $('#output_body');
+function addOut(v, page) {
+	let output = page['#output_body'];
 
 	v.split('\n').forEach( x => {
 		let content = x.trim();
 		if (content.length) {
-			output.append($('<tr><td>' + content + '</tr></td>'));
+			output.innerHTML += '<tr><td>' + content + '</tr></td>';
 		}
 	});
 }
@@ -43,53 +29,51 @@ function round(v, dp) {
 	return Math.round(v * Math.pow(10, dp)) / Math.pow(10, dp);
 }
 
-function addTestcase(input, time, errorcount, replayHdlr) {
-	let testcases_v = $('#testcases_body');
+function addTestcase(input, time, errorcount, replayHdlr, page) {
+	let testcases_v = page['#testcases_body'];
 
-	let newElement = $('<tr><td>' + buildReplayIcon(replayHdlr) + '</td><td>' + input +'</td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td></tr>');
+	console.log('TODO: Replay broken');
+	testcases_v.innerHTML += '<tr><td>' + input +'</td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td></tr>';
 
-	newElement.on('click', replayHdlr);
-
-	testcases_v.append(newElement);;
+	/*newElement.on('click', replayHdlr);
+	testcases_v.append(newElement);*/
 }
 
-function addError(input, msg, replayHdlr) {
-	let errors_v = $('#errors_body');
-	let elem = $('<tr><td>' + buildReplayIcon(replayHdlr) + '</td><td>' + input + '</td><td>' + msg + '</td></tr>');
+function addError(input, msg, replayHdlr, page) {
+	let errors_v = page['#errors_body'];
+	errors_v.innerHTML += '<tr><td>' + input + '</td><td>' + msg + '</td></tr>';
+	/*let elem = $('<tr><td>' + buildReplayIcon(replayHdlr) + '</td><td>' + input + '</td><td>' + msg + '</td></tr>');
 	elem.on('click', replayHdlr);
-	errors_v.append(elem);
+	errors_v.append(elem);*/
 }
 
-function addResult(file, found, total, pc) {
-	let results = $('#results_body');
-	let elem = $('<tr><td>' + file + "</td><td>" + pc + "</td><td>" + found + '</td><td>' + total + '</td></tr>');
-	results.append(elem);
+function addResult(file, found, total, pc, page) {
+	let results = page['#results_body'];
+	results.innerHTML += '<tr><td>' + file + "</td><td>" + pc + "</td><td>" + found + '</td><td>' + total + '</td></tr>';
 }
 
-function setRunning(v) {
-	let run = $('#runbtn').hide();
-	let cancel = $('#cancelbtn').hide();
-	let load = $('#loadbtn').hide();
-	
+function setRunning(v, page) {
 	if (v) {
-		cancel.show();
+		page.show(page['#cancelbtn']);
+		page.hide(page['#runbtn']);
+		page.hide(page['#loadbtn']);
 	} else {
-		run.show();
-		load.show();
+		page.show(page['#runbtn']);
+		page.show(page['#loadbtn']);
+		page.hide(page['#cancelbtn']);
 	}
 }
 
-function time(v) {
-	let timer = $('#timer');
+function time(v, page) {
+	let timer = page['#timer'];
 	if (v) {
-		timer.html('Runtime: ' + v + 's');
+		timer.innerHTML = 'Runtime: ' + v + 's';
 	} else {
-		timer.html('');
+		timer.innerHTML = '';
 	}
 }
 
 module.exports = {
-	load: view,
 	result: addResult,
 	error: addError,
 	out: addOut,

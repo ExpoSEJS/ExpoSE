@@ -23,7 +23,7 @@ function kill() {
 	exec.stderr && exec.stderr.end();
 }
 
-function runExpoSE() {
+function runExpoSE(page) {
 
 	if (running()) {
 		console.log('Already Running Something');
@@ -33,16 +33,18 @@ function runExpoSE() {
 	let file = dialog.showOpenDialog({properties: ['openFile'], filters: [{name: 'JavaScript File', extensions: ['js']}]});
 
 	if (file) {
-		view.clear();
-		view.running(true);
-		summary(null);
-		timer.start();
+		console.log('Preparing to  execute ' + file);
+		view.clear(page);
+		view.running(true, page);
+		summary(null, page);
+		timer.start(page);
 		exec = Executor(file, null, function(data) {
-			view.out('' + data);
+			view.out('' + data, page);
+			console.log('Finished with ' + data);
 		}, function() {
-			view.running(false);
-			timer.stop();
-			output.handleOutput('' + exec.final);
+			view.running(false, page);
+			timer.stop(page);
+			output.handleOutput('' + exec.final, page);
 		});
 	}
 }

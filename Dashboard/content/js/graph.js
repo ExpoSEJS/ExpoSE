@@ -9,24 +9,24 @@ const tmp = remote.require('tmp');
 
 let current;
 
-function Graph(summary) {
+function Graph(page, summary) {
 	current = summary;
-	Graph.png(summary, tmp.fileSync().name);
+	Graph.png(page, summary, tmp.fileSync().name);
 }
 
-Graph.png = function(summary, pngFile) {
-	Graph.out(summary, 'png size 1024,600', pngFile);
+Graph.png = function(page, summary, pngFile) {
+	Graph.out(page, summary, 'png size 1024,600', pngFile);
 }
 
-Graph.tex = function(summary, texFile) {
-	Graph.out(summary, 'epslatex', texFile);
+Graph.tex = function(page, summary, texFile) {
+	Graph.out(page, summary, 'epslatex', texFile);
 }
 
 Graph.findFile = function(type) {
 	return dialog.showSaveDialog({properties: ['saveFile'], filters: type});
 }
 
-Graph.savePng = function() {
+Graph.savePng = function(page) {
 
 	if (!current) {
 		return;
@@ -38,10 +38,10 @@ Graph.savePng = function() {
 		return;
 	}
 
-	Graph.png(current, '' + file);
+	Graph.png(page, current, '' + file);
 }
 
-Graph.saveTex = function() {
+Graph.saveTex = function(page) {
 
 	if (!current) {
 		return;
@@ -53,10 +53,10 @@ Graph.saveTex = function() {
 		return;
 	}
 
-	Graph.tex(current, '' + file);
+	Graph.tex(page, current, '' + file);
 }
 
-Graph.out = function(summary, mode, pngFile) {
+Graph.out = function(page, summary, mode, pngFile) {
 	let remote = require('electron').remote;
 	let GraphDataWriter = remote.require('../src/graph_data');
 	let GraphBuilder = remote.require('../src/graph_builder');
@@ -67,7 +67,7 @@ Graph.out = function(summary, mode, pngFile) {
 	GraphBuilder(pngFile, mode, files.coverage, files.rate, function() {
 		covTmp.removeCallback();
 		rateTmp.removeCallback();
-		$('#graph_content').html('<img style="width: 100%;" src="' + pngFile + '?' + new Date().getTime() + '"/>');
+		page['#graph_content'].innerHTML = '<img style="width: 100%;" src="' + pngFile + '?' + new Date().getTime() + '"/>';
 	});
 }
 

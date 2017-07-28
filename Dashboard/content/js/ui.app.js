@@ -13,56 +13,48 @@
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="xel/stylesheets/galaxy.theme.css" data-vulcanize>
+      <link rel="stylesheet" href="xel/stylesheets/material.theme.css" data-vulcanize>
 
-      <!-- Javascript -->
-      <script src="js/jquery.js" charset="utf-8">
-      summary(null); </script>
       <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
       
       <!-- Insert this line after script imports -->
       <script>if (window.module) module = window.module;</script>
-      
-      <script>
-         const output = require('./js/output');
-         const runner = require('./js/runner');
-         const summary = require('./js/summary');
-         const view = require('./js/view');
-         const graph = require('./js/graph');
-      </script>
 
       <link rel="stylesheet" href="css/eui.css">
       <link rel="stylesheet" href="css/table.css">
+
       <main>
 
         <x-button id="show-sidebar-button" icon="menu" skin="textured">
-          <x-icon name="menu"></x-icon>
+          <x-icon name="chevron-right"></x-icon>
         </x-button>
 
         <sidebar id="sidebar">
-                  <header id="header">
-            <h1 id="logo">ExpoSE</h1>
-
-          <x-button id="hide-sidebar-button" skin="textured">
-              <x-icon name="chevron-left"></x-icon>
-            </x-button>
-          </header>
 
           <nav id="nav">
           <section>
-          <x-button skin="nav">
+
+          <x-button id="hide-sidebar-button" skin="nav">
+              <x-icon name="chevron-left"></x-icon>
+          </x-button>
+
+          <x-button id="execute_btn" skin="nav">
+              <x-icon name="build"></x-icon>
+              <x-label>Execute</x-label>
+          </x-button>
+          <x-button id="test_case_btn" skin="nav">
               <x-icon name="build"></x-icon>
               <x-label>Test Case</x-label>
           </x-button>
-          <x-button skin="nav">
+          <x-button id="error_log_btn" skin="nav">
               <x-icon name="error"></x-icon>
               <x-label>Error Log</x-label>
           </x-button>
-          <x-button skin="nav">
+          <x-button id="output_btn" skin="nav">
               <x-icon name="highlight"></x-icon>
               <x-label>Output</x-label>
           </x-button>
-          <x-button skin="nav">
+          <x-button id="charts_btn" skin="nav">
               <x-icon name="show-chart"></x-icon>
               <x-label>Charts</x-label>
           </x-button>
@@ -79,8 +71,8 @@
                      <header class="toolbar toolbar-header">
                         <div align="center" style="padding: 10px">
                            <x-buttons>
-                            <x-button id="cancelbtn" onclick="runner.kill();"><x-icon name="create"></x-icon><x-label>Kill</x-label></x-button>
-                            <x-button id="runbtn" onclick="runner.runExpoSE();"><x-icon name="create"></x-icon> <x-label>Analyze</x-label></x-button>
+                            <x-button id="cancelbtn" class="hidden" onclick="runner.kill();"><x-icon name="create"></x-icon><x-label>Kill</x-label></x-button>
+                            <x-button id="runbtn"><x-icon name="create"></x-icon> <x-label>Analyze</x-label></x-button>
                             <x-button id="loadbtn" onclick="output.loadOutput();"><x-icon name="file-upload"></x-icon><x-label>Load</x-label></x-button>
                            </x-buttons>
                            <div id="timer" class="nav-group-item">
@@ -119,9 +111,9 @@
                      </div>
                   </footer>
                </div>
-               <x-card id="output_pane">
-                  <div id="execution_output">
-                     <table class="table-striped">
+               
+                     <div id="output_pane" class="floating_table hidden table table-responsive-vertical shadow-z-1">
+                        <table class="table table-hover table-mc-light-blue">
                         <thead>
                            <tr>
                               <th>Output</th>
@@ -129,15 +121,13 @@
                         </thead>
                         <tbody id="output_body">
                         </tbody>
-                     </table>
-                  </div>
-               </x-card>
-               <x-card id="testcases_pane">
-                  <div id="testcases_output">
-                     <table class="table-striped">
+                        </table>
+                    </div>
+
+                     <div id="testcases_pane" class="floating_table hidden table table-responsive-vertical shadow-z-1">
+                        <table class="table table-hover table-mc-light-blue">
                         <thead>
                            <tr>
-                              <th>Replay</th>
                               <th>Test Case</th>
                               <th>Time</th>
                               <th>Error Count</th>
@@ -146,14 +136,12 @@
                         <tbody id="testcases_body">
                         </tbody>
                      </table>
-                  </div>
-               </x-card>
-               <x-card id="errors_pane" class="pane">
-                  <div id="execution_errors">
-                     <table class="table-striped">
-                        <thead>
+                    </div>
+
+                     <div id="errors_pane" class="floating_table hidden table table-responsive-vertical shadow-z-1">
+                        <table class="table table-hover table-mc-light-blue">
+                          <thead>
                            <tr>
-                              <th>Replay</th>
                               <th>Test Case</th>
                               <th>Error</th>
                            </tr>
@@ -161,9 +149,9 @@
                         <tbody id="errors_body">
                         </tbody>
                      </table>
-                  </div>
-               </x-card>
-               <x-card id="analyze_pane" class="pane">
+                    </div>
+
+               <x-card id="analyze_pane" class="pane hidden">
                   <header class="toolbar toolbar-header">
                      <div style="padding: 10px" align="center">
                         <button class="btn btn-large btn-default" onclick="graph.savePng();">To PNG</button>
@@ -196,6 +184,27 @@
 
       this["#hide-sidebar-button"].addEventListener("click", (event) => this._onHideNavButtonClick(event));
       this["#show-sidebar-button"].addEventListener("click", (event) => this._onShowNavButtonClick(event));
+
+      this["#execute_btn"].addEventListener("click", (event) => this.setPage(this["#execute_pane"]));
+      this["#test_case_btn"].addEventListener("click", (event) => this.setPage(this["#testcases_pane"]));
+      this["#error_log_btn"].addEventListener("click", (event) => this.setPage(this["#errors_pane"]));
+      this["#output_btn"].addEventListener("click", (event) => this.setPage(this["#output_pane"]));
+      this["#charts_btn"].addEventListener("click", (event) => this.setPage(this["#analyze_pane"]));
+
+      this["#runbtn"].addEventListener("click", (event) => this._onClickRun(event));
+
+      this.views = [this["#execute_pane"], this["#analyze_pane"], this["#output_pane"], this["#testcases_pane"], this["#errors_pane"]];
+
+      summary(null, this);
+    }
+
+    setPage(elem) {
+      this.views.forEach(view => this.hide(view));
+      this.show(elem);
+    }
+
+    _onClickRun(event) {
+      runner.runExpoSE(this);
     }
 
 
@@ -215,6 +224,14 @@
       if (event.button === 0) {
         this._showSidebar();
       }
+    }
+
+    show(elem) {
+      elem.classList.remove('hidden');
+    }
+
+    hide(elem) {
+      elem.classList.add('hidden');
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -237,7 +254,18 @@
           }
         );
 
+        this["#views"].animate(
+          {
+            marginLeft: [0, width]
+          },
+          {
+            duration: 250,
+            easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
+          }
+        );
+
         this["#sidebar"].style.marginLeft = "0";
+        this["#views"].style.marginLeft = width;
         this._currentAnimation = animation;
       });
     }
@@ -260,7 +288,18 @@
           }
         );
 
+        this["#views"].animate(
+          {
+            marginLeft: [width, 0]
+          },
+          {
+            duration: 250,
+            easing: "cubic-bezier(0.4, 0.0, 0.2, 1)"
+          }
+        );
+
         this["#sidebar"].style.marginLeft = toMarginLeft;
+        this["#views"].style.marginLeft = 0;
         this._currentAnimation = animation;
 
         await animation.finished;

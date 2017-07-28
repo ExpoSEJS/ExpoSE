@@ -7,17 +7,17 @@ const view = require('./view');
 let interval;
 let start;
 
-function startClock() {
+function startClock(page) {
 	start = new Date().getTime();
 	interval = setInterval(function() {
 		let now = new Date().getTime();
-		view.time(((now - start) / 1000).toFixed(2));
+		view.time(((now - start) / 1000).toFixed(2), page);
 	}, 100);
 }
 
-function stopClock() {
+function stopClock(page) {
 	clearInterval(interval);
-	view.time(null);
+	view.time(null, page);
 }
 
 module.exports = {

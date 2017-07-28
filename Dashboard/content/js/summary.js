@@ -2,11 +2,11 @@
 
 "use strict";
 
-module.exports = function(data) {
-	const summary = $('#summary_body');
+module.exports = function(data, page) {
+	let summary = page['#summary_body'];
 	let inf;
 
-	summary.html('');
+	summary.innerHTML = '';
 
 	if (data) {
 		inf = data.info;
@@ -21,10 +21,10 @@ module.exports = function(data) {
 		}
 	}
 
-	summary.html(summary.html() + '<tr><td>Total Paths</td><td>' + inf.pathCount + '</td>');
-	summary.html(summary.html() + '<tr><td>Total Runtime</td><td>' + inf.totalExec + '</td>');
-	summary.html(summary.html() + '<tr><td>Average Test (Mean)</td><td>' + inf.meanTest + '</td>');
-	summary.html(summary.html() + '<tr><td>Average Test (Median)</td><td>' + inf.medianTest + '</td>');
-	summary.html(summary.html() + '<tr><td>Best Case</td><td>' + inf.worstCase + '</td>');
-	summary.html(summary.html() + '<tr><td>Worst Case</td><td>' + inf.bestCase + '</td>');
+	summary.innerHTML += '<tr><td>Total Paths</td><td>' + inf.pathCount + '</td>';
+	summary.innerHTML += '<tr><td>Total Runtime</td><td>' + inf.totalExec + '</td>';
+	summary.innerHTML += '<tr><td>Average Test (Mean)</td><td>' + inf.meanTest + '</td>';
+	summary.innerHTML += '<tr><td>Average Test (Median)</td><td>' + inf.medianTest + '</td>';
+	summary.innerHTML += '<tr><td>Best Case</td><td>' + inf.worstCase + '</td>';
+	summary.innerHTML += '<tr><td>Worst Case</td><td>' + inf.bestCase + '</td>';
 }
