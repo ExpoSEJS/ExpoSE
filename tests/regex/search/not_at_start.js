@@ -1,5 +1,3 @@
-//Tests search on a regex with no anchor
-
 var x = symbolic X initial '';
 var b = /(a|b)$/;
 var nl = x.search(b);

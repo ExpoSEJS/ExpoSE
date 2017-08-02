@@ -53,12 +53,31 @@ function BuildModels() {
         }
     }
 
-    function AddChecks(regex, real, string_s) {
+    function EnableCaptures(regex, real, string_s) {
+        
+        if (!Config.capturesEnabled) {
+            Log.log('Captures disabled - potential loss of precision');
+        }
+
+        Log.logMid('Captures Enabled - Adding Implications');
+
+        //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
+        regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
+        this.state.pushCondition(this.ctx.mkEq(string_s, regex.implier), true);
+    }
+
+    function EnableRefinements(regex, real, string_s) {
+
+        if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
+            Log.log('Refinements disabled - potential accuracy loss');
+            return;
+        }
+        
+        Log.logMid('Refinements Enabled - Adding checks');
 
         function CheckCorrect(model) {
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
-            //console.log(`Check Correct Real: ${real_match} Sym: ${sym_match} Matches: ${real_match && !Exists(real_match, sym_match, DoesntMatch)}`);
             return !real_match || !Exists(real_match, sym_match, DoesntMatch);
         }
 
@@ -83,14 +102,7 @@ function BuildModels() {
         let in_c = real.test(this.state.getConcrete(string));
 
         if (regex.backreferences) {
-            if (Config.backreferencesEnabled) {
-                Log.log('Backreferences in RE - Forcing implier');
-                regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                let force_eq_implier = this.ctx.mkEq(this.state.getSymbolic(string), regex.implier);
-                this.state.pushCondition(this.ctx.mkImplies(in_s, force_eq_implier), true);
-            } else {
-                Log.log('WARN: Backreferences disabled in a regex that requires them, very unlikely to generate a good result');
-            }
+            EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
         }
 
         return new ConcolicValue(in_c, in_s);
@@ -99,23 +111,15 @@ function BuildModels() {
     function RegexSearch(real, string, result) {
         let regex = Z3.Regex(this.ctx, real);
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
-        this.state.symbolicConditional(in_regex);
-
-        if (result != -1) {
-            //TODO: Checks on RegexSearch
-            Log.log('WARN: Unimpl - Checks on regex search');
-            //AddChecks.call(this, regex, real, this.state.asSymbolic(string));
-            return new ConcolicValue(result, regex.startIndex); 
-        } else {
-            return -1;
-        }
+        let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
+        EnableCaptures.call(this, regex, real, this.state.getSymbolic(string));
+        EnableRefinements.call(this, regex, real, this.state.getSymbolic(string));
+        return new ConcolicValue(result, search_in_re);
     }
 
     function RegexMatch(real, string, result) {
 
         let regex = Z3.Regex(this.ctx, real);
-
-        //console.log(`RegexMatch ${JSON.stringify(regex)} ${regex.ast} ${string} ${real}`);
 
         let in_regex = RegexTest.apply(this, [regex, real, string, result]);
 
@@ -125,21 +129,8 @@ function BuildModels() {
 
         if (result) {
 
-            if (Config.capturesEnabled) {
-                Log.logMid('Captures Enabled - Adding Implications');
-                //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-                regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-                this.state.pushCondition(this.ctx.mkEq(this.state.getSymbolic(string), regex.implier), true);
-            } else {
-                Log.log('Captures Disable - Potential loss of precision');
-            }
-
-            if (Config.capturesEnabled && Config.refinementsEnabled) {
-                Log.logMid('Refinements Enabled - Adding checks');
-                AddChecks.call(this, regex, real, string_s);
-            } else {
-                Log.log('Refinements disabled - Potential loss of precision');
-            }
+            EnableCaptures.call(this, regex, real, string_s);
+            EnableRefinements.call(this, regex, real, string_s);
 
             result = result.map((current_c, idx) => {
                 if (typeof current_c == 'string') {
@@ -245,10 +236,7 @@ function BuildModels() {
         (c, _f, base, args, result) => {
             let off = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
             off = c.ctx.mkRealToInt(off);
-
-            //TODO: Rewrite this better
             result = new ConcolicValue(result, c.ctx.mkSeqIndexOf(c.state.asSymbolic(base), c.state.asSymbolic(c._concretizeToString(args[0])), off));
-            c.state.getSymbolic(result).FORCE_EQ_TO_INT = true;
             return result;
         }
     );

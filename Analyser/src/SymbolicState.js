@@ -68,7 +68,7 @@ class SymbolicState {
      * Roll PC into a single AND'ed PC
      */
     _simplifyPC(pc) {
-        return pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)); //.simplify();
+        return pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)).simplify();
     }
 
     /**
@@ -98,7 +98,7 @@ class SymbolicState {
     }
 
     _buildPC(childInputs, i) {
-        let newPC = this.ctx.mkNot(this.pathCondition[i].ast); //.simplify();
+        let newPC = this.ctx.mkNot(this.pathCondition[i].ast).simplify();
         Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable');
         
         let solution = this._checkSat(newPC);
@@ -246,14 +246,6 @@ class SymbolicState {
             return s;
         }
 
-        let resultIsInt = false;
-
-        if (left_s.FORCE_EQ_TO_INT || right_s.FORCE_EQ_TO_INT) {
-            left_s = coerceInt(left_s);
-            right_s = coerceInt(right_s);
-            resultIsInt = true;
-        }
-
         let result;
 
         switch (op) {
@@ -307,18 +299,10 @@ class SymbolicState {
                 return undefined;
         }
 
-        //Tags results as int
-        if (resultIsInt) {
-            result.FORCE_EQ_TO_INT = true;
-        }
-
         return result;
     }
 
     _symbolicFieldStrLookup(base_c, base_s, field_c, field_s) {
-        Log.log('WARNING: symbolic charAt support new and buggy');
-        let lookupCnd = this.ctx.mkNot(this.symbolicBinary('>=', base_c.length, this.symbolicField(base_c, base_s, 'length'), field_c, this.wrapConstant(field_c)));
-        this.symbolicConditional(new ConcolicValue(base_c.length < field_c, lookupCnd));
         return this.ctx.mkSeqAt(base_s, this.ctx.mkRealToInt(field_s));
     }
 
@@ -334,7 +318,7 @@ class SymbolicState {
                     //TODO: This is a stupid solution to a more fundamental problem in Z3
                     //Remove ASAP
                     let res = this.ctx.mkSeqLength(base_s);
-                    res.FORCE_EQ_TO_INT = true;
+                    //res.FORCE_EQ_TO_INT = true;
                     return res;
                 }
     		default:

@@ -43,10 +43,10 @@ function round(v, dp) {
 	return Math.round(v * Math.pow(10, dp)) / Math.pow(10, dp);
 }
 
-function addTestcase(input, time, errorcount, replayHdlr) {
+function addTestcase(input, time, alternatives, errorcount, replayHdlr) {
 	let testcases_v = $('#testcases_body');
 
-	let newElement = $('<tr><td>' + buildReplayIcon(replayHdlr) + '</td><td>' + input +'</td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td></tr>');
+	let newElement = $('<tr><td>' + buildReplayIcon(replayHdlr) + '</td><td>' + input +'</td><td>' + round(time, 2) + 's</td><td>' + alternatives + '</td><td>' + errorcount + '</td></tr>');
 
 	newElement.on('click', replayHdlr);
 

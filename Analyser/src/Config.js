@@ -6,7 +6,6 @@ function Default(i, d) {
 }
 
 export default {
-	backreferencesEnabled: !Default('DISABLE_BACKREFERENCES', false),
 	capturesEnabled: !Default('DISABLE_CAPTURE_GROUPS', false),
 	refinementsEnabled: !Default('DISABLE_REFINEMENTS', false),
 	outFilePath: Default(OUT_PATH, undefined),
