@@ -54,7 +54,7 @@ function handleOutput(src, page) {
     }
 }
 
-function loadOutput() {
+function loadOutput(page) {
 	let file = dialog.showOpenDialog({properties: ['openFile']});
 
 	if (!file) {
@@ -69,10 +69,10 @@ function loadOutput() {
 		return;
 	}
 
-	handleOutput('' + data);
+	handleOutput('' + data, page);
 }
 
-function saveOutput() {
+function saveOutput(page) {
 	
 	if (!current_output_src) {
 		console.log('There is no output');

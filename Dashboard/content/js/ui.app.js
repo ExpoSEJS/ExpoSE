@@ -74,7 +74,7 @@
   
                            <x-buttons>
                             <x-button id="runbtn"><x-icon name="create"></x-icon> <x-label>Analyze</x-label></x-button>
-                            <x-button id="loadbtn" onclick="output.loadOutput();"><x-icon name="file-upload"></x-icon><x-label>Load</x-label></x-button>
+                            <x-button id="loadbtn"><x-icon name="file-upload"></x-icon><x-label>Load</x-label></x-button>
                            </x-buttons>
                            <div id="timer" class="nav-group-item">
                            </div>
@@ -106,11 +106,9 @@
                            </tbody>
                         </table>
                      </div>
-                  <footer class="toolbar toolbar-footer">
                      <div style="padding: 10px" align="center">
-                        <x-button onclick="output.saveOutput();"><x-icon name="save"></x-icon></x-button>
+                        <x-button id="savebtn"><x-icon name="save"></x-icon></x-button>
                      </div>
-                  </footer>
                </div>
                
                      <div id="output_pane" class="table-out hidden table-responsive-vertical shadow-z-1">
@@ -194,6 +192,8 @@
       this["#charts_btn"].addEventListener("click", (event) => this.setPage(this["#analyze_pane"]));
 
       this["#runbtn"].addEventListener("click", (event) => this._onClickRun(event));
+      this["#loadbtn"].addEventListener("click", (event) => this._onClickLoad(event));
+      this["#savebtn"].addEventListener("click", (event) => this._onClickSave(event));
 
       this.views = [this["#execute_pane"], this["#analyze_pane"], this["#output_pane"], this["#testcases_pane"], this["#errors_pane"]];
 
@@ -209,6 +209,13 @@
       runner.runExpoSE(this);
     }
 
+    _onClickLoad(event) {
+      output.loadOutput(this);
+    }
+
+    _onClickSave(event) {
+      output.saveOutput(this);
+    }
 
     attributeChangedCallback(name) {
       if (name === "name") {

@@ -11,14 +11,7 @@ function clearViews(page) {
 }
 
 function addOut(v, page) {
-	let output = page['#output_body'];
-
-	v.split('\n').forEach( x => {
-		let content = x.trim();
-		if (content.length) {
-			output.innerHTML += '<tr><td>' + wrapSpan(content) + '</tr></td>';
-		}
-	});
+	page['#output_body'].innerHTML += v.split('\n').map(x => x.trim()).filter(x => x.length);
 }
 
 function buildReplayIcon(rp) {
@@ -28,7 +21,6 @@ function buildReplayIcon(rp) {
 function round(v, dp) {
 	return Math.round(v * Math.pow(10, dp)) / Math.pow(10, dp);
 }
-
 
 function addTestcase(input, time, alternatives, errorcount, replayHdlr, page) {
 	let testcases_v = page['#testcases_body'];
@@ -60,14 +52,15 @@ function addResult(file, found, total, pc, page) {
 }
 
 function setRunning(v, page) {
+	let all_buttons = [page['#cancelbtn'], page['#runbtn'], page['#loadbtn']];
+
+	all_buttons.forEach(x => page.hide(x));
+
 	if (v) {
-		page.show(page['#cancelbtn']);
-		page.hide(page['#runbtn']);
-		page.hide(page['#loadbtn']);
+		page.show(all_buttons[0]);
 	} else {
-		page.show(page['#runbtn']);
-		page.show(page['#loadbtn']);
-		page.hide(page['#cancelbtn']);
+		page.show(all_buttons[1]);
+		page.show(all_buttons[2]);
 	}
 }
 
