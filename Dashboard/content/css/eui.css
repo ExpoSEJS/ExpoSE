@@ -24,16 +24,6 @@
   margin-top: 20px;
 }
 
-.floating_table {
-  display: table;
-  width: 90% !important;
-  max-width: 90% !important;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 20px;
-  margin-top: 40px;
-}
-
 #summary, #execute_results {
 	margin-top: 10px;
 }

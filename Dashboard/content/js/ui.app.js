@@ -80,7 +80,7 @@
                            </div>
                         </div>
                      </header>
-                     <div class="table floating_table table-responsive-vertical shadow-z-1" id="summary">
+                     <div class="flex table-out table-responsive-vertical shadow-z-1" id="summary">
                         <table class="table table-hover table-mc-light-blue">
                            <thead>
                               <tr>
@@ -92,7 +92,7 @@
                            </tbody>
                         </table>
                      </div>
-                     <div class="flex floating_table table table-responsive-vertical shadow-z-1" id="execute_results">
+                     <div class="table-out table-responsive-vertical shadow-z-1" id="execute_results">
                         <table class="table table-hover table-mc-light-blue">
                            <thead>
                               <tr>
@@ -113,7 +113,7 @@
                   </footer>
                </div>
                
-                     <div id="output_pane" class="floating_table hidden table table-responsive-vertical shadow-z-1">
+                     <div id="output_pane" class="table-out hidden table-responsive-vertical shadow-z-1">
                         <table class="table table-hover table-mc-light-blue">
                         <thead>
                            <tr>
@@ -125,7 +125,7 @@
                         </table>
                     </div>
 
-                     <div id="testcases_pane" class="floating_table hidden table table-responsive-vertical shadow-z-1">
+                     <div id="testcases_pane" class="table-out hidden table-responsive-vertical shadow-z-1">
                         <table class="table table-hover table-mc-light-blue">
                         <thead>
                            <tr>
@@ -139,7 +139,7 @@
                      </table>
                     </div>
 
-                     <div id="errors_pane" class="floating_table hidden table table-responsive-vertical shadow-z-1">
+                     <div id="errors_pane" class="table-out hidden table-responsive-vertical shadow-z-1">
                         <table class="table table-hover table-mc-light-blue">
                           <thead>
                            <tr>

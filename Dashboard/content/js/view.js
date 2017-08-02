@@ -16,7 +16,7 @@ function addOut(v, page) {
 	v.split('\n').forEach( x => {
 		let content = x.trim();
 		if (content.length) {
-			output.innerHTML += '<tr><td>' + content + '</tr></td>';
+			output.innerHTML += '<tr><td>' + wrapSpan(content) + '</tr></td>';
 		}
 	});
 }
@@ -37,6 +37,10 @@ function addTestcase(input, time, errorcount, replayHdlr, page) {
 
 	/*newElement.on('click', replayHdlr);
 	testcases_v.append(newElement);*/
+}
+
+function wrapSpan(txt) {
+	return '<span style="display: inline;">' + txt + '</span>';
 }
 
 function addError(input, msg, replayHdlr, page) {
