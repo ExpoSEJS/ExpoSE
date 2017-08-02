@@ -6,6 +6,8 @@ if [ "$1" == "setup" ]; then
 	exit $?
 fi
 
+./scripts/setup_if_needed
+
 #Store the current working directory to return after calculating abspath
 ORIGIN_PATH="$(pwd)"
 

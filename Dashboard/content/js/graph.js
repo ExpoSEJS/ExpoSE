@@ -11,11 +11,12 @@ let current;
 
 function Graph(page, summary) {
 	current = summary;
-	Graph.png(page, summary, tmp.fileSync().name);
+	Graph.png(page, summary, tmp.fileSync().name + '.svg');
+	page.show(page['#graph_buttons']);
 }
 
 Graph.png = function(page, summary, pngFile) {
-	Graph.out(page, summary, 'png size 1024,600', pngFile);
+	Graph.out(page, summary, 'svg size 1000,500 dynamic', pngFile);
 }
 
 Graph.tex = function(page, summary, texFile) {
@@ -67,7 +68,7 @@ Graph.out = function(page, summary, mode, pngFile) {
 	GraphBuilder(pngFile, mode, files.coverage, files.rate, function() {
 		covTmp.removeCallback();
 		rateTmp.removeCallback();
-		page['#graph_content'].innerHTML = '<img style="width: 100%;" src="' + pngFile + '?' + new Date().getTime() + '"/>';
+		page['#graph_content'].innerHTML = '<img class="graph" src="' + pngFile + '?' + new Date().getTime() + '"/>';
 	});
 }
 

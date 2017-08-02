@@ -58,7 +58,7 @@
               <x-icon name="show-chart"></x-icon>
               <x-label>Charts</x-label>
           </x-button>
-          <x-button skin="nav">
+          <x-button class="hidden" skin="nav">
               <x-icon name="settings"></x-icon>
               <x-label>Settings</x-label>
           </x-button>
@@ -72,7 +72,7 @@
                         <div align="center" style="padding: 10px">
                            <x-button id="cancelbtn" class="hidden" onclick="runner.kill();"><x-icon name="create"></x-icon><x-label>Kill</x-label></x-button>
   
-                          <x-buttons>
+                           <x-buttons>
                             <x-button id="runbtn"><x-icon name="create"></x-icon> <x-label>Analyze</x-label></x-button>
                             <x-button id="loadbtn" onclick="output.loadOutput();"><x-icon name="file-upload"></x-icon><x-label>Load</x-label></x-button>
                            </x-buttons>
@@ -152,13 +152,13 @@
                      </table>
                     </div>
 
-               <div id="analyze_pane" class="pane floating_table hidden">
-                  <header class="toolbar toolbar-header">
+               <div id="analyze_pane" class="hidden">
                      <div style="padding: 10px" align="center">
-                        <button class="btn btn-large btn-default" onclick="graph.savePng();">To PNG</button>
-                        <button class="btn btn-large btn-default" onclick="graph.saveTex();">To Tex</button>
+                        <x-buttons id="graph_buttons" class="hidden">
+                          <x-button onclick="graph.savePng();">To PNG</x-button>
+                          <x-button onclick="graph.saveTex();">To Tex</x-button>
+                        </x-buttons>
                      </div>
-                  </header>
                   <div id="graph_content">
                   </div>
                </div>

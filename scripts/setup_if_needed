@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -f ~/.expose_setup ]; then
+	echo "Setup Done exists, not setting up"
+else
+	echo "Refreshing Setup (No setup file found)"
+	./scripts/setup/setup
+fi

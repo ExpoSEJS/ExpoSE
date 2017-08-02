@@ -20,4 +20,6 @@ echo "Installing into PATH"
 #echo "Re-sourcing bash profile"
 #source ~/.bash_profile
 
+touch ~/.expose_setup
+
 exit 0
