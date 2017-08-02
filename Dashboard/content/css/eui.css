@@ -21,7 +21,10 @@
 
 .view {
   padding: 10px;
-  margin-top: 20px;
+}
+
+.replay-out {
+  width: 100%;
 }
 
 td x-icon {

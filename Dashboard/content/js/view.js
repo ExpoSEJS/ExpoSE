@@ -32,8 +32,15 @@ function round(v, dp) {
 function addTestcase(input, time, errorcount, replayHdlr, page) {
 	let testcases_v = page['#testcases_body'];
 
-	console.log('TODO: Replay broken');
-	testcases_v.innerHTML += '<tr><td>' + buildReplayIcon(replayHdlr) + input +'</td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td></tr>';
+	let newTR = document.createElement('tr');
+	newTR.innerHTML = '<td><a>' + buildReplayIcon(replayHdlr) + input +'</a></td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td>';
+	newTR.onclick = replayHdlr;
+
+	testcases_v.appendChild(newTR);
+
+	debugger;
+
+	console.log('Added Handler');
 
 	/*newElement.on('click', replayHdlr);
 	testcases_v.append(newElement);*/
@@ -45,10 +52,12 @@ function wrapSpan(txt) {
 
 function addError(input, msg, replayHdlr, page) {
 	let errors_v = page['#errors_body'];
-	errors_v.innerHTML += '<tr><td>' + input + '</td><td>' + msg + '</td></tr>';
-	/*let elem = $('<tr><td>' + buildReplayIcon(replayHdlr) + '</td><td>' + input + '</td><td>' + msg + '</td></tr>');
-	elem.on('click', replayHdlr);
-	errors_v.append(elem);*/
+
+	let newTR = document.createElement('tr');
+	newTR.innerHTML = '<td><a>' + buildReplayIcon(replayHdlr) + input +'</a></td><td>' + msg + '</td>';
+	newTR.onclick = replayHdlr;
+
+	errors_v.appendChild(newTR);
 }
 
 function addResult(file, found, total, pc, page) {

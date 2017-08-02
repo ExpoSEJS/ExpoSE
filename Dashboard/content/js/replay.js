@@ -6,9 +6,9 @@ const remote = require('electron').remote;
 const Executor = remote.require('../src/expose_executor');
 const view = require('./view');
 
-module.exports = function(file, input) {
+module.exports = function(page, file, input) {
 	Executor(file, input, function(data) {
-		view.out('' + data);
+		view.out('' + data, page);
 	}, function() {
 	});
 }
