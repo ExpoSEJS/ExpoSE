@@ -14,8 +14,8 @@ function createReplay(file, input) {
 	let i = replays.length;
 
 	let replay = new BrowserWindow({
-	    width: 400,
-	    height: 800
+	    width: 500,
+	    height: 600
  	});
 
  	replay.replayFile = file;

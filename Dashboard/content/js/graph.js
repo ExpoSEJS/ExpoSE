@@ -9,39 +9,40 @@ const tmp = remote.require('tmp');
 
 let current;
 
-function Graph(summary) {
+function Graph(page, summary) {
 	current = summary;
-	Graph.png(summary, tmp.fileSync().name);
+	Graph.svg(page, summary, tmp.fileSync().name + '.svg');
+	page.show(page['#graph_buttons']);
 }
 
-Graph.png = function(summary, pngFile) {
-	Graph.out(summary, 'png size 1024,600', pngFile);
+Graph.svg = function(page, summary, file) {
+	Graph.out(page, summary, 'svg size 1000,500 dynamic', file);
 }
 
-Graph.tex = function(summary, texFile) {
-	Graph.out(summary, 'epslatex', texFile);
+Graph.tex = function(page, summary, texFile) {
+	Graph.out(page, summary, 'epslatex', texFile);
 }
 
 Graph.findFile = function(type) {
 	return dialog.showSaveDialog({properties: ['saveFile'], filters: type});
 }
 
-Graph.savePng = function() {
+Graph.saveSvg = function(page) {
 
 	if (!current) {
 		return;
 	}
 
-	let file = Graph.findFile([{name: 'PNG', extensions: ['png']}]);
+	let file = Graph.findFile([{name: 'SVG', extensions: ['svg']}]);
 	
 	if (!file) {
 		return;
 	}
 
-	Graph.png(current, '' + file);
+	Graph.svg(page, current, '' + file);
 }
 
-Graph.saveTex = function() {
+Graph.saveTex = function(page) {
 
 	if (!current) {
 		return;
@@ -53,10 +54,10 @@ Graph.saveTex = function() {
 		return;
 	}
 
-	Graph.tex(current, '' + file);
+	Graph.tex(page, current, '' + file);
 }
 
-Graph.out = function(summary, mode, pngFile) {
+Graph.out = function(page, summary, mode, file) {
 	let remote = require('electron').remote;
 	let GraphDataWriter = remote.require('../src/graph_data');
 	let GraphBuilder = remote.require('../src/graph_builder');
@@ -64,10 +65,10 @@ Graph.out = function(summary, mode, pngFile) {
 	let rateTmp = tmp.fileSync();
 	let files = GraphDataWriter(summary, covTmp.name, rateTmp.name);
 
-	GraphBuilder(pngFile, mode, files.coverage, files.rate, function() {
+	GraphBuilder(file, mode, files.coverage, files.rate, function() {
 		covTmp.removeCallback();
 		rateTmp.removeCallback();
-		$('#graph_content').html('<img style="width: 100%;" src="' + pngFile + '?' + new Date().getTime() + '"/>');
+		page['#graph_content'].innerHTML = '<img class="graph" src="' + file + '?' + new Date().getTime() + '"/>';
 	});
 }
 

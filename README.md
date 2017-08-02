@@ -2,21 +2,13 @@
 
 A symbolic execution engine for JavaScript.
 
-### Installation
+### Requirements
 
 Requires `node` version v7.5.0 (Others should work but no support is guaranteed), `npm`, `clang`, `clang++`, `gnuplot`, `make`, `mitmproxy` (Depends libxml2-dev, libxslt-dev, libssl-dev), `python2` (as python in path).
 
-To build all other dependencies and install, execute
+### First time setup
 
-```sh
-$ npm install
-```
-
-from the command line.
-
-Note: no administrator privileges are required, but the environment assumes either a standard(ish) Linux distribution with bash or OS X.
-
-This will also add ExpoSE to your path, restarting your terminal should allow expoSE to be executed from anywhere.
+The first time `npm start` is executed ExpoSE will be setup, this process can take a long time (up to 30 minutes) collecting and installing dependencies. The install script will attempt to add expoSE to your bash profile during the process. To manually setup expose execute `./expoSE setup`
 
 ### ExpoSE GUI
 
@@ -42,7 +34,7 @@ $ expoSE test ./tests/integers/infoflow
 
 Valid Options:
 
-* `setup` - Clean and instantiates the environment (Called by NPM install).
+* `setup` - Clean and setup ExpoSE
 * `test` - Symbolically execute a Node.js program.
 * `ui` - Launch the ExpoSE Dashboard
 * `replay` - Replay a test case with a specific input.
