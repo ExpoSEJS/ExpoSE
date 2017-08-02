@@ -24,6 +24,11 @@
   margin-top: 20px;
 }
 
+td x-icon {
+  float:left;
+  margin-right: 5px;
+}
+
 #summary, #execute_results {
 	margin-top: 10px;
 }

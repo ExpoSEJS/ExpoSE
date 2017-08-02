@@ -22,7 +22,7 @@ function addOut(v, page) {
 }
 
 function buildReplayIcon(rp) {
-	return rp ? '<span class="icon icon-play"></span>' : '';
+	return rp ? '<x-icon name="play-arrow"></x-icon>' : '';
 }
 
 function round(v, dp) {
@@ -33,7 +33,7 @@ function addTestcase(input, time, errorcount, replayHdlr, page) {
 	let testcases_v = page['#testcases_body'];
 
 	console.log('TODO: Replay broken');
-	testcases_v.innerHTML += '<tr><td>' + input +'</td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td></tr>';
+	testcases_v.innerHTML += '<tr><td>' + buildReplayIcon(replayHdlr) + input +'</td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td></tr>';
 
 	/*newElement.on('click', replayHdlr);
 	testcases_v.append(newElement);*/
