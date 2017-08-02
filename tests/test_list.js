@@ -61,20 +61,29 @@ function buildTestList() {
     buildTest('regex/test/atoms/simple_one.js', 2, 1);
     buildTest('regex/test/atoms/simple_two.js', 2, 1);
 
+    buildTest('regex/test/escaping/ranges.js', 8, 8);
+    buildTest('regex/test/escaping/negative_ranges.js', 9, 9);
+
     buildTest('regex/test/star/star.js', 7, 7);
-    buildTest('regex/test/star/star_online.js', 11, 10);
+    buildTest('regex/test/star/star_online.js', 12, 11);
     buildTest('regex/test/star/lazy.js', 7, 7);
 
     buildTest('regex/test/plus/plus.js', 12, 11);
     buildTest('regex/test/plus/lazy.js', 12, 11);
 
-    //buildTest('regex/test/anchors/left.js', 5, 5); //TODO: This has more tests than it should
-    //buildTest('regex/test/anchors/none.js', 6, 6); //TODO: This has more tests than it should
+    buildTest('regex/test/anchors/left.js', 3, 3);
+    //buildTest('regex/test/anchors/right.js', 3, 3); TODO: An extra query is generated
+    buildTest('regex/test/anchors/none.js', 4, 4);
 
     buildTest('regex/test/assertions/arbitrary_ahead.js', 3, 3);
 
+    buildTest('regex/test/backreferences/closed.js', 2, 2);
 
-    buildTest('regex/test/backreferences/closed.js', 2, 1);
+
+    buildTest('regex/search/simple.js', 2, 2);
+    buildTest('regex/search/alt.js', 3, 3);
+    buildTest('regex/search/not_at_start.js', 3, 3);
+    buildTest('regex/search/test_at_start.js', 5, 5);
 
     /*
     //Regex

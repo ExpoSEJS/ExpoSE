@@ -29,21 +29,15 @@ function round(v, dp) {
 	return Math.round(v * Math.pow(10, dp)) / Math.pow(10, dp);
 }
 
-function addTestcase(input, time, errorcount, replayHdlr, page) {
+
+function addTestcase(input, time, alternatives, errorcount, replayHdlr, page) {
 	let testcases_v = page['#testcases_body'];
 
 	let newTR = document.createElement('tr');
-	newTR.innerHTML = '<td><a>' + buildReplayIcon(replayHdlr) + input +'</a></td><td>' + round(time, 2) + 's</td><td>' + errorcount + '</td>';
+	newTR.innerHTML = '<td><a>' + buildReplayIcon(replayHdlr) + input +'</a></td><td>' + round(time, 2) + 's</td><td>' + alternatives + '</td><td>' + errorcount + '</td>';
 	newTR.onclick = replayHdlr;
 
 	testcases_v.appendChild(newTR);
-
-	debugger;
-
-	console.log('Added Handler');
-
-	/*newElement.on('click', replayHdlr);
-	testcases_v.append(newElement);*/
 }
 
 function wrapSpan(txt) {

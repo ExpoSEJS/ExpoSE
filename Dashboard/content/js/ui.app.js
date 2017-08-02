@@ -131,6 +131,7 @@
                            <tr>
                               <th>Test Case</th>
                               <th>Time</th>
+                              <th>Alternatives</th>
                               <th>Error Count</th>
                            </tr>
                         </thead>
