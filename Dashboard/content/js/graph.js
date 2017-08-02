@@ -11,12 +11,12 @@ let current;
 
 function Graph(page, summary) {
 	current = summary;
-	Graph.png(page, summary, tmp.fileSync().name + '.svg');
+	Graph.svg(page, summary, tmp.fileSync().name + '.svg');
 	page.show(page['#graph_buttons']);
 }
 
-Graph.png = function(page, summary, pngFile) {
-	Graph.out(page, summary, 'svg size 1000,500 dynamic', pngFile);
+Graph.svg = function(page, summary, file) {
+	Graph.out(page, summary, 'svg size 1000,500 dynamic', file);
 }
 
 Graph.tex = function(page, summary, texFile) {
@@ -27,19 +27,19 @@ Graph.findFile = function(type) {
 	return dialog.showSaveDialog({properties: ['saveFile'], filters: type});
 }
 
-Graph.savePng = function(page) {
+Graph.saveSvg = function(page) {
 
 	if (!current) {
 		return;
 	}
 
-	let file = Graph.findFile([{name: 'PNG', extensions: ['png']}]);
+	let file = Graph.findFile([{name: 'SVG', extensions: ['svg']}]);
 	
 	if (!file) {
 		return;
 	}
 
-	Graph.png(page, current, '' + file);
+	Graph.svg(page, current, '' + file);
 }
 
 Graph.saveTex = function(page) {
@@ -57,7 +57,7 @@ Graph.saveTex = function(page) {
 	Graph.tex(page, current, '' + file);
 }
 
-Graph.out = function(page, summary, mode, pngFile) {
+Graph.out = function(page, summary, mode, file) {
 	let remote = require('electron').remote;
 	let GraphDataWriter = remote.require('../src/graph_data');
 	let GraphBuilder = remote.require('../src/graph_builder');
@@ -65,10 +65,10 @@ Graph.out = function(page, summary, mode, pngFile) {
 	let rateTmp = tmp.fileSync();
 	let files = GraphDataWriter(summary, covTmp.name, rateTmp.name);
 
-	GraphBuilder(pngFile, mode, files.coverage, files.rate, function() {
+	GraphBuilder(file, mode, files.coverage, files.rate, function() {
 		covTmp.removeCallback();
 		rateTmp.removeCallback();
-		page['#graph_content'].innerHTML = '<img class="graph" src="' + pngFile + '?' + new Date().getTime() + '"/>';
+		page['#graph_content'].innerHTML = '<img class="graph" src="' + file + '?' + new Date().getTime() + '"/>';
 	});
 }
 

@@ -155,7 +155,7 @@
                <div id="analyze_pane" class="hidden">
                      <div style="padding: 10px" align="center">
                         <x-buttons id="graph_buttons" class="hidden">
-                          <x-button onclick="graph.savePng();">To PNG</x-button>
+                          <x-button onclick="graph.savePng();">To SVG</x-button>
                           <x-button onclick="graph.saveTex();">To Tex</x-button>
                         </x-buttons>
                      </div>
