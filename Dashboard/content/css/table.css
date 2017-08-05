@@ -49,6 +49,7 @@
 .table > thead > tr > td,
 .table > tbody > tr > td,
 .table > tfoot > tr > td {
+  max-width: 1.4em;
   text-align: left;
   padding: 1vw;
   vertical-align: top;

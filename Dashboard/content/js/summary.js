@@ -2,29 +2,30 @@
 
 "use strict";
 
+function updateBody(page, inf) {
+	page['#total_path_count'].innerHTML = inf.pathCount;
+	page['#total_runtime'].innerHTML = inf.totalExec;
+	page['#average_test_mean'].innerHTML = inf.meanTest;
+	page['#average_test_median'].innerHTML = inf.medianTest;
+	page['#best_case_test'].innerHTML = inf.bestCase;
+	page['#word_case_test'].innerHTML = inf.worstCase;
+}
+
 module.exports = function(data, page) {
 	let summary = page['#summary_body'];
-	let inf;
 
-	summary.innerHTML = '';
+	let inf = {};
 
 	if (data) {
 		inf = data.info;
-	} else {
-		inf = {
-			pathCount: '',
-			totalExec: '',
-			meanTest: '',
-			medianTest: '',
-			worstCase: '',
-			bestCase: ''
-		}
 	}
 
-	summary.innerHTML += '<tr><td>Total Paths</td><td>' + inf.pathCount + '</td>';
-	summary.innerHTML += '<tr><td>Total Runtime</td><td>' + inf.totalExec + '</td>';
-	summary.innerHTML += '<tr><td>Average Test (Mean)</td><td>' + inf.meanTest + '</td>';
-	summary.innerHTML += '<tr><td>Average Test (Median)</td><td>' + inf.medianTest + '</td>';
-	summary.innerHTML += '<tr><td>Best Case</td><td>' + inf.worstCase + '</td>';
-	summary.innerHTML += '<tr><td>Worst Case</td><td>' + inf.bestCase + '</td>';
+	inf.pathCount = inf.pathCount || '';
+	inf.totalExec = inf.totalExec || '';
+	inf.meanTest = inf.meanTest || '';
+	inf.medianTest = inf.medianTest || '';
+	inf.worstCase = inf.worstCase || '';
+	inf.bestCase = inf.bestCase || '';
+
+	updateBody(page, inf);
 }

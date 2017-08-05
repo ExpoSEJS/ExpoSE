@@ -27,6 +27,11 @@
   width: 100%;
 }
 
+.centered {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 td x-icon {
   float:left;
   margin-right: 5px;
@@ -65,10 +70,6 @@ td x-icon {
 #graph_content {
 	width: 100%;
   padding: 30px;
-}
-
-#timer {
-	display: inline;
 }
 
 :host {

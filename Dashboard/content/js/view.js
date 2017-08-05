@@ -2,6 +2,9 @@
 
 "use strict";
 
+
+const summary = require('./summary');
+
 function clearViews(page) {
 	page['#output_body'].innerHTML = '';
 	page['#results_body'].innerHTML = '';
@@ -66,11 +69,17 @@ function setRunning(v, page) {
 
 function time(v, page) {
 	let timer = page['#timer'];
+	
 	if (v) {
-		timer.innerHTML = 'Runtime: ' + v + 's';
+		page.show(timer);
 	} else {
-		timer.innerHTML = '';
+		page.hide(timer);
 	}
+
+	//Refresh the total exec count
+	summary({info: {
+		totalExec: v
+	}}, page);
 }
 
 module.exports = {
