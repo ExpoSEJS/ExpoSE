@@ -60,6 +60,11 @@ function buildTestList() {
 
     buildTest('regex/test/atoms/simple_one.js', 2, 1);
     buildTest('regex/test/atoms/simple_two.js', 2, 1);
+    buildTest('regex/test/atoms/long_example.js', 2, 2);
+    buildTest('regex/test/atoms/empty_example.js', 2, 2);
+    buildTest('regex/test/atoms/mixed_escaped.js', 3, 3); //TODO: Should this be 2
+    buildTest('regex/test/atoms/non_alpha.js', 2, 2);
+    buildTest('regex/test/atoms/multiple.js', 6, 6);
 
     buildTest('regex/test/escaping/ranges.js', 8, 8);
     buildTest('regex/test/escaping/negative_ranges.js', 9, 9);
@@ -67,6 +72,7 @@ function buildTestList() {
     buildTest('regex/test/star/star.js', 7, 7);
     buildTest('regex/test/star/star_online.js', 12, 11);
     buildTest('regex/test/star/lazy.js', 7, 7);
+    buildTest('regex/test/star/multiple.js', 5, 5);
 
     buildTest('regex/test/plus/plus.js', 12, 11);
     buildTest('regex/test/plus/lazy.js', 12, 11);

@@ -67,19 +67,21 @@
         </sidebar>
           <div id="views">
 
+              <div class="centered hidden" id="timer">
+                <x-progressbar style="height: 7px"></x-progressbar>
+              </div>
+
               <div id="execute_pane" class="view">
-                     <header class="toolbar toolbar-header">
-                        <div align="center" style="padding: 10px">
-                           <x-button id="cancelbtn" class="hidden" onclick="runner.kill();"><x-icon name="create"></x-icon><x-label>Kill</x-label></x-button>
+                    <div class="centered">
+                        <div class="centered" style="padding: 10px">
+                           <x-button id="cancelbtn" class="centered hidden" onclick="runner.kill();"><x-icon name="create"></x-icon><x-label>Kill</x-label></x-button>
   
-                           <x-buttons>
+                           <x-buttons class="centered">
                             <x-button id="runbtn"><x-icon name="create"></x-icon> <x-label>Analyze</x-label></x-button>
                             <x-button id="loadbtn"><x-icon name="file-upload"></x-icon><x-label>Load</x-label></x-button>
                            </x-buttons>
-                           <div id="timer" class="nav-group-item">
-                           </div>
                         </div>
-                     </header>
+                      </div>
                      <div class="flex table-out table-responsive-vertical shadow-z-1" id="summary">
                         <table class="table table-hover table-mc-light-blue">
                            <thead>
@@ -89,6 +91,12 @@
                               </tr>
                            </thead>
                            <tbody id="summary_body">
+                              <tr><td>Total Paths</td><td id="total_path_count"></td>
+                              <tr><td>Total Runtime</td><td id="total_runtime"></td>
+                              <tr><td>Average Test (Mean)</td><td id="average_test_mean"></td>
+                              <tr><td>Average Test (Median)</td><td id="average_test_median"></td>
+                              <tr><td>Best Case</td><td id="best_case_test"></td>
+                              <tr><td>Worst Case</td><td id="word_case_test"></td>
                            </tbody>
                         </table>
                      </div>
