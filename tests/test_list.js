@@ -76,7 +76,7 @@ function buildTestList() {
 
     buildTest('regex/test/plus/plus.js', 12, 11);
     buildTest('regex/test/plus/lazy.js', 12, 11);
-    buildTest('regex/test/plus/online.js', 11, 11);
+    buildTest('regex/test/plus/online.js', 11, 10);
     buildTest('regex/test/plus/multiple.js', 4, 4);
 
     buildTest('regex/test/anchors/left.js', 3, 3);
