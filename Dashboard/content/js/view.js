@@ -14,7 +14,7 @@ function clearViews(page) {
 }
 
 function addOut(v, page) {
-	page['#output_body'].innerHTML += v.split('\n').map(x => x.trim()).filter(x => x.length);
+	page['#output_body'].innerHTML += v.split('\n').map(x => x.trim() + '<br/>').filter(x => x.length).join();
 }
 
 function buildReplayIcon(rp) {
