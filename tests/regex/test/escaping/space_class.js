@@ -1,3 +1,5 @@
+var x = symbolic X initial '';
+
 //Any whitespace
 if (x.test(/^\s$/)) {
 	if (x == '\f') throw 'Reachable';

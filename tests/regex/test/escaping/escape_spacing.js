@@ -13,19 +13,19 @@ if (/^[\b]$/.test(x)) {
 }
 
 //Tabs
-if (x.test(/^\t$/)) {
-	if (x == 't') throw 'Reachable';
+if (/^\t$/.test(x)) {
+	if (x == '\t') throw 'Reachable';
 	throw 'Unreachable';
 }
 
 //Vertical Tab
-if (x.test(/^\v$/)) {
+if (/^\v$/.test(x)) {
 	if (x == '\v') throw 'Reachable';
 	throw 'Unreachable';
 }
 
 //CR
-if (x.test(/^\n$/)) {
+if (/^\n$/.test(x)) {
 	if (x == '\n') throw 'Reachable';
 	throw 'Unreachable';
 }
