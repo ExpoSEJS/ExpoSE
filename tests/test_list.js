@@ -69,7 +69,7 @@ function buildTestList() {
     buildTest('regex/test/atoms/multiple.js', 6, 6);
 
     buildTest('regex/test/escaping/hex.js', 5, 4);
-    buildTest('regex/test/escaping/unicode.js', 5, 4);
+    buildTest('regex/test/escaping/unicode.js', 6, 5);
     buildTest('regex/test/escaping/ranges.js', 8, 8);
     buildTest('regex/test/escaping/negative_ranges.js', 9, 9);
 
