@@ -1,3 +1,4 @@
+var x = symbolic X initial '';
 var inStr = / /.test(x);
 
 if (inStr) {
