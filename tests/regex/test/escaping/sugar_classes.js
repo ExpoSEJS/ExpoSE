@@ -1,14 +1,20 @@
 var x = symbolic X initial '';
 
 if (/^\d$/.test(x)) {
-	var is_digit = (x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9');
-	if (!is_digit) throw 'Unreachable';
+
+	if (!/^[0-9]$/.test(x)) {
+		throw 'Unreachable';
+	}
+
 	throw 'Reachable';
 }
 
 if (/^\D$/.test(x)) {
-	var is_digit = (x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9');
-	if (is_digit) throw 'Unreachable';
+
+	if (/^[0-9]$/.test(x)) {
+		throw 'Unreachable';
+	}
+
 	throw 'Reachable';
 }
 

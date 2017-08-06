@@ -1,7 +1,7 @@
 var x = symbolic X initial '';
 
 //Any whitespace
-if (x.test(/^\s$/)) {
+if (/^\s$/.test(x)) {
 	if (x == '\f') throw 'Reachable';
 	if (x == '\n') throw 'Reachable';
 	if (x == '\r') throw 'Reachable';
@@ -23,7 +23,7 @@ if (x.test(/^\s$/)) {
 }
 
 //Anything but whitespace
-if (x.test(/^\S$/)) {
+if (/^\S$/.test(x)) {
 	if (x == '\f') throw 'Unreachable';
 	if (x == '\n') throw 'Unreachable';
 	if (x == '\r') throw 'Unreachable';
