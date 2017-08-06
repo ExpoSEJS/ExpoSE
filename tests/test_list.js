@@ -56,7 +56,9 @@ function buildTestList() {
 
     buildTest('regex/test/alternatives/simple.js', 4, 4);
     buildTest('regex/test/alternatives/many.js', 4, 4);
+    buildTest('regex/test/alternatives/words.js', 4, 4);
     buildTest('regex/test/alternatives/exhaustive_simple.js', 5, 5);
+    buildTest('regex/test/alternatives/multiple_related.js', 7, 7);
 
     buildTest('regex/test/atoms/simple_one.js', 2, 1);
     buildTest('regex/test/atoms/simple_two.js', 2, 1);
