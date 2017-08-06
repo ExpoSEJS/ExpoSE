@@ -6,7 +6,7 @@ if [ $? -ne 0 ]; then
 fi
 
 if [ -z $TESTS_MAX_CONCURRENT ]; then
-	export TESTS_MAX_CONCURRENT=30
+	export TESTS_MAX_CONCURRENT=16
 fi
 
 node --version
