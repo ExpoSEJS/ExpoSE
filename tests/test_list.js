@@ -102,6 +102,11 @@ function buildTestList() {
     buildTest('regex/test/backreferences/closed.js', 2, 2);
 
 
+    buildTest('regex/exec/captures/anchors.js', 4, 3);
+    buildTest('regex/exec/captures/related.js', 3, 2);
+    buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
+
+
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/alt.js', 3, 3);
     buildTest('regex/search/not_at_start.js', 3, 3);

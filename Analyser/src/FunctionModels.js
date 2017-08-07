@@ -73,7 +73,7 @@ function BuildModels() {
             return;
         }
         
-        Log.logMid('Refinements Enabled - Adding checks');
+        Log.log('Refinements Enabled - Adding checks');
 
         function CheckCorrect(model) {
             let real_match = real.exec(model.eval(string_s).asConstant());
@@ -97,11 +97,11 @@ function BuildModels() {
         this.state.pushCheck(CheckFixed);
     }
 
-    function RegexTest(regex, real, string) {
+    function RegexTest(regex, real, string, dontAdd) {
         let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
 
-        if (regex.backreferences) {
+        if (regex.backreferences && !dontAdd) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
         }
 
@@ -121,7 +121,7 @@ function BuildModels() {
 
         let regex = Z3.Regex(this.ctx, real);
 
-        let in_regex = RegexTest.apply(this, [regex, real, string, result]);
+        let in_regex = RegexTest.apply(this, [regex, real, string, true]);
 
         this.state.symbolicConditional(in_regex);
 
