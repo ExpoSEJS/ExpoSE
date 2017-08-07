@@ -17,5 +17,3 @@ if (/^qerf??ef?$/.test(x)) {
 	if (x == 'qerfef') throw 'Reachable';
 	throw 'Unreachable';
 }
-
-throw 'Reachable';

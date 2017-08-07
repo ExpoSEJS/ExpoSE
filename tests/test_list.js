@@ -87,6 +87,10 @@ function buildTestList() {
     buildTest('regex/test/plus/online.js', 11, 10);
     buildTest('regex/test/plus/multiple.js', 4, 4);
 
+    buildTest('regex/test/optional/base.js', 13, 12);
+    buildTest('regex/test/optional/combined.js', 9, 8);
+    buildTest('regex/test/optional/no_greed.js', 13, 12);
+
     buildTest('regex/test/anchors/left.js', 3, 3);
     buildTest('regex/test/anchors/right.js', 3, 3); //TODO: An extra query is generated
     buildTest('regex/test/anchors/none.js', 4, 4);

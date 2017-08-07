@@ -27,5 +27,3 @@ if (/^zed??$/.test(x)) {
 	if (x == 'zed') throw 'Reachable';
 	throw 'Unreachable';
 }
-
-throw 'Reachable';
