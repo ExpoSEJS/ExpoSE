@@ -20,5 +20,3 @@ if (/^[^0-9]+$/.test(x)) {
 	if (x == '') throw 'Unreachable';
 	throw 'Reachable';
 }
-
-throw 'Reachable';
