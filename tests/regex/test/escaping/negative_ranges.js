@@ -10,18 +10,20 @@ if (/^[^abcd]$/.test(x)) {
 
 if (/^[^a-z]$/.test(x)) {
 	
+	//Definitely unreachable given this if should never be entered
 	if (/^[a-z]$/.test(x)) {
 		throw 'Unreachable';
 	}
 
-	throw 'Reachable';
+	//This is unreachable as any section that is caught by [^a-z] will be caught by [^abcd]
+	throw 'Unreachable';
 }
 
-if (/^[^0-9]+$/.test(x)) {
+if (/^[^0-9]$/.test(x)) {
 	
 	if (/^[0-9]$/.test(x)) {
 		throw 'Unreachable';
 	}
 
-	throw 'Reachable';
+	throw 'R3';
 }
