@@ -1,4 +1,4 @@
-/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake_l@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
+/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
 function buildTestList() {
     var testList = [];
@@ -73,7 +73,7 @@ function buildTestList() {
     buildTest('regex/test/escaping/unicode_mode.js', 3, 2);
     buildTest('regex/test/escaping/ranges.js', 8, 8);
     buildTest('regex/test/escaping/negative_ranges.js', 9, 9);
-    buildTest('regex/test/escaping/space_class.js', 8, 6);
+    buildTest('regex/test/escaping/space_class.js', 8, 7);
     //buildTest('regex/test/escaping/sugar_classes.js', 9, 8);
 
     buildTest('regex/test/star/star.js', 7, 7);

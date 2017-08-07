@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Blake Loring <blake_l@parsed.uk>",
+  "author": "Blake Loring <blake@parsed.uk>",
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {

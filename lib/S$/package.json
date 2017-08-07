@@ -2,7 +2,7 @@
   "name": "SDollar",
   "version": "0.0.1",
   "description": "Javascript Assertion Library",
-  "author": "Blake Loring <blake_l@parsed.uk>",
+  "author": "Blake Loring <blake@parsed.uk>",
   "readme": "README.md",
   "dependencies": {},
   "main": "bin/symbols.js",
