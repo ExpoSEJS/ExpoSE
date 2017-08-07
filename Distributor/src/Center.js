@@ -4,6 +4,7 @@
 
 import Spawn from './Spawn';
 import Coverage from './CoverageAggregator';
+import LineCoverage from './LineAggregator';
 
 class Center {
 
@@ -19,6 +20,9 @@ class Center {
         this._errors = 0;
         this._running = 0;
         this._coverage = new Coverage();
+        if (this.options.visualCoverage){
+            this._lineCoverage = new LineCoverage();
+        }
 
         this._startTesting([{
             id: this._nextID(),
@@ -86,6 +90,9 @@ class Center {
 
     _finishedTesting() {
         this.cbs.forEach(cb => cb(this, this._done, this._errors, this._coverage));
+        if (this.options.visualCoverage){
+            this._lineCoverage.getInstrumentedLineNumbers(this._coverage);
+        }
     }
 
     _nextID() {
@@ -105,7 +112,7 @@ class Center {
 
     _pushDone(test, input, pc, alternatives, errors) {
 
-        this._done.push({
+        let doneLength = this._done.push({
             id: test.file.id,
             input: input,
             pc: pc,
