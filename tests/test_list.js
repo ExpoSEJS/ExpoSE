@@ -70,7 +70,7 @@ function buildTestList() {
 
     buildTest('regex/test/escaping/hex.js', 5, 4);
     buildTest('regex/test/escaping/unicode.js', 6, 5);
-    buildTest('regex/test/escaping/unicode_mode.js', 3, 2);
+    buildTest('regex/test/escaping/unicode_mode.js', 6, 5);
     buildTest('regex/test/escaping/ranges.js', 8, 8);
     buildTest('regex/test/escaping/negative_ranges.js', 3, 2);
     buildTest('regex/test/escaping/space_class.js', 8, 7);
