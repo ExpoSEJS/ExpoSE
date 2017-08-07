@@ -74,7 +74,8 @@ function buildTestList() {
     buildTest('regex/test/escaping/ranges.js', 8, 8);
     buildTest('regex/test/escaping/negative_ranges.js', 9, 9);
     buildTest('regex/test/escaping/space_class.js', 8, 7);
-    //buildTest('regex/test/escaping/sugar_classes.js', 9, 8);
+    buildTest('regex/test/escaping/word.js', 3, 2);
+    buildTest('regex/test/escaping/digit.js', 3, 2);
 
     buildTest('regex/test/star/star.js', 7, 7);
     buildTest('regex/test/star/online.js', 12, 11);
