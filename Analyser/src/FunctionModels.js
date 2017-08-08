@@ -78,11 +78,11 @@ function BuildModels() {
         function CheckCorrect(model) {
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
+            Log.logMid('Regex sanity check ' + JSON.stringify(real_match) + ' vs ' + JSON.stringify(sym_match));
             return !real_match || !Exists(real_match, sym_match, DoesntMatch);
         }
 
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-            console.log('Doing Not');
             let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
             return [new Z3.Query(query.exprs.slice(0).concat([not]), query.checks)];
         });
@@ -91,7 +91,11 @@ function BuildModels() {
             //CheckCorrect will check model has a proper match
             let real_match = real.exec(model.eval(string_s).asConstant()).map(match => match || '');
             let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
+            
+            Log.logMid("WARN: TODO: Removing CheckFixed and NotMatch from checks may break stuff");
             let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
+            next_list = CloneReplace(query.checks, NotMatch, Z3.Check(CheckCorrect, () => []));
+            
             return [new Z3.Query(query.exprs.slice(0).concat(query_list), next_list)];
         });
 
