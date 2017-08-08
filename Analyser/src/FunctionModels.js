@@ -82,6 +82,7 @@ function BuildModels() {
         }
 
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
+            console.log('Doing Not');
             let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
             return [new Z3.Query(query.exprs.slice(0).concat([not]), query.checks)];
         });
@@ -91,10 +92,11 @@ function BuildModels() {
             let real_match = real.exec(model.eval(string_s).asConstant()).map(match => match || '');
             let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
             let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
-            return [new Z3.Query(query.exprs.concat(query_list), next_list)];
+            return [new Z3.Query(query.exprs.slice(0).concat(query_list), next_list)];
         });
 
         this.state.pushCheck(CheckFixed);
+        this.state.pushCheck(NotMatch);
     }
 
     function RegexTest(regex, real, string, dontAdd) {
