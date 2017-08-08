@@ -2,7 +2,7 @@
   "name": "Tester",
   "version": "0.0.1",
   "description": "Test runner for the symbolic execution machine",
-  "author": "Blake Loring <blake_l@parsed.uk>",
+  "author": "Blake Loring <blake@parsed.uk>",
   "readme": "README.md",
   "dependencies": {
     "walk": "*"

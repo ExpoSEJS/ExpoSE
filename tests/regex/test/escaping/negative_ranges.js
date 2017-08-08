@@ -1,24 +1,29 @@
 var x = symbolic X initial '';
 
 if (/^[^abcd]$/.test(x)) {
-	if (x == 'c' || x == 'a') throw 'Unreachable';
-	if (x == '') throw 'Unreachable';
-	if (x == 'e' || x == 'p') throw 'Reachable';
+	if (x == 'a') throw 'Unreachable';
+	if (x == 'b') throw 'Unreachable';
+	if (x == 'c') throw 'Unreachable';
+	if (x == 'd') throw 'Unreachable';
 	throw 'Reachable';
 }
 
-if (/^[^a-z]*$/.test(x)) {
-	if (x == 'abcdef' || x == '123abc') throw 'Unreachable';
-	if (x == '') throw 'Reachable';
-	if (x == '12345' || x == '1$"£"!%^32131') throw 'Reachable';
-	throw 'Reachable';
+if (/^[^a-z]$/.test(x)) {
+	
+	//Definitely unreachable given this if should never be entered
+	if (/^[a-z]$/.test(x)) {
+		throw 'Unreachable';
+	}
+
+	//This is unreachable as any section that is caught by [^a-z] will be caught by [^abcd]
+	throw 'Unreachable';
 }
 
-if (/^[^0-9]+$/.test(x)) {
-	if (x == '12345' || x == '12ab34') throw 'Unreachable';
-	if (x == 'abc') throw 'Reachable';
-	if (x == '') throw 'Unreachable';
-	throw 'Reachable';
-}
+if (/^[^0-9]$/.test(x)) {
+	
+	if (/^[0-9]$/.test(x)) {
+		throw 'Unreachable';
+	}
 
-throw 'Reachable';
+	throw 'R3';
+}

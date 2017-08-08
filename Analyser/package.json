@@ -2,7 +2,7 @@
   "name": "ExpoSE",
   "version": "0.0.2",
   "description": "Symbolic Execution for JavaScript",
-  "author": "Blake Loring <blake_l@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
+  "author": "Blake Loring <blake@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
   "readme": "README.md",
   "dependencies": {
     "browserify": "^14.1.0",

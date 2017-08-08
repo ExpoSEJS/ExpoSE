@@ -1,4 +1,4 @@
-/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake_l@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
+/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
 "use strict";
 
@@ -24,10 +24,15 @@ class Coverage {
     end() {
         let ret = {};
         for (let i = 0; i < this._branches.length; i++) {
+            
+            //SID are indexed from 1 not 0
+            const localSid = i + 1;
+
             if (this._branches[i] !== undefined) {
                 //Deep copy the smap
-            	let map = JSON.parse(JSON.stringify(this._sandbox.smap[i+1]));
                 let touchedLines = [];
+            	let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
+
                 //Strip away any non SID related entities
                 //Also replace all source index arrays to a single value to reduce stdout
             	for (let j in map) {
@@ -59,12 +64,15 @@ class Coverage {
     }
 
     getBranchInfo() {
-        let branchInfo = this._branches[this._sandbox.sid - 1];
+
+        //-1 from 1-indexed sid to start from 0
+        const localIndex = this._sandbox.sid - 1;
+        let branchInfo = this._branches[localIndex];
 
         if (!branchInfo) {
             branchInfo = {};
-            this._branches[this._sandbox.sid - 1] = branchInfo;
-            this._branchFilenameMap[this._sandbox.sid - 1] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
+            this._branches[localIndex] = branchInfo;
+            this._branchFilenameMap[localIndex] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
         }
 
         return branchInfo;

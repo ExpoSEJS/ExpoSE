@@ -1,6 +1,8 @@
-/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake_l@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
+/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
 "use strict";
+
+let os = require('os');
 
 import Runner from './Runner';
 
@@ -25,7 +27,9 @@ if (process.argv.length >= 3) {
     
     console.log('Test runner searching ' + target);
 
-    let concurrent = getArgument('--concurrent', 10);
+    let numConcurrent = os.cpus().length * 2;
+
+    let concurrent = getArgument('--concurrent', numConcurrent);
 
     console.log('Launching with max concurrent of ' + concurrent);
 

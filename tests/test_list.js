@@ -1,4 +1,4 @@
-/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake_l@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
+/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
 function buildTestList() {
     var testList = [];
@@ -70,11 +70,12 @@ function buildTestList() {
 
     buildTest('regex/test/escaping/hex.js', 5, 4);
     buildTest('regex/test/escaping/unicode.js', 6, 5);
-    buildTest('regex/test/escaping/unicode_mode.js', 3, 2);
+    buildTest('regex/test/escaping/unicode_mode.js', 6, 5);
     buildTest('regex/test/escaping/ranges.js', 8, 8);
-    buildTest('regex/test/escaping/negative_ranges.js', 9, 9);
-    buildTest('regex/test/escaping/space_class.js', 8, 6);
-    //buildTest('regex/test/escaping/sugar_classes.js', 9, 8);
+    buildTest('regex/test/escaping/negative_ranges.js', 3, 2);
+    buildTest('regex/test/escaping/space_class.js', 8, 7);
+    buildTest('regex/test/escaping/word.js', 3, 2);
+    buildTest('regex/test/escaping/digit.js', 3, 2);
 
     buildTest('regex/test/star/star.js', 7, 7);
     buildTest('regex/test/star/online.js', 12, 11);
@@ -86,13 +87,26 @@ function buildTestList() {
     buildTest('regex/test/plus/online.js', 11, 10);
     buildTest('regex/test/plus/multiple.js', 4, 4);
 
+    buildTest('regex/test/optional/base.js', 13, 12);
+    buildTest('regex/test/optional/combined.js', 9, 8);
+    buildTest('regex/test/optional/no_greed.js', 13, 12);
+    buildTest('regex/test/optional/range.js', 3, 2);
+
     buildTest('regex/test/anchors/left.js', 3, 3);
     buildTest('regex/test/anchors/right.js', 3, 3); //TODO: An extra query is generated
     buildTest('regex/test/anchors/none.js', 4, 4);
+    buildTest('regex/test/anchors/both.js', 2, 1);
 
     buildTest('regex/test/assertions/arbitrary_ahead.js', 3, 3);
 
     buildTest('regex/test/backreferences/closed.js', 2, 2);
+
+
+    buildTest('regex/exec/captures/greedy_capture.js', 4, 2); //TODO: Heisenbug, and extra query is sometimes generated
+    buildTest('regex/exec/captures/simple.js', 4, 3);
+    buildTest('regex/exec/captures/anchors.js', 4, 3);
+    buildTest('regex/exec/captures/related.js', 3, 2);
+    buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
 
 
     buildTest('regex/search/simple.js', 2, 2);

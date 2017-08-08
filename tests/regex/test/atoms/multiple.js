@@ -16,7 +16,7 @@ if (/YEP YEP YEP/.test(x)) {
 	throw 'Reachable';
 }
 
-if (/£"£!£%"£$£$%£$"£/.test(x)) {
+if (/£"£!£%"£$/.test(x)) {
 	throw 'Reachable';
 }
 

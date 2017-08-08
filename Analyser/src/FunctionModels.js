@@ -1,4 +1,4 @@
-/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake_l@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
+/* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 "use strict";
 
 import ObjectHelper from './Utilities/ObjectHelper';
@@ -73,11 +73,12 @@ function BuildModels() {
             return;
         }
         
-        Log.logMid('Refinements Enabled - Adding checks');
+        Log.log('Refinements Enabled - Adding checks');
 
         function CheckCorrect(model) {
             let real_match = real.exec(model.eval(string_s).asConstant());
             let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
+            Log.logMid('Regex sanity check ' + JSON.stringify(real_match) + ' vs ' + JSON.stringify(sym_match));
             return !real_match || !Exists(real_match, sym_match, DoesntMatch);
         }
 
@@ -90,18 +91,23 @@ function BuildModels() {
             //CheckCorrect will check model has a proper match
             let real_match = real.exec(model.eval(string_s).asConstant()).map(match => match || '');
             let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
+            
+            Log.logMid("WARN: TODO: Removing CheckFixed and NotMatch from checks may break stuff");
             let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
-            return [new Z3.Query(query.exprs.concat(query_list), next_list)];
+            next_list = CloneReplace(query.checks, NotMatch, Z3.Check(CheckCorrect, () => []));
+            
+            return [new Z3.Query(query.exprs.slice(0).concat(query_list), next_list)];
         });
 
         this.state.pushCheck(CheckFixed);
+        this.state.pushCheck(NotMatch);
     }
 
-    function RegexTest(regex, real, string) {
+    function RegexTest(regex, real, string, dontAdd) {
         let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
 
-        if (regex.backreferences) {
+        if (regex.backreferences && !dontAdd) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
         }
 
@@ -121,7 +127,7 @@ function BuildModels() {
 
         let regex = Z3.Regex(this.ctx, real);
 
-        let in_regex = RegexTest.apply(this, [regex, real, string, result]);
+        let in_regex = RegexTest.apply(this, [regex, real, string, true]);
 
         this.state.symbolicConditional(in_regex);
 
