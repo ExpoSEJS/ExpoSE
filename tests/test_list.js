@@ -109,10 +109,16 @@ function buildTestList() {
     buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
 
 
+    buildTest('regex/exec/greed/anchors.js', 4, 3);
+    buildTest('regex/exec/greed/nested.js', 4, 3);
+    buildTest('regex/exec/greed/optionals.js', 3, 2);
+    buildTest('regex/exec/greed/related.js', 3, 2);
+
+
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/alt.js', 3, 3);
     buildTest('regex/search/not_at_start.js', 3, 3);
-    buildTest('regex/search/test_at_start.js', 5, 5);
+    buildTest('regex/search/test_at_start.js', 5, 4);
 
     /*
     //Regex
