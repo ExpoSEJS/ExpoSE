@@ -13,10 +13,14 @@ class Coverage {
     end() {
         let ret = {};
         for (let i = 0; i < this._branches.length; i++) {
+            
+            //SID are indexed from 1 not 0
+            const localSid = i + 1;
+
             if (this._branches[i] !== undefined) {
 
                 //Deep copy the smap
-            	let map = JSON.parse(JSON.stringify(this._sandbox.smap[i+1]));
+            	let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
                 //Strip away any non SID related entities
                 //Also replace all source index arrays to a single value to reduce stdout
@@ -39,12 +43,15 @@ class Coverage {
     }
 
     getBranchInfo() {
-        let branchInfo = this._branches[this._sandbox.sid - 1];
+
+        //-1 from 1-indexed sid to start from 0
+        const localIndex = this._sandbox.sid - 1;
+        let branchInfo = this._branches[localIndex];
 
         if (!branchInfo) {
             branchInfo = {};
-            this._branches[this._sandbox.sid - 1] = branchInfo;
-            this._branchFilenameMap[this._sandbox.sid - 1] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
+            this._branches[localIndex] = branchInfo;
+            this._branchFilenameMap[localIndex] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
         }
 
         return branchInfo;
