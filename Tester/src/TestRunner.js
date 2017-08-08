@@ -2,6 +2,8 @@
 
 "use strict";
 
+let os = require('os');
+
 import Runner from './Runner';
 
 process.title = 'ExpoSE Test Runner';
@@ -25,7 +27,7 @@ if (process.argv.length >= 3) {
     
     console.log('Test runner searching ' + target);
 
-    let concurrent = getArgument('--concurrent', 10);
+    let concurrent = getArgument('--concurrent', os.cpus().length);
 
     console.log('Launching with max concurrent of ' + concurrent);
 

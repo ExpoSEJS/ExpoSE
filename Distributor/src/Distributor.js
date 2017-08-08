@@ -5,6 +5,8 @@
 import Center from './Center';
 import microtime from 'microtime';
 
+let os = require('os');
+
 process.title = 'ExpoSE Distributor';
 
 process.on('disconnect', function() {
@@ -30,8 +32,16 @@ function getArgument(name, type, dResult) {
 if (process.argv.length >= 3) {
     let target = getTarget();
 
+    let numCpuCores = os.cpus().length;
+    let defaultTestCases = numCpuCores;
+
+    if (!getArgument('EXPOSE_MAX_CONCURRENT', 'number', undefined)) {
+        console.log('Number of CPU cores: ' + numCpuCores);
+        console.log(`Defaulting to ${defaultTestCases} concurrent test cases`);
+    }
+
     let options = {
-        maxConcurrent: getArgument('EXPOSE_MAX_CONCURRENT', 'number', 10), //max number of tests to run concurrently
+        maxConcurrent: getArgument('EXPOSE_MAX_CONCURRENT', 'number', defaultTestCases), //max number of tests to run concurrently
         maxPaths: getArgument('EXPOSE_MAX_PATHS', 'number', 100), //Max paths spawned
         jsonOut: getArgument('EXPOSE_JSON_OUT', 'number', false), //By default ExpoSE should not print JSON results into STDOUT
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
