@@ -19,10 +19,7 @@ class Center {
         this._done = [];
         this._errors = 0;
         this._running = 0;
-        this._coverage = new Coverage();
-        if (this.options.visualCoverage){
-            this._lineCoverage = new LineCoverage();
-        }
+        this._coverage = new Coverage(this.options.uninstrumentedLineCoverage);
 
         this._startTesting([{
             id: this._nextID(),
@@ -90,9 +87,6 @@ class Center {
 
     _finishedTesting() {
         this.cbs.forEach(cb => cb(this, this._done, this._errors, this._coverage));
-        if (this.options.visualCoverage){
-            this._lineCoverage.getInstrumentedLineNumbers(this._coverage);
-        }
     }
 
     _nextID() {

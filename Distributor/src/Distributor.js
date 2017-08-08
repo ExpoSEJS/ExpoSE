@@ -37,7 +37,7 @@ if (process.argv.length >= 3) {
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
         testMaxTime: getArgument('EXPOSE_TEST_TIMEOUT', 'number', 1000 * 60 * 15), //10 minutes default time
         analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play'),
-        visualCoverage: getArgument('EXPOSE_VISUAL_COVERAGE', 'number', false) //By default ExoSE should not produce output to reconstruct visual coverage
+        uninstrumentedLineCoverage: getArgument('UNINSTRUMENTED_LINE_COVERAGE', 'number', false) //By default ExoSE should not produce output to reconstruct visual coverage
     };
 
     console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.maxConcurrent + ' max paths: ' + options.maxPaths);
@@ -53,6 +53,10 @@ if (process.argv.length >= 3) {
                 end: microtime.now(),
                 done: done
             }) + '\nEND JSON');
+        } else if (options.uninstrumentedLineCoverage) {
+            console.log('\ExpoSE Line Coverage');
+            console.log(coverage.getTouchedLines());
+            console.log('');
         } else {
             console.log('');
         }
