@@ -102,6 +102,8 @@ function buildTestList() {
     buildTest('regex/test/backreferences/closed.js', 2, 2);
 
 
+    buildTest('regex/exec/captures/greedy_capture.js', 4, 2); //TODO: Heisenbug, and extra query is sometimes generated
+    buildTest('regex/exec/captures/simple.js', 4, 3);
     buildTest('regex/exec/captures/anchors.js', 4, 3);
     buildTest('regex/exec/captures/related.js', 3, 2);
     buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
