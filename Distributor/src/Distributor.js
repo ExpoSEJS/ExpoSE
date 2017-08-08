@@ -36,7 +36,7 @@ if (process.argv.length >= 3) {
     let defaultTestCases = numCpuCores;
 
     if (!getArgument('EXPOSE_MAX_CONCURRENT', 'number', undefined)) {
-        console.log('Number of CPU cores: ' + numCpuCores);
+        console.log(`Number of CPU cores: ${numCpuCores}`);
         console.log(`Defaulting to ${defaultTestCases} concurrent test cases`);
     }
 
