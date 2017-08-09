@@ -26,7 +26,7 @@ const Z3 = External('z3javascript');
 const Tropigate = External('Tropigate');
 
 //60s default timeout
-const DEFAULT_CONTEXT_TIMEOUT = 4 * 60 * 1000;
+const DEFAULT_CONTEXT_TIMEOUT = 5 * 60 * 1000;
 
 class SymbolicExecution {
 
