@@ -35,17 +35,17 @@ class Coverage {
         });
     }
 
-	/**
-	 * Merges new coverage data from a path with existing data
-	 */
-	add(coverage) {
-		for (let i in coverage) {
-			let file = this._getFile(i);
-			this._addSMap(file, coverage[i].smap);
-			this._mergeBranches(file, coverage[i].branches);
+    /**
+     * Merges new coverage data from a path with existing data
+       */
+    add(coverage) {
+        for (let i in coverage) {
+            let file = this._getFile(i);
+            this._addSMap(file, coverage[i].smap);
+            this._mergeBranches(file, coverage[i].branches);
             this._mergeLineNumbers(file, coverage[i].touchedLines);
-		}
-	}
+        }
+    }
 
 	_results(file) {
 		let found = 0;
