@@ -123,7 +123,6 @@ function BuildModels() {
 
         //TODO: There is only the need to force back references if anchors are not set
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
-        this.state.symbolicConditional(in_regex);
         
         let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
         
@@ -135,6 +134,7 @@ function BuildModels() {
         let regex = Z3.Regex(this.ctx, real);
 
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
+        this.state.symbolicConditional(in_regex);
 
         let string_s = this.state.asSymbolic(string);
 
