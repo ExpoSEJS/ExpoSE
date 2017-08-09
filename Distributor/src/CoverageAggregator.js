@@ -81,7 +81,7 @@ class Coverage {
     getTouchedLines() {
         let toStringify = {};
         Object.keys(this._current).forEach( key => {
-            let file = this._current[key];
+            let file = this._getFile(key);
             toStringify[key] = Array.from(file.touchedLines).sort((a, b) => a - b);
         });
         return JSON.stringify(toStringify);
