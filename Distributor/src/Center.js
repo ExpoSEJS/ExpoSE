@@ -19,7 +19,7 @@ class Center {
         this._done = [];
         this._errors = 0;
         this._running = 0;
-        this._coverage = new Coverage(this.options.uninstrumentedLineCoverage);
+        this._coverage = new Coverage();
 
         this._startTesting([{
             id: this._nextID(),
