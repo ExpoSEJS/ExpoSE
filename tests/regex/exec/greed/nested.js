@@ -4,7 +4,6 @@ var x = symbolic X initial '';
 var b = /^((.)(.))?$/.exec(x);
 
 if (b) {
-	
 	if (b[0] == '') {
 		if (b[1] != null) throw 'Unreachable';
 		if (b[2] != null) throw 'Unreachable';

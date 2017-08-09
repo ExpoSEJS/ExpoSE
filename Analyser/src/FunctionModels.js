@@ -65,7 +65,7 @@ function BuildModels() {
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
         regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(this.ctx.mkEq(string_s, regex.implier), true, checks);
+        this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.implier)), true, checks);
     }
 
     function BuildRefinements(regex, real, string_s) {
@@ -107,12 +107,14 @@ function BuildModels() {
     function RegexTest(regex, real, string, forceCaptures) {
         let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
+        let result = new ConcolicValue(in_c, in_s);
 
         if (regex.backreferences || forceCaptures) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
+            this.state.symbolicConditional(result);
         }
 
-        return new ConcolicValue(in_c, in_s);
+        return result;
     }
 
     function RegexSearch(real, string, result) {
@@ -131,8 +133,6 @@ function BuildModels() {
         let regex = Z3.Regex(this.ctx, real);
 
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
-
-        this.state.symbolicConditional(in_regex);
 
         let string_s = this.state.asSymbolic(string);
 
