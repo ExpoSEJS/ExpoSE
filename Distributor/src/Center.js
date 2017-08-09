@@ -4,7 +4,6 @@
 
 import Spawn from './Spawn';
 import Coverage from './CoverageAggregator';
-import LineCoverage from './LineAggregator';
 
 class Center {
 
