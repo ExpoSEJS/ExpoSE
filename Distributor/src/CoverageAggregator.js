@@ -71,7 +71,7 @@ class Coverage {
             results.push({
                 file: fidx,
                 data: this._results(file),
-                coveredLines: Array.from(file.touchedLines)
+                coveredLines: Array.from(file.touchedLines).sort((a, b) => a - b)
             });
         }
 
@@ -79,12 +79,7 @@ class Coverage {
     }
 
     getTouchedLines() {
-        let toStringify = {};
-        Object.keys(this._current).forEach( key => {
-            let file = this._getFile(key);
-            toStringify[key] = Array.from(file.touchedLines).sort((a, b) => a - b);
-        });
-        return JSON.stringify(toStringify);
+        return JSON.stringify(this.final().reduce((prev, next) => { prev[next.file] = next.coveredLines; return prev; }, {}));
     }
 }
 
