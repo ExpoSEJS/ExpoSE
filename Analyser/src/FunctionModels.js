@@ -63,9 +63,11 @@ function BuildModels() {
 
         let checks = BuildRefinements.call(this, regex, real, string_s);
 
+        let implies = this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.implier));
+
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
         regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.implier)), true, checks);
+        this.state.pushCondition(implies, true, checks);
     }
 
     function BuildRefinements(regex, real, string_s) {
