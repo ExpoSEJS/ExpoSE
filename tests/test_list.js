@@ -78,7 +78,7 @@ function buildTestList() {
     buildTest('regex/test/escaping/digit.js', 3, 2);
 
     buildTest('regex/test/star/star.js', 7, 7);
-    buildTest('regex/test/star/online.js', 12, 11);
+    buildTest('regex/test/star/online.js', 11, 10);
     buildTest('regex/test/star/lazy.js', 7, 7);
     buildTest('regex/test/star/multiple.js', 5, 5);
 

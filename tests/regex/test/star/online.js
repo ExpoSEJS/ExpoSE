@@ -16,5 +16,3 @@ if (/^z*$/.test(x)) {
 
 	throw 'Reachable';
 }
-
-throw 'Reachable';
