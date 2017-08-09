@@ -2,16 +2,13 @@
 
 "use strict";
 
-import Config from './Config';
-
-const lineNumberRegex = /\/\S*.js:[\d]*:[\d]*:([\d]*):([\d]*)/;
+import iidToLocation from './Utilities/iidToLocation';
 
 class Coverage {
 
     /**
      * Creates an instance of Coverage.
      * @param {any} sandbox The Jalangi sandbox
-     * @param {any} returnTouchedLineNumbers If non-instrumented coverage numbers be returned 
      * _branches is an array of coverages for a given sid where the sid is branches[sid+1]
      * @memberOf Coverage
      */
@@ -42,9 +39,7 @@ class Coverage {
                         map[j] = 1;
 
                         // Convert the sid and instrumented iid into an uninstrumented line number
-                        let jalangiOutput = this._sandbox.iidToLocation(i + 1, j);
-                        let uninstrumentedLineNumber = lineNumberRegex.exec(jalangiOutput);
-                        touchedLines.push(uninstrumentedLineNumber[1]);
+                        touchedLines.push(iidToLocation(this._sandbox, i + 1, j).uninstrumentedLineNumber);
                     }
                 }
 
@@ -79,8 +74,6 @@ class Coverage {
     }
 
     _branchToLines(sid, branch){
-        
-
         return this.sandbox.iidToLocation(sid, branch);
     }
 }

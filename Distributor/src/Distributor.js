@@ -62,11 +62,9 @@ if (process.argv.length >= 3) {
                 end: microtime.now(),
                 done: done
             }) + '\nEND JSON');
-        } else if (options.uninstrumentedLineCoverage) {
-            console.log('ExpoSE Line Coverage');
-            console.log(coverage.getTouchedLines());
-            console.log('');
         } else {
+            console.log('\nExpoSE Line Coverage');
+            console.log(coverage.getTouchedLines());
             console.log('');
         }
 
