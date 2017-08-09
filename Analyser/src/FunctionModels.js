@@ -60,11 +60,14 @@ function BuildModels() {
         }
 
         Log.logMid('Captures Enabled - Adding Implications');
-        let implies = this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.implier));
+
+        let checks = BuildRefinements.call(this, regex, real, string_s);
+
+        let implies = this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.))
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
         regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(implies, true);
+        this.state.pushCondition(implies, true, checks);
     }
 
     function BuildRefinements(regex, real, string_s) {
@@ -110,8 +113,6 @@ function BuildModels() {
 
         if (regex.backreferences || forceCaptures) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
-            let refinements = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
-            in_c ? this.state.pushCondition(in_s, false, refinements) : this.state.pushCondition(this.ctx.mkNot(in_s), false, refinements);
         }
 
         return result;
@@ -122,6 +123,7 @@ function BuildModels() {
 
         //TODO: There is only the need to force back references if anchors are not set
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
+        this.state.symbolicConditional(in_regex);
         
         let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
         
