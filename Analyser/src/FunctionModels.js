@@ -60,14 +60,11 @@ function BuildModels() {
         }
 
         Log.logMid('Captures Enabled - Adding Implications');
-
-        let checks = BuildRefinements.call(this, regex, real, string_s);
-
         let implies = this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.implier));
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
         regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(implies, true, checks);
+        this.state.pushCondition(implies, true);
     }
 
     function BuildRefinements(regex, real, string_s) {
@@ -113,7 +110,8 @@ function BuildModels() {
 
         if (regex.backreferences || forceCaptures) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
-            this.state.symbolicConditional(result);
+            let refinements = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
+            in_c ? this.state.pushCondition(in_s, false, refinements) : this.state.pushCondition(this.ctx.mkNot(in_s), false, refinements);
         }
 
         return result;
