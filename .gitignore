@@ -27,3 +27,4 @@ libz3*
 Dashboard/tmp/*
 tmp/
 package-lock.json
+.vscode/settings.json
