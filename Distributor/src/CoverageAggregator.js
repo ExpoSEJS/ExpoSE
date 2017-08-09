@@ -4,10 +4,9 @@
 
 class Coverage {
 
-	constructor(returnUninstrumentedLineNumbers) {
-		this._current = {};
-		this.returnUninstrumentedLineNumbers = returnUninstrumentedLineNumbers;
-	}
+    constructor() {
+        this._current = {};
+    }
 
 	_getFile(file) {
 		if (!this._current[file]) {
@@ -30,11 +29,11 @@ class Coverage {
 		}
 	}
 
-	_mergeLineNumbers(file, lineNumbers) {
-		lineNumbers.forEach(lineNumber => {
-			file.touchedLines.add(lineNumber);
-		});
-	}
+    _mergeLineNumbers(file, lineNumbers) {
+        lineNumbers.forEach(lineNumber => {
+            file.touchedLines.add(lineNumber);
+        });
+    }
 
 	/**
 	 * Merges new coverage data from a path with existing data
@@ -44,9 +43,7 @@ class Coverage {
 			let file = this._getFile(i);
 			this._addSMap(file, coverage[i].smap);
 			this._mergeBranches(file, coverage[i].branches);
-			if (this.returnUninstrumentedLineNumbers) {
-				this._mergeLineNumbers(file, coverage[i].touchedLines);
-			}
+            this._mergeLineNumbers(file, coverage[i].touchedLines);
 		}
 	}
 
@@ -66,32 +63,29 @@ class Coverage {
 		}
 	}
 
-	final() {
-		let results = [];
+    final() {
+        let results = [];
 
-		for (let fidx in this._current) {
-			let file = this._getFile(fidx);
-			var result = {
-				file: fidx,
-				data: this._results(file)
-			};
-			if (this.returnUninstrumentedLineNumbers) {
-				result['CoveredLines'] = Array.from(file.touchedLines);
-			}
-			results.push(result);
-		}
+        for (let fidx in this._current) {
+            let file = this._getFile(fidx);
+            results.push({
+                file: fidx,
+                data: this._results(file),
+                coveredLines: Array.from(file.touchedLines)
+            });
+        }
 
-		return results;
-	}
+        return results;
+    }
 
-	getTouchedLines() {
-		let toStringify = {};
-		Object.keys(this._current).forEach( key => {
-			let file = this._current[key];
-			toStringify[key] = Array.from(file.touchedLines).sort((a, b) => a - b);
-		});
-		return JSON.stringify(toStringify);
-	}
+    getTouchedLines() {
+        let toStringify = {};
+        Object.keys(this._current).forEach( key => {
+            let file = this._current[key];
+            toStringify[key] = Array.from(file.touchedLines).sort((a, b) => a - b);
+        });
+        return JSON.stringify(toStringify);
+    }
 }
 
 export default Coverage;

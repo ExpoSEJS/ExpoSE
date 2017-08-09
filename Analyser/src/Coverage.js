@@ -31,29 +31,25 @@ class Coverage {
             if (this._branches[i] !== undefined) {
                 //Deep copy the smap
                 let touchedLines = [];
-            	let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
+                let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
                 //Strip away any non SID related entities
                 //Also replace all source index arrays to a single value to reduce stdout
-            	for (let j in map) {
-            		if (isNaN(parseInt(j))) {
-            			delete map[j];
-            		} else {
+                for (let j in map) {
+                    if (isNaN(parseInt(j))) {
+                        delete map[j];
+                    } else {
                         map[j] = 1;
 
                         // Convert the sid and instrumented iid into an uninstrumented line number
-                        if (Config.returnUninstrumentedLineCoverage){
-                            let jalangiOutput = this._sandbox.iidToLocation(i + 1, j);
-                            let uninstrumentedLineNumber = lineNumberRegex.exec(jalangiOutput);
-                            if (uninstrumentedLineNumber.length >= 1){
-                                touchedLines.push(uninstrumentedLineNumber[1]);
-                            }
-                        }
+                        let jalangiOutput = this._sandbox.iidToLocation(i + 1, j);
+                        let uninstrumentedLineNumber = lineNumberRegex.exec(jalangiOutput);
+                        touchedLines.push(uninstrumentedLineNumber[1]);
                     }
                 }
 
                 ret[this._branchFilenameMap[i]] = {
-                	smap: map,
+                    smap: map,
                     branches: this._branches[i],
                     touchedLines
                 };
@@ -79,7 +75,7 @@ class Coverage {
     }
 
     touch(iid) {
-    	this.getBranchInfo()[iid] = 1;
+        this.getBranchInfo()[iid] = 1;
     }
 
     _branchToLines(sid, branch){

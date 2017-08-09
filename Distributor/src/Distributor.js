@@ -10,8 +10,8 @@ let os = require('os');
 process.title = 'ExpoSE Distributor';
 
 process.on('disconnect', function() {
-  Log.log('Premature termination - Parent exit')
-  process.exit();
+    Log.log('Premature termination - Parent exit');
+    process.exit();
 });
 
 function getTarget() {
@@ -46,8 +46,7 @@ if (process.argv.length >= 3) {
         jsonOut: getArgument('EXPOSE_JSON_OUT', 'number', false), //By default ExpoSE should not print JSON results into STDOUT
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
         testMaxTime: getArgument('EXPOSE_TEST_TIMEOUT', 'number', 1000 * 60 * 15), //10 minutes default time
-        analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play'),
-        uninstrumentedLineCoverage: getArgument('UNINSTRUMENTED_LINE_COVERAGE', 'number', false) //By default ExoSE should not produce output to reconstruct visual coverage
+        analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play')
     };
 
     console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.maxConcurrent + ' max paths: ' + options.maxPaths);
@@ -64,7 +63,7 @@ if (process.argv.length >= 3) {
                 done: done
             }) + '\nEND JSON');
         } else if (options.uninstrumentedLineCoverage) {
-            console.log('\ExpoSE Line Coverage');
+            console.log('ExpoSE Line Coverage');
             console.log(coverage.getTouchedLines());
             console.log('');
         } else {
@@ -76,7 +75,7 @@ if (process.argv.length >= 3) {
         }
 
         function formatSeconds(v) {
-            return round((v / 1000 / 1000), 4)
+            return round((v / 1000 / 1000), 4);
         }
 
         done.forEach(item => {

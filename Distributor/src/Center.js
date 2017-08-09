@@ -106,7 +106,7 @@ class Center {
 
     _pushDone(test, input, pc, alternatives, errors) {
 
-        let doneLength = this._done.push({
+        this._done.push({
             id: test.file.id,
             input: input,
             pc: pc,
