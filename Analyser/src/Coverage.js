@@ -26,8 +26,13 @@ class Coverage {
             const localSid = i + 1;
 
             if (this._branches[i] !== undefined) {
-                //Deep copy the smap
+
+                //TODO: This is a really ugly solution to working out whether it is possible to cover a given line
+                //Find a way that doesn't involve transferring info on every line number out in the coverage file
                 let touchedLines = [];
+                let allLines = [];
+
+                //Deep copy the smap
                 let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
                 //Strip away any non SID related entities
@@ -37,16 +42,23 @@ class Coverage {
                         delete map[j];
                     } else {
                         map[j] = 1;
-
-                        // Convert the sid and instrumented iid into an uninstrumented line number
-                        touchedLines.push(iidToLocation(this._sandbox, i + 1, j).uninstrumentedLineNumber);
+                        allLines.push(iidToLocation(this._sandbox, i + 1, j).uninstrumentedLineNumber);
                     }
+                }
+
+                for (let j in this._branches[i]) {
+                    // Convert the sid and instrumented iid into an uninstrumented line number
+                    touchedLines.push(iidToLocation(this._sandbox, i + 1, j).uninstrumentedLineNumber);
                 }
 
                 ret[this._branchFilenameMap[i]] = {
                     smap: map,
                     branches: this._branches[i],
-                    touchedLines
+                    
+                    lines: {
+                        all: allLines,
+                        touched: touchedLines
+                    }
                 };
             }
         }

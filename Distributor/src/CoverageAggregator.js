@@ -13,7 +13,10 @@ class Coverage {
 			this._current[file] = {
 				smap: [],
 				branches: [],
-				touchedLines: new Set()
+				lines: {
+                  all: new Set(),
+                  touched: new Set()
+                }
 			};
 		}
 		return this._current[file];
@@ -29,9 +32,9 @@ class Coverage {
 		}
 	}
 
-    _mergeLineNumbers(file, lineNumbers) {
+    _mergeLineNumbers(set, lineNumbers) {
         lineNumbers.forEach(lineNumber => {
-            file.touchedLines.add(lineNumber);
+            set.add(lineNumber);
         });
     }
 
@@ -43,7 +46,8 @@ class Coverage {
             let file = this._getFile(i);
             this._addSMap(file, coverage[i].smap);
             this._mergeBranches(file, coverage[i].branches);
-            this._mergeLineNumbers(file, coverage[i].touchedLines);
+            this._mergeLineNumbers(file.lines.all, coverage[i].lines.all);
+            this._mergeLineNumbers(file.lines.touched, coverage[i].lines.touched);
         }
     }
 
@@ -71,15 +75,22 @@ class Coverage {
             results.push({
                 file: fileName,
                 data: this._results(file),
-                coveredLines: Array.from(file.touchedLines).sort((a, b) => a - b)
+                touchedLines: Array.from(file.lines.touched).sort((a, b) => a - b),
+                allLines: Array.from(file.lines.all).sort((a, b) => a - b)
             });
         }
 
         return results;
     }
 
-    getTouched() {
-        return this.final().reduce((prev, next) => { prev[next.file] = next.coveredLines; return prev; }, {});
+    lines() {
+        return this.final().reduce((prev, next) => {
+            prev[next.file] = {
+                all: next.allLines,
+                touched: next.touchedLines 
+            };
+            return prev; 
+        }, {});
     }
 }
 

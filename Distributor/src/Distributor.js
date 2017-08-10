@@ -92,13 +92,22 @@ if (process.argv.length >= 3) {
         });
 
         if (options.printDeltaCoverage) {
-            let touched = coverage.getTouched();
+            let lineInfo = coverage.lines();
 
-            for (let filename in touched) {
+            for (let filename in lineInfo) {
                 FileTransformer(filename).then(data => {
-                    console.log(`*- Experimental Line Coverage for ${filename} `);
+                    console.log(`*- Experimental Line Coverage for ${filename} `); 
                     let lines = data.split('\n');
-                    lines.map((line, idx) => touched[filename].find(i => i == idx + 1) ? ('+:' + line) : ('-:' + line)).forEach((line, idx) => console.log(`${idx+1}${line}`));
+                    let linesWithNumbers = lines.map((line, idx) => `${idx + 1}:${line}`);
+                    let linesWithTouched = lines.map((line, idx) => {
+                        let lineNumber = idx + 1;
+                        if (lineInfo[filename].touched.find(i => i == lineNumber) || !lineInfo[filename].all.find(i => i == lineNumber)) {
+                            return `+${line}`;
+                        } else {
+                            return `-${line}`;
+                        }
+                    });
+                    linesWithTouched.forEach(line => console.log(line));
                 });
             }
         } else {
