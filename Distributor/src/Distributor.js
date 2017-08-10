@@ -47,6 +47,7 @@ if (process.argv.length >= 3) {
         jsonOut: getArgument('EXPOSE_JSON_OUT', 'number', false), //By default ExpoSE should not print JSON results into STDOUT
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
         testMaxTime: getArgument('EXPOSE_TEST_TIMEOUT', 'number', 1000 * 60 * 15), //10 minutes default time
+        printDeltaCoverage: getArgument('EXPOSE_PRINT_COVERAGE', 'number', false),
         analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play')
     };
 
@@ -90,15 +91,16 @@ if (process.argv.length >= 3) {
             console.log('*- File ' + d.file + '. Coverage: ' + Math.round(d.data.coverage * 100) + '%');
         });
 
-        //TODO: Feature flag this
-        let touched = coverage.getTouched();
+        if (options.printDeltaCoverage) {
+            let touched = coverage.getTouched();
 
-        for (let filename in touched) {
-            FileTransformer(filename).then(data => {
-                console.log(`*- Experimental Line Coverage for ${filename} *-`);
-                let lines = data.split('\n');
-                lines.map((line, idx) => touched[filename].find(i => i == idx + 1) ? ('+' + line) : ('-' + line)).forEach(line => console.log(line));
-            });
+            for (let filename in touched) {
+                FileTransformer(filename).then(data => {
+                    console.log(`*- Experimental Line Coverage for ${filename} *-`);
+                    let lines = data.split('\n');
+                    lines.map((line, idx) => touched[filename].find(i => i == idx + 1) ? ('+' + line) : ('-' + line)).forEach(line => console.log(line));
+                });
+            }
         }
 
         console.log('** ExpoSE Finished. ' + done.length + ' paths with ' + errors + ' errors **');
