@@ -66,10 +66,10 @@ class Coverage {
     final() {
         let results = [];
 
-        for (let fidx in this._current) {
-            let file = this._getFile(fidx);
+        for (let fileName in this._current) {
+            let file = this._getFile(fileName);
             results.push({
-                file: fidx,
+                file: fileName,
                 data: this._results(file),
                 coveredLines: Array.from(file.touchedLines).sort((a, b) => a - b)
             });
