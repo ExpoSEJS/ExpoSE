@@ -577,14 +577,8 @@ class SymbolicExecution {
 
     instrumentCodePre(iid, code) {
 
-        let acornOpts = {
-            ranges: true,
-            ecmaVersion: 7,
-            sourceType: "module"
-        }
-
         try {
-            code = Tropigate(code, acornOpts);
+            code = Tropigate(code);
         } catch (e) {
             throw 'Tropigate failed because ' + e + ' on program ' + code + ' at ' + e.stack;
         }

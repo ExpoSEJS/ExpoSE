@@ -4,6 +4,7 @@
 
 import Center from './Center';
 import microtime from 'microtime';
+import FileTransformer from './FileTransformer';
 
 let os = require('os');
 
@@ -88,6 +89,7 @@ if (process.argv.length >= 3) {
         console.log('*-- Coverage Data');
 
         coverage.final().forEach(d => {
+            //FileTransformer(d.file).then(data => console.log(data));
             console.log('*- File ' + d.file + '. Coverage: ' + Math.round(d.data.coverage * 100) + '%');
         });
 
