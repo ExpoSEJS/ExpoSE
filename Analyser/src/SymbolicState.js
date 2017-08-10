@@ -33,15 +33,12 @@ class SymbolicState {
     addError(error) {
         this.errors.push(error);
     }
-
-    pushCheck(check) {
-        this.checks.push(check);
-    }
     
-    pushCondition(cnd, binder) {
+    pushCondition(cnd, binder, checks) {
     	this.pathCondition.push({
             ast: cnd,
-            binder: binder || false
+            binder: binder || false,
+            checks: checks || []
         });
     }
 
@@ -86,7 +83,7 @@ class SymbolicState {
      * Returns the final PC as a string (if any symbols exist)
      */
     finalPC() {
-        return this._stringPC(this.pathCondition.map(x => x.ast));
+        return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
     }
 
     /**
@@ -133,11 +130,16 @@ class SymbolicState {
         this.slv.push();
 
         for (let i = this.input._bound; i < this.pathCondition.length; i++) {
-            
+
+            //TODO: At the moment checks and conditions go onto the same list in order to avoid adding a check before it was created in the PC
+            //We need a better way for this
+
+            this.checks = this.pathCondition.slice(0, i).map(x => x.checks).reduce((last, next) => last.concat(next), []);
+
             if (!this.pathCondition[i].binder) {
                 this._buildPC(childInputs, i);
             }
-            
+                
             //Push the current thing we're looking at to the solver
             this.slv.assert(this.pathCondition[i].ast);
 

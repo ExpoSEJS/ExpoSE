@@ -16,7 +16,4 @@ if (nl != -1) {
 	} else {
 		throw 'Reachable';
 	}
-} else {
-	//b not in x
-	throw 'Reachable';
 }

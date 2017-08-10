@@ -61,16 +61,20 @@ function BuildModels() {
 
         Log.logMid('Captures Enabled - Adding Implications');
 
+        let checks = BuildRefinements.call(this, regex, real, string_s);
+
+        let implies = this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.implier))
+
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
         regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(this.ctx.mkEq(string_s, regex.implier), true);
+        this.state.pushCondition(implies, true, checks);
     }
 
-    function EnableRefinements(regex, real, string_s) {
+    function BuildRefinements(regex, real, string_s) {
 
         if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
             Log.log('Refinements disabled - potential accuracy loss');
-            return;
+            return [];
         }
         
         Log.log('Refinements Enabled - Adding checks');
@@ -99,27 +103,29 @@ function BuildModels() {
             return [new Z3.Query(query.exprs.slice(0).concat(query_list), next_list)];
         });
 
-        this.state.pushCheck(CheckFixed);
-        this.state.pushCheck(NotMatch);
+        return [CheckFixed, NotMatch];
     }
 
-    function RegexTest(regex, real, string, dontAdd) {
+    function RegexTest(regex, real, string, forceCaptures) {
         let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
+        let result = new ConcolicValue(in_c, in_s);
 
-        if (regex.backreferences && !dontAdd) {
+        if (regex.backreferences || forceCaptures) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
         }
 
-        return new ConcolicValue(in_c, in_s);
+        return result;
     }
 
     function RegexSearch(real, string, result) {
         let regex = Z3.Regex(this.ctx, real);
-        let in_regex = RegexTest.apply(this, [regex, real, string, result]);
+
+        //TODO: There is only the need to force back references if anchors are not set
+        let in_regex = RegexTest.apply(this, [regex, real, string, true]);
+        
         let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
-        EnableCaptures.call(this, regex, real, this.state.getSymbolic(string));
-        EnableRefinements.call(this, regex, real, this.state.getSymbolic(string));
+        
         return new ConcolicValue(result, search_in_re);
     }
 
@@ -128,15 +134,11 @@ function BuildModels() {
         let regex = Z3.Regex(this.ctx, real);
 
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
-
         this.state.symbolicConditional(in_regex);
 
         let string_s = this.state.asSymbolic(string);
 
         if (result) {
-
-            EnableCaptures.call(this, regex, real, string_s);
-            EnableRefinements.call(this, regex, real, string_s);
 
             result = result.map((current_c, idx) => {
                 if (typeof current_c == 'string') {
@@ -264,7 +266,7 @@ function BuildModels() {
 
     models[RegExp.prototype.test] = symbolicHook(
         (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]), result)
+        (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]))
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.
