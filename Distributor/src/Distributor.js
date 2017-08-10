@@ -98,7 +98,7 @@ if (process.argv.length >= 3) {
                 FileTransformer(filename).then(data => {
                     console.log(`*- Experimental Line Coverage for ${filename} *-`);
                     let lines = data.split('\n');
-                    lines.map((line, idx) => touched[filename].find(i => i == idx + 1) ? ('+' + line) : ('-' + line)).forEach(line => console.log(line));
+                    lines.map((line, idx) => touched[filename].find(i => i == idx + 1) ? ('+' + line) : ('-' + line)).forEach((line, idx) => console.log(`{idx+1}: ${line}`));
                 });
             }
         }
