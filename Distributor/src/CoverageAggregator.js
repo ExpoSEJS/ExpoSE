@@ -78,8 +78,8 @@ class Coverage {
         return results;
     }
 
-    getTouchedLines() {
-        return JSON.stringify(this.final().reduce((prev, next) => { prev[next.file] = next.coveredLines; return prev; }, {}));
+    getTouched() {
+        return this.final().reduce((prev, next) => { prev[next.file] = next.coveredLines; return prev; }, {});
     }
 }
 

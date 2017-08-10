@@ -63,10 +63,6 @@ if (process.argv.length >= 3) {
                 end: microtime.now(),
                 done: done
             }) + '\nEND JSON');
-        } else {
-            console.log('\nExpoSE Line Coverage');
-            console.log(coverage.getTouchedLines());
-            console.log('');
         }
 
         function round(num, precision) { 
@@ -91,9 +87,19 @@ if (process.argv.length >= 3) {
         console.log('*-- Coverage Data');
 
         coverage.final().forEach(d => {
-            //FileTransformer(d.file).then(data => console.log(data));
             console.log('*- File ' + d.file + '. Coverage: ' + Math.round(d.data.coverage * 100) + '%');
         });
+
+        //TODO: Feature flag this
+        let touched = coverage.getTouched();
+
+        for (let filename in touched) {
+            FileTransformer(filename).then(data => {
+                console.log(`*- Experimental Line Coverage for ${filename} *-`);
+                let lines = data.split('\n');
+                lines.map((line, idx) => touched[filename].find(i => i == idx + 1) ? ('+' + line) : ('-' + line)).forEach(line => console.log(line));
+            });
+        }
 
         console.log('** ExpoSE Finished. ' + done.length + ' paths with ' + errors + ' errors **');
         process.exitCode = errors;
