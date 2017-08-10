@@ -1,5 +1,4 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
-
 "use strict";
 
 import Center from './Center';
@@ -28,6 +27,29 @@ function argToType(arg, type) {
 
 function getArgument(name, type, dResult) {
     return process.env[name] ? argToType(process.env[name], type) : dResult;
+}
+
+function generateCoverageMap(lineInfo) {
+    for (let filename in lineInfo) {
+        FileTransformer(filename).then(data => {
+            console.log(`*- Experimental Line Coverage for ${filename} `);
+            const lines = data.split('\n');
+            const linesWithNumbers = lines.map((line, idx) => `${idx + 1}:${line}`);
+
+            const linesWithTouched = lines.map((line, idx) => {
+                let lineNumber = idx + 1;
+                if (!lineInfo[filename].all.find(i => i == lineNumber)) {
+                    return `s${line}`;
+                } else if (lineInfo[filename].touched.find(i => i == lineNumber)) {
+                    return `+${line}`;
+                } else {
+                    return `-${line}`;
+                }
+            });
+
+            linesWithTouched.forEach(line => console.log(line));
+        });
+    }
 }
 
 if (process.argv.length >= 3) {
@@ -66,7 +88,7 @@ if (process.argv.length >= 3) {
             }) + '\nEND JSON');
         }
 
-        function round(num, precision) { 
+        function round(num, precision) {
             return Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
         }
 
@@ -93,23 +115,7 @@ if (process.argv.length >= 3) {
 
         if (options.printDeltaCoverage) {
             let lineInfo = coverage.lines();
-
-            for (let filename in lineInfo) {
-                FileTransformer(filename).then(data => {
-                    console.log(`*- Experimental Line Coverage for ${filename} `); 
-                    let lines = data.split('\n');
-                    let linesWithNumbers = lines.map((line, idx) => `${idx + 1}:${line}`);
-                    let linesWithTouched = lines.map((line, idx) => {
-                        let lineNumber = idx + 1;
-                        if (lineInfo[filename].touched.find(i => i == lineNumber) || !lineInfo[filename].all.find(i => i == lineNumber)) {
-                            return `+${line}`;
-                        } else {
-                            return `-${line}`;
-                        }
-                    });
-                    linesWithTouched.forEach(line => console.log(line));
-                });
-            }
+            generateCoverageMap(lineInfo);
         } else {
             console.log('*- Re-run with EXPOSE_PRINT_COVERAGE=1 to print line by line coverage information');
         }

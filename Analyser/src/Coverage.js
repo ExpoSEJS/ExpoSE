@@ -18,6 +18,17 @@ class Coverage {
         this._branchFilenameMap = [];
     }
 
+    _pushLines(set, map, sid) {
+        for (let j in map) {
+            if (!isNaN(parseInt(j))) {
+                let location = iidToLocation(this._sandbox, sid, j);
+                if (location) {
+                    set.add(location.uninstrumentedLineNumber);
+                }
+            }
+        }
+    }
+
     end() {
         let ret = {};
         for (let i = 0; i < this._branches.length; i++) {
@@ -29,8 +40,8 @@ class Coverage {
 
                 //TODO: This is a really ugly solution to working out whether it is possible to cover a given line
                 //Find a way that doesn't involve transferring info on every line number out in the coverage file
-                let touchedLines = [];
-                let allLines = [];
+                let touchedLines = new Set();
+                let allLines = new Set();
 
                 //Deep copy the smap
                 let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
@@ -42,22 +53,19 @@ class Coverage {
                         delete map[j];
                     } else {
                         map[j] = 1;
-                        allLines.push(iidToLocation(this._sandbox, i + 1, j).uninstrumentedLineNumber);
                     }
                 }
 
-                for (let j in this._branches[i]) {
-                    // Convert the sid and instrumented iid into an uninstrumented line number
-                    touchedLines.push(iidToLocation(this._sandbox, i + 1, j).uninstrumentedLineNumber);
-                }
+                this._pushLines(allLines, map, localSid);
+                this._pushLines(touchedLines, this._branches[i], localSid);
 
                 ret[this._branchFilenameMap[i]] = {
                     smap: map,
                     branches: this._branches[i],
                     
                     lines: {
-                        all: allLines,
-                        touched: touchedLines
+                        all: Array.from(allLines),
+                        touched: Array.from(touchedLines)
                     }
                 };
             }
