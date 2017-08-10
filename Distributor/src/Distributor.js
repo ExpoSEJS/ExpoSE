@@ -11,8 +11,8 @@ let os = require('os');
 process.title = 'ExpoSE Distributor';
 
 process.on('disconnect', function() {
-  Log.log('Premature termination - Parent exit')
-  process.exit();
+    Log.log('Premature termination - Parent exit');
+    process.exit();
 });
 
 function getTarget() {
@@ -64,6 +64,8 @@ if (process.argv.length >= 3) {
                 done: done
             }) + '\nEND JSON');
         } else {
+            console.log('\nExpoSE Line Coverage');
+            console.log(coverage.getTouchedLines());
             console.log('');
         }
 
@@ -72,7 +74,7 @@ if (process.argv.length >= 3) {
         }
 
         function formatSeconds(v) {
-            return round((v / 1000 / 1000), 4)
+            return round((v / 1000 / 1000), 4);
         }
 
         done.forEach(item => {

@@ -2,8 +2,16 @@
 
 "use strict";
 
+import iidToLocation from './Utilities/iidToLocation';
+
 class Coverage {
 
+    /**
+     * Creates an instance of Coverage.
+     * @param {any} sandbox The Jalangi sandbox
+     * _branches is an array of coverages for a given sid where the sid is branches[sid+1]
+     * @memberOf Coverage
+     */
     constructor(sandbox) {
         this._sandbox = sandbox;
         this._branches = [];
@@ -18,23 +26,27 @@ class Coverage {
             const localSid = i + 1;
 
             if (this._branches[i] !== undefined) {
-
                 //Deep copy the smap
-            	let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
+                let touchedLines = [];
+                let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
                 //Strip away any non SID related entities
                 //Also replace all source index arrays to a single value to reduce stdout
-            	for (let j in map) {
-            		if (isNaN(parseInt(j))) {
-            			delete map[j];
-            		} else {
+                for (let j in map) {
+                    if (isNaN(parseInt(j))) {
+                        delete map[j];
+                    } else {
                         map[j] = 1;
+
+                        // Convert the sid and instrumented iid into an uninstrumented line number
+                        touchedLines.push(iidToLocation(this._sandbox, i + 1, j).uninstrumentedLineNumber);
                     }
-            	}
+                }
 
                 ret[this._branchFilenameMap[i]] = {
-                	smap: map,
-                    branches: this._branches[i]
+                    smap: map,
+                    branches: this._branches[i],
+                    touchedLines
                 };
             }
         }
@@ -58,7 +70,11 @@ class Coverage {
     }
 
     touch(iid) {
-    	this.getBranchInfo()[iid] = 1;
+        this.getBranchInfo()[iid] = 1;
+    }
+
+    _branchToLines(sid, branch){
+        return this.sandbox.iidToLocation(sid, branch);
     }
 }
 

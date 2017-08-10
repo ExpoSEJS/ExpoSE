@@ -1,5 +1,5 @@
 function Default(i, d) {
-	return process.env[i] || d;
+    return process.env[i] || d;
 }
 
 export default {
