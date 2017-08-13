@@ -21,8 +21,6 @@ class SymbolicState {
         this.inputSymbols = {};
 
         this.pathCondition = [];
-        this.checks = [];
-
         this.errors = [];
     }
 
@@ -34,11 +32,10 @@ class SymbolicState {
         this.errors.push(error);
     }
     
-    pushCondition(cnd, binder, checks) {
+    pushCondition(cnd, binder) {
     	this.pathCondition.push({
             ast: cnd,
-            binder: binder || false,
-            checks: checks || []
+            binder: binder || false
         });
     }
 
@@ -98,7 +95,9 @@ class SymbolicState {
         let newPC = this.ctx.mkNot(this.pathCondition[i].ast).simplify();
         Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable');
         
-        let solution = this._checkSat(newPC);
+        let allChecks = this.pathCondition.reduce((last, next) => last.concat(next.ast.checks.trueCheck), []);//.concat(newPC.checks.trueCheck);
+
+        let solution = this._checkSat(newPC, allChecks);
 
         if (solution) {
             solution._bound = i + 1;
@@ -131,11 +130,7 @@ class SymbolicState {
 
         for (let i = this.input._bound; i < this.pathCondition.length; i++) {
 
-            //TODO: At the moment checks and conditions go onto the same list in order to avoid adding a check before it was created in the PC
-            //We need a better way for this
-
-            this.checks = this.pathCondition.slice(0, i).map(x => x.checks).reduce((last, next) => last.concat(next), []);
-
+            //TODO: Make checks on expressions smarter
             if (!this.pathCondition[i].binder) {
                 this._buildPC(childInputs, i);
             }
@@ -202,8 +197,9 @@ class SymbolicState {
         return solution;
     }
 
-    _checkSat(clause) {
-        let model = (new Z3.Query([clause], this.checks)).getModel(this.slv);
+    _checkSat(clause, checks) {
+        console.log('CheckSat ' + checks.map);
+        let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
 
