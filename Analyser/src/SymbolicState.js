@@ -7,6 +7,8 @@ import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 
+const QUERY_MAX_REFINEMENTS = 10;
+
 class SymbolicState {
     constructor(context, solver, input) {
 
@@ -199,7 +201,7 @@ class SymbolicState {
 
     _checkSat(clause, checks) {
         console.log('CheckSat ' + checks.map);
-        let model = (new Z3.Query([clause], checks)).getModel(this.slv);
+        let model = (new Z3.Query([clause], checks, QUERY_MAX_REFINEMENTS)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
 
