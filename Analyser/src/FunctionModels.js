@@ -97,14 +97,13 @@ function BuildModels() {
                 real_match = real_match.map(match => match || '');
                 let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
                 
-                /*
-                Log.logMid("WARN: TODO: Removing CheckFixed and NotMatch from checks may break stuff");
+                /*Log.logMid("WARN: TODO: Removing CheckFixed and NotMatch from checks may break stuff");
                 let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
                 next_list = CloneReplace(query.checks, NotMatch, Z3.Check(CheckCorrect, () => [])); */
 
                 return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
             } else {
-                Log.log('WARN: Broken regex detected ' + regex.toString() + ' vs ' + real);
+                Log.log('WARN: Broken regex detected ' + regex.ast.toString() + ' vs ' + real);
                 return [];
             }
         });
