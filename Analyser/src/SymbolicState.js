@@ -7,7 +7,7 @@ import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 
-const QUERY_MAX_REFINEMENTS = 10;
+Z3.Query.MAX_REFINEMENTS = 20;
 
 class SymbolicState {
     constructor(context, solver, input) {
@@ -97,7 +97,7 @@ class SymbolicState {
         let newPC = this.ctx.mkNot(this.pathCondition[i].ast).simplify();
         Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable');
         
-        let allChecks = this.pathCondition.reduce((last, next) => last.concat(next.ast.checks.trueCheck), []);//.concat(newPC.checks.trueCheck);
+        let allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
 
         let solution = this._checkSat(newPC, allChecks);
 
@@ -201,7 +201,7 @@ class SymbolicState {
 
     _checkSat(clause, checks) {
         console.log('CheckSat ' + checks.map);
-        let model = (new Z3.Query([clause], checks, QUERY_MAX_REFINEMENTS)).getModel(this.slv);
+        let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
 
