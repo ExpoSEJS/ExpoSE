@@ -120,7 +120,7 @@ class SymbolicState {
 
         if (this.input._bound > this.pathCondition.length) {
             Log.log('Bound > PathCondition');
-            Log.log('Warning: This path has diverged');
+            throw 'This path has diverged';
         }
 
         //Push all PCs up until bound
