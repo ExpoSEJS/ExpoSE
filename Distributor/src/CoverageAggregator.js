@@ -51,7 +51,7 @@ class Coverage {
         }
     }
 
-	_results(file) {
+	_termResults(file) {
 		let found = 0;
 		let total = 0;
 
@@ -67,6 +67,18 @@ class Coverage {
 		}
 	}
 
+    _locResults(file) {
+        let touchedLines = Array.from(file.lines.touched).sort((a, b) => a - b);
+        let allLines = Array.from(file.lines.all).sort((a, b) => a - b);
+        return {
+            touched: touchedLines,
+            all: allLines,
+            found: touchedLines.length,
+            total: allLines.length,
+            coverage: touchedLines.length / allLines.length
+        }
+    }
+
     final() {
         let results = [];
 
@@ -74,9 +86,8 @@ class Coverage {
             let file = this._getFile(fileName);
             results.push({
                 file: fileName,
-                data: this._results(file),
-                touchedLines: Array.from(file.lines.touched).sort((a, b) => a - b),
-                allLines: Array.from(file.lines.all).sort((a, b) => a - b)
+                terms: this._termResults(file),
+                loc: this._locResults(file)
             });
         }
 
@@ -86,8 +97,8 @@ class Coverage {
     lines() {
         return this.final().reduce((prev, next) => {
             prev[next.file] = {
-                all: next.allLines,
-                touched: next.touchedLines 
+                all: next.loc.all,
+                touched: next.loc.touched 
             };
             return prev; 
         }, {});

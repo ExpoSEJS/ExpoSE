@@ -49,9 +49,9 @@ function addError(input, msg, replayHdlr, page) {
 	errors_v.appendChild(newTR);
 }
 
-function addResult(file, found, total, pc, page) {
+function addResult(file, lines, terms, page) {
 	let results = page['#results_body'];
-	results.innerHTML += '<tr><td>' + file + "</td><td>" + pc + "</td><td>" + found + '</td><td>' + total + '</td></tr>';
+	results.innerHTML += `<tr><td>${file}</td><td>${lines}%</td><td>${terms}%</td></tr>`;
 }
 
 function setRunning(v, page) {

@@ -105,9 +105,8 @@
                            <thead>
                               <tr>
                                  <th>File Name</th>
-                                 <th>Coverage (%)</th>
-                                 <th>Found Blocks</th>
-                                 <th>Total Blocks</th>
+                                 <th>Coverage (LOC)</th>
+                                 <th>Coverage (Terms)</th>
                               </tr>
                            </thead>
                            <tbody id="results_body">

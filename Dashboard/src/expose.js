@@ -16,7 +16,10 @@ function averageList(list) {
 
 function coverage(job) {
 	job.coverage.forEach(x => {
-		x.percentage = toPercentage(x.data.found / x.data.total)
+		x.percentage = {
+			terms: toPercentage(x.terms.coverage),
+			lines: toPercentage(x.loc.coverage)
+		}
 	});
 }
 
@@ -27,15 +30,23 @@ function internal(filename) {
 function aggregateCoverage(job) {
 	let coveredBlocks = 0;
 	let totalBlocks = 0;
+
+	let coveredLines = 0;
+	let totalLines = 0;
 	
 	job.coverage.forEach(x => {
 		if (!internal(x.file)) {
-			coveredBlocks += x.data.found;
-			totalBlocks += x.data.total;
+			coveredBlocks += x.terms.found;
+			totalBlocks += x.terms.total;
+			coveredLines += x.loc.found;
+			totalLines += x.loc.total;
 		}
 	});
 
-	return toPercentage(coveredBlocks / totalBlocks);
+	return {
+		terms: toPercentage(coveredBlocks / totalBlocks),
+		lines: toPercentage(coveredLines / totalLines)
+	}
 }
 
 function sort(summary) {

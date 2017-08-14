@@ -110,7 +110,7 @@ if (process.argv.length >= 3) {
         console.log('*-- Coverage Data');
 
         coverage.final().forEach(d => {
-            console.log('*- File ' + d.file + '. Coverage: ' + Math.round(d.data.coverage * 100) + '%');
+            console.log(`*- File ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}%`);
         });
 
         if (options.printDeltaCoverage) {

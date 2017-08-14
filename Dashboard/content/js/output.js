@@ -47,7 +47,7 @@ function handleOutput(src, page) {
         });
 
         done.coverage.forEach(x => {
-        	view.result(x.file, x.data.found, x.data.total, x.percentage, page);
+        	view.result(x.file, x.percentage.lines, x.percentage.terms, page);
         });
 
         graph(page, done);

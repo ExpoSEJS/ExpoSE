@@ -28,8 +28,8 @@ function handlePercentage(summary, outFile) {
 	let lastCoverage = 0;
 
 	jobList.forEach((x, i) => {
-		coverageLines += '' + time(x.endTime) + ', ' + Math.max(expose.aggregateCoverage(x), lastCoverage) + '\n';
-		lastCoverage = expose.aggregateCoverage(x);
+		coverageLines += '' + time(x.endTime) + ', ' + Math.max(expose.aggregateCoverage(x).lines, lastCoverage) + '\n';
+		lastCoverage = expose.aggregateCoverage(x).lines;
 	});
 
 	fs.writeFileSync(outFile, coverageLines);
