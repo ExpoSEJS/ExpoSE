@@ -14,6 +14,11 @@ function clearViews(page) {
 }
 
 function addOut(v, page) {
+	
+	if (/ExpoSE JSON: ([\s\S]*)\nEND JSON/.test(v)) {
+		return;
+	}
+
 	page['#output_body'].innerHTML += v.split('\n').map(x => x.trim() + '<br/>').filter(x => x.length).join();
 }
 

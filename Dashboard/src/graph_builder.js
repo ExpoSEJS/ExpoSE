@@ -19,7 +19,6 @@ function BuildGraph(outFile, outType, coverageFiles, inRate, done) {
 
     prc.stdout.on('close', function(c) {
     	this.running = false;
-
     	done(c);
     }.bind(this));
 }

@@ -61,12 +61,12 @@ Graph.out = function(page, summary, mode, file) {
 	let remote = require('electron').remote;
 	let GraphDataWriter = remote.require('../src/graph_data');
 	let GraphBuilder = remote.require('../src/graph_builder');
-	let files = GraphDataWriter(summary);
-
-	GraphBuilder(file, mode, files.coverage, files.rate, function() {
-		files.coverage.forEach(covFile => covFile.removeCallback());
-		files.rate.removeCallback();
-		page['#graph_content'].innerHTML = '<img class="graph" src="' + file + '?' + new Date().getTime() + '"/>';
+	GraphDataWriter(summary, function(files) {
+		GraphBuilder(file, mode, files.coverage, files.rate, function() {
+			files.coverage.forEach(covFile => covFile.removeCallback());
+			files.rate.removeCallback();
+			page['#graph_content'].innerHTML = '<img class="graph" src="' + file + '?' + new Date().getTime() + '"/>';
+		});
 	});
 }
 
