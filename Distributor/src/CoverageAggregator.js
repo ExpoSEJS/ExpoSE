@@ -94,6 +94,19 @@ class Coverage {
         return results;
     }
 
+    /**
+     * Final without terms or lines
+     * TODO: Doesn't really need to exist
+     */
+    current() {
+        let results = this.final();
+        
+        delete results.lines.touched;
+        delete results.lines.all;
+
+        return results;
+    }
+
     lines() {
         return this.final().reduce((prev, next) => {
             prev[next.file] = {
