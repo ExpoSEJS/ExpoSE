@@ -14,8 +14,8 @@ function clearViews(page) {
 }
 
 function addOut(v, page) {
-	
-	if (/ExpoSE JSON: ([\s\S]*)\nEND JSON/.test(v)) {
+
+	if (v.indexOf('ExpoSE JSON:') != -1) {
 		return;
 	}
 
