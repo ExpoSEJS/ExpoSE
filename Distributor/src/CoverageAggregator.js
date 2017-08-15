@@ -103,9 +103,9 @@ class Coverage {
         
         results.forEach(item => {
             delete item.lines.touched;
-            delete results.lines.all;
+            delete item.lines.all;
         });
-        
+
         return results;
     }
 
