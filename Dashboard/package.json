@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "author": "Blake Loring",
   "scripts": {
-    "start": "electron ."
+    "start": "electron --js-flags=\"--max_old_space_size=8100\" ."
   },
   "devDependencies": {
     "electron": "^1.4.1"
