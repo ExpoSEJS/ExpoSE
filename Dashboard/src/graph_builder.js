@@ -2,12 +2,14 @@
 
 "use strict";
 
-let spawn = require('child_process').spawn;
+const spawn = require('child_process').spawn;
+const tmp = require('tmp')
 
 const REPLOTTER = './scripts/replot';
 
-function BuildGraph(outFile, outType, inCoverage, inRate, done) {
-	let args = [inCoverage, inRate, outFile, "", "", "", outType];
+function BuildGraph(outFile, outType, coverageFiles, inRate, done) {
+
+	let args = [inRate.name, outFile, "", "", "", outType].concat(coverageFiles.map(x => x.name));
 
 	console.log('Calling replot with ' + args);
 
@@ -17,6 +19,7 @@ function BuildGraph(outFile, outType, inCoverage, inRate, done) {
 
     prc.stdout.on('close', function(c) {
     	this.running = false;
+
     	done(c);
     }.bind(this));
 }

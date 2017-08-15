@@ -3,6 +3,7 @@
 "use strict";
 
 const fs = require('fs');
+const tmp = require('tmp');
 const expose = require('./expose');
 const TIMESTEP = 1000 * 1000;
 
@@ -18,7 +19,7 @@ function averageList(list) {
 	return list.reduce((last, cur) => last + cur.time, 0) / list.length;
 }
 
-function handlePercentage(summary, outFile) {
+function handlePercentage(summary, outFile, mode) {
 	let jobList = summary.jobs;
 
 	let time = timeutil.bind(this, jobList[0]);
@@ -28,8 +29,8 @@ function handlePercentage(summary, outFile) {
 	let lastCoverage = 0;
 
 	jobList.forEach((x, i) => {
-		coverageLines += '' + time(x.endTime) + ', ' + Math.max(expose.aggregateCoverage(x).lines, lastCoverage) + '\n';
-		lastCoverage = expose.aggregateCoverage(x).lines;
+		coverageLines += '' + time(x.endTime) + ', ' + Math.max(expose.aggregateCoverage(x)[mode], lastCoverage) + '\n';
+		lastCoverage = expose.aggregateCoverage(x)[mode];
 	});
 
 	fs.writeFileSync(outFile, coverageLines);
@@ -50,12 +51,18 @@ function handlePerSecond(summary, outFile) {
 	fs.writeFileSync(outFile, intervalLines);
 }
 
-function buildGraphData(summary, pcOutFile, rateOutFile) {
-	handlePercentage(summary, pcOutFile);
-	handlePerSecond(summary, rateOutFile);
+function buildGraphData(summary) {
+
+	const COVERAGE_MODES = ['lines', 'terms'];
+
+	let coverageFiles = COVERAGE_MODES.map(mode => tmp.fileSync());
+	let rateOutFile = tmp.fileSync();
+
+	COVERAGE_MODES.forEach((mode, idx) => handlePercentage(summary, coverageFiles[idx].name, mode));
+	handlePerSecond(summary, rateOutFile.name);
 
 	return {
-		coverage: pcOutFile,
+		coverage: coverageFiles,
 		rate: rateOutFile
 	}
 }

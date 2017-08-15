@@ -120,7 +120,6 @@ function BuildModels() {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
             let checks = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
             in_s.checks.trueCheck = checks;
-            console.log('Refinements: ' + in_s.checks.trueCheck);
         }
 
         console.log(JSON.stringify(in_s));

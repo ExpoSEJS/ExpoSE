@@ -50,6 +50,7 @@ function aggregateCoverage(job) {
 }
 
 function sort(summary) {
+	
 	summary.done.forEach(x => {
 		x.endTime = x.startTime + x.time;
 	});

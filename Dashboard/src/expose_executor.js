@@ -2,7 +2,7 @@
 
 "use strict";
 
-let spawn = require('child_process').spawn;
+const spawn = require('child_process').spawn;
 
 const EXPOSE_PATH = 'expoSE';
 
