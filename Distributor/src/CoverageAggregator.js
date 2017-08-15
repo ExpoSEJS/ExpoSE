@@ -102,8 +102,8 @@ class Coverage {
         let results = this.final();
         
         results.forEach(item => {
-            delete item.lines.touched;
-            delete item.lines.all;
+            delete item.loc.touched;
+            delete item.loc.all;
         });
 
         return results;
