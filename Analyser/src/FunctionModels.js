@@ -171,7 +171,7 @@ function BuildModels() {
      *
      * A function which makes up the new function model is returned
      */
-    function symbolicHook(condition, hook) {
+    function symbolicHook(condition, hook, featureDisabled) {
         return function(f, base, args, result) {
 
             result = undefined;
@@ -186,7 +186,7 @@ function BuildModels() {
 
             Log.logMid(`Symbolic Testing ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)} and initial result ${ObjectHelper.asString(result)}`);
 
-            if (condition(this, f, base, args, result)) {
+            if (!featureDisabled && condition(this, f, base, args, result)) {
                 result = hook(this, f, base, args, result);
             }
 
@@ -198,6 +198,10 @@ function BuildModels() {
 
             return result;
         };
+    }
+
+    function symbolicHookRe(condition, hook) {
+        return symbolicHook(condition, hook, !Config.regexEnabled);
     }
 
     function NoOp() {
@@ -258,28 +262,28 @@ function BuildModels() {
         }
     );
 
-    models[String.prototype.search] = symbolicHook(
+    models[String.prototype.search] = symbolicHookRe(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
         (c, _f, base, args, result) => RegexSearch.call(c, args[0], base, result)
     );
 
-    models[String.prototype.match] = symbolicHook(
+    models[String.prototype.match] = symbolicHookRe(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
         (c, _f, base, args, result) => RegexMatch.call(c, args[0], base, result)
     );
 
-    models[RegExp.prototype.exec] = symbolicHook(
+    models[RegExp.prototype.exec] = symbolicHookRe(
         (c, _f, base, args, _r) => base instanceof RegExp && c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => RegexMatch.call(c, base, args[0], result)
     );
 
-    models[RegExp.prototype.test] = symbolicHook(
+    models[RegExp.prototype.test] = symbolicHookRe(
         (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]))
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.
-    models[String.prototype.replace] = symbolicHook(
+    models[String.prototype.replace] = symbolicHookRe(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
         (c, _f, base, args, result) => {
             Log.log('TODO: Awful String.prototype.replace model will reduce search space');

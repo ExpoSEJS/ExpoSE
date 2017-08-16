@@ -81,7 +81,7 @@ class Center {
     }
 
     _printStatus() {
-        process.stdout.write('\r*** [' + this._done.length + ' done /' + this.files.length +' queued / ' + this._running + ' running / ' + this._errors + ' errors] ***');
+        process.stdout.write('\r*** [' + this._done.length + ' done /' + this.files.length +' queued / ' + this._running + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
     }
 
     _finishedTesting() {

@@ -79,6 +79,18 @@ class Coverage {
         }
     }
 
+    _total(list, field) {
+        let found = 0;
+        let total = 0;
+
+        for (let file of list) {
+            found += file[field].found;
+            total += file[field].total;
+        }
+
+        return found / total;
+    }
+
     final() {
         let results = [];
 
@@ -90,6 +102,11 @@ class Coverage {
                 loc: this._locResults(file)
             });
         }
+
+        let [loc, terms] = [this._total(results, 'loc'), this._total(results, 'terms')];
+
+        results.loc = loc;
+        results.terms = terms;
 
         return results;
     }

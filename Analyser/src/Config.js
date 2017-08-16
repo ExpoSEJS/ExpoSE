@@ -3,6 +3,7 @@ function Default(i, d) {
 }
 
 export default {
+	regexEnabled: !Default('DISABLE_REGULAR_EXPRESSIONS', false),
 	capturesEnabled: !Default('DISABLE_CAPTURE_GROUPS', false),
 	refinementsEnabled: !Default('DISABLE_REFINEMENTS', false),
 	outFilePath: Default('EXPOSE_OUT_PATH', undefined),
