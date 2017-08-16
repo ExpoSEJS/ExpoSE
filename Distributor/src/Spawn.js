@@ -54,11 +54,6 @@ class Spawn {
         this._endTime = microtime.now();
     }
 
-    _processKilled(done) {
-        this._recordEndTime();
-        done(PROCESS_KILLED, this, null, null, ['Process terminated due to duration hitting timeout']);
-    }
-
     _processEnded(code, done) {
 
         this._recordEndTime();
@@ -120,7 +115,6 @@ class Spawn {
         return setTimeout(() => {
           prc.stdin.pause();
           prc.kill();
-          this._processKilled(done);
         }, this.options.timeout);
     }
 

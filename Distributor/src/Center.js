@@ -114,7 +114,7 @@ class Center {
             startTime: test.startTime(),
             coverage: this._coverage.current(),
             replay: test.makeReplayString(),
-            alternatives: alternatives
+            alternatives: alternatives.length
         });
 
         if (errors.length) {

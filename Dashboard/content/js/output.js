@@ -38,7 +38,7 @@ function handleOutput(src, page) {
         	Replay(done.source, JSON.stringify(input));
         }
 
-        done.jobs.forEach(x => view.testcase(JSON.stringify(x.input), (x.time / 1000 / 1000), x.alternatives.length, x.errors.length, replay.bind(this, x.input), page));
+        done.jobs.forEach(x => view.testcase(JSON.stringify(x.input), (x.time / 1000 / 1000), x.alternatives, x.errors.length, replay.bind(this, x.input), page));
 
         done.jobs.forEach(x => {
             x.errors.forEach(r => {
