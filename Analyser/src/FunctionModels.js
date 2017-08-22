@@ -84,6 +84,10 @@ function BuildModels() {
             return real_match && !Exists(real_match, sym_match, DoesntMatch);
         }
 
+        function CheckFailed(model) {
+            return !real.test(model.eval(string_s).asConstant());
+        }
+
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
             let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
             return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
@@ -108,7 +112,15 @@ function BuildModels() {
             }
         });
 
-        return [CheckFixed, NotMatch];
+        let CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
+            Log.log('BIG WARN: False check failed, possible divergence');
+            return [];
+        });
+
+        return {
+            true: [CheckFixed, NotMatch],
+            false: [CheckNotIn]
+        };
     }
 
     function RegexTest(regex, real, string, forceCaptures) {
@@ -119,7 +131,8 @@ function BuildModels() {
         if (regex.backreferences || forceCaptures) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
             let checks = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
-            in_s.checks.trueCheck = checks;
+            in_s.checks.trueCheck = checks.true;
+            //in_s.checks.falseCheck = checks.false;
         }
 
         console.log(JSON.stringify(in_s));
@@ -134,7 +147,7 @@ function BuildModels() {
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
         
         let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
-        
+
         return new ConcolicValue(result, search_in_re);
     }
 

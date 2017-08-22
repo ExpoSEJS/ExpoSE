@@ -95,7 +95,7 @@ class SymbolicState {
 
     _buildPC(childInputs, i) {
         let newPC = this.ctx.mkNot(this.pathCondition[i].ast).simplify();
-        Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable');
+        Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable with checks ' + newPC.checks.trueCheck.length);
         
         let allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
 
@@ -200,6 +200,7 @@ class SymbolicState {
     }
 
     _checkSat(clause, checks) {
+        console.log('Checks length ' + checks.length);
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
