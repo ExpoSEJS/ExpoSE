@@ -119,7 +119,7 @@ function buildTestList() {
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/ambiguous1.js', 3, 2);
     buildTest('regex/search/ambiguous2.js', 3, 1); //One extra path spawned by assume command
-    buildTest('regex/search/ambiguous3.js', 3, 2); //One extra path spawned by assume command
+    buildTest('regex/search/ambiguous3.js', 4, 3); //One extra path spawned by assume command
     buildTest('regex/search/ambiguous4.js', 7, 3); //TODO: Weird results
     buildTest('regex/search/alt.js', 3, 3);
     buildTest('regex/search/not_at_start.js', 3, 3);
