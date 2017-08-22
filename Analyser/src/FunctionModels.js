@@ -118,8 +118,8 @@ function BuildModels() {
         });
 
         return {
-            true: [CheckFixed, NotMatch],
-            false: [CheckNotIn]
+            trueCheck: [CheckFixed, NotMatch],
+            falseCheck: [CheckNotIn]
         };
     }
 
@@ -131,7 +131,8 @@ function BuildModels() {
         if (regex.backreferences || forceCaptures) {
             EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
             let checks = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
-            in_s.checks.trueCheck = checks.true;
+            console.log('CReating Checks ' + checks.trueCheck.length);
+            in_s.checks.trueCheck = checks.trueCheck;
             //in_s.checks.falseCheck = checks.false;
         }
 

@@ -4,19 +4,19 @@ var x = symbolic X initial '';
 var b = /[a-z]*/;
 var nl = x.search(b);
 
-assume nl != -1;
+assume x.length <= 5;
 
 //The first set of as should be the match, but if greediness is not enforced either will be accepted
-if (x == 'hello_world') {
+if (x == 'hello') {
 
-	if (nl == 7) {
+	if (nl == 2) {
 		throw 'Unreachable';
 	}
 
 	throw 'Reachable';
 }
 
-if (x == 'goodbye') {
+if (x == 'what') {
 		
 	if (nl != 0) {
 		throw 'Unreachable';
@@ -25,6 +25,6 @@ if (x == 'goodbye') {
 	throw 'Reachable';
 }
 
-if (x == '1231241' && nl != 0) {
+if (x == '12345' && nl != 0) {
 	throw 'Unreachable';
 }

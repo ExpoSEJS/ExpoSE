@@ -4,11 +4,11 @@ var q = symbolic q initial '';
 
 if (/--.+=/.test(q)) {
 
-	if (q[0] != '-') {
+	if (q.charAt(0) != '-') {
 		throw 'Reachable';
 	}
 
-	if (q[q.length - 1] != '=') {
+	if (q.charAt(q.length - 1) != '=') {
 		throw 'Reachable';
 	}
 
