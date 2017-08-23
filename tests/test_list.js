@@ -83,10 +83,10 @@ function buildTestList() {
     buildTest('regex/core/star/lazy.js', 7, 7);
     buildTest('regex/core/star/multiple.js', 5, 5);
 
-    buildTest('regex/test/plus/plus.js', 12, 11);
-    buildTest('regex/test/plus/lazy.js', 12, 11);
-    buildTest('regex/test/plus/online.js', 11, 10);
-    buildTest('regex/test/plus/multiple.js', 4, 4);
+    buildTest('regex/core/plus/plus.js', 12, 11);
+    buildTest('regex/core/plus/lazy.js', 12, 11);
+    buildTest('regex/core/plus/online.js', 11, 10);
+    buildTest('regex/core/plus/multiple.js', 4, 4);
 
     buildTest('regex/test/optional/base.js', 13, 12);
     buildTest('regex/test/optional/combined.js', 9, 8);
