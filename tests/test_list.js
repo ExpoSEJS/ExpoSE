@@ -68,14 +68,14 @@ function buildTestList() {
     buildTest('regex/test/atoms/non_alpha.js', 2, 2);
     buildTest('regex/test/atoms/multiple.js', 6, 6);
 
-    buildTest('regex/test/escaping/hex.js', 5, 4);
-    buildTest('regex/test/escaping/unicode.js', 6, 5);
-    buildTest('regex/test/escaping/unicode_mode.js', 6, 5);
-    buildTest('regex/test/escaping/ranges.js', 8, 8);
-    buildTest('regex/test/escaping/negative_ranges.js', 3, 2);
-    buildTest('regex/test/escaping/space_class.js', 8, 7);
-    buildTest('regex/test/escaping/word.js', 3, 2);
-    buildTest('regex/test/escaping/digit.js', 3, 2);
+    buildTest('test/core/escaping/hex.js', 5, 4);
+    buildTest('test/core/escaping/unicode.js', 6, 5);
+    buildTest('test/core/escaping/unicode_mode.js', 6, 5);
+    buildTest('test/core/escaping/ranges.js', 8, 8);
+    buildTest('test/core/escaping/negative_ranges.js', 3, 2);
+    buildTest('test/core/escaping/space_class.js', 8, 7);
+    buildTest('test/core/escaping/word.js', 3, 2);
+    buildTest('test/core/escaping/digit.js', 3, 2);
 
     buildTest('regex/test/star/star.js', 7, 7);
     buildTest('regex/test/star/online.js', 11, 10);
