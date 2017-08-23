@@ -97,10 +97,10 @@ function buildTestList() {
     buildTest('regex/core/plus/online.js', 11, 10);
     buildTest('regex/core/plus/multiple.js', 4, 4);
 
-    buildTest('regex/test/optional/base.js', 13, 12);
-    buildTest('regex/test/optional/combined.js', 9, 8);
-    buildTest('regex/test/optional/no_greed.js', 13, 12);
-    buildTest('regex/test/optional/range.js', 3, 2);
+    buildTest('regex/core/optional/base.js', 13, 12);
+    buildTest('regex/core/optional/combined.js', 9, 8);
+    buildTest('regex/core/optional/no_greed.js', 13, 12);
+    buildTest('regex/core/optional/range.js', 3, 2);
 
     /**
      * Lazy Operator Tests
