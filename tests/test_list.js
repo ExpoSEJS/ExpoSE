@@ -115,6 +115,7 @@ function buildTestList() {
     buildTest('regex/exec/greed/optionals.js', 3, 2);
     buildTest('regex/exec/greed/related.js', 3, 2);
 
+    //buildTest('regex/match/non_sticky.js', 3, 0);
 
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/ambiguous1.js', 3, 2);

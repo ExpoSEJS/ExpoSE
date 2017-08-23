@@ -90,7 +90,7 @@ function BuildModels() {
 
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
             let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
-            return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
+            return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed])];
         });
 
         let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
@@ -105,7 +105,7 @@ function BuildModels() {
                 let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
                 next_list = CloneReplace(query.checks, NotMatch, Z3.Check(CheckCorrect, () => [])); */
 
-                return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
+                return [new Z3.Query(query.exprs.slice(0).concat(query_list), [NotMatch])];
             } else {
                 Log.log('WARN: Broken regex detected ' + regex.ast.toString() + ' vs ' + real);
                 return [];
@@ -118,7 +118,7 @@ function BuildModels() {
         });
 
         return {
-            trueCheck: [CheckFixed, NotMatch],
+            trueCheck: [CheckFixed],
             falseCheck: [CheckNotIn]
         };
     }
@@ -163,13 +163,12 @@ function BuildModels() {
 
         if (result) {
 
-            result = result.map((current_c, idx) => {
-                if (typeof current_c == 'string') {
-                    return Config.capturesEnabled ? new ConcolicValue(current_c, regex.captures[idx]) : current_c;
-                } else {
-                    return undefined;
-                }
-            });
+            if (Config.capturesEnabled) {
+                result = result.map((current_c, idx) => {
+                    //TODO: This is really nasty, current_c should be a
+                    return new ConcolicValue(current_c === undefined ? '' : current_c, regex.captures[idx]);
+                });
+            }
 
             result.index = new ConcolicValue(result.index, regex.startIndex);
             result.input = string;
