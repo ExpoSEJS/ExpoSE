@@ -45,6 +45,9 @@ function buildTestList() {
     //Named methods
     buildTest('named_method/simple.js', 1, 0);
 
+    //Async
+    buildTest('async/settimeout.js', 3, 1);
+
     //Strings
     buildTest('strings/hello_strings.js', 2, 0);
     buildTest('strings/hello_strings2.js', 3, 0);
@@ -54,7 +57,13 @@ function buildTestList() {
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
 
-    //Regular expressions
+    /**
+     * Regular Expression Feature Test
+     */
+
+    /**
+     * Core language tests
+     */
     buildTest('regex/core/alternation/simple.js', 4, 4);
     buildTest('regex/core/alternation/many.js', 4, 4);
     buildTest('regex/core/alternation/words.js', 4, 4);
@@ -93,14 +102,34 @@ function buildTestList() {
     buildTest('regex/test/optional/no_greed.js', 13, 12);
     buildTest('regex/test/optional/range.js', 3, 2);
 
-    buildTest('regex/test/anchors/left.js', 3, 3);
-    buildTest('regex/test/anchors/right.js', 3, 3); //TODO: An extra query is generated
-    buildTest('regex/test/anchors/none.js', 4, 4);
-    buildTest('regex/test/anchors/both.js', 2, 1);
+    /**
+     * Lazy Operator Tests
+     */
 
+    buildTest('regex/lazy/lazy_1.js', 3, 2);
+    buildTest('regex/lazy/lazy_2.js', 2, 1);
+    buildTest('regex/lazy/lazy_3.js', 3, 2);
+    buildTest('regex/lazy/lazy_4.js', 2, 1);
+    buildTest('regex/lazy/lazy_5.js', 3, 2);
+    buildTest('regex/lazy/lazy_6.js', 3, 2);
+
+    /**
+     * Anchors Tests
+     */
+    buildTest('regex/anchors/left.js', 3, 3);
+    buildTest('regex/anchors/right.js', 3, 3); //TODO: An extra query is generated
+    buildTest('regex/anchors/none.js', 4, 4);
+    buildTest('regex/anchors/both.js', 2, 1);
+
+    /**
+     * Assertion Tests
+     */
     buildTest('regex/test/assertions/arbitrary_ahead.js', 3, 3);
 
-    buildTest('regex/test/backreferences/closed.js', 2, 2);
+    /**
+     * Backreference Tests
+     */
+    buildTest('regex/backreferences/closed.js', 2, 2);
 
 
     buildTest('regex/exec/captures/greedy2.js', 3, 2);
@@ -110,13 +139,6 @@ function buildTestList() {
     buildTest('regex/exec/captures/related.js', 3, 2);
     buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
 
-    buildTest('regex/lazy/lazy_1.js', 3, 2);
-    buildTest('regex/lazy/lazy_2.js', 2, 1);
-    buildTest('regex/lazy/lazy_3.js', 3, 2);
-    buildTest('regex/lazy/lazy_4.js', 2, 1);
-    buildTest('regex/lazy/lazy_5.js', 3, 2);
-    buildTest('regex/lazy/lazy_6.js', 3, 2);
-
     buildTest('regex/exec/greed/anchors.js', 4, 3);
     buildTest('regex/exec/greed/nested.js', 4, 3);
     buildTest('regex/exec/greed/optionals.js', 3, 2);
@@ -124,6 +146,9 @@ function buildTestList() {
 
     //buildTest('regex/match/non_sticky.js', 3, 0);
 
+    /**
+     * Search application model tests
+     */
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/ambiguous1.js', 3, 2);
     buildTest('regex/search/ambiguous2.js', 3, 1); //One extra path spawned by assume command
@@ -133,31 +158,9 @@ function buildTestList() {
     buildTest('regex/search/not_at_start.js', 3, 3);
     buildTest('regex/search/test_at_start.js', 5, 4);
 
-    /*
-    //Regex
-    buildTest('regex/primatives/anchors_one.js', 3, 1);
-    buildTest('regex/primatives/anchors_two.js', 5, 2);
-
-    buildTest('regex/primatives/simple_one.js', 2, 0);
-    buildTest('regex/primatives/simple_two.js', 2, 1);
-
-    buildTest('regex/primatives/klene_plus_one.js', 3, 1);
-    buildTest('regex/primatives/klene_plus_two.js', 3, 1);
-    buildTest('regex/primatives/klene_plus_three.js', 2, 0);
-
-    buildTest('regex/primatives/kleene_star_two.js', 3, 2);
-    buildTest('regex/primatives/kleene_star_three.js', 2, 1);
-
-    buildTest('regex/primatives/primative_rw_github.js', 2, 1);
-
-    //buildTest('regex/test_three_deep.js', 7, 3);
-
-    buildTest('regex/replace_and_length.js', 5, 0);
-    buildTest('regex/replace_and_length.js', 3, 0);
-    */
-
-    //Async
-    buildTest('async/settimeout.js', 3, 1);
+    /**
+     * End of regular expression feature tests
+     */
 
     return testList;
 }
