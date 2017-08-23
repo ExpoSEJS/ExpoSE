@@ -109,11 +109,12 @@ function buildTestList() {
     buildTest('regex/exec/captures/related.js', 3, 2);
     buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
 
-    buildTest('regex/exec/captures/lazy_1.js', 3, 2);
-    buildTest('regex/exec/captures/lazy_2.js', 2, 1);
-    buildTest('regex/exec/captures/lazy_3.js', 3, 2);
-    buildTest('regex/exec/captures/lazy_4.js', 2, 1);
-    buildTest('regex/exec/captures/lazy_5.js', 3, 2);
+    buildTest('regex/lazy/lazy_1.js', 3, 2);
+    buildTest('regex/lazy/lazy_2.js', 2, 1);
+    buildTest('regex/lazy/lazy_3.js', 3, 2);
+    buildTest('regex/lazy/lazy_4.js', 2, 1);
+    buildTest('regex/lazy/lazy_5.js', 3, 2);
+    buildTest('regex/lazy/lazy_6.js', 3, 2);
 
     buildTest('regex/exec/greed/anchors.js', 4, 3);
     buildTest('regex/exec/greed/nested.js', 4, 3);
