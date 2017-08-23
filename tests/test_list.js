@@ -54,19 +54,20 @@ function buildTestList() {
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
 
+    //Regular expressions
     buildTest('regex/core/alternation/simple.js', 4, 4);
     buildTest('regex/core/alternation/many.js', 4, 4);
     buildTest('regex/core/alternation/words.js', 4, 4);
     buildTest('regex/core/alternation/exhaustive_simple.js', 5, 5);
     buildTest('regex/core/alternation/multiple_related.js', 7, 7);
 
-    buildTest('regex/test/atoms/simple_one.js', 2, 1);
-    buildTest('regex/test/atoms/simple_two.js', 2, 1);
-    buildTest('regex/test/atoms/long_example.js', 2, 2);
-    buildTest('regex/test/atoms/empty_example.js', 2, 2);
-    buildTest('regex/test/atoms/mixed_escaped.js', 3, 3); //TODO: Should this be 2
-    buildTest('regex/test/atoms/non_alpha.js', 2, 2);
-    buildTest('regex/test/atoms/multiple.js', 6, 6);
+    buildTest('regex/core/literals/simple_one.js', 2, 1);
+    buildTest('regex/core/literals/simple_two.js', 2, 1);
+    buildTest('regex/core/literals/long_example.js', 2, 2);
+    buildTest('regex/core/literals/empty_example.js', 2, 2);
+    buildTest('regex/core/literals/mixed_escaped.js', 3, 3); //TODO: Should this be 2
+    buildTest('regex/core/literals/non_alpha.js', 2, 2);
+    buildTest('regex/core/literals/multiple.js', 6, 6);
 
     buildTest('regex/core/escaping/hex.js', 5, 4);
     buildTest('regex/core/escaping/unicode.js', 6, 5);
