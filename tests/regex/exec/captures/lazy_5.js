@@ -1,11 +1,17 @@
 //Test the lastIndex property of the sticky flag
 
 var x = symbolic X initial '';
-var b = /^[a-z]*?(aaa)$/.exec(x);
+var b = /^(a)+?a?$/.exec(x);
 
 if (b != null) {
 	
-	if (!b[1] || b[1] !== 'aaa') {
+	if (x == 'a') {
+		if (b[1] != 'a') {
+			throw 'Unreachable';
+		}
+	}
+
+	if (b[1] == '') {
 		throw 'Unreachable';
 	}
 
