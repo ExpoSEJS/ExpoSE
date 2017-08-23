@@ -4,11 +4,12 @@ var x = symbolic X initial '';
 var b = /^a*?(a)?$/y.exec(x);
 
 if (b != null) {
-	console.log('B1: ' + b[1]);
 	
 	if (b[1] == 'a') {
 		throw 'Reachable';
+	} else if (!b[1]) {
+		throw 'Reachable';
 	}
 
-	throw 'Reachable';
+	throw 'Unreachable';
 }

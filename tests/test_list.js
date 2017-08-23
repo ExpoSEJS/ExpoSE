@@ -109,6 +109,8 @@ function buildTestList() {
     buildTest('regex/exec/captures/related.js', 3, 2);
     buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
 
+    buildTest('regex/exec/captures/lazy_1.js', 3, 2);
+    buildTest('regex/exec/captures/lazy_2.js', 2, 1);
 
     buildTest('regex/exec/greed/anchors.js', 4, 3);
     buildTest('regex/exec/greed/nested.js', 4, 3);
