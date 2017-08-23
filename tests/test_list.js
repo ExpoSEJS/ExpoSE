@@ -54,11 +54,11 @@ function buildTestList() {
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
 
-    buildTest('regex/test/alternatives/simple.js', 4, 4);
-    buildTest('regex/test/alternatives/many.js', 4, 4);
-    buildTest('regex/test/alternatives/words.js', 4, 4);
-    buildTest('regex/test/alternatives/exhaustive_simple.js', 5, 5);
-    buildTest('regex/test/alternatives/multiple_related.js', 7, 7);
+    buildTest('regex/core/alternation/simple.js', 4, 4);
+    buildTest('regex/core/alternation/many.js', 4, 4);
+    buildTest('regex/core/alternation/words.js', 4, 4);
+    buildTest('regex/core/alternation/exhaustive_simple.js', 5, 5);
+    buildTest('regex/core/alternation/multiple_related.js', 7, 7);
 
     buildTest('regex/test/atoms/simple_one.js', 2, 1);
     buildTest('regex/test/atoms/simple_two.js', 2, 1);
@@ -68,14 +68,14 @@ function buildTestList() {
     buildTest('regex/test/atoms/non_alpha.js', 2, 2);
     buildTest('regex/test/atoms/multiple.js', 6, 6);
 
-    buildTest('test/core/escaping/hex.js', 5, 4);
-    buildTest('test/core/escaping/unicode.js', 6, 5);
-    buildTest('test/core/escaping/unicode_mode.js', 6, 5);
-    buildTest('test/core/escaping/ranges.js', 8, 8);
-    buildTest('test/core/escaping/negative_ranges.js', 3, 2);
-    buildTest('test/core/escaping/space_class.js', 8, 7);
-    buildTest('test/core/escaping/word.js', 3, 2);
-    buildTest('test/core/escaping/digit.js', 3, 2);
+    buildTest('regex/core/escaping/hex.js', 5, 4);
+    buildTest('regex/core/escaping/unicode.js', 6, 5);
+    buildTest('regex/core/escaping/unicode_mode.js', 6, 5);
+    buildTest('regex/core/escaping/ranges.js', 8, 8);
+    buildTest('regex/core/escaping/negative_ranges.js', 3, 2);
+    buildTest('regex/core/escaping/space_class.js', 8, 7);
+    buildTest('regex/core/escaping/word.js', 3, 2);
+    buildTest('regex/core/escaping/digit.js', 3, 2);
 
     buildTest('regex/test/star/star.js', 7, 7);
     buildTest('regex/test/star/online.js', 11, 10);
