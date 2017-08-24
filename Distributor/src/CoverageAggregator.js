@@ -88,7 +88,7 @@ class Coverage {
             total += file[field].total;
         }
 
-        return found / total;
+        return total != 0 ? (found / total) : 0;
     }
 
     final() {
