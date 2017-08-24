@@ -143,7 +143,9 @@ function buildTestList() {
 
     //Start of open group tests, these will fail often due to restriction on S
     buildTest('regex/backreferences/open.js', 5, 4);
-    buildTest('regex/backreferences/open.js', 4, 3);
+    buildTest('regex/backreferences/open_two.js', 4, 3);
+    buildTest('regex/backreferences/open_three.js', 4, 3);
+    buildTest('regex/backreferences/open_four.js', 3, 2);
 
     /**
      * End of backreference tests
