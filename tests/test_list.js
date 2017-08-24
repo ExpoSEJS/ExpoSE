@@ -129,15 +129,20 @@ function buildTestList() {
     /**
      * Backreference Tests
      */
-    buildTest('regex/backreferences/closed.js', 2, 2);
+    buildTest('regex/backreferences/closed.js', 2, 1);
+    buildTest('regex/backreferences/closed_limited.js', 2, 1);
+    buildTest('regex/backreferences/closed_range.js', 3, 2);
+    buildTest('regex/backreferences/closed_loop.js', 3, 1); //Extra path from assume
+    buildTest('regex/backreferences/closed_limited.js', 3, 1); //Extra path from assume
+    buildTest('regex/backreferences/closed_loop_quantified.js', 4, 2); // We fail this test because of the restrictions in the paper
 
 
-    buildTest('regex/exec/captures/greedy2.js', 3, 2);
-    buildTest('regex/exec/captures/greedy_capture.js', 3, 2);
-    buildTest('regex/exec/captures/simple.js', 4, 3);
-    buildTest('regex/exec/captures/anchors.js', 4, 3);
-    buildTest('regex/exec/captures/related.js', 3, 2);
-    buildTest('regex/exec/captures/multiple_locked.js', 2, 1);
+    buildTest('regex/captures/greedy2.js', 3, 2);
+    buildTest('regex/captures/greedy_capture.js', 3, 2);
+    buildTest('regex/captures/simple.js', 4, 3);
+    buildTest('regex/captures/anchors.js', 4, 3);
+    buildTest('regex/captures/related.js', 3, 2);
+    buildTest('regex/captures/multiple_locked.js', 2, 1);
 
     buildTest('regex/exec/greed/anchors.js', 4, 3);
     buildTest('regex/exec/greed/nested.js', 4, 3);
@@ -149,6 +154,7 @@ function buildTestList() {
     /**
      * Search application model tests
      */
+
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/ambiguous1.js', 3, 2);
     buildTest('regex/search/ambiguous2.js', 3, 1); //One extra path spawned by assume command

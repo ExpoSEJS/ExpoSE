@@ -2,7 +2,8 @@
 
 var x = symbolic X initial '';
 
-if (/^(.)\1$/.test(x)) {
+if (/^(a)\1(a)\2$/.test(x)) {
 	if (x[0] != x[1]) { throw 'Unreachable'; }
+	if (x[2] != x[3]) { throw 'Unreachable'; }
 	throw 'Reachable';
 }
