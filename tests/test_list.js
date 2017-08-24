@@ -174,8 +174,8 @@ function buildTestList() {
      */
 
      buildTest('regex/replace/single/single_replace.js', 5, 3);
-     buildTest('regex/replace/single/replace_2.js', 3, 2);
-     buildTest('regex/replace/single/replace_3.js', 4, 3);
+     buildTest('regex/replace/single/replace_2.js', 4, 3);
+     buildTest('regex/replace/single/replace_3.js', 5, 4);
 
      /**
       * Split application model tests
