@@ -149,6 +149,7 @@ function buildTestList() {
 
     buildTest('regex/backreferences/open_unlocked.js', 4, 3);
     buildTest('regex/backreferences/open_unlocked_2.js', 4, 3);
+    buildTest('regex/backreferences/open_unlocked_2.js', 5, 4);
 
     /**
      * End of backreference tests

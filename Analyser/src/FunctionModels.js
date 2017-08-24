@@ -90,7 +90,7 @@ function BuildModels() {
 
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
             let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
-            return [new Z3.Query(query.exprs.slice(0).concat([not]), [NotMatch, CheckFixed])];
+            return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
         });
 
         let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
@@ -108,6 +108,7 @@ function BuildModels() {
                 return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
             } else {
                 Log.log('WARN: Broken regex detected ' + regex.ast.toString() + ' vs ' + real);
+                Log.log('WARN: No Highly Specific Refinements');
                 return [];
             }
         });
