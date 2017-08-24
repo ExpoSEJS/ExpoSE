@@ -3,6 +3,8 @@
 var x = symbolic X initial '';
 var b = /(a|b)/g;
 
+assume x.length < 5;
+
 if (x != 'Test' && x.replace(b, 'Test') == 'Test') {
 	
 	//In a global replace all instances should go

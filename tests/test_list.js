@@ -170,6 +170,14 @@ function buildTestList() {
     //buildTest('regex/match/non_sticky.js', 3, 0);
 
     /**
+     * Replace application model tests
+     */
+
+     buildTest('regex/replace/single/single_replace.js', 5, 3);
+     buildTest('regex/replace/single/replace_2.js', 3, 2);
+     buildTest('regex/replace/single/replace_3.js', 4, 3);
+
+    /**
      * Search application model tests
      */
 

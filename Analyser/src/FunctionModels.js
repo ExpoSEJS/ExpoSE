@@ -162,17 +162,21 @@ function BuildModels() {
 
         let string_s = this.state.asSymbolic(string);
 
-        if (result) {
+        if (this.state.getConcrete(in_regex)) {
+
+            let rewrittenResult = [];
 
             if (Config.capturesEnabled) {
-                result = result.map((current_c, idx) => {
+                rewrittenResult = result.map((current_c, idx) => {
                     //TODO: This is really nasty, current_c should be a
                     return new ConcolicValue(current_c === undefined ? '' : current_c, regex.captures[idx]);
                 });
             }
 
-            result.index = new ConcolicValue(result.index, regex.startIndex);
-            result.input = string;
+            rewrittenResult.index = new ConcolicValue(result.index, regex.startIndex);
+            rewrittenResult.input = string;
+
+            result = rewrittenResult;
         }
 
         return result;
@@ -236,7 +240,7 @@ function BuildModels() {
     models[String.prototype.substr] = symbolicHook(
         (c, _f, base, args, _) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
         (c, _f, base, args, result) => {
-            Log.log('WARNING: Symbolic substring support new and buggy');
+            Log.log('WARNING: Symbolic substring support new and buggy ' + JSON.stringify(args));
 
             let target = c.state.asSymbolic(base);
             let start_off = c.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
@@ -300,17 +304,7 @@ function BuildModels() {
     models[String.prototype.replace] = symbolicHookRe(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
         (c, _f, base, args, result) => {
-            Log.log('TODO: Awful String.prototype.replace model will reduce search space');
-
-            let test = c.state.getConcrete(base) === result;
-
-            Log.logMid(`Replace test = ${test}`);
-
-            let regex = Z3.Regex(c.ctx, args[0]);
-
-            let baseInRe = c.ctx.mkSeqInRe(c.state.getSymbolic(base), regex.ast);
-            test ? c.state.pushNot(baseInRe) : c.state.pushCondition(baseInRe);
-            return new ConcolicValue(result, c.state.getSymbolic(base));
+            return c.state.getConcrete(base).secret_replace.apply(base, args);
         }
     );
 
