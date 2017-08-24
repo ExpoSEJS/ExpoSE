@@ -177,6 +177,12 @@ function buildTestList() {
      buildTest('regex/replace/single/replace_2.js', 3, 2);
      buildTest('regex/replace/single/replace_3.js', 4, 3);
 
+     /**
+      * Split application model tests
+      */
+
+     buildTest('regex/split/split_1', 8, 2);
+
     /**
      * Search application model tests
      */

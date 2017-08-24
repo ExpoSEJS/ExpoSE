@@ -308,6 +308,13 @@ function BuildModels() {
         }
     );
 
+    models[String.prototype.split] = symbolicHookRe(
+        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
+        (c, _f, base, args, result) => {
+            return c.state.getConcrete(base).secret_split.apply(base, args);
+        }
+    );
+
     models[String.prototype.trim] = symbolicHook(
         (c, _f, base, _a, _r) => c.state.isSymbolic(base),
         (c, _f, base, _a, result) => {
