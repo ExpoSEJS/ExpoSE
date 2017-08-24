@@ -2,17 +2,21 @@
 
 var x = symbolic X initial '';
 
-if (/^((.)\2)+$/.test(x)) {
+if (/^(([a-z])\2)+$/.test(x)) {
+
+	if (x == '11') {
+		throw 'Unreachable';
+	}
+
+	if (x == 'ab') {
+		throw 'Unreachable';
+	}
 
 	if (x == 'aa') {
 		throw 'Reachable';
 	}
 
-	if (x == 'bb') {
-		throw 'Reachable';
-	}
-
-	if (x == 'cc') {
+	if (x == 'zz') {
 		throw 'Reachable';
 	}
 

@@ -141,6 +141,13 @@ function buildTestList() {
     buildTest('regex/backreferences/closed_loop_complex.js', 3, 2);
     buildTest('regex/backreferences/closed_loop_quantified.js', 4, 2); // We fail this test because of the restrictions in the paper
 
+    //Start of open group tests, these will fail often due to restriction on S
+    buildTest('regex/backreferences/open.js', 5, 4);
+    buildTest('regex/backreferences/open.js', 4, 3);
+
+    /**
+     * End of backreference tests
+     */
 
     buildTest('regex/captures/greedy2.js', 3, 2);
     buildTest('regex/captures/greedy_capture.js', 3, 2);
