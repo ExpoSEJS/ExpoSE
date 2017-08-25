@@ -185,18 +185,54 @@ function BuildModels() {
         return result;
     }
 
-    function rewriteTestSticky(real, string, result) {
+    function substringHelper(c, _f, base, args, result) {
+        Log.log('WARNING: Symbolic substring support new and buggy ' + JSON.stringify(args));
+
+        let target = c.state.asSymbolic(base);
+        let start_off = c.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
+
+        let len;
+
+        if (args[1]) {
+            len = c.state.asSymbolic(args[1]);
+            len = c.ctx.mkRealToInt(len);
+        } else {
+            len = c.ctx.mkSub(c.ctx.mkSeqLength(target), start_off);
+        }
+
+        return new ConcolicValue(result, c.ctx.mkSeqSubstr(target, start_off, len));
+    }
+
+    function rewriteTestSticky(real, target, result) {
         
         if (real.sticky || real.global) {
 
+            let originLastindex = real.lastIndex;
+            real.lastIndex = this.state.getConcrete(real.lastIndex);
+            let realResult = real.exec(this.state.getConcrete(target));
+
             if (real.lastIndex != 0) {
-                string = string.substr(real.lastIndex, string.length);
+                let part_c = this.state.getConcrete(target);
+                let part_s = this.state.getSymbolic(target);
+
+
+                console.log('H of target ' + JSON.stringify(part_c.length));
+
+                let realLength = part_c.substring(this.state.getConcrete(real.lastIndex), part_c.length);
+
+                target = substringHelper.call(this,
+                    this, null, target,
+                    [real.lastIndex, new ConcolicValue(part_c.length, this.ctx.mkSeqLength(part_s))],
+                    realLength
+                );
             }
 
-            let matchResult = RegexMatch.call(this, real, string, result);
+            let matchResult = RegexMatch.call(this, real, target, realResult);
+
+            console.log('MatchResult: ' + matchResult);
 
             if (matchResult) {
-                real.lastIndex = matchResult.index + matchResult[0].length;
+                real.lastIndex = originLastindex + matchResult.index + this.state.getConcrete(matchResult[0]).length;
                 return true;
             } else {
                 return false;
@@ -264,23 +300,7 @@ function BuildModels() {
 
     models[String.prototype.substr] = symbolicHook(
         (c, _f, base, args, _) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
-        (c, _f, base, args, result) => {
-            Log.log('WARNING: Symbolic substring support new and buggy ' + JSON.stringify(args));
-
-            let target = c.state.asSymbolic(base);
-            let start_off = c.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
-
-            let len;
-
-            if (args[1]) {
-                len = c.state.asSymbolic(args[1]);
-                len = c.ctx.mkRealToInt(len);
-            } else {
-                len = c.ctx.mkSub(c.ctx.mkSeqLength(target), start_off);
-            }
-
-            return new ConcolicValue(result, c.ctx.mkSeqSubstr(target, start_off, len));
-        }
+        substringHelper
     );
 
     models[String.prototype.substring] = models[String.prototype.substr];

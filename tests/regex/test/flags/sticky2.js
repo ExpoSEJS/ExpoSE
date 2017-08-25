@@ -2,7 +2,7 @@
 var x = symbolic X initial '';
 var re = /abc/y;
 
-assume x.length < 4;
+assume x.length < 8;
 
 if (re.test(x)) {
 	

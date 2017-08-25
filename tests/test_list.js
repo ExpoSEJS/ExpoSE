@@ -214,6 +214,11 @@ function buildTestList() {
      buildTest('regex/split/split_hard', 8, 2);
 
     /**
+     * Sticky model tests
+     */
+     buildTest('regex/test/flags/sticky', 3, 1);
+
+    /**
      * Search application model tests
      */
 
