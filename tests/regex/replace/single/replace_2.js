@@ -5,6 +5,8 @@ var b = /^(a|b)$/;
 
 x = x.replace(b, 'hello');
 
+console.log('X is ' + x);
+
 if (x == 'hello') {
 	throw 'Reachable';
 }
