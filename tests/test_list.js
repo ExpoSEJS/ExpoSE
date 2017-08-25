@@ -97,6 +97,10 @@ function buildTestList() {
     buildTest('regex/core/plus/online.js', 11, 10);
     buildTest('regex/core/plus/multiple.js', 4, 4);
 
+    buildTest('regex/core/loops/fixed_loop.js', 3, 2);
+    buildTest('regex/core/loops/between_loop.js', 9, 8);
+    buildTest('regex/core/loops/minimum_loop.js', 6, 5);
+
     buildTest('regex/core/optional/base.js', 13, 12);
     buildTest('regex/core/optional/combined.js', 9, 8);
     buildTest('regex/core/optional/no_greed.js', 13, 12);
@@ -124,7 +128,15 @@ function buildTestList() {
     /**
      * Assertion Tests
      */
-    buildTest('regex/test/assertions/arbitrary_ahead.js', 3, 3);
+    buildTest('regex/assertions/ahead.js', 1, 0);
+    buildTest('regex/assertions/ahead_2.js', 2, 1);
+    buildTest('regex/assertions/ahead_3.js', 2, 1);
+    buildTest('regex/assertions/ahead_4.js', 4, 3);
+    buildTest('regex/assertions/ahead_5.js', 4, 3);
+    buildTest('regex/assertions/ahead_6.js', 2, 1);
+    buildTest('regex/assertions/ahead_7.js', 2, 1);
+    buildTest('regex/assertions/ahead_8.js', 2, 1);
+    buildTest('regex/assertions/ahead_9.js', 2, 1);
 
     /**
      * Backreference Tests

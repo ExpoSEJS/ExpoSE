@@ -72,7 +72,10 @@ function BuildModels() {
 
         if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
             Log.log('Refinements disabled - potential accuracy loss');
-            return [];
+            return {
+                trueCheck: [],
+                falseCheck: []
+            };
         }
         
         Log.log('Refinements Enabled - Adding checks');
