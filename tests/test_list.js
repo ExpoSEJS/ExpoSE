@@ -167,7 +167,21 @@ function buildTestList() {
     buildTest('regex/exec/greed/optionals.js', 3, 2);
     buildTest('regex/exec/greed/related.js', 3, 2);
 
-    //buildTest('regex/match/non_sticky.js', 3, 0);
+    /**
+     * Match Tests
+     */
+
+    buildTest('regex/match/captures/greedy2.js', 3, 2);
+    buildTest('regex/match/captures/greedy_capture.js', 3, 2);
+    buildTest('regex/match/captures/simple.js', 4, 3);
+    buildTest('regex/match/captures/anchors.js', 4, 3);
+    buildTest('regex/match/captures/related.js', 3, 2);
+    buildTest('regex/match/captures/multiple_locked.js', 2, 1);
+
+    buildTest('regex/match/greed/anchors.js', 4, 3);
+    buildTest('regex/match/greed/nested.js', 4, 3);
+    buildTest('regex/match/greed/optionals.js', 3, 2);
+    buildTest('regex/match/greed/related.js', 3, 2);
 
     /**
      * Replace application model tests
@@ -199,6 +213,8 @@ function buildTestList() {
     buildTest('regex/search/alt.js', 3, 3);
     buildTest('regex/search/not_at_start.js', 3, 3);
     buildTest('regex/search/test_at_start.js', 5, 4);
+
+
 
     /**
      * End of regular expression feature tests
