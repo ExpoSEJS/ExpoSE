@@ -135,6 +135,8 @@ function buildTestList() {
     buildTest('regex/test/assertions/ahead_5.js', 4, 3);
     buildTest('regex/test/assertions/ahead_6.js', 2, 1);
     buildTest('regex/test/assertions/ahead_7.js', 2, 1);
+    buildTest('regex/test/assertions/ahead_8.js', 2, 1);
+    buildTest('regex/test/assertions/ahead_9.js', 2, 1);
 
     /**
      * Backreference Tests
