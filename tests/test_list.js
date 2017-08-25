@@ -128,15 +128,15 @@ function buildTestList() {
     /**
      * Assertion Tests
      */
-    buildTest('regex/test/assertions/ahead.js', 1, 0);
-    buildTest('regex/test/assertions/ahead_2.js', 2, 1);
-    buildTest('regex/test/assertions/ahead_3.js', 2, 1);
-    buildTest('regex/test/assertions/ahead_4.js', 4, 3);
-    buildTest('regex/test/assertions/ahead_5.js', 4, 3);
-    buildTest('regex/test/assertions/ahead_6.js', 2, 1);
-    buildTest('regex/test/assertions/ahead_7.js', 2, 1);
-    buildTest('regex/test/assertions/ahead_8.js', 2, 1);
-    buildTest('regex/test/assertions/ahead_9.js', 2, 1);
+    buildTest('regex/assertions/ahead.js', 1, 0);
+    buildTest('regex/assertions/ahead_2.js', 2, 1);
+    buildTest('regex/assertions/ahead_3.js', 2, 1);
+    buildTest('regex/assertions/ahead_4.js', 4, 3);
+    buildTest('regex/assertions/ahead_5.js', 4, 3);
+    buildTest('regex/assertions/ahead_6.js', 2, 1);
+    buildTest('regex/assertions/ahead_7.js', 2, 1);
+    buildTest('regex/assertions/ahead_8.js', 2, 1);
+    buildTest('regex/assertions/ahead_9.js', 2, 1);
 
     /**
      * Backreference Tests
