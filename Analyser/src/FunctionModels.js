@@ -185,6 +185,28 @@ function BuildModels() {
         return result;
     }
 
+    function rewriteTestSticky(real, string, result) {
+        
+        if (real.sticky || real.global) {
+
+            if (real.lastIndex != 0) {
+                string = string.substr(real.lastIndex, string.length);
+            }
+
+            let matchResult = RegexMatch.call(this, real, string, result);
+
+            if (matchResult) {
+                real.lastIndex = matchResult.index + matchResult[0].length;
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+            return RegexTest.call(this, Z3.Regex(this.ctx, real), real, string, false);
+        }
+    }
+
     /**
      * Symbolic hook is a helper function which builds concrete results and then,
      * if condition() -> true executes a symbolic helper specified by hook
@@ -300,7 +322,7 @@ function BuildModels() {
 
     models[RegExp.prototype.test] = symbolicHookRe(
         (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => RegexTest.call(c, Z3.Regex(c.ctx, base), base, c._concretizeToString(args[0]))
+        (c, _f, base, args, result) => rewriteTestSticky.call(c, base, c._concretizeToString(args[0]), result)
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.
