@@ -97,6 +97,10 @@ function buildTestList() {
     buildTest('regex/core/plus/online.js', 11, 10);
     buildTest('regex/core/plus/multiple.js', 4, 4);
 
+    buildTest('regex/core/loop/fixed_loop.js', 3, 2);
+    buildTest('regex/core/loop/between_loop.js', 9, 8);
+    buildTest('regex/core/loop/minimum_loop.js', 6, 5);
+
     buildTest('regex/core/optional/base.js', 13, 12);
     buildTest('regex/core/optional/combined.js', 9, 8);
     buildTest('regex/core/optional/no_greed.js', 13, 12);
