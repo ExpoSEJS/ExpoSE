@@ -203,36 +203,40 @@ function BuildModels() {
         return new ConcolicValue(result, c.ctx.mkSeqSubstr(target, start_off, len));
     }
 
+    //TODO - Ouch
     function rewriteTestSticky(real, target, result) {
         
         if (real.sticky || real.global) {
 
-            let originLastindex = real.lastIndex;
-            real.lastIndex = this.state.getConcrete(real.lastIndex);
+            let lastIndex = real.lastIndex;
+            let lastIndex_s = this.state.asSymbolic(real.lastIndex);
+            let lastIndex_c = this.state.getConcrete(real.lastIndex);
+            real.lastIndex = lastIndex_c;
+
             let realResult = real.exec(this.state.getConcrete(target));
 
-            if (real.lastIndex != 0) {
+            if (lastIndex_c) {
                 let part_c = this.state.getConcrete(target);
                 let part_s = this.state.getSymbolic(target);
 
-
-                console.log('H of target ' + JSON.stringify(part_c.length));
-
-                let realLength = part_c.substring(this.state.getConcrete(real.lastIndex), part_c.length);
+                let real_cut = part_c.substring(lastIndex_c, part_c.length);
 
                 target = substringHelper.call(this,
                     this, null, target,
-                    [real.lastIndex, new ConcolicValue(part_c.length, this.ctx.mkSeqLength(part_s))],
-                    realLength
+                    [lastIndex, new ConcolicValue(part_c.length, this.ctx.mkSeqLength(part_s))],
+                    real_cut
                 );
             }
 
             let matchResult = RegexMatch.call(this, real, target, realResult);
 
-            console.log('MatchResult: ' + matchResult);
-
             if (matchResult) {
-                real.lastIndex = originLastindex + matchResult.index + this.state.getConcrete(matchResult[0]).length;
+                console.log('LASTINDEX: ' + lastIndex_s + ' ' + matchResult.index);
+                let firstAdd = new ConcolicValue(lastIndex_c + this.state.getConcrete(matchResult.index), this.state.symbolicBinary('+', lastIndex_c, lastIndex_s, this.state.getConcrete(matchResult.index), this.state.asSymbolic(matchResult.index)));
+                let secondAdd = new ConcolicValue(this.state.getConcrete(firstAdd), this.state.getConcrete(matchResult[0]).length, 
+                    this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.ctx.mkSeqLength(this.state.asSymbolic(matchResult[0]))));
+                //TODO: This should be symbolic
+                real.lastIndex = secondAdd;
                 return true;
             } else {
                 return false;
