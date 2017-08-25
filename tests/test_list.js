@@ -128,7 +128,12 @@ function buildTestList() {
     /**
      * Assertion Tests
      */
-    buildTest('regex/test/assertions/arbitrary_ahead.js', 3, 3);
+    buildTest('regex/test/assertions/ahead.js', 1, 0);
+    buildTest('regex/test/assertions/ahead_2.js', 2, 1);
+    buildTest('regex/test/assertions/ahead_3.js', 2, 1);
+    buildTest('regex/test/assertions/ahead_4.js', 4, 3);
+    buildTest('regex/test/assertions/ahead_5.js', 4, 3);
+    buildTest('regex/test/assertions/ahead_6.js', 2, 1);
 
     /**
      * Backreference Tests
