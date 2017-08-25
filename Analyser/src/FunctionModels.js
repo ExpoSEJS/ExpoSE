@@ -243,7 +243,7 @@ function BuildModels() {
             }
 
         } else {
-            return RegexTest.call(this, Z3.Regex(this.ctx, real), real, string, false);
+            return RegexTest.call(this, Z3.Regex(this.ctx, real), real, target, false);
         }
     }
 
