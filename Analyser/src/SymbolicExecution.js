@@ -14,7 +14,6 @@ import ObjectHelper from './Utilities/ObjectHelper';
 import SymbolicState from './SymbolicState';
 import SymbolicHelper from './SymbolicHelper';
 import Log from './Utilities/Log';
-import Coverage from './Coverage';
 import ArrayHelper from './Utilities/ArrayHelper';
 import NotAnErrorException from './NotAnErrorException';
 import {isNative} from './Utilities/IsNative';
@@ -32,7 +31,6 @@ class SymbolicExecution {
 
     constructor(sandbox, initialInput, exitFn) {
         this._sandbox = sandbox;
-        this._coverage = new Coverage(this._sandbox);
 
         this._setupSpecialFunctions();
         this._setupState(initialInput);
@@ -44,13 +42,13 @@ class SymbolicExecution {
         process.on('uncaughtException', this._uncaughtException.bind(this));
 
         //Bind the exit handler to the exit callback supplied
-        process.on('exit', exitFn.bind(null, this.state, this._coverage));
+        process.on('exit', exitFn.bind(null, this.state, this.state.coverage));
     }
 
     _setupState(input) {
         this.ctx = new Z3.Context();
         this.slv = new Z3.Solver(this.ctx, DEFAULT_CONTEXT_TIMEOUT);
-        this.state = new SymbolicState(this.ctx, this.slv, input);
+        this.state = new SymbolicState(this.ctx, this.slv, input, this._sandbox);
     }
 
     _generateErrorOutput(e) {
@@ -194,7 +192,7 @@ class SymbolicExecution {
 
     //Called after a function completes execution
     invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
 
         Log.logHigh('Exit function (' + ObjectHelper.asString(f) + ') near ' + this._location(iid));
 
@@ -220,14 +218,14 @@ class SymbolicExecution {
     }
 
     literal(iid, val, hasGetterSetter) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         return {
             result: val
         };
     }
 
     forinObject(iid, val) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         return {
             result: val
         };
@@ -238,11 +236,11 @@ class SymbolicExecution {
     }
 
     endExpression(iid) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
     }
 
     declare(iid, name, val, isArgument, argumentIndex, isCatchParam) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         Log.logHigh('Declare ' + name + ' at ' + this._location(iid));
         return {
             result: val
@@ -258,7 +256,7 @@ class SymbolicExecution {
     }
 
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
 
         let result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
@@ -296,14 +294,14 @@ class SymbolicExecution {
     }
 
     putField(iid, base, offset, val, isComputed, isOpAssign) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         return {
             result: val
         };
     }
 
     read(iid, name, val, isGlobal, isScriptLocal) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         Log.logHigh('Read ' + name + ' at ' + this._location(iid));
 
         WrappedValue.reduceAndDiscard(val,
@@ -316,7 +314,7 @@ class SymbolicExecution {
     }
 
     write(iid, name, val, lhs, isGlobal, isScriptLocal) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         Log.logHigh('Write ' + name + ' at ' + this._location(iid));
 
         WrappedValue.reduceAndDiscard(val,
@@ -329,7 +327,7 @@ class SymbolicExecution {
     }
 
     _return(iid, val) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
 
         WrappedValue.reduceAndDiscard(val,
             annotation => annotation.isReturned(val).discard
@@ -341,7 +339,7 @@ class SymbolicExecution {
     }
 
     _throw(iid, val) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
 
         return {
             result: val
@@ -349,17 +347,17 @@ class SymbolicExecution {
     }
 
     _with(iid, val) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         return {result: val};
     }
 
     functionEnter(iid, f, dis, args) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         Log.logHigh('Entering ' + ObjectHelper.asString(f) + ' ' + this._location(iid));
     }
 
     functionExit(iid, returnVal, wrappedExceptionVal) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
 
         Log.logHigh('Exiting function ' + this._location(iid));
 
@@ -383,7 +381,7 @@ class SymbolicExecution {
     }
 
     scriptEnter(iid, instrumentedFileName, originalFileName) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
 
         let enterString = "====== ENTERING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
 
@@ -397,7 +395,7 @@ class SymbolicExecution {
     }
 
     scriptExit(iid, wrappedExceptionVal) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         let originalFileName = this._removeScript();
         let exitString = "====== EXITING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
 
@@ -424,7 +422,7 @@ class SymbolicExecution {
     }
 
     binary(iid, op, left, right, result_c, isOpAssign, isSwitchCaseComparison, isComputed) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         Log.logHigh('Op ' + op + ' left ' + ObjectHelper.asString(left) + ' right ' + ObjectHelper.asString(right) + ' result_c ' + ObjectHelper.asString(result_c) + ' at ' + this._location(iid));
 
         if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
@@ -497,7 +495,7 @@ class SymbolicExecution {
     }
 
     unary(iid, op, left, result_c) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
 
         Log.logHigh('Unary ' + op + ' left ' + ObjectHelper.asString(left) + ' result ' + ObjectHelper.asString(result_c));
 
@@ -555,7 +553,7 @@ class SymbolicExecution {
     }
 
     conditional(iid, result) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
 
         if (this.state.isSymbolic(result)) {
             Log.logMid("Evaluating symbolic condition " + this.state.getSymbolic(result) + " at " + this._location(iid));
@@ -566,6 +564,7 @@ class SymbolicExecution {
             } else {
                 Log.logMid('Concretized ' + result + ' because do not know how to coerce');
             }
+
         } else {
             Log.logHigh("Concrete test at " + this._location(iid));
         }
@@ -596,7 +595,7 @@ class SymbolicExecution {
     }
 
     runInstrumentedFunctionBody(iid) {
-        this._coverage.touch(iid);
+        this.state.coverage.touch(iid);
         return false;
     }
 

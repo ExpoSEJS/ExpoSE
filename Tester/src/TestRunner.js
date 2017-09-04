@@ -9,6 +9,10 @@ import Runner from './Runner';
 process.title = 'ExpoSE Test Runner';
 
 function getTarget() {
+	return process.argv[process.argv.length - 2];
+}
+
+function getFn() {
 	return process.argv[process.argv.length - 1];
 }
 
@@ -24,6 +28,7 @@ function getArgument(name, dResult) {
 
 if (process.argv.length >= 3) {
 	let target = getTarget();
+	let fn = getFn();
     
     console.log('Test runner searching ' + target);
 
@@ -33,7 +38,7 @@ if (process.argv.length >= 3) {
 
     console.log('Launching with max concurrent of ' + concurrent);
 
-    new Runner(concurrent).done(errors => process.exit(errors)).start(target);
+    new Runner(concurrent).done(errors => process.exit(errors)).start(target, fn);
 } else {
     console.log('Wrong number of arguments');
     console.log('Usage ./TestRunner --concurrent XX Directory');

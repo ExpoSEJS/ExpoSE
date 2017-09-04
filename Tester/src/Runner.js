@@ -12,10 +12,10 @@ class Runner {
         this._maxConcurrent = maxConcurrent;
     }
 
-    start(dir) {
+    start(dir, fn) {
         this._errors = 0;
         this._running = 0;
-        this.walker = new Walker(dir).done(files => this.startTesting(files)).start();
+        this.walker = new Walker(dir, fn).done(files => this.startTesting(files)).start();
         return this;
     }
 

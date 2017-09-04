@@ -6,6 +6,6 @@ if [ $? -ne 0 ]; then
 fi
 
 node --version
-node ./Tester/bin/TestRunner.js ./tests/
+node ./Tester/bin/TestRunner.js ./tests/ test_list
 
 exit $?

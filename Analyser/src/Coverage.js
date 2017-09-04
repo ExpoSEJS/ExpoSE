@@ -4,6 +4,8 @@
 
 import iidToLocation from './Utilities/iidToLocation';
 
+const LAST_IID = 'LAST_IID';
+
 class Coverage {
 
     /**
@@ -16,6 +18,7 @@ class Coverage {
         this._sandbox = sandbox;
         this._branches = [];
         this._branchFilenameMap = [];
+        this._lastIid = 0; //Store the last IID touched for search strategizer
     }
 
     _pushLines(set, map, sid) {
@@ -31,6 +34,7 @@ class Coverage {
 
     end() {
         let ret = {};
+
         for (let i = 0; i < this._branches.length; i++) {
             
             //SID are indexed from 1 not 0
@@ -71,6 +75,8 @@ class Coverage {
             }
         }
 
+        ret[LAST_IID] = this._lastIid;
+
         return ret;
     }
 
@@ -91,6 +97,11 @@ class Coverage {
 
     touch(iid) {
         this.getBranchInfo()[iid] = 1;
+        this._lastIid = iid;
+    }
+
+    last() {
+        return this._lastIid || 0;
     }
 
     _branchToLines(sid, branch){

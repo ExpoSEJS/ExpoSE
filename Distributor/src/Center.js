@@ -3,6 +3,7 @@
 "use strict";
 
 import Spawn from './Spawn';
+import Strategy from './Strategy';
 import Coverage from './CoverageAggregator';
 
 class Center {
@@ -10,6 +11,7 @@ class Center {
     constructor(options) {
         this.cbs = [];
         this.options = options;
+        this._strategy = null;
     }
 
     start(file) {
@@ -35,7 +37,9 @@ class Center {
     }
 
     _startTesting(files) {
-        this.files = files;
+        this._strategy = new Strategy();
+        files.forEach(i => this._strategy.add(i));
+
         this._requeue();
         this._printStatus();
     }
@@ -44,10 +48,10 @@ class Center {
      * If there is a slot & under max paths start an additional test
      */
     _startNext() {
-        if (this.files.length) {
+        if (this._strategy.length()) {
             //TODO: Have different strategies, or
             //maybe different strategies running concurrently
-            this._testFile(this.files.shift());
+            this._testFile(this._strategy.next());
         }
     }
 
@@ -62,7 +66,7 @@ class Center {
      * Queue as many tests as possible
      */
     _requeue() {
-        while (this.files.length && this._canQueue()) {
+        while (this._strategy.length() && this._canQueue()) {
             this._startNext();
         }
     }
@@ -81,7 +85,7 @@ class Center {
     }
 
     _printStatus() {
-        process.stdout.write('\r*** [' + this._done.length + ' done /' + this.files.length +' queued / ' + this._running + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
+        process.stdout.write('\r*** [' + this._done.length + ' done /' + this._strategy.length() +' queued / ' + this._running + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
     }
 
     _finishedTesting() {
@@ -92,14 +96,14 @@ class Center {
         return this._lastid++;
     }
 
-    _expandAlternatives(file, alternatives) {
+    _expandAlternatives(file, alternatives, testCoverage) {
         alternatives.forEach(alt => {
-            this.files.push({
+            this._strategy.add({
                 id: this._nextID(),
                 path: file.path,
                 input: alt.input,
                 pc: alt.pc
-            });
+            }, alt, testCoverage);
         });
     }
 
@@ -136,7 +140,7 @@ class Center {
 
         if (finalOut) {
             this._pushDone(test, finalOut.input, finalOut.pc, finalOut.alternatives, errors.concat(finalOut.errors));
-            this._expandAlternatives(test.file, finalOut.alternatives);
+            this._expandAlternatives(test.file, finalOut.alternatives, coverage);
         } else {
             this._pushDone(test, test.file.input, test.file.pc, [], errors.concat([{ error: 'Error extracting final output - a fatal error must have occured' }]));
         }

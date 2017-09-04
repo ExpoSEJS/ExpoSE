@@ -2,6 +2,8 @@
 
 "use strict";
 
+const LAST_IID = 'LAST_IID';
+
 class Coverage {
 
     constructor() {
@@ -43,11 +45,13 @@ class Coverage {
        */
     add(coverage) {
         for (let i in coverage) {
-            let file = this._getFile(i);
-            this._addSMap(file, coverage[i].smap);
-            this._mergeBranches(file, coverage[i].branches);
-            this._mergeLineNumbers(file.lines.all, coverage[i].lines.all);
-            this._mergeLineNumbers(file.lines.touched, coverage[i].lines.touched);
+            if (i != LAST_IID) {
+                let file = this._getFile(i);
+                this._addSMap(file, coverage[i].smap);
+                this._mergeBranches(file, coverage[i].branches);
+                this._mergeLineNumbers(file.lines.all, coverage[i].lines.all);
+                this._mergeLineNumbers(file.lines.touched, coverage[i].lines.touched);
+            }
         }
     }
 

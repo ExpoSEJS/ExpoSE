@@ -231,11 +231,9 @@ function BuildModels() {
             let matchResult = RegexMatch.call(this, real, target, realResult);
 
             if (matchResult) {
-                console.log('LASTINDEX: ' + lastIndex_s + ' ' + matchResult.index);
                 let firstAdd = new ConcolicValue(lastIndex_c + this.state.getConcrete(matchResult.index), this.state.symbolicBinary('+', lastIndex_c, lastIndex_s, this.state.getConcrete(matchResult.index), this.state.asSymbolic(matchResult.index)));
                 let secondAdd = new ConcolicValue(this.state.getConcrete(firstAdd), this.state.getConcrete(matchResult[0]).length, 
                     this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.ctx.mkSeqLength(this.state.asSymbolic(matchResult[0]))));
-                //TODO: This should be symbolic
                 real.lastIndex = secondAdd;
                 return true;
             } else {

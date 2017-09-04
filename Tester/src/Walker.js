@@ -6,13 +6,14 @@ import walk from 'walk';
 import path from 'path';
 
 class Walker {
-    constructor(dir) {
+    constructor(dir, fn) {
         this.cbs = [];
         this.dir = dir;
+        this.fn = fn;
     }
 
     start() {
-        let absTestFilePath = path.resolve(this.dir + 'test_list');
+        let absTestFilePath = path.resolve(this.dir + this.fn);
         let fileList = require(absTestFilePath);
         
         this.files = fileList.map(f => ({

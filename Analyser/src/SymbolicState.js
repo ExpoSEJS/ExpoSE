@@ -5,12 +5,13 @@
 import Z3 from 'z3javascript';
 import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
+import Coverage from './Coverage';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 
-Z3.Query.MAX_REFINEMENTS = 100;
+Z3.Query.MAX_REFINEMENTS = 5;
 
 class SymbolicState {
-    constructor(context, solver, input) {
+    constructor(context, solver, input, sandbox) {
 
         this.ctx = context;
         this.slv = solver;
@@ -19,6 +20,8 @@ class SymbolicState {
         this.boolSort = this.ctx.mkBoolSort();
         this.stringSort = this.ctx.mkStringSort();
         this.realSort = this.ctx.mkRealSort();
+
+        this.coverage = new Coverage(sandbox);
 
         this.inputSymbols = {};
 
@@ -37,7 +40,8 @@ class SymbolicState {
     pushCondition(cnd, binder) {
     	this.pathCondition.push({
             ast: cnd,
-            binder: binder || false
+            binder: binder || false,
+            forkIid: this.coverage.last()
         });
     }
 
@@ -107,7 +111,8 @@ class SymbolicState {
             
             childInputs.push({
                 input: solution,
-                pc: this._stringPC(newPC)
+                pc: this._stringPC(newPC),
+                forkIid: this.pathCondition[i].forkIid
             });
            
             Log.logMid("Satisfiable. Remembering new input: " + ObjectHelper.asString(solution));
