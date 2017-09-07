@@ -6,6 +6,5 @@ source ./scripts/expose_env
 #Generate the real path to script if it is relative
 TARGET_REAL_PATH="$(./scripts/abspath $1)"
 
-export HARNESS_TARGET=$TARGET_REAL_PATH
 #Invoke analyser
 (node Distributor/bin/Distributor.js $TARGET_REAL_PATH ${@:2})
