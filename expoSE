@@ -1,13 +1,5 @@
 #!/bin/bash
 
-#If command is setup run setup script and exit
-if [ "$1" == "setup" ]; then
-	./scripts/setup/setup
-	exit $?
-fi
-
-./scripts/setup_if_needed
-
 #Store the current working directory to return after calculating abspath
 ORIGIN_PATH="$(pwd)"
 
@@ -16,6 +8,14 @@ cd "$(dirname "$2")"
 TARGET_REAL_PATH="$(printf "%s/%s\n" "$(pwd)" "$(basename "$2")")"
 
 cd $ORIGIN_PATH
+
+#If command is setup run setup script and exit
+if [ "$1" == "setup" ]; then
+	./scripts/setup/setup
+	exit $?
+fi
+
+./scripts/setup_if_needed
 
 #cd to ExpoSE directory
 cd "$(dirname "${BASH_SOURCE[0]}")"
