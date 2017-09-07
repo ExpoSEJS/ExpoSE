@@ -120,9 +120,9 @@ function buildTestList() {
     /**
      * Anchors Tests
      */
-    buildTest('regex/anchors/left.js', 3, 3);
-    buildTest('regex/anchors/right.js', 3, 3); //TODO: An extra query is generated
-    buildTest('regex/anchors/none.js', 4, 4);
+    //buildTest('regex/anchors/left.js', 3, 3);
+    //buildTest('regex/anchors/right.js', 3, 3); //TODO: An extra query is generated
+    //buildTest('regex/anchors/none.js', 4, 4);
     buildTest('regex/anchors/both.js', 2, 1);
 
     /**
@@ -147,7 +147,7 @@ function buildTestList() {
     buildTest('regex/backreferences/closed_limited.js', 3, 1); //Extra path from assume
 
     //These we can fail because of restrictions on S
-    buildTest('regex/backreferences/closed_loop.js', 2, 1);
+    /*buildTest('regex/backreferences/closed_loop.js', 2, 1);
     buildTest('regex/backreferences/closed_loop_minor.js', 2, 1);
     buildTest('regex/backreferences/closed_loop_interleaved.js', 2, 1);
     buildTest('regex/backreferences/closed_loop_complex.js', 3, 2);
@@ -161,7 +161,7 @@ function buildTestList() {
 
     buildTest('regex/backreferences/open_unlocked.js', 4, 3);
     buildTest('regex/backreferences/open_unlocked_2.js', 4, 3);
-    buildTest('regex/backreferences/open_unlocked_3.js', 5, 4);
+    buildTest('regex/backreferences/open_unlocked_3.js', 5, 4);*/
 
     /**
      * End of backreference tests
@@ -175,7 +175,7 @@ function buildTestList() {
     buildTest('regex/captures/multiple_locked.js', 2, 1);
 
     buildTest('regex/exec/greed/anchors.js', 4, 3);
-    buildTest('regex/exec/greed/nested.js', 4, 3);
+    //buildTest('regex/exec/greed/nested.js', 4, 3);
     buildTest('regex/exec/greed/optionals.js', 3, 2);
     buildTest('regex/exec/greed/related.js', 3, 2);
 
@@ -191,7 +191,7 @@ function buildTestList() {
     buildTest('regex/match/captures/multiple_locked.js', 2, 1);
 
     buildTest('regex/match/greed/anchors.js', 4, 3);
-    buildTest('regex/match/greed/nested.js', 4, 3);
+    //buildTest('regex/match/greed/nested.js', 4, 3);
     buildTest('regex/match/greed/optionals.js', 3, 2);
     buildTest('regex/match/greed/related.js', 3, 2);
 
@@ -224,12 +224,12 @@ function buildTestList() {
 
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/ambiguous1.js', 3, 2);
-    buildTest('regex/search/ambiguous2.js', 3, 1); //One extra path spawned by assume command
+    /*buildTest('regex/search/ambiguous2.js', 3, 1); //One extra path spawned by assume command
     buildTest('regex/search/ambiguous3.js', 3, 2); //One extra path spawned by assume command
     buildTest('regex/search/ambiguous4.js', 7, 3); //TODO: Weird results
     buildTest('regex/search/alt.js', 3, 3);
     buildTest('regex/search/not_at_start.js', 3, 3);
-    buildTest('regex/search/test_at_start.js', 5, 4);
+    buildTest('regex/search/test_at_start.js', 5, 4);*/
 
 
 
