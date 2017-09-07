@@ -2,6 +2,7 @@
 
 function abs_target {
 	#Generate the absolute path of test script
+	cd $2
 	cd "$(dirname "$1")"
 	echo "$(printf "%s/%s\n" "$(pwd)" "$(basename "$1")")" 
 }
@@ -35,14 +36,14 @@ elif [ "$1" == "uic" ]; then
 	exit $?
 elif [ "$1" == "replay" ]; then
 	source ./scripts/expose_env
-	TARGET_REAL_PATH="$(abs_target $2)"
+	TARGET_REAL_PATH="$(abs_target $2 $ORIGIN_PATH)"
 	./scripts/play $TARGET_REAL_PATH "${@:3}"
 	exit $?
 elif [ "$1" == "test_suite" ]; then
 	./scripts/run_tests
 	exit $?
 else
-	TARGET_REAL_PATH="$(abs_target $1)"
+	TARGET_REAL_PATH="$(abs_target $1 $ORIGIN_PATH)"
 	./scripts/analyse $TARGET_REAL_PATH "${@:2}"
 	exit $?
 fi
