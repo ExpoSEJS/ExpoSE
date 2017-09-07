@@ -8,8 +8,9 @@ class Strategy {
 	add(target, alternative, coverage) {
 
 		//Range for RNG in a bracket
-		const BRACKET_SIZE = 10000;
-		const RANDOM_PRIORITY = Math.floor(Math.random() * BRACKET_SIZE);
+        const BRACKET_SIZE = 10000;
+        const MAX_JUMP = 3;
+		const RANDOM_PRIORITY =  -(BRACKET_SIZE * MAX_JUMP) + Math.floor(Math.random() * (BRACKET_SIZE * MAX_JUMP * 2));
 
 		let priority = 0; 
 		

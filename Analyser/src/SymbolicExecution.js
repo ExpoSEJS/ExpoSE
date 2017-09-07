@@ -259,6 +259,16 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
         Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
 
+        if (this.state.isSymbolic(offset) && typeof this.state.getConcrete(offset) == 'string') {
+            const base_c = this.state.getConcrete(base);
+            const offset_c = this.state.getConcrete(offset);
+            for (let idx in base_c) {
+                if (offset_c != base_c[idx]) {
+                    this.state.pushNot(this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset)));
+                }
+            }
+        }
+
         let result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
         let result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
 
