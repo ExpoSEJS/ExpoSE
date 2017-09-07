@@ -216,7 +216,7 @@ function buildTestList() {
     /**
      * Sticky model tests
      */
-     buildTest('regex/test/flags/sticky', 3, 1);
+    //buildTest('regex/test/flags/sticky', 3, 1);
 
     /**
      * Search application model tests
