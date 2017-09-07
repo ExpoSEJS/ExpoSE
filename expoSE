@@ -34,6 +34,10 @@ if [ "$1" == "ui" ]; then
 elif [ "$1" == "uic" ]; then
 	./scripts/start_ui
 	exit $?
+elif [ "$1" == "ahg" ]; then
+    export NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules"
+    echo $NODE_PATH
+    EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
 elif [ "$1" == "replay" ]; then
 	source ./scripts/expose_env
 	TARGET_REAL_PATH="$(abs_target $2 $ORIGIN_PATH)"

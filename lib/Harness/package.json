@@ -1,0 +1,11 @@
+{
+  "name": "Harness",
+  "version": "0.0.1",
+  "description": "Javascript Symbex Harness Generation Library",
+  "author": "Blake Loring <blake@parsed.uk>",
+  "readme": "README.md",
+  "dependencies": {},
+  "main": "src/harness.js",
+  "license": "Apache",
+  "devDependencies": {}
+}
