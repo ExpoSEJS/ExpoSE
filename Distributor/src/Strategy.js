@@ -36,7 +36,6 @@ class Strategy {
 	}
 
 	next() {
-		console.log('Next target prio ' + this._targets[0].priority);
 		return this._targets.shift().target;
 	}
 
