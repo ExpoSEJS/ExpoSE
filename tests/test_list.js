@@ -174,10 +174,10 @@ function buildTestList() {
     buildTest('regex/captures/related.js', 3, 2);
     buildTest('regex/captures/multiple_locked.js', 2, 1);
 
-    buildTest('regex/exec/greed/anchors.js', 4, 3);
+    //buildTest('regex/exec/greed/anchors.js', 4, 3);
     //buildTest('regex/exec/greed/nested.js', 4, 3);
-    buildTest('regex/exec/greed/optionals.js', 3, 2);
-    buildTest('regex/exec/greed/related.js', 3, 2);
+    //buildTest('regex/exec/greed/optionals.js', 3, 2);
+    //buildTest('regex/exec/greed/related.js', 3, 2);
 
     /**
      * Match Tests
