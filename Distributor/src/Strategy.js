@@ -24,9 +24,6 @@ class Strategy {
 
 			const BRACKET = this._seen[forkPoint];
 			priority = (BRACKET * BRACKET_SIZE) + RANDOM_PRIORITY;
-
-			console.log('I have seen ' + forkPoint + ' ' + this._seen[forkPoint] + ' times');
-			console.log('As such I seed it with ' + priority);
 		}
 
 		this._targets.push({
