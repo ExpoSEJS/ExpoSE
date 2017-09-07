@@ -1,7 +1,16 @@
 #!/bin/bash
 
+function abs_target {
+	#Generate the absolute path of test script
+	cd "$(dirname "$1")"
+	echo "$(printf "%s/%s\n" "$(pwd)" "$(basename "$1")")" 
+}
+
 #Store the current working directory to return after calculating abspath
 ORIGIN_PATH="$(pwd)"
+
+#cd to ExpoSE directory
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
 #If command is setup run setup script and exit
 if [ "$1" == "setup" ]; then
@@ -10,9 +19,6 @@ if [ "$1" == "setup" ]; then
 fi
 
 ./scripts/setup_if_needed
-
-#cd to ExpoSE directory
-cd "$(dirname "${BASH_SOURCE[0]}")"
 
 if [ -z ${NO_COMPILE} ]; then
 	./scripts/build/build_analyser
@@ -29,24 +35,14 @@ elif [ "$1" == "uic" ]; then
 	exit $?
 elif [ "$1" == "replay" ]; then
 	source ./scripts/expose_env
-
-	#Generate the absolute path of test script
-	cd "$(dirname "$2")"
-	TARGET_REAL_PATH="$(printf "%s/%s\n" "$(pwd)" "$(basename "$2")")"
-	cd $ORIGIN_PATH
-
+	TARGET_REAL_PATH="$(abs_target $2)"
 	./scripts/play $TARGET_REAL_PATH "${@:3}"
 	exit $?
 elif [ "$1" == "test_suite" ]; then
 	./scripts/run_tests
 	exit $?
 else
-
-	#Generate the absolute path of test script
-	cd "$(dirname "$1")"
-	TARGET_REAL_PATH="$(printf "%s/%s\n" "$(pwd)" "$(basename "$1")")"
-	cd $ORIGIN_PATH
-
+	TARGET_REAL_PATH="$(abs_target $1)"
 	./scripts/analyse $TARGET_REAL_PATH "${@:2}"
 	exit $?
 fi
