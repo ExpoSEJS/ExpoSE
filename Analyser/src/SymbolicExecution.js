@@ -140,8 +140,8 @@ class SymbolicExecution {
 
 
         let modelled = !!Models[f] || this._isSpecialFunction(f);
-
         if (!modelled && isNative(f)) {
+            this.state.concretizations.add(f.name);
             Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
             Log.logHigh(ObjectHelper.asString(base) + " " + ObjectHelper.asString(args));
 
