@@ -21,6 +21,7 @@ class Center {
         this._errors = 0;
         this._running = 0;
         this._coverage = new Coverage();
+        this._concretizations = new Set();
 
         this._startTesting([{
             id: this._nextID(),
@@ -141,13 +142,13 @@ class Center {
             this._pushDone(test, finalOut.input, finalOut.pc, finalOut.alternatives, errors.concat(finalOut.errors));
             this._expandAlternatives(test.file, finalOut.alternatives, coverage);
             
-            if (finalOut.concretizations && !this._concretizations) {
-                this._concretizations = new Set();
+            if (finalOut.concretizations) {
+               let concretizations = this._concretizations
+                finalOut.concretizations.forEach(concretization => {
+                concretizations.add(concretization);
+                });
             }
-            let concretizations = this._concretizations
-            finalOut.concretizations.forEach(concretization => {
-               concretizations.add(concretization);
-            });
+            
         } else {
             this._pushDone(test, test.file.input, test.file.pc, [], errors.concat([{ error: 'Error extracting final output - a fatal error must have occured' }]));
         }
