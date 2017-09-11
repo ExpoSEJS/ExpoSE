@@ -70,8 +70,7 @@ if (process.argv.length >= 3) {
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
         testMaxTime: getArgument('EXPOSE_TEST_TIMEOUT', 'number', 1000 * 60 * 15), //10 minutes default time
         printDeltaCoverage: getArgument('EXPOSE_PRINT_COVERAGE', 'number', false),
-        analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play'),
-        printUniqueConcretizations: getArgument('EXPOSE_PRINT_CONCRETIZATIONS', 'number', false)
+        analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play')
     };
 
     console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.maxConcurrent + ' max paths: ' + options.maxPaths);
@@ -89,7 +88,7 @@ if (process.argv.length >= 3) {
             }) + '\nEND JSON');
         }
 
-        if (options.printUniqueConcretizations) {
+        if (center._concretizations) {
             console.log('\n *-- Concretizations On:'   )
             center._concretizations.forEach(concretization => {
                 console.log(concretization) + '\n'

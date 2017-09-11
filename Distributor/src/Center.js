@@ -21,7 +21,6 @@ class Center {
         this._errors = 0;
         this._running = 0;
         this._coverage = new Coverage();
-        this._concretizations = new Set();
 
         this._startTesting([{
             id: this._nextID(),
@@ -109,7 +108,6 @@ class Center {
     }
 
     _pushDone(test, input, pc, alternatives, errors) {
-
         this._done.push({
             id: test.file.id,
             input: input,
@@ -142,6 +140,10 @@ class Center {
         if (finalOut) {
             this._pushDone(test, finalOut.input, finalOut.pc, finalOut.alternatives, errors.concat(finalOut.errors));
             this._expandAlternatives(test.file, finalOut.alternatives, coverage);
+            
+            if (finalOut.concretizations && !this._concretizations) {
+                this._concretizations = new Set();
+            }
             let concretizations = this._concretizations
             finalOut.concretizations.forEach(concretization => {
                concretizations.add(concretization);
