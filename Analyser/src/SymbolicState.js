@@ -27,6 +27,8 @@ class SymbolicState {
 
         this.pathCondition = [];
         this.errors = [];
+
+        this.concretizations = new Set();
     }
 
     getErrorCount() {

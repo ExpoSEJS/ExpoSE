@@ -97,6 +97,14 @@ if (process.argv.length >= 3) {
             }) + '\nEND JSON');
         }
 
+        if (center._concretizations) {
+            console.log('\n *-- Concretizations On:'   )
+            center._concretizations.forEach(concretization => {
+                console.log(concretization) + '\n'
+            })
+            console.log ('--*');
+        }
+
         function round(num, precision) {
             return Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
         }
