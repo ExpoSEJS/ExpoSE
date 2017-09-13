@@ -8,7 +8,7 @@ import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 
-Z3.Query.MAX_REFINEMENTS = 5;
+Z3.Query.MAX_REFINEMENTS = 20;
 
 class SymbolicState {
     constructor(context, solver, input, sandbox) {
