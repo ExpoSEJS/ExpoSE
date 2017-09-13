@@ -92,6 +92,10 @@ class Center {
         this.cbs.forEach(cb => cb(this, this._done, this._errors, this._coverage));
     }
 
+    cancel() {
+        this._finishedTesting();
+    }
+
     _nextID() {
         return this._lastid++;
     }
