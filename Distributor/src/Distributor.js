@@ -65,8 +65,8 @@ if (process.argv.length >= 3) {
 
     let options = {
         maxConcurrent: getArgument('EXPOSE_MAX_CONCURRENT', 'number', defaultTestCases), //max number of tests to run concurrently
-        maxPaths: getArgument('EXPOSE_MAX_PATHS', 'number', 100), //Max paths spawned
-        maxTime: getArgument('EXPOSE_MAX_TIME', 'number', 1000 * 60 * 15), //Max time in MS
+        maxPaths: getArgument('EXPOSE_MAX_PATHS', 'number', 100000), //Max paths spawned
+        maxTime: getArgument('EXPOSE_MAX_TIME', 'number', 1000 * 60 * 10), //Max time in MS
         jsonOut: getArgument('EXPOSE_JSON_OUT', 'number', false), //By default ExpoSE should not print JSON results into STDOUT
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
         testMaxTime: getArgument('EXPOSE_TEST_TIMEOUT', 'number', 1000 * 60 * 10), //10 minutes default time
