@@ -282,7 +282,10 @@ function BuildModels() {
     }
 
     function symbolicHookRe(condition, hook) {
-        return symbolicHook(condition, hook, !Config.regexEnabled);
+        return symbolicHook(condition, function(env) {
+            env.state.stats.seen('regex');
+            hook.apply(this, arguments);
+        }, !Config.regexEnabled);
     }
 
     function NoOp() {
