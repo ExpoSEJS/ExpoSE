@@ -38,8 +38,6 @@ class SymbolicState {
         this.errors = [];
 
         this.stats = new Stats();
-
-        this.concretizations = new Set();
     }
 
     getErrorCount() {
