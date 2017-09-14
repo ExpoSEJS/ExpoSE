@@ -86,7 +86,7 @@ if (process.argv.length >= 3) {
         process.exit();
     }, options.maxTime);
 
-    center.done((center, done, errors, coverage) => {
+    center.done((center, done, errors, coverage, stats) => {
 
         if (options.jsonOut) {
             console.log('\nExpoSE JSON: ' + JSON.stringify({
@@ -97,13 +97,13 @@ if (process.argv.length >= 3) {
             }) + '\nEND JSON');
         }
 
-        if (center._concretizations) {
-            console.log('\n *-- Concretizations On:'   )
-            center._concretizations.forEach(concretization => {
-                console.log(concretization) + '\n'
-            })
-            console.log ('--*');
+        console.log('\n*-- Stat Module Output --*')
+
+        for (let stat in stats) {
+            console.log('*-- Stat: ' + stat + ' ' + stats[stat].payload);
         }
+
+        console.log('\n*-- Stat Module Done --*')
 
         function round(num, precision) {
             return Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);

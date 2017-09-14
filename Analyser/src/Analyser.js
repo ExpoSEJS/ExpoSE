@@ -53,7 +53,7 @@ J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => 
         input: state.finalInput(),
         errors: state.errors,
         alternatives: state.alternatives(),
-        concretizations: state.stats.export()
+        stats: state.stats.export()
     };
 
     if (Config.outCoveragePath) {

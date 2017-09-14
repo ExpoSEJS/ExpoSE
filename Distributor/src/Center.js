@@ -5,6 +5,7 @@
 import Spawn from './Spawn';
 import Strategy from './Strategy';
 import Coverage from './CoverageAggregator';
+import Stats from 'Stats';
 
 class Center {
 
@@ -21,7 +22,7 @@ class Center {
         this._errors = 0;
         this._running = 0;
         this._coverage = new Coverage();
-        this._concretizations = new Set();
+        this._stats = new Stats();
 
         this._startTesting([{
             id: this._nextID(),
@@ -90,7 +91,7 @@ class Center {
     }
 
     _finishedTesting() {
-        this.cbs.forEach(cb => cb(this, this._done, this._errors, this._coverage));
+        this.cbs.forEach(cb => cb(this, this._done, this._errors, this._coverage, this._stats.data()));
     }
 
     cancel() {
@@ -145,16 +146,7 @@ class Center {
         if (finalOut) {
             this._pushDone(test, finalOut.input, finalOut.pc, finalOut.alternatives, errors.concat(finalOut.errors));
             this._expandAlternatives(test.file, finalOut.alternatives, coverage);
-            
-            /*
-            if (finalOut.concretizations) {
-               let concretizations = this._concretizations
-                finalOut.concretizations.forEach(concretization => {
-                concretizations.add(concretization);
-                });
-            }
-            */
-            
+            this._stats.merge(finalOut.stats);
         } else {
             this._pushDone(test, test.file.input, test.file.pc, [], errors.concat([{ error: 'Error extracting final output - a fatal error must have occured' }]));
         }
