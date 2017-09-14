@@ -61,7 +61,7 @@ function BuildModels() {
 
         Log.logMid('Captures Enabled - Adding Implications');
 
-        let implies = this.ctx.mkImplies(this.ctx.mkSeqInRe(string_s, regex.ast), this.ctx.mkEq(string_s, regex.implier))
+        let implies = this.state.ctx.mkImplies(this.state.ctx.mkSeqInRe(string_s, regex.ast), this.state.ctx.mkEq(string_s, regex.implier))
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
         regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
@@ -92,7 +92,7 @@ function BuildModels() {
         }
 
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-            let not = this.ctx.mkNot(this.ctx.mkEq(string_s, this.ctx.mkString(model.eval(string_s).asConstant())));
+            let not = this.state.ctx.mkNot(this.state.ctx.mkEq(string_s, this.state.ctx.mkString(model.eval(string_s).asConstant())));
             return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
         });
 
@@ -102,7 +102,7 @@ function BuildModels() {
 
             if (real_match) {
                 real_match = real_match.map(match => match || '');
-                let query_list = regex.captures.map((cap, idx) => this.ctx.mkEq(this.ctx.mkString(real_match[idx]), cap));
+                let query_list = regex.captures.map((cap, idx) => this.state.ctx.mkEq(this.state.ctx.mkString(real_match[idx]), cap));
                 
                 /*Log.logMid("WARN: TODO: Removing CheckFixed and NotMatch from checks may break stuff");
                 let next_list = CloneReplace(query.checks, CheckFixed, Z3.Check(CheckCorrect, () => []));
@@ -128,7 +128,7 @@ function BuildModels() {
     }
 
     function RegexTest(regex, real, string, forceCaptures) {
-        let in_s = this.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
+        let in_s = this.state.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
         let in_c = real.test(this.state.getConcrete(string));
         let result = new ConcolicValue(in_c, in_s);
 
@@ -146,19 +146,19 @@ function BuildModels() {
     }
 
     function RegexSearch(real, string, result) {
-        let regex = Z3.Regex(this.ctx, real);
+        let regex = Z3.Regex(this.state.ctx, real);
 
         //TODO: There is only the need to force back references if anchors are not set
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
         
-        let search_in_re = this.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
+        let search_in_re = this.state.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
 
         return new ConcolicValue(result, search_in_re);
     }
 
     function RegexMatch(real, string, result) {
 
-        let regex = Z3.Regex(this.ctx, real);
+        let regex = Z3.Regex(this.state.ctx, real);
 
         let in_regex = RegexTest.apply(this, [regex, real, string, true]);
         this.state.symbolicConditional(in_regex);
@@ -223,7 +223,7 @@ function BuildModels() {
 
                 target = substringHelper.call(this,
                     this, null, target,
-                    [lastIndex, new ConcolicValue(part_c.length, this.ctx.mkSeqLength(part_s))],
+                    [lastIndex, new ConcolicValue(part_c.length, this.state.ctx.mkSeqLength(part_s))],
                     real_cut
                 );
             }
@@ -233,7 +233,7 @@ function BuildModels() {
             if (matchResult) {
                 let firstAdd = new ConcolicValue(lastIndex_c + this.state.getConcrete(matchResult.index), this.state.symbolicBinary('+', lastIndex_c, lastIndex_s, this.state.getConcrete(matchResult.index), this.state.asSymbolic(matchResult.index)));
                 let secondAdd = new ConcolicValue(this.state.getConcrete(firstAdd), this.state.getConcrete(matchResult[0]).length, 
-                    this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.ctx.mkSeqLength(this.state.asSymbolic(matchResult[0]))));
+                    this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.state.ctx.mkSeqLength(this.state.asSymbolic(matchResult[0]))));
                 real.lastIndex = secondAdd;
                 return true;
             } else {
@@ -241,7 +241,7 @@ function BuildModels() {
             }
 
         } else {
-            return RegexTest.call(this, Z3.Regex(this.ctx, real), real, target, false);
+            return RegexTest.call(this, Z3.Regex(this.state.ctx, real), real, target, false);
         }
     }
 
@@ -376,8 +376,8 @@ function BuildModels() {
         if (this.state.isSymbolic(base)) {
             Log.log('TODO: Awful String.prototype.toLowerCase model will reduce search space');
             base = this._concretizeToString(base);
-            let azRegex = Z3.Regex(this.ctx, /^[^A-Z]+$/);
-            this.state.pushCondition(this.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast), true);
+            let azRegex = Z3.Regex(this.state.ctx, /^[^A-Z]+$/);
+            this.state.pushCondition(this.state.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast), true);
             result = new ConcolicValue(result, this.state.getSymbolic(base));
         }
 
