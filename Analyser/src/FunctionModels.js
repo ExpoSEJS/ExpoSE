@@ -281,10 +281,12 @@ function BuildModels() {
         };
     }
 
+    //Hook for regex methods, will only hook if regex is enabled
     function symbolicHookRe(condition, hook) {
         return symbolicHook(condition, function(env) {
+            //Intercept the hook to do regex stats
             env.state.stats.seen('regex');
-            hook.apply(this, arguments);
+            return hook.apply(this, arguments);
         }, !Config.regexEnabled);
     }
 
