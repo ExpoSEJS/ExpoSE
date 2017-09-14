@@ -42,7 +42,7 @@ Valid Options:
 All environment flags work both with the ExpoSE UI and ExpoSE CLI. Typically these can be set from a terminal by writing a command such as
 
 ```sh
-$ EXPOSE_LOG_LEVEL=1 expoSE test target/hello.js
+$ EXPOSE_LOG_LEVEL=1 expoSE target/hello.js
 ```
 
 * `NO_COMPILE`              - Don't rebuild ExpoSE before executing scripts
