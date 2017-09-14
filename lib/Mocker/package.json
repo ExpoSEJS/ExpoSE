@@ -6,7 +6,7 @@
   "readme": "README.md",
   "dependencies": {},
   "main": "bin/Mocker.js",
-  "license": "Apache",
+  "license": "",
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-preset-babili": "0.0.9",
