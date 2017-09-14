@@ -6,6 +6,6 @@
   "readme": "README.md",
   "dependencies": {},
   "main": "src/harness.js",
-  "license": "Apache",
+  "license": "",
   "devDependencies": {}
 }

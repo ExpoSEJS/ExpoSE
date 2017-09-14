@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "Blake Loring <blake@parsed.uk>",
-  "license": "ISC",
+  "license": "",
   "devDependencies": {},
   "dependencies": {
     "babel-cli": "^6.18.0",

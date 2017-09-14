@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "Blake Loring <blake@parsed.uk>",
-  "license": "ISC",
+  "license": "",
   "devDependencies": {},
   "dependencies": {
     "acorn": "^3.3.0",
