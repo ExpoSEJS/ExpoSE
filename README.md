@@ -33,7 +33,6 @@ $ expoSE ./tests/integers/infoflow
 Valid Options:
 
 * `setup`      - Clean and setup ExpoSE
-* `test`       - Symbolically execute a Node.js program.
 * `ui`         - Launch the ExpoSE Dashboard
 * `replay`     - Replay a test case with a specific input.
 * `test_suite` - Run the pre-push test suite.
