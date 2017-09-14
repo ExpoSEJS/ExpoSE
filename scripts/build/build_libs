@@ -21,6 +21,13 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+(./scripts/build/build lib/Stats src bin)
+
+if [ $? -ne 0 ]; then
+	echo "S$ failed to build"
+	exit 1
+fi
+
 (./scripts/build/build lib/Tropigate src bin)
 
 if [ $? -ne 0 ]; then

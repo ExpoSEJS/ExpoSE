@@ -2,19 +2,28 @@
 
 "use strict";
 
-import Z3 from 'z3javascript';
 import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 
+import External from './External';
+
+const Stats = External('Stats');
+const Z3 = External('z3javascript');
+
 Z3.Query.MAX_REFINEMENTS = 20;
 
-class SymbolicState {
-    constructor(context, solver, input, sandbox) {
+//60s default timeout
+const DEFAULT_CONTEXT_TIMEOUT = 5 * 60 * 1000;
 
-        this.ctx = context;
-        this.slv = solver;
+class SymbolicState {
+    constructor(input, sandbox) {
+
+
+        this.ctx = new Z3.Context();
+        this.slv = new Z3.Solver(this.ctx, DEFAULT_CONTEXT_TIMEOUT);
+
         this.input = input;
 
         this.boolSort = this.ctx.mkBoolSort();
@@ -27,6 +36,8 @@ class SymbolicState {
 
         this.pathCondition = [];
         this.errors = [];
+
+        this.stats = new Stats();
 
         this.concretizations = new Set();
     }

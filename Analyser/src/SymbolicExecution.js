@@ -21,11 +21,7 @@ import Models from './FunctionModels';
 import External from './External';
 
 //Electron can't resolve external library's directly. The External packages makes that transparent
-const Z3 = External('z3javascript');
 const Tropigate = External('Tropigate');
-
-//60s default timeout
-const DEFAULT_CONTEXT_TIMEOUT = 5 * 60 * 1000;
 
 class SymbolicExecution {
 
@@ -46,9 +42,7 @@ class SymbolicExecution {
     }
 
     _setupState(input) {
-        this.ctx = new Z3.Context();
-        this.slv = new Z3.Solver(this.ctx, DEFAULT_CONTEXT_TIMEOUT);
-        this.state = new SymbolicState(this.ctx, this.slv, input, this._sandbox);
+        this.state = new SymbolicState(input, this._sandbox);
     }
 
     _generateErrorOutput(e) {
