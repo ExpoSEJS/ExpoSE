@@ -100,10 +100,10 @@ if (process.argv.length >= 3) {
         console.log('\n*-- Stat Module Output --*')
 
         for (let stat in stats) {
-            console.log('*-- Stat: ' + stat + ' ' + stats[stat].payload);
+            console.log('*-- ' + stat + ': ' + JSON.stringify(stats[stat].payload));
         }
 
-        console.log('\n*-- Stat Module Done --*')
+        console.log('*-- Stat Module Done --*')
 
         function round(num, precision) {
             return Math.round(num * Math.pow(10, precision)) / Math.pow(10, precision);
