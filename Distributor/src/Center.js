@@ -91,7 +91,7 @@ class Center {
     }
 
     _finishedTesting() {
-        this.cbs.forEach(cb => cb(this, this._done, this._errors, this._coverage, this._stats.data()));
+        this.cbs.forEach(cb => cb(this, this._done, this._errors, this._coverage, this._stats.final()));
     }
 
     cancel() {
