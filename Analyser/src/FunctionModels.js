@@ -189,18 +189,18 @@ function BuildModels() {
         Log.log('WARNING: Symbolic substring support new and buggy ' + JSON.stringify(args));
 
         let target = c.state.asSymbolic(base);
-        let start_off = c.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
+        let start_off = c.state.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
 
         let len;
 
         if (args[1]) {
             len = c.state.asSymbolic(args[1]);
-            len = c.ctx.mkRealToInt(len);
+            len = c.state.ctx.mkRealToInt(len);
         } else {
-            len = c.ctx.mkSub(c.ctx.mkSeqLength(target), start_off);
+            len = c.state.ctx.mkSub(c.state.ctx.mkSeqLength(target), start_off);
         }
 
-        return new ConcolicValue(result, c.ctx.mkSeqSubstr(target, start_off, len));
+        return new ConcolicValue(result, c.state.ctx.mkSeqSubstr(target, start_off, len));
     }
 
     //TODO - Ouch
@@ -309,20 +309,20 @@ function BuildModels() {
 
     models[String.prototype.charAt] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => new ConcolicValue(result, c.ctx.mkSeqAt(c.state.asSymbolic(base), c.ctx.mkRealToInt(c.state.asSymbolic(args[0]))))
+        (c, _f, base, args, result) => new ConcolicValue(result, c.state.ctx.mkSeqAt(c.state.asSymbolic(base), c.state.ctx.mkRealToInt(c.state.asSymbolic(args[0]))))
     );
 
     models[String.prototype.concat] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || find.call(args, arg => c.state.isSymbolic(arg)),
-        (c, _f, base, args, result) => new ConcolicValue(result, c.ctx.mkSeqConcat([c.state.asSymbolic(base)].concat(args.map(arg => c.state.asSymbolic(arg)))))
+        (c, _f, base, args, result) => new ConcolicValue(result, c.state.ctx.mkSeqConcat([c.state.asSymbolic(base)].concat(args.map(arg => c.state.asSymbolic(arg)))))
     );
 
     models[String.prototype.indexOf] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
         (c, _f, base, args, result) => {
             let off = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
-            off = c.ctx.mkRealToInt(off);
-            result = new ConcolicValue(result, c.ctx.mkSeqIndexOf(c.state.asSymbolic(base), c.state.asSymbolic(c._concretizeToString(args[0])), off));
+            off = c.state.ctx.mkRealToInt(off);
+            result = new ConcolicValue(result, c.state.ctx.mkSeqIndexOf(c.state.asSymbolic(base), c.state.asSymbolic(c._concretizeToString(args[0])), off));
             return result;
         }
     );
@@ -389,9 +389,9 @@ function BuildModels() {
         (c, _f, base, args, result) => {
             const toFix = c.state.asSymbolic(base);
             const requiredDigits = c.state.asSymbolic(args[0]);
-            const gte0 = c.ctx.mkGe(requiredDigits, c.ctx.mkIntVal(0));
-            const lte20 = c.ctx.mkLe(requiredDigits, c.ctx.mkIntVal(20));
-            const validRequiredDigitsSymbolic = c.ctx.mkAnd(lte20, gte0);
+            const gte0 = c.state.ctx.mkGe(requiredDigits, c.state.ctx.mkIntVal(0));
+            const lte20 = c.state.ctx.mkLe(requiredDigits, c.state.ctx.mkIntVal(20));
+            const validRequiredDigitsSymbolic = c.state.ctx.mkAnd(lte20, gte0);
             const validRequiredDigits = c.state.getConcrete(args[0]) >= 0 && c.state.getConcrete(args[0]) <= 20;
 
             c.state.symbolicConditional(new ConcolicValue(!!validRequiredDigits, validRequiredDigitsSymbolic));
@@ -399,8 +399,8 @@ function BuildModels() {
             if (validRequiredDigits) {
                 //TODO: Need to coerce result to string
 
-                // const pow = c.ctx.mkPower(c.state.asSymbolic(10), requiredDigits)
-                // const symbolicValue = c.ctx.mkDiv(c.ctx.mkInt2Real(c.ctx.mkReal2Int(c.ctx.mkMul(pow, toFix))), c.state.asSymbolic(10.0))
+                // const pow = c.state.ctx.mkPower(c.state.asSymbolic(10), requiredDigits)
+                // const symbolicValue = c.state.ctx.mkDiv(c.state.ctx.mkInt2Real(c.state.ctx.mkReal2Int(c.state.ctx.mkMul(pow, toFix))), c.state.asSymbolic(10.0))
                 //return new ConcolicValue(result, symbolicValue);
                 return result;
             }
