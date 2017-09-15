@@ -283,12 +283,9 @@ function BuildModels() {
 
     //Hook for regex methods, will only hook if regex is enabled
     function symbolicHookRe(condition, hook) {
-        return symbolicHook(function(env) {
-            env.state.stats.seen('regex');
-            return condition.apply(this, arguments);
-        }, function(env) {
+        return symbolicHook(condition, function(env) {
             //Intercept the hook to do regex stats
-            env.state.stats.seen('re_hook');
+            env.state.stats.seen('regex');
             return hook.apply(this, arguments);
         }, !Config.regexEnabled);
     }
