@@ -114,7 +114,7 @@ class Spawn {
     _buildTimeout(prc, done) {
         return setTimeout(() => {
           prc.stdin.pause();
-          prc.kill();
+          prc.kill('SIGKILL');
         }, this.options.timeout);
     }
 
