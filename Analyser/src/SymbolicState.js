@@ -19,10 +19,9 @@ const DEFAULT_CONTEXT_TIMEOUT = 5 * 60 * 1000;
 
 class SymbolicState {
     constructor(input, sandbox) {
-
-
         this.ctx = new Z3.Context();
         this.slv = new Z3.Solver(this.ctx, DEFAULT_CONTEXT_TIMEOUT);
+        this._createArrayLengthFn();
 
         this.input = input;
 
@@ -38,6 +37,11 @@ class SymbolicState {
         this.errors = [];
 
         this.stats = new Stats();
+    }
+
+    _createArrayLengthFn() {
+        //(declare-const ARRAY_LEN_MAP (Array Int Int) Int)
+        //(assert (= ARRAY_LEN_MAP A Array_len)) on array creation
     }
 
     getErrorCount() {
