@@ -107,13 +107,6 @@ class SymbolicExecution {
         };
     }
 
-    _fail(args) {
-        Log.log('====== INTERCEPTED SCRIPT FAILURE ======');
-        Log.log('=           SCRIPT FAIL WITH           =');
-        Log.log('PC: ' + this.state.pathCondition);
-        Log.log('========================================');
-    }
-
     literal(iid, val, hasGetterSetter) {
         this.state.coverage.touch(iid);
         return {
