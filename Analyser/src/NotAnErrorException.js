@@ -5,11 +5,11 @@
 /**
  * Thrown by the underlying script when the run should immediately terminate without an error
  */
- 
-class NotAnErrorException {
-	toString() {
-		return 'NotAnErrorException';
-	}
+
+function NotAnErrorException() {}
+
+NotAnErrorException.prototype.toString = function() {
+	return 'NotAnErrorException';
 }
 
 export default NotAnErrorException;

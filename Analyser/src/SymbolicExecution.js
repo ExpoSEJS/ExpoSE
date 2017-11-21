@@ -13,7 +13,6 @@ import ObjectHelper from './Utilities/ObjectHelper';
 import SymbolicState from './SymbolicState';
 import SymbolicHelper from './SymbolicHelper';
 import Log from './Utilities/Log';
-import ArrayHelper from './Utilities/ArrayHelper';
 import NotAnErrorException from './NotAnErrorException';
 import {isNative} from './Utilities/IsNative';
 import Models from './FunctionModels';

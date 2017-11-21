@@ -14,6 +14,14 @@ import {
 const find = Array.prototype.find;
 const map = Array.prototype.map;
 
+function DoesntMatch(l, r) {
+    if (l === undefined) {
+        return r !== '';
+    } else {
+        return l !== r;
+    }
+}
+
 function Exists(array1, array2, pred) {
 
     for (let i = 0; i < array1.length; i++) {
@@ -23,26 +31,6 @@ function Exists(array1, array2, pred) {
     }
 
     return false;
-}
-
-function DoesntMatch(l, r) {
-    if (l === undefined) {
-        return r !== '';
-    } else {
-        return l !== r;
-    }
-}
-
-function CloneReplace(list, item, n) {
-    let clone = list.slice(0);
-    clone[clone.indexOf(item)] = n;
-    return clone;
-}
-
-function CloneRemove(list, item) {
-    let c = list.slice(0);
-    c.splice(list.indexOf(item), 1);
-    return c;
 }
 
 function BuildModels() {
@@ -379,6 +367,8 @@ function BuildModels() {
         return result;
     };
 
+    /*
+    TODO: Fix this model
     models[Number.prototype.toFixed] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
         (c, _f, base, args, result) => {
@@ -399,11 +389,10 @@ function BuildModels() {
                 //return new ConcolicValue(result, symbolicValue);
                 return result;
             }
-            else {
-                // f.Apply() will throw
-            }
+            // f.Apply() will throw ifthis fails
         }
     );
+    */
 
     models[Array.prototype.push] = NoOp();
     models[Array.prototype.keys] = NoOp();
@@ -422,14 +411,9 @@ function BuildModels() {
      */
 
     Object._expose = {};
-    Object._expose.wrapSymbolic = function() { return 'WrapSymbolic'; };
+
     Object._expose.makeSymbolic = function() { return 'MakeSymbolic'; };
     Object._expose.notAnError = function() { return NotAnErrorException; };
-
-    models[Object._expose.wrapSymbolic] = symbolicHook(
-        () => true,
-        (c, _f, base, args, result) => new ConcolicValue(args[0], this.state.asSymbolic(args[0]))
-    );
 
     models[Object._expose.makeSymbolic] = symbolicHook(
         () => true,

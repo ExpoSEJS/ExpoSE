@@ -2,45 +2,10 @@
 
 "use strict";
 
-import ArrayHelper from '../Utilities/ArrayHelper';
-
 class WrappedValue {
 
     constructor(concrete) {
         this.concrete = concrete;
-        this.rider = null;
-    }
-
-    getAnnotations() {
-        return this.rider ? this.rider.params() : [];
-    }
-
-    discardAnnotation(annotation) {
-
-        let index = this.getAnnotations().indexOf(annotation);
-
-        if (index != -1) {
-            this.getAnnotations().splice(index, 1);
-            annotation.discarded(this.concrete);
-        }
-
-        return this;
-    }
-
-    _discardAnnotations(toRemove) {
-        toRemove.forEach(annotation => this.discardAnnotation(annotation));
-        return this;
-    }
-
-    _reduceAnnotations(fn) {
-        return this.getAnnotations().reduce(
-            (list, annotation) => ArrayHelper.addIf(fn(annotation), list, annotation), []
-        );
-    }
-
-    reduceAndDiscard(fn) {
-        this._discardAnnotations(this._reduceAnnotations(fn));
-        return this;
     }
 
     clone() {
@@ -67,20 +32,6 @@ WrappedValue.clone = function(val) {
 WrappedValue.getConcrete = function(val) {
     return WrappedValue.isWrapped(val) ? val.concrete : val;
 }
-
-WrappedValue.getAnnotations = function(val) {
-    return WrappedValue.isWrapped(val) ? val.getAnnotations() : [];
-}
-
-/**
- * Reduce and discard annotations based on the predicate fn from the given value
- */
-WrappedValue.reduceAndDiscard = (val, fn) => val instanceof WrappedValue && val.reduceAndDiscard(fn);
-
-/**
- * If the passed value is already wrapped return value otherwise return a new wrapped version of the value
- */
-WrappedValue.wrap = val => val instanceof WrappedValue ? val : new WrappedValue(val);
 
 /*
  * Copyright 2013 Samsung Information Systems America, Inc.
