@@ -31,6 +31,9 @@ function buildTestList() {
     buildTest('integers/breaker.js', 1, 0);
     buildTest('integers/infoflow.js', 17, 0);
 
+    //Eval
+    buildTest('eval/test.js', 2, 1);
+
     //Fractions
     buildTest('fractions/fraction_one.js', 3, 0);
 

@@ -219,12 +219,6 @@ class SymbolicExecution {
         let result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
         let result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
 
-        WrappedValue.reduceAndDiscard(base, annotation => {
-            let fnResult = annotation.getField(base, offset, result_c);
-            result_c = fnResult.result;
-            return fnResult.discard;
-        });
-
         let result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
 
         return {
@@ -235,12 +229,6 @@ class SymbolicExecution {
     putFieldPre(iid, base, offset, val, isComputed, isOpAssign) {
 
         Log.logHigh('Put field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
-
-        WrappedValue.reduceAndDiscard(base, annotation => {
-            let fnResult = annotation.setField(base, offset, val);
-            val = fnResult.result;
-            return fnResult.discard;
-        });
 
         return {
             base: this.state.getConcrete(base),
@@ -261,10 +249,6 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
         Log.logHigh('Read ' + name + ' at ' + this._location(iid));
 
-        WrappedValue.reduceAndDiscard(val,
-            annotation => annotation.isRead(val).discard
-        );
-
         return {
             result: val
         };
@@ -274,10 +258,6 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
         Log.logHigh('Write ' + name + ' at ' + this._location(iid));
 
-        WrappedValue.reduceAndDiscard(val,
-            annotation => annotation.isWritten(val).discard
-        );
-
         return {
             result: val
         };
@@ -285,10 +265,6 @@ class SymbolicExecution {
 
     _return(iid, val) {
         this.state.coverage.touch(iid);
-
-        WrappedValue.reduceAndDiscard(val,
-            annotation => annotation.isReturned(val).discard
-        );
 
         return {
             result: val
@@ -391,30 +367,9 @@ class SymbolicExecution {
         return this._binaryNonSymbolic(op, left, right, result_c);
     }
 
-    _binaryApplyAnnotations(op, left, right, result) {
-
-        WrappedValue.reduceAndDiscard(left,
-            annotation => {
-                let r = annotation.binary(left, right, op, true, result);
-                result = r.result;
-                return r.discard;
-            }
-        );
-
-        WrappedValue.reduceAndDiscard(right,
-            annotation => {
-                let r = annotation.binary(left, right, op, false, result);
-                result = r.result;
-                return r.discard;
-            }
-        );
-
-        return result;
-    }
-
     _binaryNonSymbolic(op, left, right, result) {
         return {
-            result: this._binaryApplyAnnotations(op, left, right, result)
+            result: result
         };
     }
 
@@ -437,7 +392,7 @@ class SymbolicExecution {
         result = result ? new ConcolicValue(result_c, result) : result_c;
 
         return {
-            result: this._binaryApplyAnnotations(op, left, right, result)
+            result: result
         };
     }
 
@@ -462,25 +417,8 @@ class SymbolicExecution {
             result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
         }
 
-        return this._unaryNonSymbolic(op, left, result_c);
-    }
-
-    _unaryApplyAnnotations(op, left, result) {
-
-        WrappedValue.reduceAndDiscard(left,
-            annotation => {
-                let r = annotation.unary(left, op, result);
-                result = r.result;
-                return r.discard;
-            }
-        );
-
-        return result;
-    }
-
-    _unaryNonSymbolic(op, left, result_c) {
         return {
-            result: this._unaryApplyAnnotations(op, left, result_c)
+            result: result_c
         };
     }
 
@@ -498,7 +436,7 @@ class SymbolicExecution {
         let result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
 
         return {
-            result: this._unaryApplyAnnotations(op, left, result)
+            result: result
         };
     }
 
