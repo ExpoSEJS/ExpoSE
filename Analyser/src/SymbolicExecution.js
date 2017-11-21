@@ -345,6 +345,18 @@ class SymbolicExecution {
     }
 
     binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
+        
+        let left_c = this.state.getConcrete(left),
+            right_c = this.state.getConcrete(right);
+
+        //Don't do symbolic logic if the symbolic values are diff types
+        //Concretise instead
+        if (typeof left_c !== typeof right_c) {
+            Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
+            left = left_c;
+            right = right_c;
+        }
+
         // Don't evaluate natively when args are symbolic
         return {
             op: op,
@@ -371,13 +383,6 @@ class SymbolicExecution {
 
         let [left_c, right_c] = [this.state.getConcrete(left), this.state.getConcrete(right)];
         result_c = SymbolicHelper.evalBinary(op, left_c, right_c);
-
-        if (typeof left_c !== typeof right_c) {
-            Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
-            return {
-                result: result_c
-            };
-        }
 
         Log.logMid("Symbolically evaluating binary " + op + ", which has concrete result \"" + result_c + "\"");
 
