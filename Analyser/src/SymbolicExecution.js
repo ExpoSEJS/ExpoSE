@@ -51,6 +51,7 @@ class SymbolicExecution {
     }
 
     invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
+        this.state.coverage.touch(iid);
         Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
         
         f = this.state.getConcrete(f);
@@ -138,6 +139,7 @@ class SymbolicExecution {
     }
 
     getFieldPre(iid, base, offset, isComputed, isOpAssign, isMethodCall) {
+        this.state.coverage.touch(iid);
         return {
             base: base,
             offset: offset,
@@ -161,7 +163,6 @@ class SymbolicExecution {
 
         let result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
         let result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
-
         let result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
 
         return {
@@ -170,7 +171,7 @@ class SymbolicExecution {
     }
 
     putFieldPre(iid, base, offset, val, isComputed, isOpAssign) {
-
+        this.state.coverage.touch(iid);
         Log.logHigh('Put field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
 
         return {
@@ -339,6 +340,7 @@ class SymbolicExecution {
     }
 
     unaryPre(iid, op, left) {
+        this.state.coverage.touch(iid);
 
         // Don't evaluate natively when args are symbolic
         return {
