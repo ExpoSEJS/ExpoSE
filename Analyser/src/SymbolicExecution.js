@@ -360,17 +360,11 @@ class SymbolicExecution {
 
         if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
             return this._binarySymbolic(op, left, right, result_c);
-        } else if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
-            result_c = SymbolicHelper.evalBinary(op, this.state.getConcrete(left), this.state.getConcrete(right));
+        } else {
+            return {
+                result: result
+            }
         }
-
-        return this._binaryNonSymbolic(op, left, right, result_c);
-    }
-
-    _binaryNonSymbolic(op, left, right, result) {
-        return {
-            result: result
-        };
     }
 
     _binarySymbolic(op, left, right, result_c) {
