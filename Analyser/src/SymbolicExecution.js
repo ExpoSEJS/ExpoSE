@@ -362,7 +362,7 @@ class SymbolicExecution {
             return this._binarySymbolic(op, left, right, result_c);
         } else {
             return {
-                result: result
+                result: result_c
             }
         }
     }
