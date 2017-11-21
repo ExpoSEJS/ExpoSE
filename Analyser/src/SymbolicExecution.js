@@ -108,20 +108,6 @@ class SymbolicExecution {
         };
     }
 
-    _concretizeToString(symbol) {
-
-        if (typeof this.state.getConcrete(symbol) !== 'string') {
-            //TODO: Fix Me
-            let cval = '' + this.state.getConcrete(symbol);
-            Log.log('TODO: Concretizing non string input to test rather than int2string, bool2string etc');
-            Log.log('' + symbol + ' reduced to ' + '' + this.state.getConcrete(symbol));
-
-            symbol = new ConcolicValue(cval, this.state.asSymbolic(cval));
-        }
-
-        return symbol;
-    }
-
     //Called after a function completes execution
     invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
         this.state.coverage.touch(iid);

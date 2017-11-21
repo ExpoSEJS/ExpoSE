@@ -9,16 +9,13 @@ cp ./scripts/pre-push .git/hooks/
 echo "Setting Up Packages"
 ./scripts/setup/setup_packages
 
-touch ~/.bash_profile
+touch ~/.bashrc
 
 echo "Cleaning previous installations"
 ./scripts/setup/cleanup_bashprofile
 
 echo "Installing into PATH"
 ./scripts/setup/install_bashprofile
-
-#echo "Re-sourcing bash profile"
-#source ~/.bash_profile
 
 touch ~/.expose_setup
 

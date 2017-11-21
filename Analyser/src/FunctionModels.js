@@ -275,12 +275,26 @@ function BuildModels() {
         };
     }
 
+    function concretizeToString(ctx, symbol) {
+
+        if (typeof ctx.state.getConcrete(symbol) !== 'string') {
+            //TODO: Fix Me
+            let cval = '' + this.state.getConcrete(symbol);
+            Log.log('TODO: Concretizing non string input to test rather than int2string, bool2string etc');
+            Log.log('' + symbol + ' reduced to ' + '' + this.state.getConcrete(symbol));
+            symbol = new ConcolicValue(cval, this.state.asSymbolic(cval));
+        }
+
+        return symbol;
+    }
+
+
     /**
      * Model for String(xxx) in code to coerce something to a string
      */
     models[String] = symbolicHook(
         (c, _f, _base, args, _result) => c.state.isSymbolic(args[0]),
-        (c, _f, _base, args, result) => new ConcolicValue(result, c.state.asSymbolic(c._concretizeToString(args[0])))
+        (c, _f, _base, args, result) => new ConcolicValue(result, c.state.asSymbolic(concretizeToString(c, args[0])))
     );
 
     models[String.prototype.substr] = symbolicHook(
@@ -305,7 +319,7 @@ function BuildModels() {
         (c, _f, base, args, result) => {
             let off = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
             off = c.state.ctx.mkRealToInt(off);
-            result = new ConcolicValue(result, c.state.ctx.mkSeqIndexOf(c.state.asSymbolic(base), c.state.asSymbolic(c._concretizeToString(args[0])), off));
+            result = new ConcolicValue(result, c.state.ctx.mkSeqIndexOf(c.state.asSymbolic(base), c.state.asSymbolic(concretizeToString(c, args[0])), off));
             return result;
         }
     );
@@ -327,7 +341,7 @@ function BuildModels() {
 
     models[RegExp.prototype.test] = symbolicHookRe(
         (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => rewriteTestSticky.call(c, base, c._concretizeToString(args[0]), result)
+        (c, _f, base, args, result) => rewriteTestSticky.call(c, base, concretizeToString(c, args[0]), result)
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.
@@ -358,7 +372,7 @@ function BuildModels() {
 
         if (this.state.isSymbolic(base)) {
             Log.log('TODO: String.prototype.toLowerCase model is weak, can reduce coverage');
-            base = this._concretizeToString(base);
+            base = concretizeToString(this, base);
             let azRegex = Z3.Regex(this.state.ctx, /^[^A-Z]+$/);
             this.state.pushCondition(this.state.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast), true);
             result = new ConcolicValue(result, this.state.getSymbolic(base));
