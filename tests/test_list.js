@@ -15,6 +15,7 @@ function buildTestList() {
     buildTest('core/bools.js', 1, 0);
     buildTest('core/recursion.js', 1, 0);
     buildTest('core/lamda.js', 1, 0);
+    buildTest('core/conc_diff.js', 3, 2);
 
     //Booleans
     buildTest('bool/hello.js', 2, 0);
