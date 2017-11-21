@@ -30,7 +30,6 @@ class SymbolicExecution {
         this._setupState(initialInput);
 
         this._fileList = new Array();
-        this._callStack = new Array();
 
         //Bind any uncaught exceptions to the uncaught exception handler
         process.on('uncaughtException', this._uncaughtException.bind(this));
@@ -66,18 +65,6 @@ class SymbolicExecution {
             error: '' + e,
             stack: e.stack
         });
-    }
-
-    _invokeFunAnnotations(result) {
-        let s_top = this._callStack.pop();
-
-        WrappedValue.reduceAndDiscard(s_top.base, annotation => {
-            let fnResult = annotation.invokedOn(s_top.f, s_top.base, s_top.args, result);
-            result = fnResult.result;
-            return fnResult.discard;
-        });
-
-        return result;
     }
 
     /**
@@ -138,12 +125,6 @@ class SymbolicExecution {
     invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
         Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
 
-        this._callStack.push({
-            f: f,
-            base: base,
-            args: args
-        });
-
         return this._invokeFunPreConcretize(f, base, args);
     }
 
@@ -172,7 +153,7 @@ class SymbolicExecution {
         }
 
         return {
-            result: this._invokeFunAnnotations(result)
+            result: result
         };
     }
 
