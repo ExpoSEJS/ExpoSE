@@ -66,35 +66,17 @@ class SymbolicExecution {
         });
     }
 
-    /**
-     * Get the concrete version of val if symbolic
-     * If val is an instanceof Object concretize all properties of val
-     * This is because native functions take arrays or objects with
-     * symbolic args the args have to be non symbolic
-     * TODO: Investigate how to allievate this constraint
-     * TODO: Should do deep property inspection rather than for i in x
-     */
-    _concretize(val) {
-        val = this.state.getConcrete(val);
-
-        if (val instanceof Array) {
-            let nval = {};
-
-            for (let i in val) {
-                nval[i] = this._concretize(val[i]);
-            }
-
-            val = nval;
-        }
-
-        return val;
-    }
-
-    _invokeFunPreConcretize(f, base, args) {
+    invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
+        Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
+        
         f = this.state.getConcrete(f);
 
+        /**
+         * Concretize the function if it is native and we do not have a custom model for it
+         */
 
         let modelled = !!Models[f];
+
         if (!modelled && isNative(f)) {
             
             this.state.stats.set('concretizations', f.name);
@@ -104,6 +86,7 @@ class SymbolicExecution {
 
             base = this.state.getConcrete(base);
 
+            Log.logMid('TODO: Potential Issue: Not deep concretize in IsNative application');
             let n_args = new Array(args.length);
 
             for (let i = 0; i < args.length; i++) {
@@ -113,18 +96,16 @@ class SymbolicExecution {
             args = n_args;
         }
 
+        /**
+         * End of conc
+         */
+
         return {
             f: f,
             base: base,
             args: args,
             skip: modelled
         };
-    }
-
-    invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
-        Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
-
-        return this._invokeFunPreConcretize(f, base, args);
     }
 
     _concretizeToString(symbol) {
