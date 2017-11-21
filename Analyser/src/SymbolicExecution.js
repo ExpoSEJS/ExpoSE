@@ -25,9 +25,7 @@ class SymbolicExecution {
 
     constructor(sandbox, initialInput, exitFn) {
         this._sandbox = sandbox;
-
-        this._setupState(initialInput);
-
+        this.state = new SymbolicState(initialInput, this._sandbox);
         this._fileList = new Array();
 
         //Bind any uncaught exceptions to the uncaught exception handler
@@ -37,20 +35,6 @@ class SymbolicExecution {
         process.on('exit', exitFn.bind(null, this.state, this.state.coverage));
     }
 
-    _setupState(input) {
-        this.state = new SymbolicState(input, this._sandbox);
-    }
-
-    _generateErrorOutput(e) {
-        let baseText = 'Uncaught exception ' + e;
-
-        if (e.stack) {
-            baseText += ' stack ' + e.stack;
-        }
-
-        return baseText;
-    }
-
     _uncaughtException(e) {
 
         //Ignore NotAnErrorException
@@ -58,7 +42,7 @@ class SymbolicExecution {
             return;
         }
 
-        Log.log(this._generateErrorOutput(e));
+        Log.log('Uncaught exception ' + e + (e.stack ? ('(stack ' + e.stack + ')') : ''));
 
         this.state.addError({
             error: '' + e,
