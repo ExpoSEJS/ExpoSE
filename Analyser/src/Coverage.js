@@ -42,8 +42,7 @@ class Coverage {
 
             if (this._branches[i] !== undefined) {
 
-                //TODO: This is a really ugly solution to working out whether it is possible to cover a given line
-                //Find a way that doesn't involve transferring info on every line number out in the coverage file
+                //TODO: Return an Array[0,1,2] instead of 2 sets
                 let touchedLines = new Set();
                 let allLines = new Set();
 

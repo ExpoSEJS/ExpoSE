@@ -9,7 +9,6 @@
  */
 
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
-import SpecialFunctions from './SpecialFunctions';
 import ObjectHelper from './Utilities/ObjectHelper';
 import SymbolicState from './SymbolicState';
 import SymbolicHelper from './SymbolicHelper';
@@ -28,7 +27,6 @@ class SymbolicExecution {
     constructor(sandbox, initialInput, exitFn) {
         this._sandbox = sandbox;
 
-        this._setupSpecialFunctions();
         this._setupState(initialInput);
 
         this._fileList = new Array();
@@ -68,29 +66,6 @@ class SymbolicExecution {
             error: '' + e,
             stack: e.stack
         });
-    }
-
-    _setupSpecialFunctions() {
-        this._specialFunctions = {};
-
-        for (let item in Object.getOwnPropertyNames(Object.prototype)) {
-            if (!ObjectHelper.startsWith(item, '__')) {
-                delete this._specialFunctions[item];
-            }
-        }
-
-        delete this._specialFunctions.toString;
-        this._specialFunctions['__make__symbolic__'] = SpecialFunctions.makeSymbolic;
-        this._specialFunctions['__wrap__'] = SpecialFunctions.wrap;
-        this._specialFunctions['__clone__'] = SpecialFunctions.clone;
-        this._specialFunctions['__not__error_exp__'] = SpecialFunctions.notAnErrorException;
-        this._specialFunctions['__get__rider__'] = SpecialFunctions.getRider;
-        this._specialFunctions['__set__rider__'] = SpecialFunctions.setRider;
-    }
-
-    _isSpecialFunction(f) {
-        //TODO: This is legacy way of  modelling stuff, Models now does all this much better. Replace all this crap
-        return f && f.name !== 'toString' && !!this._specialFunctions[f.name];
     }
 
     _invokeFunAnnotations(result) {
@@ -133,7 +108,7 @@ class SymbolicExecution {
         f = this.state.getConcrete(f);
 
 
-        let modelled = !!Models[f] || this._isSpecialFunction(f);
+        let modelled = !!Models[f];
         if (!modelled && isNative(f)) {
             
             this.state.stats.set('concretizations', f.name);
@@ -194,11 +169,6 @@ class SymbolicExecution {
 
         if (Models[f]) {
             result = Models[f].apply(this, [f, base, args, result]);
-        }
-
-        if (this._isSpecialFunction(f)) {
-            Log.logMid('Intercepted call to ' + f.name);
-            result = this._specialFunctions[f.name](this.state, args, base, f, result);
         }
 
         return {
