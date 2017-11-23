@@ -72,15 +72,4 @@ ObjectHelper.asString = function(item, forceSafe, depth) {
     }
 }
 
-ObjectHelper.asConjunction = function(item, depth) {
-    depth = depth || 0;
-    if (depth < MAX_LOG_DEPTH) {
-        if (item instanceof Array) {
-            return item.reduce((last, next) => last + (last.length == 0 ? '' : ' ∧ ') + next.toPrettyString(), "");
-        } else {
-            return item.toPrettyString();
-        }
-    }
-}
-
 export default ObjectHelper;

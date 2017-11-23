@@ -2,8 +2,9 @@
 
 "use strict";
 
-//Some code is from https://gist.github.com/jdalton/5e34d890105aca44399f by John-David Dalton
-
+/** 
+ * Some code is from https://gist.github.com/jdalton/5e34d890105aca44399f by John-David Dalton
+ */
 const toString = Object.prototype.toString;
 const fnToString = Function.prototype.toString;
 const reHostCtor = /^\[object .+?Constructor\]$/;
