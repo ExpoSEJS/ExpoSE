@@ -164,10 +164,7 @@ class SymbolicState {
         return childInputs;
     }
 
-    createSymbolicValue(name, concrete) {
-
-        this.stats.seen('Symbolic Values');
-
+    _getSort(concrete) {
         let sort;
 
         switch (typeof concrete) {
@@ -186,6 +183,20 @@ class SymbolicState {
             default:
                 Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
         }
+
+        return sort;
+    }
+
+    createSymbolicValue(name, concrete) {
+
+        this.stats.seen('Symbolic Values');
+
+        if (concrete instanceof Array) {
+            this.stats.seen('Symbolic Arrays');
+            return new ConcolicValue(concrete, this.ctx.mkArray(name, this._getSort(concrete[0])));
+        }
+
+        let sort = this._getSort(concrete);
 
         let symbol = this.ctx.mkStringSymbol(name);
         let symbolic = this.ctx.mkConst(symbol, sort);
@@ -320,9 +331,9 @@ class SymbolicState {
         }
     	
         switch (field_c) {
-    		case 'length':                
-                if (typeof base_c == "string") {
-                    return this.ctx.mkSeqLength(base_s);
+    		case 'length':
+                if (base_s.getLength()) {
+                    return base_s.getLength();
                 }
     		default:
     			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);

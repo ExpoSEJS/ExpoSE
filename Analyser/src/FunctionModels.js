@@ -176,7 +176,7 @@ function BuildModels() {
             len = c.state.asSymbolic(args[1]);
             len = c.state.ctx.mkRealToInt(len);
         } else {
-            len = c.state.ctx.mkSub(c.state.ctx.mkSeqLength(target), start_off);
+            len = c.state.ctx.mkSub(target.getLength(), start_off);
         }
 
         return new ConcolicValue(result, c.state.ctx.mkSeqSubstr(target, start_off, len));
@@ -201,7 +201,7 @@ function BuildModels() {
 
                 target = substringHelper.call(this,
                     this, null, target,
-                    [lastIndex, new ConcolicValue(part_c.length, this.state.ctx.mkSeqLength(part_s))],
+                    [lastIndex, new ConcolicValue(part_c.length, part_s.getLength())],
                     real_cut
                 );
             }
@@ -211,7 +211,7 @@ function BuildModels() {
             if (matchResult) {
                 let firstAdd = new ConcolicValue(lastIndex_c + this.state.getConcrete(matchResult.index), this.state.symbolicBinary('+', lastIndex_c, lastIndex_s, this.state.getConcrete(matchResult.index), this.state.asSymbolic(matchResult.index)));
                 let secondAdd = new ConcolicValue(this.state.getConcrete(firstAdd), this.state.getConcrete(matchResult[0]).length, 
-                    this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.state.ctx.mkSeqLength(this.state.asSymbolic(matchResult[0]))));
+                    this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.state.asSymbolic(matchResult[0]).getLength()));
                 real.lastIndex = secondAdd;
                 return true;
             } else {
