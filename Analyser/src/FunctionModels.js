@@ -263,7 +263,7 @@ function BuildModels() {
     function symbolicHookRe(condition, hook) {
         return symbolicHook(condition, function(env) {
             //Intercept the hook to do regex stats
-            env.state.stats.seen('regex');
+            env.state.stats.seen('Regular Expressions');
             return hook.apply(this, arguments);
         }, !Config.regexEnabled);
     }

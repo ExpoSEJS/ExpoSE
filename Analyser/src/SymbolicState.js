@@ -21,7 +21,6 @@ class SymbolicState {
     constructor(input, sandbox) {
         this.ctx = new Z3.Context();
         this.slv = new Z3.Solver(this.ctx, DEFAULT_CONTEXT_TIMEOUT);
-        this._createArrayLengthFn();
 
         this.input = input;
 
@@ -37,11 +36,6 @@ class SymbolicState {
         this.errors = [];
 
         this.stats = new Stats();
-    }
-
-    _createArrayLengthFn() {
-        //(declare-const ARRAY_LEN_MAP (Array Int Int) Int)
-        //(assert (= ARRAY_LEN_MAP A Array_len)) on array creation
     }
 
     getErrorCount() {
@@ -172,6 +166,8 @@ class SymbolicState {
 
     createSymbolicValue(name, concrete) {
 
+        this.stats.seen('Symbolic Values');
+
         let sort;
 
         switch (typeof concrete) {
@@ -250,22 +246,13 @@ class SymbolicState {
         return WrappedValue.getAnnotations(val);
     }
 
+    _coerceInt(s) {
+        return this.ctx.mkRealToInt(s);
+    }
+
     symbolicBinary(op, left_c, left_s, right_c, right_s) {
 
         let ctx = this.ctx;
-
-        /**
-         * TODO: The following code forces coercions to int, rather than
-         * Letting the default upgrading to reals happen.
-         * This is awful code to fix a silly bug in Z3
-         * Remove ASAP
-         */
-        function coerceInt(s) {
-            if (!s.FORCE_EQ_TO_INT) {
-                return ctx.mkRealToInt(s);
-            }
-            return s;
-        }
 
         let result;
 
@@ -324,7 +311,7 @@ class SymbolicState {
     }
 
     _symbolicFieldStrLookup(base_c, base_s, field_c, field_s) {
-        return this.ctx.mkSeqAt(base_s, this.ctx.mkRealToInt(field_s));
+        return this.ctx.mkSeqAt(base_s, this._coerceInt(field_s));
     }
 
     symbolicField(base_c, base_s, field_c, field_s) {
@@ -336,11 +323,7 @@ class SymbolicState {
         switch (field_c) {
     		case 'length':                
                 if (typeof base_c == "string") {
-                    //TODO: This is a stupid solution to a more fundamental problem in Z3
-                    //Remove ASAP
-                    let res = this.ctx.mkSeqLength(base_s);
-                    //res.FORCE_EQ_TO_INT = true;
-                    return res;
+                    return this.ctx.mkSeqLength(base_s);
                 }
     		default:
     			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
@@ -401,6 +384,7 @@ class SymbolicState {
     }
 
     wrapConstant(val) {
+        this.stats.seen('Wrapped Constants');
         switch (typeof val) {
             case 'boolean':
                 return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
