@@ -322,14 +322,10 @@ class SymbolicState {
         return result;
     }
 
-    _symbolicFieldStrLookup(base_c, base_s, field_c, field_s) {
-        return this.ctx.mkSeqAt(base_s, this._coerceInt(field_s));
-    }
-
     symbolicField(base_c, base_s, field_c, field_s) {
 
         if ((typeof base_c === "string" || base_c instanceof Array) && typeof field_c === "number") {
-            return base_s.getAt(field_s);
+            return base_s.getAt(this._coerceInt(field_s));
         }
     	
         switch (field_c) {
