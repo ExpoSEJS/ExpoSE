@@ -421,6 +421,8 @@ class SymbolicExecution {
             throw 'Tropigate failed because ' + e + ' on program ' + code + ' at ' + e.stack;
         }
 
+        console.log(code);
+
         return {
             code: code,
             skip: false
