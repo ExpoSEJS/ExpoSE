@@ -208,7 +208,7 @@ class SymbolicState {
 
         for (let name in this.inputSymbols) {
             let solutionAst = model.eval(this.inputSymbols[name]);
-            solution[name] = solutionAst.asConstant();
+            solution[name] = solutionAst.asConstant(model);
             solutionAst.destroy();
         }
 

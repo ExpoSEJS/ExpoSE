@@ -70,24 +70,24 @@ function BuildModels() {
         Log.log('Refinements Enabled - Adding checks');
 
         function CheckCorrect(model) {
-            let real_match = real.exec(model.eval(string_s).asConstant());
-            let sym_match = regex.captures.map(cap => model.eval(cap).asConstant());
+            let real_match = real.exec(model.eval(string_s).asConstant(model));
+            let sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
             Log.logMid('Regex sanity check ' + JSON.stringify(real_match) + ' vs ' + JSON.stringify(sym_match));
             return real_match && !Exists(real_match, sym_match, DoesntMatch);
         }
 
         function CheckFailed(model) {
-            return !real.test(model.eval(string_s).asConstant());
+            return !real.test(model.eval(string_s).asConstant(model));
         }
 
         let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-            let not = this.state.ctx.mkNot(this.state.ctx.mkEq(string_s, this.state.ctx.mkString(model.eval(string_s).asConstant())));
+            let not = this.state.ctx.mkNot(this.state.ctx.mkEq(string_s, this.state.ctx.mkString(model.eval(string_s).asConstant(model))));
             return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
         });
 
         let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
             //CheckCorrect will check model has a proper match
-            let real_match = real.exec(model.eval(string_s).asConstant());
+            let real_match = real.exec(model.eval(string_s).asConstant(model));
 
             if (real_match) {
                 real_match = real_match.map(match => match || '');
