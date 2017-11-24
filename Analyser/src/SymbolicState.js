@@ -217,7 +217,6 @@ class SymbolicState {
     }
 
     _checkSat(clause, checks) {
-        console.log('Checks length ' + checks.length);
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }

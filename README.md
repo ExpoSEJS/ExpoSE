@@ -4,7 +4,7 @@ A symbolic execution engine for JavaScript.
 
 ### Requirements
 
-Requires `node` version v7.5.0 (Others should work but no support is guaranteed), `npm`, `clang`, `clang++`, `gnuplot`, `make`, `python2` (as python in path).
+Requires `node` version v7.5.0 (Other versions may work but are not tested), `npm`, `clang`, `clang++`, `gnuplot`, `make`, `python2` (as python in path).
 
 `mitmproxy` (Depends libxml2-dev, libxslt-dev, libssl-dev) is required for electron analysis.
 
