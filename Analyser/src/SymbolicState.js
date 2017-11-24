@@ -197,6 +197,7 @@ class SymbolicState {
             this.stats.seen('Symbolic Arrays');
             symbolic = this.ctx.mkArray(name, this._getSort(concrete[0]));
         } else {
+            this.stats.seen('Symbolic Primitives');
             let sort = this._getSort(concrete);
             let symbol = this.ctx.mkStringSymbol(name);
             symbolic = this.ctx.mkConst(symbol, sort);
@@ -327,8 +328,8 @@ class SymbolicState {
 
     symbolicField(base_c, base_s, field_c, field_s) {
 
-        if (typeof base_c === "string" && typeof field_c === "number") {
-            return this._symbolicFieldStrLookup(base_c, base_s, field_c, field_s);
+        if ((typeof base_c === "string" || base_c instanceof Array) && typeof field_c === "number") {
+            return base_s.getAt(field_s);
         }
     	
         switch (field_c) {

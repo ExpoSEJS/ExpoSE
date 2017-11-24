@@ -7,6 +7,10 @@ console.log('Loading Symbols');
 
 var x = symbolic X initial ['A'];
 
+assume x.length < 4;
+
 for (var i = 0; i < x.length; i++) {
-	
+	if (x[i] == 'What') {
+		throw 'Reachable';
+	}
 }
