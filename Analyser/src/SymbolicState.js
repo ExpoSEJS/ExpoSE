@@ -191,15 +191,16 @@ class SymbolicState {
 
         this.stats.seen('Symbolic Values');
 
+        let symbolic;
+
         if (concrete instanceof Array) {
             this.stats.seen('Symbolic Arrays');
-            return new ConcolicValue(concrete, this.ctx.mkArray(name, this._getSort(concrete[0])));
+            symbolic = this.ctx.mkArray(name, this._getSort(concrete[0]));
+        } else {
+            let sort = this._getSort(concrete);
+            let symbol = this.ctx.mkStringSymbol(name);
+            symbolic = this.ctx.mkConst(symbol, sort);
         }
-
-        let sort = this._getSort(concrete);
-
-        let symbol = this.ctx.mkStringSymbol(name);
-        let symbolic = this.ctx.mkConst(symbol, sort);
 
         // Use generated input if available
         if (name in this.input) {
