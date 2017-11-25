@@ -315,7 +315,7 @@ function BuildModels() {
     );
 
     models[String.prototype.indexOf] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+        (c, _f, base, args, _r) => typeof c.state.getConcrete(base) === 'string' && (c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1])),
         (c, _f, base, args, result) => {
             let off = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
             off = c.state.ctx.mkRealToInt(off);

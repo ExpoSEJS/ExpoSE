@@ -3,6 +3,7 @@ function Default(i, d) {
 }
 
 export default {
+	incrementalSolverEnabled: Default('USE_INCREMENTAL_SOLVER', false),
 	regexEnabled: !Default('DISABLE_REGULAR_EXPRESSIONS', false),
 	capturesEnabled: !Default('DISABLE_CAPTURE_GROUPS', false),
 	refinementsEnabled: !Default('DISABLE_REFINEMENTS', false),

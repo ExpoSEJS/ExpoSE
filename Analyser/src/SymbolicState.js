@@ -6,15 +6,15 @@ import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
-
 import External from './External';
+import Config from './Config';
 
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
 
-Z3.Query.MAX_REFINEMENTS = 20;
+const USE_INCREMENTAL_SOLVER = Config.incrementalSolverEnabled;
 
-//60s default timeout
+Z3.Query.MAX_REFINEMENTS = 20;
 const DEFAULT_CONTEXT_TIMEOUT = 5 * 60 * 1000;
 
 class SymbolicState {
@@ -130,6 +130,12 @@ class SymbolicState {
         }
     }
 
+    _buildAsserts(maxPc) {
+        for (let i = 0; i < maxPc; i++) {
+            this.slv.assert(this.pathCondition[i].ast);
+        }
+    }
+
     alternatives() {
         let childInputs = [];
 
@@ -138,24 +144,29 @@ class SymbolicState {
             throw 'This path has diverged';
         }
 
-        //Push all PCs up until bound
-        for (let i = 0; i < Math.min(this.input._bound, this.pathCondition.length); i++) {
-            this.slv.assert(this.pathCondition[i].ast);
+        if (USE_INCREMENTAL_SOLVER) {
+            //Push all PCs up until bound
+            this._buildAsserts(Math.min(this.input._bound, this.pathCondition.length));
+            this.slv.push();
         }
 
-        this.slv.push();
-
         for (let i = this.input._bound; i < this.pathCondition.length; i++) {
+
+            if (!USE_INCREMENTAL_SOLVER) {
+                this.slv.reset();
+                this._buildAsserts(i);
+            }
 
             //TODO: Make checks on expressions smarter
             if (!this.pathCondition[i].binder) {
                 this._buildPC(childInputs, i);
             }
-                
-            //Push the current thing we're looking at to the solver
-            this.slv.assert(this.pathCondition[i].ast);
-
-            this.slv.push();
+            
+            if (USE_INCREMENTAL_SOLVER) {
+                //Push the current thing we're looking at to the solver
+                this.slv.assert(this.pathCondition[i].ast);
+                this.slv.push();
+            }
         }
 
         this.slv.reset();
@@ -230,7 +241,7 @@ class SymbolicState {
     }
 
     _checkSat(clause, checks) {
-        let model = (new Z3.Query([clause], checks)).getModel(this.slv);
+        let model = (new Z3.Query([clause], checks)).getModel(this.slv, USE_INCREMENTAL_SOLVER);
         return model ? this.getSolution(model) : undefined;
     }
 
@@ -325,7 +336,13 @@ class SymbolicState {
     symbolicField(base_c, base_s, field_c, field_s) {
 
         if ((typeof base_c === "string" || base_c instanceof Array) && typeof field_c === "number") {
-            return base_s.getAt(this._coerceInt(field_s));
+            if (field_c >= base_c.length) {
+                this.pushCondition(this.ctx.mkGe(field_s, base_s.getLength()));
+                return undefined;
+            } else {
+                this.pushCondition(this.ctx.mkLt(field_s, base_s.getLength()));
+                return base_s.getAt(this._coerceInt(field_s));
+            }
         }
     	
         switch (field_c) {

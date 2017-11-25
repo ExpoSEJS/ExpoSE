@@ -184,6 +184,7 @@ class SymbolicExecution {
 
     putField(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
+        console.log('PutField ' + base.toString() + ' ' + offset);
         return {
             result: val
         };
@@ -299,6 +300,8 @@ class SymbolicExecution {
             Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
             left = left_c;
             right = right_c;
+        } else {
+            Log.logHigh('Not concretizing ' + op + ' ' + left + ' ' + right + ' ' + typeof left_c + ' ' + typeof right_c);
         }
 
         // Don't evaluate natively when args are symbolic
@@ -326,13 +329,12 @@ class SymbolicExecution {
     _binarySymbolic(op, left, right, result_c) {
 
         let [left_c, right_c] = [this.state.getConcrete(left), this.state.getConcrete(right)];
-        result_c = SymbolicHelper.evalBinary(op, left_c, right_c);
+        let result = SymbolicHelper.evalBinary(op, left_c, right_c);
 
         Log.logMid("Symbolically evaluating binary " + op + ", which has concrete result \"" + result_c + "\"");
 
-        //Will automatically wrap non symbolic values
-        let result = this.state.symbolicBinary(op, left_c, this.state.asSymbolic(left), right_c, this.state.asSymbolic(right));
-        result = result ? new ConcolicValue(result_c, result) : result_c;
+        let result_s = this.state.symbolicBinary(op, left_c, this.state.asSymbolic(left), right_c, this.state.asSymbolic(right));
+        result = result_s ? new ConcolicValue(result, result_s) : result;
 
         return {
             result: result
@@ -420,7 +422,7 @@ class SymbolicExecution {
         } catch (e) {
             throw 'Tropigate failed because ' + e + ' on program ' + code + ' at ' + e.stack;
         }
-        
+
         return {
             code: code,
             skip: false
