@@ -2,12 +2,6 @@
 
 "use strict";
 
-/**
- * DART-style symbolic execution engine by Johannes Kinder, Blake Loring 2015
- *
- * Based on Jalangi2 ananlysisCallbackTemplate.js by Koushik Sen
- */
-
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 import ObjectHelper from './Utilities/ObjectHelper';
 import SymbolicState from './SymbolicState';

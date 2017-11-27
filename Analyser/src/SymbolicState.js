@@ -13,14 +13,12 @@ const Stats = External('Stats');
 const Z3 = External('z3javascript');
 
 const USE_INCREMENTAL_SOLVER = Config.incrementalSolverEnabled;
-
-Z3.Query.MAX_REFINEMENTS = 20;
-const DEFAULT_CONTEXT_TIMEOUT = 5 * 60 * 1000;
+Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
 class SymbolicState {
     constructor(input, sandbox) {
         this.ctx = new Z3.Context();
-        this.slv = new Z3.Solver(this.ctx, DEFAULT_CONTEXT_TIMEOUT);
+        this.slv = new Z3.Solver(this.ctx, undefined, USE_INCREMENTAL_SOLVER);
 
         this.input = input;
 
@@ -113,7 +111,7 @@ class SymbolicState {
 
         Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable with checks ' + allChecks.length);
 
-        let solution = this._checkSat(newPC, allChecks);
+        let solution = this._checkSat(newPC, i, allChecks);
 
         if (solution) {
             solution._bound = i + 1;
@@ -130,10 +128,8 @@ class SymbolicState {
         }
     }
 
-    _buildAsserts(maxPc) {
-        for (let i = 0; i < maxPc; i++) {
-            this.slv.assert(this.pathCondition[i].ast);
-        }
+    _buildAsserts(i) {
+        return this.pathCondition.slice(0, i).map(x => x.ast);
     }
 
     alternatives() {
@@ -144,29 +140,20 @@ class SymbolicState {
             throw 'This path has diverged';
         }
 
-        if (USE_INCREMENTAL_SOLVER) {
-            //Push all PCs up until bound
-            this._buildAsserts(Math.min(this.input._bound, this.pathCondition.length));
-            this.slv.push();
-        }
+        //Push all PCs up until bound
+        this._buildAsserts(Math.min(this.input._bound, this.pathCondition.length)).forEach(x => this.slv.assert(x));
+        this.slv.push();
 
         for (let i = this.input._bound; i < this.pathCondition.length; i++) {
-
-            if (!USE_INCREMENTAL_SOLVER) {
-                this.slv.reset();
-                this._buildAsserts(i);
-            }
 
             //TODO: Make checks on expressions smarter
             if (!this.pathCondition[i].binder) {
                 this._buildPC(childInputs, i);
             }
             
-            if (USE_INCREMENTAL_SOLVER) {
-                //Push the current thing we're looking at to the solver
-                this.slv.assert(this.pathCondition[i].ast);
-                this.slv.push();
-            }
+            //Push the current thing we're looking at to the solver
+            this.slv.assert(this.pathCondition[i].ast);
+            this.slv.push();
         }
 
         this.slv.reset();
@@ -240,8 +227,11 @@ class SymbolicState {
         return solution;
     }
 
-    _checkSat(clause, checks) {
-        let model = (new Z3.Query([clause], checks)).getModel(this.slv, USE_INCREMENTAL_SOLVER);
+    _checkSat(clause, i, checks) {
+
+        //If we are using incremental mode we only send a single clause and push/pop the rest.
+        //In non-incremental mode we have to send the entire PC to Query
+        let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
 
