@@ -1,4 +1,0 @@
-var x = symbolic X initial {};
-if (x.hello = "what") {
-	console.log('Hello');
-}
