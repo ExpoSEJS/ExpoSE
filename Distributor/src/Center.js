@@ -20,7 +20,7 @@ class Center {
         this._lastid = 0;
         this._done = [];
         this._errors = 0;
-        this._running = 0;
+        this._running = [];
         this._coverage = new Coverage();
         this._stats = new Stats();
 
@@ -61,7 +61,7 @@ class Center {
      * True if another test can be queued
      */
     _canQueue() {
-        return (this._done.length + this._running) < this.options.maxPaths && this._running < this.options.maxConcurrent;
+        return (this._done.length + this._running.length) < this.options.maxPaths && this._running.length < this.options.maxConcurrent;
     }
 
     /**
@@ -73,21 +73,28 @@ class Center {
         }
     }
 
-    _postTest() {
-        this._running--;
+    _remove(test) {
+        const idx = this._running.indexOf(test);
+        if (idx != -1) {
+            this._running.splice(idx, 1);
+        }
+    }
+
+    _postTest(test) {
+        this._remove(test);
 
         //Start any remaining queued
         this._requeue();
         this._printStatus();
 
         //If finished print output
-        if (this._running === 0) {
+        if (!this._running.length) {
             this._finishedTesting();
         }
     }
 
     _printStatus() {
-        process.stdout.write('\r*** [' + this._done.length + ' done /' + this._strategy.length() +' queued / ' + this._running + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
+        process.stdout.write('\r*** [' + this._done.length + ' done /' + this._strategy.length() +' queued / ' + this._running.length + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
     }
 
     _finishedTesting() {
@@ -95,6 +102,7 @@ class Center {
     }
 
     cancel() {
+        this._running.forEach(test => test.kill());
         this._finishedTesting();
     }
 
@@ -131,7 +139,7 @@ class Center {
         }
     }
 
-    _testFileDone(code, test, finalOut, coverage, fsErrors) {
+    _testFileDone(spawn, code, test, finalOut, coverage, fsErrors) {
 
         let errors = fsErrors;
 
@@ -151,19 +159,17 @@ class Center {
             this._pushDone(test, test.file.input, test.file.pc, [], errors.concat([{ error: 'Error extracting final output - a fatal error must have occured' }]));
         }
 
-        this._postTest();
+        this._postTest(test);
     }
 
     _testFile(file) {
-        this._running++;
 
-        new Spawn(this.options.analyseScript, file, {
+        let nextTest = new Spawn(this.options.analyseScript, file, {
             log: this.options.printPaths,
-            outFile: this.options.outFile,
             timeout: this.options.testMaxTime,
-            coverageFile: this.options.coverageFile
-        }).start(this._testFileDone.bind(this));
-        
+        });
+
+        this._running.push(nextTest.start(this._testFileDone.bind(this)));
         this._printStatus();
     }
 }

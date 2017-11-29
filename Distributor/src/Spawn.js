@@ -8,7 +8,9 @@ import microtime from 'microtime';
 let StringDecoder = require('string_decoder').StringDecoder;
 let tmp = require('tmp');
 let decoder = new StringDecoder('utf8');
+
 const fs = require('fs');
+const kill = require('tree-kill');
 
 //Some number non zero to say process was killed
 const PROCESS_KILLED = 999999;
@@ -58,6 +60,7 @@ class Spawn {
 
         this._recordEndTime();
 
+        let me = this;
         let errors = [];
         let coverage = null;
         let finalOut = null;
@@ -75,7 +78,7 @@ class Spawn {
             if (count == 2) {
                 test.tmpOutFile.removeCallback();
                 test.tmpCoverageFile.removeCallback();
-                done(code, test, finalOut, coverage, errors);
+                done(me, code, test, finalOut, coverage, errors);
             }
         }
 
@@ -111,10 +114,14 @@ class Spawn {
         return EXPOSE_REPLAY_PATH + ' ' + this.shellescape(this.args);
     }
 
+    kill() {
+        console.log(this.file.id + ' killed');
+        kill(this.prc.pid, 'SIGKILL');  
+    }
+
     _buildTimeout(prc, done) {
         return setTimeout(() => {
-          prc.stdin.pause();
-          prc.kill('SIGKILL');
+            this.kill();
         }, this.options.timeout);
     }
 
@@ -127,22 +134,24 @@ class Spawn {
             }
         }
 
-        let prc = spawn(this.script, this.args, {
+        this.prc = spawn(this.script, this.args, {
             env: this.env,
             disconnected: false
         });
 
         this._startTime = microtime.now();
 
-        this._killTimeout = this._buildTimeout(prc, done);
+        this._killTimeout = this._buildTimeout(this.prc, done);
         
-        prc.stdout.on('data', insertData.bind(this));
-        prc.stderr.on('data', insertData.bind(this));
+        this.prc.stdout.on('data', insertData.bind(this));
+        this.prc.stderr.on('data', insertData.bind(this));
 
-        prc.stdout.on('close', code => {
+        this.prc.stdout.on('close', code => {
             clearTimeout(this._killTimeout);
             this._processEnded(code, done);
         });
+
+        return this;
     }
 }
 
