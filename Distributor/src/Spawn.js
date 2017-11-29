@@ -115,8 +115,7 @@ class Spawn {
     }
 
     kill() {
-        console.log(this.file.id + ' killed');
-        kill(this.prc.pid, 'SIGKILL');  
+        kill(this._pid, 'SIGKILL');  
     }
 
     _buildTimeout(prc, done) {
@@ -134,22 +133,23 @@ class Spawn {
             }
         }
 
-        this.prc = spawn(this.script, this.args, {
+        this._startTime = microtime.now();
+
+        const prc = spawn(this.script, this.args, {
             env: this.env,
             disconnected: false
         });
-
-        this._startTime = microtime.now();
-
-        this._killTimeout = this._buildTimeout(this.prc, done);
         
-        this.prc.stdout.on('data', insertData.bind(this));
-        this.prc.stderr.on('data', insertData.bind(this));
+        prc.stdout.on('data', insertData.bind(this));
+        prc.stderr.on('data', insertData.bind(this));
 
-        this.prc.stdout.on('close', code => {
+        prc.stdout.on('close', code => {
             clearTimeout(this._killTimeout);
             this._processEnded(code, done);
         });
+
+        this._killTimeout = this._buildTimeout(this.prc, done);
+        this._pid = prc.pid;
 
         return this;
     }

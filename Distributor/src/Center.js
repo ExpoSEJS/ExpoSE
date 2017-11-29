@@ -11,8 +11,8 @@ class Center {
 
     constructor(options) {
         this.cbs = [];
+        this._cancelled = false;
         this.options = options;
-        this._strategy = null;
     }
 
     start(file) {
@@ -38,9 +38,9 @@ class Center {
         return this;
     }
 
-    _startTesting(files) {
+    _startTesting(cases) {
         this._strategy = new Strategy();
-        files.forEach(i => this._strategy.add(i));
+        cases.forEach(i => this._strategy.add(i));
 
         this._requeue();
         this._printStatus();
@@ -51,24 +51,22 @@ class Center {
      */
     _startNext() {
         if (this._strategy.length()) {
-            //TODO: Have different strategies, or
-            //maybe different strategies running concurrently
             this._testFile(this._strategy.next());
         }
     }
 
     /**
-     * True if another test can be queued
+     * True if another test can begin
      */
-    _canQueue() {
-        return (this._done.length + this._running.length) < this.options.maxPaths && this._running.length < this.options.maxConcurrent;
+    _canStart() {
+        return !this._cancelled && (this._done.length + this._running.length) < this.options.maxPaths && this._running.length < this.options.maxConcurrent;
     }
 
     /**
      * Queue as many tests as possible
      */
     _requeue() {
-        while (this._strategy.length() && this._canQueue()) {
+        while (this._strategy.length() && this._canStart()) {
             this._startNext();
         }
     }
@@ -102,6 +100,7 @@ class Center {
     }
 
     cancel() {
+        this._cancelled = true;
         this._running.forEach(test => test.kill());
         this._finishedTesting();
     }
