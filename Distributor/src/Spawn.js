@@ -14,7 +14,7 @@ const kill = require('tree-kill');
 
 //Some number non zero to say process was killed
 const PROCESS_KILLED = 999999;
-const EXPOSE_REPLAY_PATH = 'NO_COMPILE=1 expoSE replay';
+const EXPOSE_REPLAY_PATH = 'expoSE replay';
 
 class Spawn {
 

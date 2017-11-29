@@ -21,7 +21,7 @@ fi
 
 ./scripts/setup_if_needed
 
-if [ -z ${NO_COMPILE} ]; then
+if [[ ${RECOMPILE} && ${RECOMPILE-x} ]]; then
 	./scripts/build/build_analyser
 	if [ $? -ne 0 ]; then
 		exit 1
