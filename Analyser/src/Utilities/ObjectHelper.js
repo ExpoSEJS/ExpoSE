@@ -66,6 +66,7 @@ ObjectHelper.asString = function(item, forceSafe, depth) {
     }
 
     if (forceSafe || ObjectHelper.isSafe(item)) {
+        console.log('Concretize ' + item);
         return item.toString();
     } else {
         return ObjectHelper.enumerate(item, depth);

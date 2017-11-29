@@ -178,7 +178,7 @@ class SymbolicExecution {
 
     putField(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
-        console.log('PutField ' + base.toString() + ' ' + offset);
+        Log.logHigh('PutField ' + base.toString() + ' ' + offset);
         return {
             result: val
         };

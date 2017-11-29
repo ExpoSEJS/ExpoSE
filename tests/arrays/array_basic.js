@@ -2,9 +2,6 @@
 
 "use strict";
 
-console.log('Fraction Test');
-console.log('Loading Symbols');
-
 var x = symbolic X initial ['A'];
 
 assume x.length < 4;

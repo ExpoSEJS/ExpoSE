@@ -432,7 +432,7 @@ function BuildModels() {
     models[Object._expose.makeSymbolic] = symbolicHook(
         () => true,
         (c, _f, base, args, result) => { 
-            console.log('Creating symbolic variable ' + args[0]);
+            Log.log('Creating symbolic variable ' + args[0]);
             return c.state.createSymbolicValue(args[0], args[1]);
         }
     );

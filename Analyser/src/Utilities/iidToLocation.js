@@ -19,7 +19,6 @@ export default function(sandbox, sid, iid) {
                 uninstrumentedCharacterNumber: arr[3]
             };
         } else {
-            console.log('Returning null on ' + sid + ' and ' + iid);
             return null;
         }
     }
