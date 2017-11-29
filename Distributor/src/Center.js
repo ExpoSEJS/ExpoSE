@@ -59,7 +59,7 @@ class Center {
      * True if another test can begin
      */
     _canStart() {
-        return !this._cancelled && (this._done.length + this._running.length) < this.options.maxPaths && this._running.length < this.options.maxConcurrent;
+        return !this._cancelled && this._running.length < this.options.maxConcurrent;
     }
 
     /**

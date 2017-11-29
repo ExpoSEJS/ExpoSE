@@ -21,6 +21,10 @@ fi
 
 ./scripts/setup_if_needed
 
+if [[ ${EXPOSE_LOG_LEVEL} && ${EXPOSE_LOG_LEVEL-x} ]]; then
+	RECOMPILE="1"
+fi
+
 if [[ ${RECOMPILE} && ${RECOMPILE-x} ]]; then
 	./scripts/build/build_analyser
 	if [ $? -ne 0 ]; then

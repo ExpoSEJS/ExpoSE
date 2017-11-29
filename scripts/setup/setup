@@ -17,7 +17,7 @@ echo "Cleaning previous installations"
 echo "Installing into PATH"
 ./scripts/setup/install_bashprofile
 
-./scripts/build_analyser
+./scripts/build/build_analyser
 
 touch ~/.expose_setup
 
