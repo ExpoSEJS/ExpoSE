@@ -1,7 +1,6 @@
 #!/bin/bash -e
-if [ -z ${NO_CLEANUP} ]; then
-  ./scripts/setup/cleanup $1
-fi
+
+./scripts/setup/cleanup $1
 
 echo "Setting up $1"
 

@@ -45,13 +45,12 @@ All environment flags work both with the ExpoSE UI and ExpoSE CLI. Typically the
 $ EXPOSE_LOG_LEVEL=1 expoSE target/hello.js
 ```
 
-* `NO_COMPILE`              - Don't rebuild ExpoSE before executing scripts
+* `EXPOSE_MAX_TIME`         - The time (in milliseconds) to limit the total execution
+* `EXPOSE_TEST_TIMEOUT`     - The time (in milliseconds) a test case can run for before being timed out
+* `EXPOSE_PRINT_COVERAGE`   - Print out the files checked by an analysis and show the lines which where explored by the analyzer
 * `EXPOSE_PRINT_PATHS`      - Print the output of each test case to stdout
 * `EXPOSE_LOG_LEVEL`        - Level from 0 (None) to 3 (High)
 * `EXPOSE_MAX_CONCURRENT`   - The maximum number of test cases that can run concurrently
-* `EXPOSE_TEST_TIMEOUT`     - The time (in milliseconds) a test case can run for before being timed out
-* `EXPOSE_MAX_PATHS`        - The maximum number of test cases to execute
-* `EXPOSE_PRINT_COVERAGE`   - Print out the files checked by an analysis and show the lines which where explored by the analyzer
-* `NO_CLEANUP`              - When executing `expoSE setup` don't clean existing installation
+* `RECOMPILE`               - Force ExpoSE to rebuild before executing scripts
 
 NOTE: To improve performance logging instructions are removed from the output at compile time and so will not be updated if `NO_COMPILE` is set.
