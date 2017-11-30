@@ -419,6 +419,9 @@ function BuildModels() {
     models[Array.prototype.unshift] = NoOp();
     models[Array.prototype.fill] = NoOp();
 
+    models[Function.prototype.apply] = NoOp();
+    models[Function.prototype.call] = NoOp();
+
 
     /**
      * Secret _expose hooks for symbols.js

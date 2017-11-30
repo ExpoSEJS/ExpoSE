@@ -82,7 +82,6 @@ if (process.argv.length >= 3) {
     let center = new Center(options);
 
     process.on('SIGINT', function() {
-        console.log('\nDetected SIGINT');
         center.cancel();
     });
 
