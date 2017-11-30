@@ -50,7 +50,7 @@ J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => 
 
     let finalOut = {
         pc: state.finalPC(),
-        input: state.finalInput(),
+        input: state.input,
         errors: state.errors,
         alternatives: state.alternatives(),
         stats: state.stats.export()

@@ -57,7 +57,7 @@ class SymbolicState {
     }
 
     symbolicConditional(result) {
-        let [result_s, result_c] = [this.getSymbolic(result), this.getConcrete(result)];
+        let [result_s, result_c] = [this.asSymbolic(result), this.asSymbolic(result)];
 
         if (result_c === true) {
             Log.logMid("Concrete result was true, pushing " + result_s);
@@ -72,21 +72,10 @@ class SymbolicState {
     }
 
     /**
-     * Roll PC into a single AND'ed PC
-     */
-    _simplifyPC(pc) {
-        return pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)).simplify();
-    }
-
-    /**
      *Formats PC to pretty string if length != 0
      */
     _stringPC(pc) {
-        if (pc.length) {
-            return this._simplifyPC(pc).toPrettyString();
-        } else {
-            return "";
-        }
+        return pc.length ? pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)).simplify() : '';
     }
 
     /**
@@ -94,14 +83,6 @@ class SymbolicState {
      */
     finalPC() {
         return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
-    }
-
-    /**
-     * Regenerate the final input object from the path condition (for output)
-     * Use initial input if the PC couldn't be satisfied (Some serious issues has occured)
-     */
-    finalInput() {
-        return this.input;
     }
 
     _buildPC(childInputs, i) {
@@ -136,8 +117,7 @@ class SymbolicState {
         let childInputs = [];
 
         if (this.input._bound > this.pathCondition.length) {
-            Log.log('Bound > PathCondition');
-            throw 'This path has diverged';
+            throw `Bound ${this.input._bound} > ${this.pathCondition.length}, divergence has occured`;
         }
 
         //Push all PCs up until bound
@@ -239,28 +219,12 @@ class SymbolicState {
         return !!ConcolicValue.getSymbolic(val);
     }
 
-    getSymbolic(val) {
-        return ConcolicValue.getSymbolic(val);
-    }
-
-    isWrapped(val) {
-        return WrappedValue.isWrapped(val);
-    }
-
     getConcrete(val) {
         return WrappedValue.getConcrete(val);
     }
 
     asSymbolic(val) {
-        return this.getSymbolic(val) || this.wrapConstant(val);
-    }
-
-    getAnnotations(val) {
-        return WrappedValue.getAnnotations(val);
-    }
-
-    _coerceInt(s) {
-        return this.ctx.mkRealToInt(s);
+        return ConcolicValue.getSymbolic(val) || this.wrapConstant(val);
     }
 
     symbolicBinary(op, left_c, left_s, right_c, right_s) {
@@ -332,7 +296,7 @@ class SymbolicState {
                 return undefined;
             } else {
                 this.pushCondition(this.ctx.mkLt(field_s, base_s.getLength()));
-                return base_s.getAt(this._coerceInt(field_s));
+                return base_s.getAt(this.ctx.mkRealToInt(field_s));
             }
         }
     	

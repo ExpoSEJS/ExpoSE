@@ -302,7 +302,7 @@ class SymbolicExecution {
             op: op,
             left: left,
             right: right,
-            skip: (WrappedValue.isWrapped(left) || WrappedValue.isWrapped(right))
+            skip: WrappedValue.isSymbolic(left) || WrappedValue.isSymbolic(right)
         };
     }
 
@@ -341,7 +341,7 @@ class SymbolicExecution {
         return {
             op: op,
             left: left,
-            skip: WrappedValue.isWrapped(left)
+            skip: WrappedValue.isSymbolic(left)
         }
     }
 
@@ -352,7 +352,7 @@ class SymbolicExecution {
 
         if (this.state.isSymbolic(left)) {
             return this._unarySymbolic(op, left, result_c);
-        } else if (this.state.isWrapped(left)) {
+        } else if (this.state.isSymbolic(left)) {
             result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
         }
 
@@ -363,7 +363,7 @@ class SymbolicExecution {
 
     _unarySymbolic(op, left, result_c) {
 
-        let left_s = this.state.getSymbolic(left);
+        let left_s = this.state.asSymbolic(left);
         let left_c = this.state.getConcrete(left);
 
         result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
@@ -381,7 +381,7 @@ class SymbolicExecution {
 
     _toBool(val) {
         let val_c = this.state.getConcrete(val);
-        let val_s = this.state.getSymbolic(val);
+        let val_s = this.state.asSymbolic(val);
         let result_s = this.state.symbolicCoerceToBool(val_c, val_s);
         return result_s ? new ConcolicValue(!!val_c, result_s) : undefined;
     }
@@ -390,7 +390,7 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
 
         if (this.state.isSymbolic(result)) {
-            Log.logMid("Evaluating symbolic condition " + this.state.getSymbolic(result) + " at " + this._location(iid));
+            Log.logMid("Evaluating symbolic condition " + this.state.asSymbolic(result) + " at " + this._location(iid));
             result = this._toBool(result);
 
             if (result) {
