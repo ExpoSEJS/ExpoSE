@@ -3,23 +3,21 @@
 "use strict";
 
 export default function(sandbox, sid, iid) {
-    let ret, arr;
+    let ret;
 
     if ((ret = sandbox.smap[sid])) {
-        var fileName = ret.originalCodeFileName;
+        const iidInfo = ret[iid];
 
-        arr = ret[iid];
-
-        if (arr) {
-            return {
-                fileName: fileName,
-                instrumentedLineNumber: arr[0],
-                instrumentedCharacterNumber: arr[1],
-                uninstrumentedLineNumber: arr[2],
-                uninstrumentedCharacterNumber: arr[3]
-            };
-        } else {
+        if (!iidInfo) {
             return null;
         }
+        
+        return {
+            fileName: ret.originalCodeFileName,
+            instrumentedLineNumber: iidInfo[0],
+            instrumentedCharacterNumber: iidInfo[1],
+            uninstrumentedLineNumber: iidInfo[2],
+            uninstrumentedCharacterNumber: iidInfo[3]
+        };
     }
 }

@@ -419,9 +419,9 @@ function BuildModels() {
     models[Array.prototype.unshift] = NoOp();
     models[Array.prototype.fill] = NoOp();
 
+    //TODO: Test IsNative for apply, bind & call
     models[Function.prototype.apply] = NoOp();
     models[Function.prototype.call] = NoOp();
-
 
     /**
      * Secret _expose hooks for symbols.js

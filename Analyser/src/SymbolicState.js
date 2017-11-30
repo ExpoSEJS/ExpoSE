@@ -264,9 +264,9 @@ class SymbolicState {
     }
 
     symbolicBinary(op, left_c, left_s, right_c, right_s) {
+        this.state.seen('Symbolic Binary');
 
         let ctx = this.ctx;
-
         let result;
 
         switch (op) {
@@ -324,6 +324,7 @@ class SymbolicState {
     }
 
     symbolicField(base_c, base_s, field_c, field_s) {
+        this.state.seen('Symbolic Field');
 
         if ((typeof base_c === "string" || base_c instanceof Array) && typeof field_c === "number") {
             if (field_c >= base_c.length) {
@@ -364,11 +365,14 @@ class SymbolicState {
     }
 
     symbolicUnary(op, left_c, left_s) {
+        this.state.seen('Symbolic Unary');
+
         switch (op) {
             case "!": {
                 let bool_s = this.symbolicCoerceToBool(left_c, left_s);
                 return bool_s ? this.ctx.mkNot(bool_s) : undefined;
             }
+
             case "+": {
 
                 switch (typeof left_c) {
@@ -381,6 +385,7 @@ class SymbolicState {
                 //But some tit might write var x = +5;
                 return left_s;
             }
+
             case "-":
                 
                 switch (typeof left_c) {
