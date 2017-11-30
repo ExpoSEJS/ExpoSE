@@ -196,9 +196,6 @@ class SymbolicState {
     }
 
     _checkSat(clause, i, checks) {
-
-        //If we are using incremental mode we only send a single clause and push/pop the rest.
-        //In non-incremental mode we have to send the entire PC to Query
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         return model ? this.getSolution(model) : undefined;
     }
@@ -218,61 +215,40 @@ class SymbolicState {
     symbolicBinary(op, left_c, left_s, right_c, right_s) {
         this.state.seen('Symbolic Binary');
 
-        let ctx = this.ctx;
-        let result;
-
         switch (op) {
             case "===":
             case "==":
-                result = this.ctx.mkEq(left_s, right_s);
-                break;
+                return this.ctx.mkEq(left_s, right_s);
             case "!==":
             case "!=":
-                result = this.ctx.mkNot(this.ctx.mkEq(left_s, right_s));
-                break;
+                return this.ctx.mkNot(this.ctx.mkEq(left_s, right_s));
             case "&&":
-                result = this.ctx.mkAnd(left_s, right_s);
-                break;
+                return this.ctx.mkAnd(left_s, right_s);
             case "||":
-                result = this.ctx.mkOr(left_s, right_s);
-                break;
+                return this.ctx.mkOr(left_s, right_s);
             case ">":
-                result = this.ctx.mkGt(left_s, right_s);
-                break;
+                return this.ctx.mkGt(left_s, right_s);
             case ">=":
-                result = this.ctx.mkGe(left_s, right_s);
-                break;
+                return this.ctx.mkGe(left_s, right_s);
             case "<=":
-                result = this.ctx.mkLe(left_s, right_s);
-                break;
+                return this.ctx.mkLe(left_s, right_s);
             case "<":
-                result = this.ctx.mkLt(left_s, right_s);
-                break;
+                return this.ctx.mkLt(left_s, right_s);
             case "+":
-                if (typeof left_c == "string") {
-                    result = this.ctx.mkSeqConcat([left_s, right_s]);
-                } else {
-            	    result = this.ctx.mkAdd(left_s, right_s);
-                }
-                break;
+                return typeof left_c === 'string' ? this.ctx.mkSeqConcat([left_s, right_s]) : this.ctx.mkAdd(left_s, right_s);
             case "-":
-                result = this.ctx.mkSub(left_s, right_s);
-                break;
+                return this.ctx.mkSub(left_s, right_s);
             case "*":
-                result = this.ctx.mkMul(left_s, right_s);
-                break;
+                return this.ctx.mkMul(left_s, right_s);
             case "/":
-                result = this.ctx.mkDiv(left_s, right_s);
-                break;
+                return this.ctx.mkDiv(left_s, right_s);
             case "%":
-                result = this.ctx.mkMod(left_s, right_s);
-                break;
+                return this.ctx.mkMod(left_s, right_s);
             default:
                 Log.log("Symbolic execution does not support operand \"" + op + "\", concretizing.");
-                return undefined;
+                break;
         }
-
-        return result;
+        return undefined;
     }
 
     symbolicField(base_c, base_s, field_c, field_s) {
@@ -326,16 +302,7 @@ class SymbolicState {
             }
 
             case "+": {
-
-                switch (typeof left_c) {
-                    case 'string':
-                        return this.ctx.mkStrToInt(left_s);
-                }
-
-                //For numeric types, +N => N
-                //I don't see this being done often, generally only used to coerce
-                //But some tit might write var x = +5;
-                return left_s;
+                return typeof left_c === 'string' ? this.ctx.mkStrToInt(left_s) : left_s;
             }
 
             case "-":
