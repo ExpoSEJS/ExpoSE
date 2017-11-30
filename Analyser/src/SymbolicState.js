@@ -35,14 +35,6 @@ class SymbolicState {
 
         this.stats = new Stats();
     }
-
-    getErrorCount() {
-        return this.errors.length;
-    }
-
-    addError(error) {
-        this.errors.push(error);
-    }
     
     pushCondition(cnd, binder) {
     	this.pathCondition.push({
@@ -50,10 +42,6 @@ class SymbolicState {
             binder: binder || false,
             forkIid: this.coverage.last()
         });
-    }
-
-    pushNot(cnd) {
-        this.pushCondition(this.ctx.mkNot(cnd));
     }
 
     symbolicConditional(result) {
@@ -64,7 +52,7 @@ class SymbolicState {
             this.pushCondition(result_s);
         } else if (result_c === false) {
             Log.logMid("Concrete result was false, pushing not of " + result_s);
-            this.pushNot(result_s);
+            this.pushCondition(this.ctx.mkNot(result_s));
         } else {
             Log.log("Result: " + result_c.toString() + ' and ' + result_s.toString() + " (" + typeof(result_c) + ")");
             Log.log("Undefined result not yet supported");

@@ -38,7 +38,7 @@ class SymbolicExecution {
 
         Log.log('Uncaught exception ' + e + (e.stack ? ('(stack ' + e.stack + ')') : ''));
 
-        this.state.addError({
+        this.state.errors.push({
             error: '' + e,
             stack: e.stack
         });
@@ -149,7 +149,7 @@ class SymbolicExecution {
             const offset_c = this.state.getConcrete(offset);
             for (let idx in base_c) {
                 if (offset_c != base_c[idx]) {
-                    this.state.pushNot(this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset)));
+                    this.state.pushCondition(this.state.ctx.mkNot(this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset))));
                 }
             }
         }
