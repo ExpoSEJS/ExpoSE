@@ -5,28 +5,24 @@
 const remote = require('electron').remote;
 const {dialog} = remote.require('electron');
 const fs = remote.require('fs');
-const Parser = remote.require('../src/output_parser');
 const Replay = remote.require('../src/replay');
+const parser = require('./parser');
 const graph = require('./graph');
 const view = require('./view');
 
-let current_output_src;
+let current_stdout;
 let current_summary;
 
-function handleOutput(src, page) {
+function handleOutput(err, stdout, done, page) {
 
-	current_output_src = src;
-
-	view.clear(page);
-
-	//Clear and add all lines of output to out
-	src.split('\n').forEach(x=> {
-		view.out('' + x, page);
-	});
-
-	let done = Parser(src);
-
+	current_stdout = stdout;
 	current_summary = done;
+
+	if (err) {
+		view.error('Error', err);
+	}
+
+	done = parser(JSON.parse(done));
 
     if (!done) {
     	view.error('Error', 'No JSON', page);
@@ -54,6 +50,8 @@ function handleOutput(src, page) {
     }
 }
 
+const STDOUT_SUFFIX = '_stdout';
+
 function loadOutput(page) {
 	let file = dialog.showOpenDialog({properties: ['openFile']});
 
@@ -62,19 +60,31 @@ function loadOutput(page) {
 		return;
 	}
 
-	let data = fs.readFileSync('' + file);
+	file = file[0];
 
-	if (!data) {
-		console.log('No Data');
-		return;
-	}
+	fs.readFile('' + file, (err, data) => {
+		
+		if (err) {
+			throw err;
+		}
 
-	handleOutput('' + data, page);
+		fs.readFile('' + file + STDOUT_SUFFIX, (err, stdout) => {
+
+			if (err) {
+				throw err;
+			}
+
+			stdout = '' + stdout;
+
+			handleOutput(null, stdout, data, page);
+			view.out(stdout, page);
+		});
+	});
 }
 
 function saveOutput(page) {
 	
-	if (!current_output_src) {
+	if (!current_stdout) {
 		console.log('There is no output');
 		return;
 	}
@@ -85,7 +95,8 @@ function saveOutput(page) {
 		return;
 	}
 
-	fs.writeFileSync(file, '' + current_output_src);
+	fs.writeFile('' + file, current_summary, function(err) {});
+	fs.writeFile('' + file + STDOUT_SUFFIX, current_stdout);
 }
 
 module.exports = {

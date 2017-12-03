@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const tmp = require('tmp');
-const expose = require('./expose');
+const graph_sorter = require('./graph_sorter');
 const TIMESTEP = 1000 * 1000;
 
 function toSeconds(v) {
@@ -29,8 +29,8 @@ function handlePercentage(summary, outFile, mode, doneCb) {
 	let lastCoverage = 0;
 
 	jobList.forEach((x, i) => {
-		coverageLines += '' + time(x.endTime) + ', ' + Math.max(expose.aggregateCoverage(x)[mode], lastCoverage) + '\n';
-		lastCoverage = expose.aggregateCoverage(x)[mode];
+		coverageLines += '' + time(x.endTime) + ', ' + Math.max(graph_sorter.aggregateCoverage(x)[mode], lastCoverage) + '\n';
+		lastCoverage = graph_sorter.aggregateCoverage(x)[mode];
 	});
 
 	fs.writeFile(outFile, coverageLines, doneCb);

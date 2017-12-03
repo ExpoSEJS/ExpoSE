@@ -24,29 +24,7 @@ function coverage(job) {
 }
 
 function internal(filename) {
-	return  filename.indexOf('/Annotations/') != -1 || filename.indexOf('/S$/') != -1 || filename.indexOf('/ExpoSE/lib/') != -1;
-}
-
-function aggregateCoverage(job) {
-	let coveredBlocks = 0;
-	let totalBlocks = 0;
-
-	let coveredLines = 0;
-	let totalLines = 0;
-	
-	job.coverage.forEach(x => {
-		if (!internal(x.file)) {
-			coveredBlocks += x.terms.found;
-			totalBlocks += x.terms.total;
-			coveredLines += x.loc.found;
-			totalLines += x.loc.total;
-		}
-	});
-
-	return {
-		terms: toPercentage(coveredBlocks / totalBlocks),
-		lines: toPercentage(coveredLines / totalLines)
-	}
+	return  filename.indexOf('/S$/') != -1 || filename.indexOf('/ExpoSE/lib/') != -1;
 }
 
 function sort(summary) {
@@ -84,11 +62,20 @@ function buildErrors(summary) {
 	return summary.done.reduce((x, y) => x.concat(y.errors), []);
 }
 
-module.exports = {
-	sort: sort,
-	buildErrors,
-	coverage: coverage,
-	aggregateCoverage: aggregateCoverage,
-	summaryInfo: summaryInfo,
-	OUT_REGEX: /ExpoSE JSON: ([\s\S]*)\nEND JSON/
+module.exports = function(summary) {
+	if (summary) {
+		
+		summary.done.forEach(x => {
+			coverage(x);
+		});
+
+		sort(summary);
+
+		return {
+			source: summary.source,
+			info: summaryInfo(summary),
+			jobs: summary.done,
+			coverage: summary.done[summary.done.length - 1].coverage
+		};
+	}
 }

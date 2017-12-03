@@ -5,7 +5,8 @@ import Center from './Center';
 import microtime from 'microtime';
 import FileTransformer from './FileTransformer';
 
-let os = require('os');
+const fs = require('fs');
+const os = require('os');
 
 process.title = 'ExpoSE Distributor';
 
@@ -69,7 +70,7 @@ if (process.argv.length >= 3) {
     let options = {
         maxConcurrent: getArgument('EXPOSE_MAX_CONCURRENT', 'number', defaultTestCases), //max number of tests to run concurrently
         maxTime: getArgument('EXPOSE_MAX_TIME', 'number', 60 * MINUTE), //Max time in MS
-        jsonOut: getArgument('EXPOSE_JSON_OUT', 'number', false), //By default ExpoSE should not print JSON results into STDOUT
+        jsonOut: getArgument('EXPOSE_JSON_PATH', 'string', undefined), //By default ExpoSE does not generate JSON out
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
         testMaxTime: getArgument('EXPOSE_TEST_TIMEOUT', 'number', 10 * MINUTE),
         printDeltaCoverage: getArgument('EXPOSE_PRINT_COVERAGE', 'number', false),
@@ -94,13 +95,14 @@ if (process.argv.length >= 3) {
 
     center.done((center, done, errors, coverage, stats) => {
 
-        if (options.jsonOut) {
-            console.log('\nExpoSE JSON: ' + JSON.stringify({
+        if (options.jsonOut !== undefined) {
+            console.log(`\n*-- Writing JSON to ${options.jsonOut} --*`);
+            fs.writeFileSync(options.jsonOut, JSON.stringify({
                 source: getTarget(),
                 start: start,
                 end: microtime.now(),
                 done: done
-            }) + '\nEND JSON');
+            }));
         }
 
         console.log('\n*-- Stat Module Output --*')
