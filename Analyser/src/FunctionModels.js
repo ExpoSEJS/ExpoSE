@@ -164,17 +164,28 @@ function BuildModels() {
         return result;
     }
 
+    /**
+     * In JavaScript slice and substr can be given a negative index to indicate addressing from the end of the array
+     * We need to rewrite the SMT to handle these cases
+     */
+    function substringHandleNegativeLengths(ctx, base_s, index_s) {
+        let indexFromLength = ctx.mkAdd(base_s.getLength(), index_s);
+        return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexFromLength);
+    }
+
     function substringHelper(c, _f, base, args, result) {
-        Log.log('WARNING: Symbolic substring support new and buggy ' + JSON.stringify(args));
+        c.state.stats.seen('Symbolic Substrings');
 
         let target = c.state.asSymbolic(base);
         let start_off = c.state.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
+        start_off = substringHandleNegativeLengths(c.state.ctx, target, start_off);
 
         let len;
 
         if (args[1]) {
             len = c.state.asSymbolic(args[1]);
             len = c.state.ctx.mkRealToInt(len);
+            len = substringHandleNegativeLengths(c.state.ctx, target, len);
         } else {
             len = c.state.ctx.mkSub(target.getLength(), start_off);
         }
@@ -303,6 +314,7 @@ function BuildModels() {
     );
 
     models[String.prototype.substring] = models[String.prototype.substr];
+    models[String.prototype.slice] = models[String.prototype.substr];
 
     models[String.prototype.charAt] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
