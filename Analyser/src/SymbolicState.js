@@ -73,27 +73,26 @@ class SymbolicState {
     }
 
     _buildPC(childInputs, i) {
-        let newPC = this.ctx.mkNot(this.pathCondition[i].ast);
-        
-        let allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
+        const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
+        const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
+        const solution = this._checkSat(newPC, i, allChecks);
 
         Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable with checks ${allChecks.length}`);
 
-        let solution = this._checkSat(newPC, i, allChecks);
-
-        if (solution) {
-            solution._bound = i + 1;
-            
-            childInputs.push({
-                input: solution,
-                pc: this._stringPC(newPC),
-                forkIid: this.pathCondition[i].forkIid
-            });
-           
-            Log.logMid(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
-        } else {
-            Log.logMid("Unsatisfiable.");
+        if (!solution) {
+            Log.logMid(`Unsatisfiable`);
+            return;
         }
+        
+        solution._bound = i + 1;
+            
+        childInputs.push({
+            input: solution,
+            pc: this._stringPC(newPC),
+            forkIid: this.pathCondition[i].forkIid
+        });
+           
+        Log.logMid(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
     }
 
     _buildAsserts(i) {
