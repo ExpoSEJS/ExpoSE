@@ -265,11 +265,11 @@ class SymbolicExecution {
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
         if (typeof left_c !== typeof right_c) {
-            Log.log(`Concretizing binary ${op} on operands of differing types. Type coercion not yet implemented symbolically. (${ObjectHelper.asString(left_c)}, ${ObjectHelper.asString(right_c)})`);
+            Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
             left = left_c;
             right = right_c;
         } else {
-            Log.logHigh(`Not concretizing ${op} ${left} ${right} ${typeof left_c} ${typeof right_c}`);
+            Log.logHigh('Not concretizing ' + op + ' ' + left + ' ' + right + ' ' + typeof left_c + ' ' + typeof right_c);
         }
 
         // Don't evaluate natively when args are symbolic
@@ -283,25 +283,29 @@ class SymbolicExecution {
 
     binary(iid, op, left, right, result_c, isOpAssign, isSwitchCaseComparison, isComputed) {
         this.state.coverage.touch(iid);
-        Log.logHigh(`${op} left ${ObjectHelper.asString(left)} right ${ObjectHelper.asString(right)} result_c ${ObjectHelper.asString(result_c)} at ${this._location(iid)}`);
+        Log.logHigh('Op ' + op + ' left ' + ObjectHelper.asString(left) + ' right ' + ObjectHelper.asString(right) + ' result_c ' + ObjectHelper.asString(result_c) + ' at ' + this._location(iid));
 
-        return {
-            result: this.state.isSymbolic(left) || this.state.isSymbolic(right) ? this._binarySymbolic(op, left, right, result_c) : result_c
-        };
+        if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
+            return this._binarySymbolic(op, left, right, result_c);
+        } else {
+            return {
+                result: result_c
+            }
+        }
     }
 
     _binarySymbolic(op, left, right, result_c) {
 
-        let [left_c, right_c] = [this.state.getConcrete(left), this.state.getConcrete(right)];
-        let result = SymbolicHelper.evalBinary(op, left_c, right_c);
+        const left_c  = this.state.getConcrete(left),
+              right_c = this.state.getConcrete(right);
 
         Log.logMid(`Symbolically evaluating binary ${op} which has concrete result ${result_c}`);
 
-        let result_s = this.state.symbolicBinary(op, left_c, this.state.asSymbolic(left), right_c, this.state.asSymbolic(right));
-        result = result_s ? new ConcolicValue(result, result_s) : result;
+        const result = SymbolicHelper.evalBinary(op, left_c, right_c),
+              result_s = this.state.symbolicBinary(op, left_c, this.state.asSymbolic(left), right_c, this.state.asSymbolic(right));
 
         return {
-            result: result
+            result: result_s ? new ConcolicValue(result, result_s) : result
         };
     }
 
@@ -372,7 +376,7 @@ class SymbolicExecution {
             Log.logHigh(`Concrete test at ${this._location(iid)}`);
         }
 
-        return { result: result };
+        return { result: this.state.getConcrete(result) };
     }
 
     instrumentCodePre(iid, code) {
