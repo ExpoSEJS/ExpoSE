@@ -347,7 +347,7 @@ function BuildModels(state) {
     models[String.prototype.slice] = models[String.prototype.substr];
 
     models[String.prototype.charAt] = symbolicHook(
-        (_f, base, args, _r) => tate.isSymbolic(base) || state.isSymbolic(args[0]),
+        (_f, base, args, _r) => state.isSymbolic(base) || state.isSymbolic(args[0]),
         (_f, base, args, result) => {
             const index_s = ctx.mkRealToInt(state.asSymbolic(args[0]));
             const char_s = ctx.mkSeqAt(state.asSymbolic(base), index_s);
@@ -356,23 +356,28 @@ function BuildModels(state) {
     );
 
     models[String.prototype.concat] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || find.call(args, arg => c.state.isSymbolic(arg)),
-        (c, _f, base, args, result) => new ConcolicValue(result, c.state.ctx.mkSeqConcat([c.state.asSymbolic(base)].concat(args.map(arg => c.state.asSymbolic(arg)))))
+        (_f, base, args, _r) => state.isSymbolic(base) || find.call(args, arg => state.isSymbolic(arg)),
+        (_f, base, args, result) => {
+            const arg_s_list = args.map(arg => state.asSymbolic(arg));
+            const concat_s = ctx.mkSeqConcat([state.asSymbolic(base)].concat(arg_s_list));
+            return new ConcolicValue(result, concat_s);
+        }
     );
 
     models[String.prototype.indexOf] = symbolicHook(
-        (c, _f, base, args, _r) => typeof c.state.getConcrete(base) === 'string' && (c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1])),
-        (c, _f, base, args, result) => {
-            let off = args[1] ? c.state.asSymbolic(args[1]) : c.state.asSymbolic(0);
-            off = c.state.ctx.mkRealToInt(off);
-            result = new ConcolicValue(result, c.state.ctx.mkSeqIndexOf(c.state.asSymbolic(base), c.state.asSymbolic(concretizeToString(c, args[0])), off));
-            return result;
+        (_f, base, args, _r) => typeof state.getConcrete(base) === 'string' && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+        (_f, base, args, result) => {
+            const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
+            const off_s = ctx.mkRealToInt(off_real);
+            const target_s = state.asSymbolic(concretizeToString(args[0]));
+            const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off);
+            return new ConcolicValue(result, seq_index);
         }
     );
 
     models[String.prototype.search] = symbolicHookRe(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
-        (c, _f, base, args, result) => RegexSearch.call(c, args[0], base, result)
+        (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp,
+        (_f, base, args, result) => RegexSearch(args[0], base, result)
     );
 
     models[String.prototype.match] = symbolicHookRe(
