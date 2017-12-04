@@ -347,8 +347,12 @@ function BuildModels(state) {
     models[String.prototype.slice] = models[String.prototype.substr];
 
     models[String.prototype.charAt] = symbolicHook(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => new ConcolicValue(result, c.state.ctx.mkSeqAt(c.state.asSymbolic(base), c.state.ctx.mkRealToInt(c.state.asSymbolic(args[0]))))
+        (_f, base, args, _r) => tate.isSymbolic(base) || state.isSymbolic(args[0]),
+        (_f, base, args, result) => {
+            const index_s = ctx.mkRealToInt(state.asSymbolic(args[0]));
+            const char_s = ctx.mkSeqAt(state.asSymbolic(base), index_s);
+            return new ConcolicValue(result, char_s);
+        }
     );
 
     models[String.prototype.concat] = symbolicHook(
