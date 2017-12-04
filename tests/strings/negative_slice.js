@@ -22,6 +22,10 @@ if (x.substr(-5, 3) == "por") {
 	throw 'Reachable 4';
 }
 
+if (x.substr(-3, 8) == "por") {
+	throw 'Reachable 5';
+}
+
 if (x.substr(-5, 4) == "por") {
 	throw 'Unreachable';
 }

@@ -174,7 +174,8 @@ function BuildModels() {
         let indexFromLength = ctx.mkAdd(base_s.getLength(), index_s);
 
         //Bound the minimum index by 0
-        indexFromLength = ctx.mkIte(ctx.mkGe(indexFromLength, 0), indexFromLength, ctx.mkIntVal(0));
+        const aboveMin = ctx.mkGe(indexFromLength, ctx.mkIntVal(0));
+        indexFromLength = ctx.mkIte(aboveMin, indexFromLength, ctx.mkIntVal(0));
 
         return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexFromLength);
     }
@@ -192,16 +193,18 @@ function BuildModels() {
 
         //Length defaults to the entire string if not specified
         let len;
+        const maxLength =  c.state.ctx.mkSub(target.getLength(), start_off);
 
         if (args[1]) {
             len = c.state.asSymbolic(args[1]);
             len = c.state.ctx.mkRealToInt(len);
 
             //If the length is user-specified bound the length of the substring by the maximum size of the string ("123".slice(0, 8) === "123")
-            len = ctx.mkIte(ctx.mkGe(ctx.mkAdd(start_off, len), target.getLength()), c.state.ctx.mkSub(target.getLength(), start_off), len);
+            const exceedMax = ctx.mkGe(ctx.mkAdd(start_off, len), target.getLength());
+            len = ctx.mkIte(exceedMax, maxLength, len);
 
         } else {
-            len = c.state.ctx.mkSub(target.getLength(), start_off);
+            len = maxLength
         }
 
         return new ConcolicValue(result, c.state.ctx.mkSeqSubstr(target, start_off, len));
