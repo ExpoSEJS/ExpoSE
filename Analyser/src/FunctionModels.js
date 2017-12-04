@@ -141,23 +141,19 @@ function BuildModels(state) {
 
     function RegexMatch(real, string, result) {
 
-        let regex = Z3.Regex(this.state.ctx, real);
-
-        let in_regex = RegexTest.apply(this, [regex, real, string, true]);
+        const regex = Z3.Regex(this.state.ctx, real);
+        const in_regex = RegexTest(regex, real, string, true);
         this.state.symbolicConditional(in_regex);
 
-        let string_s = this.state.asSymbolic(string);
+        const string_s = this.state.asSymbolic(string);
 
-        if (this.state.getConcrete(in_regex)) {
+        if (Config.capturesEnabled && this.state.getConcrete(in_regex)) {
 
-            let rewrittenResult = [];
-
-            if (Config.capturesEnabled) {
-                rewrittenResult = result.map((current_c, idx) => {
-                    //TODO: This is really nasty, current_c should be a
-                    return new ConcolicValue(current_c === undefined ? '' : current_c, regex.captures[idx]);
-                });
-            }
+            const rewrittenResult = result.map((current_c, idx) => {
+                //TODO: This is really nasty, current_c should be a
+                const current_rewrite = current_c === undefined ? '' : current_c;
+                return new ConcolicValue(current_rewrite, regex.captures[idx]);
+            });
 
             rewrittenResult.index = new ConcolicValue(result.index, regex.startIndex);
             rewrittenResult.input = string;
@@ -380,8 +376,8 @@ function BuildModels(state) {
     );
 
     models[String.prototype.match] = symbolicHookRe(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
-        (c, _f, base, args, result) => RegexMatch.call(c, args[0], base, result)
+        (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp,
+        (_f, base, args, result) => RegexMatch(args[0], base, result)
     );
 
     models[RegExp.prototype.exec] = symbolicHookRe(
