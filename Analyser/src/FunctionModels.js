@@ -169,23 +169,37 @@ function BuildModels() {
      * We need to rewrite the SMT to handle these cases
      */
     function substringHandleNegativeLengths(ctx, base_s, index_s) {
+
+        //Index s is negative to adding will get us to the right start
         let indexFromLength = ctx.mkAdd(base_s.getLength(), index_s);
+
+        //Bound the minimum index by 0
+        indexFromLength = ctx.mkIte(ctx.mkGe(indexFromLength, 0), indexFromLength, ctx.mkIntVal(0));
+
         return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexFromLength);
     }
 
     function substringHelper(c, _f, base, args, result) {
         c.state.stats.seen('Symbolic Substrings');
 
+        let ctx = c.state.ctx;
+
         let target = c.state.asSymbolic(base);
+
+        //The start offset is either the argument of str.len - the arguments
         let start_off = c.state.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
         start_off = substringHandleNegativeLengths(c.state.ctx, target, start_off);
 
+        //Length defaults to the entire string if not specified
         let len;
 
         if (args[1]) {
             len = c.state.asSymbolic(args[1]);
             len = c.state.ctx.mkRealToInt(len);
-            len = substringHandleNegativeLengths(c.state.ctx, target, len);
+
+            //If the length is user-specified bound the length of the substring by the maximum size of the string ("123".slice(0, 8) === "123")
+            len = ctx.mkIte(ctx.mkGe(ctx.mkAdd(start_off, len), target.getLength()), c.state.ctx.mkSub(target.getLength(), start_off), len);
+
         } else {
             len = c.state.ctx.mkSub(target.getLength(), start_off);
         }
