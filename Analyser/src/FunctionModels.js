@@ -164,13 +164,13 @@ function BuildModels(state) {
     function substringHandleNegativeLengths(base_s, index_s) {
 
         //Index s is negative to adding will get us to the right start
-        let indexFromLength = ctx.mkAdd(base_s.getLength(), index_s);
+        const newIndex = ctx.mkAdd(base_s.getLength(), index_s);
 
         //Bound the minimum index by 0
-        const aboveMin = ctx.mkGe(indexFromLength, ctx.mkIntVal(0));
-        indexFromLength = ctx.mkIte(aboveMin, indexFromLength, ctx.mkIntVal(0));
+        const aboveMin = ctx.mkGe(newIndex, ctx.mkIntVal(0));
+        const indexOrZero = ctx.mkIte(aboveMin, newIndex, ctx.mkIntVal(0));
 
-        return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexFromLength);
+        return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexOrZero);
     }
 
     function substringHelper(_f, base, args, result) {
@@ -255,7 +255,6 @@ function BuildModels(state) {
     function symbolicHook(condition, hook, featureDisabled) {
         return function(f, base, args, result) {
 
-            result = undefined;
             let thrown = undefined;
 
             //Defer throw until after hook has run
