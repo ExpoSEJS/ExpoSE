@@ -55,7 +55,7 @@ class SymbolicExecution {
          * Concretize the function if it is native and we do not have a custom model for it
          */
 
-        let modelled = !!this.models[f];
+        const modelled = !!this.models[f];
 
         if (!modelled && isNative(f)) {
             
@@ -66,7 +66,7 @@ class SymbolicExecution {
             
             base = this.state.getConcrete(base);
 
-            let n_args = new Array(args.length);
+            let n_args = Array(args.length);
 
             for (let i = 0; i < args.length; i++) {
                 n_args[i] = this.state.getConcrete(args[i]);
@@ -90,30 +90,18 @@ class SymbolicExecution {
     //Called after a function completes execution
     invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
         this.state.coverage.touch(iid);
-
-        Log.logHigh('Exit function (' + ObjectHelper.asString(f) + ') near ' + this._location(iid));
-
-        if (this.models[f]) {
-            result = this.models[f](f, base, args, result);
-        }
-
-        return {
-            result: result
-        };
+        Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
+        return { result: this.models[f] ? this.models[f](f, base, args, result) : result };
     }
 
     literal(iid, val, hasGetterSetter) {
         this.state.coverage.touch(iid);
-        return {
-            result: val
-        };
+        return { result: val };
     }
 
     forinObject(iid, val) {
         this.state.coverage.touch(iid);
-        return {
-            result: val
-        };
+        return { result: val };
     }
 
     _location(iid) {
@@ -156,12 +144,11 @@ class SymbolicExecution {
             }
         }
 
-        let result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
-        let result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
-        let result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
+        const result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
+        const result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
 
         return {
-            result: result
+            result: result_s ? new ConcolicValue(result_c, result_s) : result_c
         };
     }
 
@@ -242,7 +229,7 @@ class SymbolicExecution {
     scriptEnter(iid, instrumentedFileName, originalFileName) {
         this.state.coverage.touch(iid);
 
-        let enterString = "====== ENTERING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
+        const enterString = "====== ENTERING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
 
         if (this._scriptDepth() == 0) {
             Log.log(enterString);
@@ -255,8 +242,8 @@ class SymbolicExecution {
 
     scriptExit(iid, wrappedExceptionVal) {
         this.state.coverage.touch(iid);
-        let originalFileName = this._removeScript();
-        let exitString = "====== EXITING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
+        const originalFileName = this._removeScript();
+        const exitString = "====== EXITING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
 
         if (this._scriptDepth() > 0) {
             Log.logMid(exitString);
@@ -272,8 +259,8 @@ class SymbolicExecution {
 
     binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
         
-        let left_c = this.state.getConcrete(left),
-            right_c = this.state.getConcrete(right);
+        const left_c  = this.state.getConcrete(left);
+        const right_c = this.state.getConcrete(right);
 
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
@@ -366,9 +353,9 @@ class SymbolicExecution {
     }
 
     _toBool(val) {
-        let val_c = this.state.getConcrete(val);
-        let val_s = this.state.asSymbolic(val);
-        let result_s = this.state.symbolicCoerceToBool(val_c, val_s);
+        const val_c = this.state.getConcrete(val);
+        const val_s = this.state.asSymbolic(val);
+        const result_s = this.state.symbolicCoerceToBool(val_c, val_s);
         return result_s ? new ConcolicValue(!!val_c, result_s) : undefined;
     }
 
@@ -389,9 +376,7 @@ class SymbolicExecution {
             Log.logHigh(`Concrete test at ${this._location(iid)}`);
         }
 
-        return {
-            result: this.state.getConcrete(result)
-        };
+        return { result: result };
     }
 
     instrumentCodePre(iid, code) {
@@ -409,14 +394,11 @@ class SymbolicExecution {
     }
 
     instrumentCode(iid, code, newAst) {
-        return {
-            result: code
-        };
+        return { result: code };
     }
 
     runInstrumentedFunctionBody(iid) {
         this.state.coverage.touch(iid);
-        return false;
     }
 
     onReady(cb) {
