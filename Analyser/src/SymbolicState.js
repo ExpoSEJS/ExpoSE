@@ -252,7 +252,7 @@ class SymbolicState {
     }
 
     symbolicField(base_c, base_s, field_c, field_s) {
-        this.state.seen('Symbolic Field');
+        this.stats.seen('Symbolic Field');
 
         if ((typeof base_c === "string" || base_c instanceof Array) && typeof field_c === "number") {
             if (field_c >= base_c.length) {
@@ -293,7 +293,7 @@ class SymbolicState {
     }
 
     symbolicUnary(op, left_c, left_s) {
-        this.state.seen('Symbolic Unary');
+        this.stats.seen('Symbolic Unary');
 
         switch (op) {
             case "!": {
