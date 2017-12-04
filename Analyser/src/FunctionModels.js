@@ -217,31 +217,30 @@ function BuildModels(state) {
         
         if (real.sticky || real.global) {
 
-            let lastIndex = real.lastIndex;
-            let lastIndex_s = this.state.asSymbolic(real.lastIndex);
-            let lastIndex_c = this.state.getConcrete(real.lastIndex);
+            const lastIndex = real.lastIndex;
+            const lastIndex_s = state.asSymbolic(real.lastIndex);
+            const lastIndex_c = state.getConcrete(real.lastIndex);
             real.lastIndex = lastIndex_c;
 
-            let realResult = real.exec(this.state.getConcrete(target));
+            const realResult = real.exec(state.getConcrete(target));
 
             if (lastIndex_c) {
-                let part_c = this.state.getConcrete(target);
-                let part_s = this.state.getSymbolic(target);
+                const part_c = state.getConcrete(target);
+                const part_s = state.getSymbolic(target);
 
-                let real_cut = part_c.substring(lastIndex_c, part_c.length);
+                const real_cut = part_c.substring(lastIndex_c, part_c.length);
 
-                target = substringHelper.call(this,
-                    this, null, target,
+                target = substringHelper(null, target,
                     [lastIndex, new ConcolicValue(part_c.length, part_s.getLength())],
                     real_cut
                 );
             }
 
-            let matchResult = RegexMatch.call(this, real, target, realResult);
+            const matchResult = RegexMatch.call(this, real, target, realResult);
 
             if (matchResult) {
-                let firstAdd = new ConcolicValue(lastIndex_c + this.state.getConcrete(matchResult.index), this.state.symbolicBinary('+', lastIndex_c, lastIndex_s, this.state.getConcrete(matchResult.index), this.state.asSymbolic(matchResult.index)));
-                let secondAdd = new ConcolicValue(this.state.getConcrete(firstAdd), this.state.getConcrete(matchResult[0]).length, 
+                const firstAdd = new ConcolicValue(lastIndex_c + this.state.getConcrete(matchResult.index), this.state.symbolicBinary('+', lastIndex_c, lastIndex_s, this.state.getConcrete(matchResult.index), this.state.asSymbolic(matchResult.index)));
+                const secondAdd = new ConcolicValue(this.state.getConcrete(firstAdd), this.state.getConcrete(matchResult[0]).length, 
                     this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.state.asSymbolic(matchResult[0]).getLength()));
                 real.lastIndex = secondAdd;
                 return true;
@@ -292,9 +291,9 @@ function BuildModels(state) {
 
     //Hook for regex methods, will only hook if regex is enabled
     function symbolicHookRe(condition, hook) {
-        return symbolicHook(condition, function(env) {
+        return symbolicHook(condition, function() {
             //Intercept the hook to do regex stats
-            env.state.stats.seen('Regular Expressions');
+            state.stats.seen('Regular Expressions');
             return hook.apply(this, arguments);
         }, !Config.regexEnabled);
     }
@@ -381,13 +380,13 @@ function BuildModels(state) {
     );
 
     models[RegExp.prototype.exec] = symbolicHookRe(
-        (c, _f, base, args, _r) => base instanceof RegExp && c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => RegexMatch.call(c, base, args[0], result)
+        (_f, base, args, _r) => base instanceof RegExp && state.isSymbolic(args[0]),
+        (_f, base, args, result) => RegexMatch(base, args[0], result)
     );
 
     models[RegExp.prototype.test] = symbolicHookRe(
-        (c, _f, _base, args, _r) => c.state.isSymbolic(args[0]),
-        (c, _f, base, args, result) => rewriteTestSticky.call(c, base, concretizeToString(c, args[0]), result)
+        (_f, _base, args, _r) => state.isSymbolic(args[0]),
+        (_f, base, args, result) => rewriteTestSticky(base, concretizeToString(args[0]), result)
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.

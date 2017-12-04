@@ -213,7 +213,7 @@ class SymbolicState {
     }
 
     symbolicBinary(op, left_c, left_s, right_c, right_s) {
-        this.state.seen('Symbolic Binary');
+        this.stats.seen('Symbolic Binary');
 
         switch (op) {
             case "===":

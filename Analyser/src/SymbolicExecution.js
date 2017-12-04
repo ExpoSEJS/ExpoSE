@@ -303,7 +303,7 @@ class SymbolicExecution {
             op: op,
             left: left,
             right: right,
-            skip: WrappedValue.isSymbolic(left) || WrappedValue.isSymbolic(right)
+            skip: this.state.isSymbolic(left) || this.state.isSymbolic(right)
         };
     }
 
@@ -342,7 +342,7 @@ class SymbolicExecution {
         return {
             op: op,
             left: left,
-            skip: WrappedValue.isSymbolic(left)
+            skip: this.state.isSymbolic(left)
         }
     }
 
