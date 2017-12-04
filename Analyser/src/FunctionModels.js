@@ -117,25 +117,24 @@ function BuildModels(state) {
     }
 
     function RegexTest(regex, real, string, careAboutCaptures) {
-        let in_s = this.state.ctx.mkSeqInRe(this.state.asSymbolic(string), regex.ast);
-        let in_c = real.test(this.state.getConcrete(string));
-        let result = new ConcolicValue(in_c, in_s);
+        const in_s = ctx.mkSeqInRe(state.asSymbolic(string), regex.ast);
+        const in_c = real.test(state.getConcrete(string));
 
         if (regex.backreferences || careAboutCaptures) {
-            EnableCaptures.call(this, regex, real, this.state.asSymbolic(string));
-            let checks = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
+            EnableCaptures(regex, real, state.asSymbolic(string));
+            const checks = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
             in_s.checks.trueCheck = checks.trueCheck;
             //in_s.checks.falseCheck = checks.false; Don't need as we currently don't enforce over-approx negation
         }
 
-        return result;
+        return new ConcolicValue(in_c, in_s);
     }
 
     function RegexSearch(real, string, result) {
 
-        let regex = Z3.Regex(this.state.ctx, real);
-        let in_regex = RegexTest.apply(this, [regex, real, string, true]);
-        let search_in_re = this.state.ctx.mkIte(this.state.getSymbolic(in_regex), regex.startIndex, this.state.wrapConstant(-1));
+        const regex = Z3.Regex(ctx, real);
+        const in_regex = RegexTest(regex, real, string, true);
+        const search_in_re = ctx.mkIte(state.getSymbolic(in_regex), regex.startIndex, state.wrapConstant(-1));
 
         return new ConcolicValue(result, search_in_re);
     }
