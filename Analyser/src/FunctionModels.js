@@ -386,22 +386,18 @@ function BuildModels(state) {
 
     //Replace model for replace regex by string. Does not model replace with callback.
     models[String.prototype.replace] = symbolicHookRe(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
-        (c, _f, base, args, result) => {
-            return c.state.getConcrete(base).secret_replace.apply(base, args);
-        }
+        (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
+        (_f, base, args, result) => state.getConcrete(base).secret_replace.apply(base, args)
     );
 
     models[String.prototype.split] = symbolicHookRe(
-        (c, _f, base, args, _r) => c.state.isSymbolic(base) && args[0] instanceof RegExp,
-        (c, _f, base, args, result) => {
-            return c.state.getConcrete(base).secret_split.apply(base, args);
-        }
+        (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp,
+        (_f, base, args, result) => state.getConcrete(base).secret_split.apply(base, args)
     );
 
     models[String.prototype.trim] = symbolicHook(
-        (c, _f, base, _a, _r) => state.isSymbolic(base),
-        (c, _f, base, _a, result) => {
+        (_f, base, _a, _r) => state.isSymbolic(base),
+        (_f, base, _a, result) => {
             Log.log('TODO: Trim model does not currently do anything');
             return new ConcolicValue(result, state.asSymbolic(base));
         }
@@ -474,7 +470,7 @@ function BuildModels(state) {
     models[Object._expose.makeSymbolic] = symbolicHook(
         () => true,
         (_f, base, args, result) => { 
-            Log.log('Creating symbolic variable ' + args[0]);
+            Log.log(`Creating symbolic variable ${args[0]}`);
             return state.createSymbolicValue(args[0], args[1]);
         }
     );
