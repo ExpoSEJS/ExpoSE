@@ -163,8 +163,8 @@ class SymbolicState {
             symbolic = this.ctx.mkArray(name, this._getSort(concrete[0]));
         } else {
             this.stats.seen('Symbolic Primitives');
-            let sort = this._getSort(concrete);
-            let symbol = this.ctx.mkStringSymbol(name);
+            const sort = this._getSort(concrete);
+            const symbol = this.ctx.mkStringSymbol(name);
             symbolic = this.ctx.mkConst(symbol, sort);
         }
 
