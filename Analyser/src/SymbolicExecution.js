@@ -179,49 +179,35 @@ class SymbolicExecution {
 
     putField(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
-        Log.logHigh('PutField ' + base.toString() + ' ' + offset);
-        return {
-            result: val
-        };
+        Log.logHigh(`PutField ${base.toString()} at ${offset}`);
+        return { result: val };
     }
 
     read(iid, name, val, isGlobal, isScriptLocal) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Read ' + name + ' at ' + this._location(iid));
-
-        return {
-            result: val
-        };
+        Log.logHigh(`Read ${name} at ${this._location(iid)}`);
+        return { result: val };
     }
 
     write(iid, name, val, lhs, isGlobal, isScriptLocal) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Write ' + name + ' at ' + this._location(iid));
-
-        return {
-            result: val
-        };
+        Log.logHigh(`Write ${name} at ${this._location(iid)}`);
+        return { result: val };
     }
 
     _return(iid, val) {
         this.state.coverage.touch(iid);
-
-        return {
-            result: val
-        };
+        return { result: val };
     }
 
     _throw(iid, val) {
         this.state.coverage.touch(iid);
-
-        return {
-            result: val
-        };
+        return { result: val };
     }
 
     _with(iid, val) {
         this.state.coverage.touch(iid);
-        return {result: val};
+        return { result: val };
     }
 
     functionEnter(iid, f, dis, args) {
@@ -390,17 +376,17 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
 
         if (this.state.isSymbolic(result)) {
-            Log.logMid("Evaluating symbolic condition " + this.state.asSymbolic(result) + " at " + this._location(iid));
+            Log.logMid(`Evaluating symbolic condition ${this.state.asSymbolic(result)} at ${this._location(iid)}`);
             result = this._toBool(result);
 
             if (result) {
                 this.state.symbolicConditional(result);
             } else {
-                Log.logMid('Concretized ' + result + ' because do not know how to coerce');
+                Log.logMid(`Concretized ${result} because do not know how to coerce`);
             }
 
         } else {
-            Log.logHigh("Concrete test at " + this._location(iid));
+            Log.logHigh(`Concrete test at ${this._location(iid)}`);
         }
 
         return {
@@ -413,7 +399,7 @@ class SymbolicExecution {
         try {
             code = Tropigate(code);
         } catch (e) {
-            throw 'Tropigate failed because ' + e + ' on program ' + code + ' at ' + e.stack;
+            throw `Tropigate failed because ${e} on program ${code} at ${e.stack}`;
         }
 
         return {
