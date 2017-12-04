@@ -77,7 +77,7 @@ class SymbolicState {
         
         let allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
 
-        Log.logMid('Checking if ' + ObjectHelper.asString(newPC) + ' is satisfiable with checks ' + allChecks.length);
+        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable with checks ${allChecks.length}`);
 
         let solution = this._checkSat(newPC, i, allChecks);
 
@@ -90,7 +90,7 @@ class SymbolicState {
                 forkIid: this.pathCondition[i].forkIid
             });
            
-            Log.logMid("Satisfiable. Remembering new input: " + ObjectHelper.asString(solution));
+            Log.logMid(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
         } else {
             Log.logMid("Unsatisfiable.");
         }
@@ -146,7 +146,7 @@ class SymbolicState {
                 break;
 
             default:
-                Log.log("Symbolic input variable of type " + typeof val + " not yet supported.");
+                Log.log(`Symbolic input variable of type ${typeof val} not yet supported.`);
         }
 
         return sort;
@@ -177,7 +177,7 @@ class SymbolicState {
 
         this.inputSymbols[name] = symbolic;
 
-        Log.logMid("Initializing fresh symbolic variable \"" + symbolic + "\" using concrete value \"" + concrete + "\"");
+        Log.logMid(`Initializing fresh symbolic variable ${symbolic} using concrete value ${concrete}`);
         return new ConcolicValue(concrete, symbolic);
     }
 
@@ -244,7 +244,7 @@ class SymbolicState {
             case "%":
                 return this.ctx.mkMod(left_s, right_s);
             default:
-                Log.log("Symbolic execution does not support operand \"" + op + "\", concretizing.");
+                Log.log(`Symbolic execution does not support operand ${op}, concretizing.`);
                 break;
         }
         return undefined;
