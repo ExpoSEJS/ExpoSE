@@ -78,7 +78,7 @@ function BuildModels(state) {
         function CheckCorrect(model) {
             const real_match = real.exec(model.eval(string_s).asConstant(model));
             const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
-            Log.logMid('Regex sanity check ' + JSON.stringify(real_match) + ' vs ' + JSON.stringify(sym_match));
+            Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
             return real_match && !Exists(real_match, sym_match, DoesntMatch);
         }
 
@@ -100,8 +100,7 @@ function BuildModels(state) {
                 const query_list = regex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
                 return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
             } else {
-                Log.log('WARN: Broken regex detected ' + regex.ast.toString() + ' vs ' + real);
-                Log.log('WARN: No Highly Specific Refinements');
+                Log.log(`WARN: Broken regex detected ${regex.ast.toString()} vs ${real}`);
                 return [];
             }
         });
@@ -307,15 +306,10 @@ function BuildModels(state) {
     }
 
     function concretizeToString(symbol) {
-
         if (typeof state.getConcrete(symbol) !== 'string') {
-            Log.log('TODO: Concretizing non string input to test rather than int2string, bool2string etc');
-            Log.log('' + symbol + ' reduced to ' + '' + state.getConcrete(symbol));
-
-            const cval = '' + state.getConcrete(symbol);
-            return new ConcolicValue(cval, state.asSymbolic(cval));
+            Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
+            return new ConcolicValue(cval, state.asSymbolic('' + state.getConcrete(symbol)));
         }
-
         return symbol;
     }
 
@@ -417,7 +411,7 @@ function BuildModels(state) {
         result = f.apply(state.getConcrete(base));
 
         if (state.isSymbolic(base)) {
-            Log.log('TODO: String.prototype.toLowerCase model is weak, can reduce coverage');
+            Log.log(`TODO: String.prototype.toLowerCase model is weak, can reduce coverage`);
             base = concretizeToString(this, base);
             let azRegex = Z3.Regex(ctx, /^[^A-Z]+$/);
             state.pushCondition(ctx.mkSeqInRe(state.asSymbolic(base), azRegex.ast), true);
