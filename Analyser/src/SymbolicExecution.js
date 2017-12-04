@@ -265,11 +265,11 @@ class SymbolicExecution {
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
         if (typeof left_c !== typeof right_c) {
-            Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
+            Log.log(`Concretizing binary ${op} on operands of differing types. Type coercion not yet implemented symbolically. (${ObjectHelper.asString(left_c)}, ${ObjectHelper.asString(right_c)})`);
             left = left_c;
             right = right_c;
         } else {
-            Log.logHigh('Not concretizing ' + op + ' ' + left + ' ' + right + ' ' + typeof left_c + ' ' + typeof right_c);
+            Log.logHigh(`Not concretizing ${op} ${left} ${right} ${typeof left_c} ${typeof right_c}`);
         }
 
         // Don't evaluate natively when args are symbolic
