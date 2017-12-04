@@ -55,11 +55,12 @@ function BuildModels(state) {
 
         Log.logMid('Captures Enabled - Adding Implications');
 
-        let implies = this.state.ctx.mkImplies(this.state.ctx.mkSeqInRe(string_s, regex.ast), this.state.ctx.mkEq(string_s, regex.implier))
+        const implies = ctx.mkImplies(ctx.mkSeqInRe(string_s, regex.ast),
+            ctx.mkEq(string_s, regex.implier));
 
         //Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
-        regex.assertions.forEach(binder => this.state.pushCondition(binder, true));
-        this.state.pushCondition(implies, true);
+        regex.assertions.forEach(binder => state.pushCondition(binder, true));
+        state.pushCondition(implies, true);
     }
 
     function BuildRefinements(regex, real, string_s) {
@@ -75,8 +76,8 @@ function BuildModels(state) {
         Log.log('Refinements Enabled - Adding checks');
 
         function CheckCorrect(model) {
-            let real_match = real.exec(model.eval(string_s).asConstant(model));
-            let sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
+            const real_match = real.exec(model.eval(string_s).asConstant(model));
+            const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
             Log.logMid('Regex sanity check ' + JSON.stringify(real_match) + ' vs ' + JSON.stringify(sym_match));
             return real_match && !Exists(real_match, sym_match, DoesntMatch);
         }
@@ -85,18 +86,18 @@ function BuildModels(state) {
             return !real.test(model.eval(string_s).asConstant(model));
         }
 
-        let NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-            let not = this.state.ctx.mkNot(this.state.ctx.mkEq(string_s, this.state.ctx.mkString(model.eval(string_s).asConstant(model))));
+        const NotMatch = Z3.Check(CheckCorrect, (query, model) => {
+            const not = ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model))));
             return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
         });
 
-        let CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
+        const CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
             //CheckCorrect will check model has a proper match
             let real_match = real.exec(model.eval(string_s).asConstant(model));
 
             if (real_match) {
                 real_match = real_match.map(match => match || '');
-                let query_list = regex.captures.map((cap, idx) => this.state.ctx.mkEq(this.state.ctx.mkString(real_match[idx]), cap));
+                const query_list = regex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
                 return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
             } else {
                 Log.log('WARN: Broken regex detected ' + regex.ast.toString() + ' vs ' + real);
@@ -105,7 +106,7 @@ function BuildModels(state) {
             }
         });
 
-        let CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
+        const CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
             Log.log('BIG WARN: False check failed, possible divergence');
             return [];
         });
@@ -122,7 +123,7 @@ function BuildModels(state) {
 
         if (regex.backreferences || careAboutCaptures) {
             EnableCaptures(regex, real, state.asSymbolic(string));
-            const checks = BuildRefinements.call(this, regex, real, this.state.asSymbolic(string));
+            const checks = BuildRefinements(regex, real, state.asSymbolic(string));
             in_s.checks.trueCheck = checks.trueCheck;
             //in_s.checks.falseCheck = checks.false; Don't need as we currently don't enforce over-approx negation
         }
@@ -141,13 +142,13 @@ function BuildModels(state) {
 
     function RegexMatch(real, string, result) {
 
-        const regex = Z3.Regex(this.state.ctx, real);
+        const regex = Z3.Regex(ctx, real);
         const in_regex = RegexTest(regex, real, string, true);
-        this.state.symbolicConditional(in_regex);
+        state.symbolicConditional(in_regex);
 
-        const string_s = this.state.asSymbolic(string);
+        const string_s = state.asSymbolic(string);
 
-        if (Config.capturesEnabled && this.state.getConcrete(in_regex)) {
+        if (Config.capturesEnabled && state.getConcrete(in_regex)) {
 
             const rewrittenResult = result.map((current_c, idx) => {
                 //TODO: This is really nasty, current_c should be a
@@ -236,12 +237,12 @@ function BuildModels(state) {
                 );
             }
 
-            const matchResult = RegexMatch.call(this, real, target, realResult);
+            const matchResult = RegexMatch(real, target, realResult);
 
             if (matchResult) {
-                const firstAdd = new ConcolicValue(lastIndex_c + this.state.getConcrete(matchResult.index), this.state.symbolicBinary('+', lastIndex_c, lastIndex_s, this.state.getConcrete(matchResult.index), this.state.asSymbolic(matchResult.index)));
-                const secondAdd = new ConcolicValue(this.state.getConcrete(firstAdd), this.state.getConcrete(matchResult[0]).length, 
-                    this.state.symbolicBinary('+', this.state.getConcrete(firstAdd), this.state.asSymbolic(firstAdd), this.state.getConcrete(matchResult[0].length), this.state.asSymbolic(matchResult[0]).getLength()));
+                const firstAdd = new ConcolicValue(lastIndex_c + state.getConcrete(matchResult.index), state.symbolicBinary('+', lastIndex_c, lastIndex_s, state.getConcrete(matchResult.index), state.asSymbolic(matchResult.index)));
+                const secondAdd = new ConcolicValue(state.getConcrete(firstAdd), state.getConcrete(matchResult[0]).length, 
+                    state.symbolicBinary('+', state.getConcrete(firstAdd), state.asSymbolic(firstAdd), state.getConcrete(matchResult[0].length), state.asSymbolic(matchResult[0]).getLength()));
                 real.lastIndex = secondAdd;
                 return true;
             } else {
@@ -249,7 +250,7 @@ function BuildModels(state) {
             }
 
         } else {
-            return RegexTest.call(this, Z3.Regex(this.state.ctx, real), real, target, false);
+            return RegexTest(Z3.Regex(ctx, real), real, target, false);
         }
     }
 
@@ -413,14 +414,14 @@ function BuildModels(state) {
     );
 
     models[String.prototype.toLowerCase] = function(f, base, args, result) {
-        result = f.apply(this.state.getConcrete(base));
+        result = f.apply(state.getConcrete(base));
 
-        if (this.state.isSymbolic(base)) {
+        if (state.isSymbolic(base)) {
             Log.log('TODO: String.prototype.toLowerCase model is weak, can reduce coverage');
             base = concretizeToString(this, base);
-            let azRegex = Z3.Regex(this.state.ctx, /^[^A-Z]+$/);
-            this.state.pushCondition(this.state.ctx.mkSeqInRe(this.state.getSymbolic(base), azRegex.ast), true);
-            result = new ConcolicValue(result, this.state.getSymbolic(base));
+            let azRegex = Z3.Regex(ctx, /^[^A-Z]+$/);
+            state.pushCondition(ctx.mkSeqInRe(state.getSymbolic(base), azRegex.ast), true);
+            result = new ConcolicValue(result, state.getSymbolic(base));
         }
 
         return result;
