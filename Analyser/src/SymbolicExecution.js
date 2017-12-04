@@ -283,15 +283,11 @@ class SymbolicExecution {
 
     binary(iid, op, left, right, result_c, isOpAssign, isSwitchCaseComparison, isComputed) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Op ' + op + ' left ' + ObjectHelper.asString(left) + ' right ' + ObjectHelper.asString(right) + ' result_c ' + ObjectHelper.asString(result_c) + ' at ' + this._location(iid));
+        Log.logHigh(`${op} left ${ObjectHelper.asString(left)} right ${ObjectHelper.asString(right)} result_c ${ObjectHelper.asString(result_c)} at ${this._location(iid)}`);
 
-        if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
-            return this._binarySymbolic(op, left, right, result_c);
-        } else {
-            return {
-                result: result_c
-            }
-        }
+        return {
+            result: this.state.isSymbolic(left) || this.state.isSymbolic(right) ? this._binarySymbolic(op, left, right, result_c) : result_c
+        };
     }
 
     _binarySymbolic(op, left, right, result_c) {
