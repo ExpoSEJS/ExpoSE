@@ -403,19 +403,14 @@ function BuildModels(state) {
         }
     );
 
-    models[String.prototype.toLowerCase] = function(f, base, args, result) {
-        result = f.apply(state.getConcrete(base));
-
-        if (state.isSymbolic(base)) {
-            Log.log(`TODO: String.prototype.toLowerCase model is weak, can reduce coverage`);
+    models[String.prototype.toLowerCase] = symbolicHook(
+        (_f, base, _a, _r) => state.isSymbolic(base),
+        (_f, base, _a, result) => {
             base = concretizeToString(this, base);
-            let azRegex = Z3.Regex(ctx, /^[^A-Z]+$/);
-            state.pushCondition(ctx.mkSeqInRe(state.asSymbolic(base), azRegex.ast), true);
-            result = new ConcolicValue(result, state.asSymbolic(base));
+            state.pushCondition(ctx.mkSeqInRe(state.asSymbolic(base), Z3.Regex(ctx, /^[^A-Z]+$/).ast), true);
+            return new ConcolicValue(result, state.asSymbolic(base));
         }
-
-        return result;
-    };
+    );
 
     /*
     TODO: Fix this model
