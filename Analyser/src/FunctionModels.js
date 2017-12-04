@@ -6,20 +6,13 @@ import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
 import Config from './Config';
 import NotAnErrorException from './NotAnErrorException';
-import {
-    WrappedValue,
-    ConcolicValue
-} from './Values/WrappedValue';
+import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
 
 const find = Array.prototype.find;
 const map = Array.prototype.map;
 
 function DoesntMatch(l, r) {
-    if (l === undefined) {
-        return r !== '';
-    } else {
-        return l !== r;
-    }
+    return l === undefined ? r !== '' : l !== r;
 }
 
 function Exists(array1, array2, pred) {
@@ -244,10 +237,9 @@ function BuildModels(state) {
                     state.symbolicBinary('+', state.getConcrete(firstAdd), state.asSymbolic(firstAdd), state.getConcrete(matchResult[0].length), state.asSymbolic(matchResult[0]).getLength()));
                 real.lastIndex = secondAdd;
                 return true;
-            } else {
-                return false;
             }
-
+        
+            return false;
         } else {
             return RegexTest(Z3.Regex(ctx, real), real, target, false);
         }
