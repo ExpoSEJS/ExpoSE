@@ -135,7 +135,7 @@ function BuildModels(state) {
 
         const regex = Z3.Regex(ctx, real);
         const in_regex = RegexTest(regex, real, string, true);
-        const search_in_re = ctx.mkIte(state.getSymbolic(in_regex), regex.startIndex, state.wrapConstant(-1));
+        const search_in_re = ctx.mkIte(state.asSymbolic(in_regex), regex.startIndex, state.wrapConstant(-1));
 
         return new ConcolicValue(result, search_in_re);
     }
@@ -227,7 +227,7 @@ function BuildModels(state) {
 
             if (lastIndex_c) {
                 const part_c = state.getConcrete(target);
-                const part_s = state.getSymbolic(target);
+                const part_s = state.asSymbolic(target);
 
                 const real_cut = part_c.substring(lastIndex_c, part_c.length);
 
@@ -406,10 +406,10 @@ function BuildModels(state) {
     );
 
     models[String.prototype.trim] = symbolicHook(
-        (c, _f, base, _a, _r) => c.state.isSymbolic(base),
+        (c, _f, base, _a, _r) => state.isSymbolic(base),
         (c, _f, base, _a, result) => {
             Log.log('TODO: Trim model does not currently do anything');
-            return new ConcolicValue(result, c.state.getSymbolic(base));
+            return new ConcolicValue(result, state.asSymbolic(base));
         }
     );
 
@@ -420,8 +420,8 @@ function BuildModels(state) {
             Log.log('TODO: String.prototype.toLowerCase model is weak, can reduce coverage');
             base = concretizeToString(this, base);
             let azRegex = Z3.Regex(ctx, /^[^A-Z]+$/);
-            state.pushCondition(ctx.mkSeqInRe(state.getSymbolic(base), azRegex.ast), true);
-            result = new ConcolicValue(result, state.getSymbolic(base));
+            state.pushCondition(ctx.mkSeqInRe(state.asSymbolic(base), azRegex.ast), true);
+            result = new ConcolicValue(result, state.asSymbolic(base));
         }
 
         return result;

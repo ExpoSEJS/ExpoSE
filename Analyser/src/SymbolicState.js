@@ -45,17 +45,16 @@ class SymbolicState {
     }
 
     symbolicConditional(result) {
-        let [result_s, result_c] = [this.asSymbolic(result), this.asSymbolic(result)];
+        let [result_s, result_c] = [this.asSymbolic(result), this.getConcrete(result)];
 
         if (result_c === true) {
-            Log.logMid("Concrete result was true, pushing " + result_s);
+            Log.logMid(`Concrete result was true, pushing ${result_s}`);
             this.pushCondition(result_s);
         } else if (result_c === false) {
-            Log.logMid("Concrete result was false, pushing not of " + result_s);
+            Log.logMid(`Concrete result was false, pushing not of ${result_s}`);
             this.pushCondition(this.ctx.mkNot(result_s));
         } else {
-            Log.log("Result: " + result_c.toString() + ' and ' + result_s.toString() + " (" + typeof(result_c) + ")");
-            Log.log("Undefined result not yet supported");
+            Log.log(`ERROR: Undefined Result: ${result_c}, ${result_s.toString()}`);
         }
     }
 

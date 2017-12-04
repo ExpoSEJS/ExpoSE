@@ -150,7 +150,8 @@ class SymbolicExecution {
             const offset_c = this.state.getConcrete(offset);
             for (let idx in base_c) {
                 if (offset_c != base_c[idx]) {
-                    this.state.pushCondition(this.state.ctx.mkNot(this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset))));
+                    const condition = this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset));
+                    this.state.pushCondition(this.state.ctx.mkNot(condition));
                 }
             }
         }
@@ -325,7 +326,7 @@ class SymbolicExecution {
         let [left_c, right_c] = [this.state.getConcrete(left), this.state.getConcrete(right)];
         let result = SymbolicHelper.evalBinary(op, left_c, right_c);
 
-        Log.logMid("Symbolically evaluating binary " + op + ", which has concrete result \"" + result_c + "\"");
+        Log.logMid(`Symbolically evaluating binary ${op} which has concrete result ${result_c}`);
 
         let result_s = this.state.symbolicBinary(op, left_c, this.state.asSymbolic(left), right_c, this.state.asSymbolic(right));
         result = result_s ? new ConcolicValue(result, result_s) : result;
@@ -364,19 +365,17 @@ class SymbolicExecution {
 
     _unarySymbolic(op, left, result_c) {
 
-        let left_s = this.state.asSymbolic(left);
-        let left_c = this.state.getConcrete(left);
+        const left_s = this.state.asSymbolic(left);
+        const left_c = this.state.getConcrete(left);
 
         result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
 
-        Log.logMid("Symbolically evaluating unary " + op + "(" + left_s + "), which has concrete result \"" + result_c + "\"");
+        Log.logMid(`Symbolically evaluating unary ${op}(${left_s}), which has concrete result ${result_c}`);
 
-        let result_s = this.state.symbolicUnary(op, left_c, left_s);
-
-        let result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
+        const result_s = this.state.symbolicUnary(op, left_c, left_s);
 
         return {
-            result: result
+            result: result_s ? new ConcolicValue(result_c, result_s) : result_c
         };
     }
 
