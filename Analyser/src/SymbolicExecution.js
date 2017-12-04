@@ -9,7 +9,7 @@ import SymbolicHelper from './SymbolicHelper';
 import Log from './Utilities/Log';
 import NotAnErrorException from './NotAnErrorException';
 import {isNative} from './Utilities/IsNative';
-import Models from './FunctionModels';
+import ModelBuilder from './FunctionModels';
 import External from './External';
 
 //Electron can't resolve external library's directly. The External packages makes that transparent
@@ -20,6 +20,7 @@ class SymbolicExecution {
     constructor(sandbox, initialInput, exitFn) {
         this._sandbox = sandbox;
         this.state = new SymbolicState(initialInput, this._sandbox);
+        this.models = ModelBuilder(this.state);
         this._fileList = new Array();
 
         //Bind any uncaught exceptions to the uncaught exception handler
@@ -54,7 +55,7 @@ class SymbolicExecution {
          * Concretize the function if it is native and we do not have a custom model for it
          */
 
-        let modelled = !!Models[f];
+        let modelled = !!this.models[f];
 
         if (!modelled && isNative(f)) {
             
@@ -92,8 +93,8 @@ class SymbolicExecution {
 
         Log.logHigh('Exit function (' + ObjectHelper.asString(f) + ') near ' + this._location(iid));
 
-        if (Models[f]) {
-            result = Models[f].apply(this, [f, base, args, result]);
+        if (this.models[f]) {
+            result = this.models[f](f, base, args, result);
         }
 
         return {

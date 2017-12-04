@@ -33,7 +33,12 @@ function Exists(array1, array2, pred) {
     return false;
 }
 
-function BuildModels() {
+/**
+ * Builds a set of function models bound to a given SymbolicState
+ */
+function BuildModels(state) {
+    const ctx = state.ctx;
+
     let models = {};
 
     for (let item in Object.getOwnPropertyNames(Object.prototype)) {
@@ -164,22 +169,53 @@ function BuildModels() {
         return result;
     }
 
-    function substringHelper(c, _f, base, args, result) {
-        Log.log('WARNING: Symbolic substring support new and buggy ' + JSON.stringify(args));
+    /**
+     * In JavaScript slice and substr can be given a negative index to indicate addressing from the end of the array
+     * We need to rewrite the SMT to handle these cases
+     */
+    function substringHandleNegativeLengths(base_s, index_s) {
 
-        let target = c.state.asSymbolic(base);
-        let start_off = c.state.ctx.mkRealToInt(c.state.asSymbolic(args[0]));
+        //Index s is negative to adding will get us to the right start
+        let indexFromLength = ctx.mkAdd(base_s.getLength(), index_s);
 
+        //Bound the minimum index by 0
+        const aboveMin = ctx.mkGe(indexFromLength, ctx.mkIntVal(0));
+        indexFromLength = ctx.mkIte(aboveMin, indexFromLength, ctx.mkIntVal(0));
+
+        return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexFromLength);
+    }
+
+    function substringHelper(_f, base, args, result) {
+        state.stats.seen('Symbolic Substrings');
+
+        const target = state.asSymbolic(base);
+
+        //The start offset is either the argument of str.len - the arguments
+        let start_off = ctx.mkRealToInt(state.asSymbolic(args[0]));
+        start_off = substringHandleNegativeLengths(target, start_off);
+
+        //Length defaults to the entire string if not specified
         let len;
+        const maxLength = ctx.mkSub(target.getLength(), start_off);
 
         if (args[1]) {
-            len = c.state.asSymbolic(args[1]);
-            len = c.state.ctx.mkRealToInt(len);
+            len = state.asSymbolic(args[1]);
+            len = ctx.mkRealToInt(len);
+
+            //If the length is user-specified bound the length of the substring by the maximum size of the string ("123".slice(0, 8) === "123")
+            const exceedMax = ctx.mkGe(ctx.mkAdd(start_off, len), target.getLength());
+            len = ctx.mkIte(exceedMax, maxLength, len);
+
         } else {
-            len = c.state.ctx.mkSub(target.getLength(), start_off);
+            len = maxLength
         }
 
-        return new ConcolicValue(result, c.state.ctx.mkSeqSubstr(target, start_off, len));
+        //If the start index is greater than or equal to the length of the string the empty string is returned
+        const substr_s = ctx.mkSeqSubstr(target, start_off, len);
+        const empty_s = ctx.mkString("");
+        const result_s = ctx.mkIte(ctx.mkGe(start_off, target.getLength()), empty_s, substr_s);
+
+        return new ConcolicValue(result, result_s);
     }
 
     function rewriteTestSticky(real, target, result) {
@@ -238,15 +274,15 @@ function BuildModels() {
 
             //Defer throw until after hook has run
             try {
-                result = f.apply(this.state.getConcrete(base), map.call(args, arg => this.state.getConcrete(arg)));
+                result = f.apply(state.getConcrete(base), map.call(args, arg => state.getConcrete(arg)));
             } catch (e) {
                 thrown = e;
             }
 
             Log.logMid(`Symbolic Testing ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)} and initial result ${ObjectHelper.asString(result)}`);
 
-            if (!featureDisabled && condition(this, f, base, args, result)) {
-                result = hook(this, f, base, args, result);
+            if (!featureDisabled && condition(f, base, args, result)) {
+                result = hook(f, base, args, result);
             }
 
             Log.logMid(`Result: ${'' + result} Thrown: ${'' + thrown}`);
@@ -275,14 +311,14 @@ function BuildModels() {
         };
     }
 
-    function concretizeToString(ctx, symbol) {
+    function concretizeToString(symbol) {
 
-        if (typeof ctx.state.getConcrete(symbol) !== 'string') {
-            //TODO: Fix Me
-            let cval = '' + this.state.getConcrete(symbol);
+        if (typeof state.getConcrete(symbol) !== 'string') {
             Log.log('TODO: Concretizing non string input to test rather than int2string, bool2string etc');
-            Log.log('' + symbol + ' reduced to ' + '' + this.state.getConcrete(symbol));
-            symbol = new ConcolicValue(cval, this.state.asSymbolic(cval));
+            Log.log('' + symbol + ' reduced to ' + '' + state.getConcrete(symbol));
+
+            const cval = '' + state.getConcrete(symbol);
+            return new ConcolicValue(cval, state.asSymbolic(cval));
         }
 
         return symbol;
@@ -293,16 +329,22 @@ function BuildModels() {
      * Model for String(xxx) in code to coerce something to a string
      */
     models[String] = symbolicHook(
-        (c, _f, _base, args, _result) => c.state.isSymbolic(args[0]),
-        (c, _f, _base, args, result) => new ConcolicValue(result, c.state.asSymbolic(concretizeToString(c, args[0])))
+        (_f, _base, args, _result) => state.isSymbolic(args[0]),
+        (_f, _base, args, result) => concretizeToString(args[0])
     );
 
     models[String.prototype.substr] = symbolicHook(
-        (c, _f, base, args, _) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]) || c.state.isSymbolic(args[1]),
+        (_f, base, args, _) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
         substringHelper
     );
 
     models[String.prototype.substring] = models[String.prototype.substr];
+    
+    /**
+     * TODO: Can impact Array.prototype.slice
+     * It appears that (at least sometimes) all the slices map to the same native method and so need to be modelled the same
+     */
+    models[String.prototype.slice] = models[String.prototype.substr];
 
     models[String.prototype.charAt] = symbolicHook(
         (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
@@ -412,7 +454,6 @@ function BuildModels() {
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
     models[Array.prototype.forEach] = NoOp();
-    models[Array.prototype.slice] = NoOp();
     models[Array.prototype.filter] = NoOp();
     models[Array.prototype.map] = NoOp();
     models[Array.prototype.shift] = NoOp();
@@ -434,9 +475,9 @@ function BuildModels() {
 
     models[Object._expose.makeSymbolic] = symbolicHook(
         () => true,
-        (c, _f, base, args, result) => { 
+        (_f, base, args, result) => { 
             Log.log('Creating symbolic variable ' + args[0]);
-            return c.state.createSymbolicValue(args[0], args[1]);
+            return state.createSymbolicValue(args[0], args[1]);
         }
     );
 
@@ -448,4 +489,4 @@ function BuildModels() {
     return models;
 }
 
-export default BuildModels();
+export default BuildModels;

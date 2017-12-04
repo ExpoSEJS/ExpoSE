@@ -2,6 +2,8 @@
 
 "use strict";
 
+const tmp = require('tmp');
+const fs = require('fs');
 const spawn = require('child_process').spawn;
 
 const EXPOSE_PATH = 'expoSE';
@@ -10,8 +12,12 @@ const EXPOSE_PATH = 'expoSE';
 //Otherwise 1 change becomes 2
 function Executor(filepath, input, data, done) {
 
-	let env = process.env;
-	env.EXPOSE_JSON_OUT = 1;
+    //Create tmp output file for the JSON
+    let jsonOutFile = tmp.fileSync();
+
+    //Clone the current environment
+	let env = JSON.parse(JSON.stringify(process.env));
+	env.EXPOSE_JSON_PATH = jsonOutFile.name;
 
     let args;
 
@@ -42,8 +48,15 @@ function Executor(filepath, input, data, done) {
     prc.stderr.on('data', data);
 
     prc.stdout.on('close', function(c) {
-    	this.running = false;
-    	done(c);
+        fs.readFile(jsonOutFile.name, (err, data) => {
+            this.running = false;
+            if (err) {
+                done(err);
+            } else {
+                jsonOutFile.removeCallback();
+                done(undefined, '' + data);
+            }
+        });
     }.bind(prc));
 
     return prc;

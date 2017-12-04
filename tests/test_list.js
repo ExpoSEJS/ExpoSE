@@ -59,6 +59,9 @@ function buildTestList() {
     buildTest('strings/hello_strings_concat2.js', 1, 0);
     buildTest('strings/hello_strings_len.js', 2, 0);
     buildTest('strings/strings_concat.js', 2, 0);
+    buildTest('strings/negative_slice.js', 7, 5);
+    buildTest('strings/substr_tests.js', 7, 5);
+    buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
 
     /**

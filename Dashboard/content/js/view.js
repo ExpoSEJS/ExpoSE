@@ -14,12 +14,8 @@ function clearViews(page) {
 }
 
 function addOut(v, page) {
-
-	if (v.indexOf('ExpoSE JSON:') != -1) {
-		return;
-	}
-
-	page['#output_body'].innerHTML += v.split('\n').map(x => x.trim() + '<br/>').filter(x => x.length).join();
+	let newInner = v.split('\n').map(x => x.trim() + '<br/>').filter(x => x.length).join();
+	page['#output_body'].innerHTML = (page['#output_body'].innerHTML + newInner).slice(newInner.length - 2048);
 }
 
 function buildReplayIcon(rp) {

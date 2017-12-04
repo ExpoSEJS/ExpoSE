@@ -17,7 +17,7 @@ function running() {
 }
 
 function kill() {
-	exec.kill();
+	exec.kill('SIGINT');
 	exec.stdin && exec.stdin.end();
 	exec.stdout && exec.stdout.end();
 	exec.stderr && exec.stderr.end();
@@ -40,11 +40,10 @@ function runExpoSE(page) {
 		timer.start(page);
 		exec = Executor(file, null, function(data) {
 			view.out('' + data, page);
-			console.log('Finished with ' + data);
-		}, function() {
+		}, function(err, jsonOut) {
 			view.running(false, page);
 			timer.stop(page);
-			output.handleOutput('' + exec.final, page);
+			output.handleOutput(err, exec.final, jsonOut, page);
 		});
 	}
 }
