@@ -66,13 +66,28 @@ if (process.argv.length >= 3) {
 
     const SECOND = 1000;
     const MINUTE = SECOND * 60;
+    const HOUR = MINUTE * 60;
+
+    function timeToMS(timeString) {
+        const suffix = timeString[timeString.length - 1];
+
+        if (suffix === 's') {
+            return SECOND * Number.parseInt(timeString.slice(0, -1)); 
+        } else if (suffix === 'm') {
+            return MINUTE * Number.parseInt(timeString.slice(0, -1));
+        } else if (suffix === 'h') {
+            return HOUR * Number.parseInt(timeString.slice(0, -1));
+        } else {
+            return Number.parseInt(timeString);
+        }
+    }
 
     let options = {
         maxConcurrent: getArgument('EXPOSE_MAX_CONCURRENT', 'number', defaultTestCases), //max number of tests to run concurrently
-        maxTime: getArgument('EXPOSE_MAX_TIME', 'number', 60 * MINUTE), //Max time in MS
+        maxTime: timeToMS(getArgument('EXPOSE_MAX_TIME', 'string', '2h')), //Max time in MS
         jsonOut: getArgument('EXPOSE_JSON_PATH', 'string', undefined), //By default ExpoSE does not generate JSON out
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
-        testMaxTime: getArgument('EXPOSE_TEST_TIMEOUT', 'number', 10 * MINUTE),
+        testMaxTime: timeToMS(getArgument('EXPOSE_TEST_TIMEOUT', 'string', '20m')),
         printDeltaCoverage: getArgument('EXPOSE_PRINT_COVERAGE', 'number', false),
         analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play')
     };
