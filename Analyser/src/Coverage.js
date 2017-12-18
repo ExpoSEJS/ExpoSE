@@ -35,7 +35,7 @@ class Coverage {
     end() {
         const payload = {};
 
-        for (const i = 0; i < this._branches.length; i++) {
+        for (let i = 0; i < this._branches.length; i++) {
             
             //SID are indexed from 1 not 0
             const localSid = i + 1;
@@ -65,7 +65,6 @@ class Coverage {
                 payload[this._branchFilenameMap[i]] = {
                     smap: map,
                     branches: this._branches[i],
-                    
                     lines: {
                         all: Array.from(allLines),
                         touched: Array.from(touchedLines)

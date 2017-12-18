@@ -68,7 +68,7 @@ class SymbolicExecution {
 
             const n_args = Array(args.length);
 
-            for (const i = 0; i < args.length; i++) {
+            for (let i = 0; i < args.length; i++) {
                 n_args[i] = this.state.getConcrete(args[i]);
             }
 
