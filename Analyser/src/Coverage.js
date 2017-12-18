@@ -33,9 +33,9 @@ class Coverage {
     }
 
     end() {
-        let ret = {};
+        const payload = {};
 
-        for (let i = 0; i < this._branches.length; i++) {
+        for (const i = 0; i < this._branches.length; i++) {
             
             //SID are indexed from 1 not 0
             const localSid = i + 1;
@@ -43,11 +43,11 @@ class Coverage {
             if (this._branches[i] !== undefined) {
 
                 //TODO: Return an Array[0,1,2] instead of 2 sets
-                let touchedLines = new Set();
-                let allLines = new Set();
+                const touchedLines = new Set();
+                const allLines = new Set();
 
                 //Deep copy the smap
-                let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
+                const map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
                 //Strip away any non SID related entities
                 //Also replace all source index arrays to a single value to reduce stdout
@@ -62,7 +62,7 @@ class Coverage {
                 this._pushLines(allLines, map, localSid);
                 this._pushLines(touchedLines, this._branches[i], localSid);
 
-                ret[this._branchFilenameMap[i]] = {
+                payload[this._branchFilenameMap[i]] = {
                     smap: map,
                     branches: this._branches[i],
                     
@@ -74,9 +74,9 @@ class Coverage {
             }
         }
 
-        ret[LAST_IID] = this._lastIid;
+        payload[LAST_IID] = this._lastIid;
 
-        return ret;
+        return payload;
     }
 
     getBranchInfo() {
