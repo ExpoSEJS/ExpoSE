@@ -31,7 +31,7 @@ ObjectHelper.safe(NotAnErrorException.prototype);
  * End the SafeToString table
  */
 
-let input = process.argv[process.argv.length - 1];
+const input = process.argv[process.argv.length - 1];
 
 Log.logHigh('Built with VERY logging enabled');
 Log.logMid('Built with FINE logging enabled');
@@ -48,7 +48,7 @@ process.on('disconnect', function() {
 J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => {
     Log.log("Finished play with PC " + state.pathCondition.map(x => x.ast));
 
-    let finalOut = {
+    const finalOut = {
         pc: state.finalPC(),
         input: state.input,
         errors: state.errors,

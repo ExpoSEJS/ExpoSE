@@ -22,9 +22,9 @@ class Coverage {
     }
 
     _pushLines(set, map, sid) {
-        for (let j in map) {
-            if (!isNaN(parseInt(j))) {
-                let location = iidToLocation(this._sandbox, sid, j);
+        for (const nextIid in map) {
+            if (!isNaN(parseInt(nextIid))) {
+                const location = iidToLocation(this._sandbox, sid, nextIid);
                 if (location) {
                     set.add(location.uninstrumentedLineNumber);
                 }
