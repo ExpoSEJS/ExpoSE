@@ -40,6 +40,28 @@ function maxConcurrent() {
     return fromArgOrDefault;
 }
 
+function timeFrom(envArg, defaultVal) {
+    const SECOND = 1000;
+    const MINUTE = SECOND * 60;
+    const HOUR = MINUTE * 60;
+
+    function timeToMS(timeString) {
+        const suffix = timeString[timeString.length - 1];
+
+        if (suffix === 's') {
+            return SECOND * Number.parseInt(timeString.slice(0, -1)); 
+        } else if (suffix === 'm') {
+            return MINUTE * Number.parseInt(timeString.slice(0, -1));
+        } else if (suffix === 'h') {
+            return HOUR * Number.parseInt(timeString.slice(0, -1));
+        } else {
+            return Number.parseInt(timeString);
+        }
+    }
+
+    return timeToMS(getArgument(envArg, 'string', defaultVal));
+}
+
 function generateCoverageMap(lineInfo) {
     for (let filename in lineInfo) {
         FileTransformer(filename).then(data => {
@@ -66,30 +88,13 @@ function generateCoverageMap(lineInfo) {
 if (process.argv.length >= 3) {
     const target = getTarget();
 
-    const SECOND = 1000;
-    const MINUTE = SECOND * 60;
-    const HOUR = MINUTE * 60;
-
-    function timeToMS(timeString) {
-        const suffix = timeString[timeString.length - 1];
-
-        if (suffix === 's') {
-            return SECOND * Number.parseInt(timeString.slice(0, -1)); 
-        } else if (suffix === 'm') {
-            return MINUTE * Number.parseInt(timeString.slice(0, -1));
-        } else if (suffix === 'h') {
-            return HOUR * Number.parseInt(timeString.slice(0, -1));
-        } else {
-            return Number.parseInt(timeString);
-        }
-    }
 
     const options = {
         maxConcurrent: maxConcurrent(), //max number of tests to run concurrently
-        maxTime: timeToMS(getArgument('EXPOSE_MAX_TIME', 'string', '2h')), //Max time in MS
+        maxTime: timeFrom('EXPOSE_MAX_TIME', '2h'),
+        testMaxTime: timeFrom('EXPOSE_TEST_TIMEOUT', '20m'),
         jsonOut: getArgument('EXPOSE_JSON_PATH', 'string', undefined), //By default ExpoSE does not generate JSON out
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
-        testMaxTime: timeToMS(getArgument('EXPOSE_TEST_TIMEOUT', 'string', '20m')),
         printDeltaCoverage: getArgument('EXPOSE_PRINT_COVERAGE', 'number', false),
         analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play')
     };
