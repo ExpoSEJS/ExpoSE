@@ -30,6 +30,16 @@ function getArgument(name, type, dResult) {
     return process.env[name] ? argToType(process.env[name], type) : dResult;
 }
 
+function maxConcurrent() {
+    const defaultCpuCores = os.cpus().length;
+    const fromArgOrDefault = getArgument('EXPOSE_MAX_CONCURRENT', 'number', defaultCpuCores);
+
+    console.log(`Number of CPU cores: ${defaultCpuCores}`);
+    console.log(`Max concurrent: ${fromArgOrDefault} concurrent test cases`);
+
+    return fromArgOrDefault;
+}
+
 function generateCoverageMap(lineInfo) {
     for (let filename in lineInfo) {
         FileTransformer(filename).then(data => {
@@ -54,15 +64,7 @@ function generateCoverageMap(lineInfo) {
 }
 
 if (process.argv.length >= 3) {
-    let target = getTarget();
-
-    let numCpuCores = os.cpus().length;
-    let defaultTestCases = numCpuCores;
-
-    if (!getArgument('EXPOSE_MAX_CONCURRENT', 'number', undefined)) {
-        console.log(`Number of CPU cores: ${numCpuCores}`);
-        console.log(`Defaulting to ${defaultTestCases} concurrent test cases`);
-    }
+    const target = getTarget();
 
     const SECOND = 1000;
     const MINUTE = SECOND * 60;
@@ -82,8 +84,8 @@ if (process.argv.length >= 3) {
         }
     }
 
-    let options = {
-        maxConcurrent: getArgument('EXPOSE_MAX_CONCURRENT', 'number', defaultTestCases), //max number of tests to run concurrently
+    const options = {
+        maxConcurrent: maxConcurrent(), //max number of tests to run concurrently
         maxTime: timeToMS(getArgument('EXPOSE_MAX_TIME', 'string', '2h')), //Max time in MS
         jsonOut: getArgument('EXPOSE_JSON_PATH', 'string', undefined), //By default ExpoSE does not generate JSON out
         printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
@@ -94,8 +96,8 @@ if (process.argv.length >= 3) {
 
     console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.maxConcurrent);
 
-    let start = microtime.now();
-    let center = new Center(options);
+    const start = microtime.now();
+    const center = new Center(options);
 
     process.on('SIGINT', function() {
         center.cancel();
@@ -103,7 +105,7 @@ if (process.argv.length >= 3) {
 
     console.log('Setting timeout to ' + options.maxTime);
 
-    let maxTimeout = setTimeout(function() {
+    const maxTimeout = setTimeout(function() {
         center.cancel();
     }, options.maxTime);
 
@@ -121,7 +123,7 @@ if (process.argv.length >= 3) {
 
         console.log('\n*-- Stat Module Output --*')
 
-        for (let stat in stats) {
+        for (const stat in stats) {
             console.log('*-- ' + stat + ': ' + JSON.stringify(stats[stat].payload));
         }
 
@@ -153,8 +155,7 @@ if (process.argv.length >= 3) {
         });
 
         if (options.printDeltaCoverage) {
-            let lineInfo = coverage.lines();
-            generateCoverageMap(lineInfo);
+            generateCoverageMap(coverage.lines());
         } else {
             console.log('*- Re-run with EXPOSE_PRINT_COVERAGE=1 to print line by line coverage information');
         }
