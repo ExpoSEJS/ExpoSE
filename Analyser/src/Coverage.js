@@ -51,11 +51,11 @@ class Coverage {
 
                 //Strip away any non SID related entities
                 //Also replace all source index arrays to a single value to reduce stdout
-                for (let j in map) {
-                    if (isNaN(parseInt(j))) {
-                        delete map[j];
+                for (const localIid in map) {
+                    if (isNaN(parseInt(localIid))) {
+                        delete map[localIid];
                     } else {
-                        map[j] = 1;
+                        map[localIid] = 1;
                     }
                 }
 
