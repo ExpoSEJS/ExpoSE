@@ -63,14 +63,14 @@ function timeFrom(envArg, defaultVal) {
 }
 
 function generateCoverageMap(lineInfo) {
-    for (let filename in lineInfo) {
+    for (const filename in lineInfo) {
         FileTransformer(filename).then(data => {
             console.log(`*- Experimental Line Coverage for ${filename} `);
             const lines = data.split('\n');
             const linesWithNumbers = lines.map((line, idx) => `${idx + 1}:${line}`);
 
             const linesWithTouched = lines.map((line, idx) => {
-                let lineNumber = idx + 1;
+                const lineNumber = idx + 1;
                 if (!lineInfo[filename].all.find(i => i == lineNumber)) {
                     return `s${line}`;
                 } else if (lineInfo[filename].touched.find(i => i == lineNumber)) {
@@ -87,7 +87,6 @@ function generateCoverageMap(lineInfo) {
 
 if (process.argv.length >= 3) {
     const target = getTarget();
-
 
     const options = {
         maxConcurrent: maxConcurrent(), //max number of tests to run concurrently
@@ -143,7 +142,7 @@ if (process.argv.length >= 3) {
         }
 
         done.forEach(item => {
-            let testStartSeconds = item.startTime - start;
+            const testStartSeconds = item.startTime - start;
             console.log('*-- Test Case ' + JSON.stringify(item.input) + ' start ' + formatSeconds(testStartSeconds) + ' took ' + formatSeconds(item.time) + 's');
 
             if (item.errors.length != 0) {
