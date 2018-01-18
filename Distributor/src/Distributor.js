@@ -101,7 +101,7 @@ if (process.argv.length >= 3) {
         center.cancel();
     });
 
-    console.log('Setting timeout to ' + options.maxTime);
+    console.log('Setting timeout to ' + options.maxTime + 'ms');
 
     let maxTimeout = setTimeout(function() {
         center.cancel();
@@ -164,6 +164,5 @@ if (process.argv.length >= 3) {
         clearTimeout(maxTimeout);
     }).start(target);
 } else {
-    console.log('Wrong number of arguments');
-    console.log('Usage Distributor --concurrent XX --max_paths 999 test_script');
+    console.log(`USAGE: ${process.argv[0]} ${process.argv[1]} target`);
 }
