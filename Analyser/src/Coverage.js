@@ -22,9 +22,9 @@ class Coverage {
     }
 
     _pushLines(set, map, sid) {
-        for (let j in map) {
-            if (!isNaN(parseInt(j))) {
-                let location = iidToLocation(this._sandbox, sid, j);
+        for (const nextIid in map) {
+            if (!isNaN(parseInt(nextIid))) {
+                const location = iidToLocation(this._sandbox, sid, nextIid);
                 if (location) {
                     set.add(location.uninstrumentedLineNumber);
                 }
@@ -33,7 +33,7 @@ class Coverage {
     }
 
     end() {
-        let ret = {};
+        const payload = {};
 
         for (let i = 0; i < this._branches.length; i++) {
             
@@ -43,29 +43,28 @@ class Coverage {
             if (this._branches[i] !== undefined) {
 
                 //TODO: Return an Array[0,1,2] instead of 2 sets
-                let touchedLines = new Set();
-                let allLines = new Set();
+                const touchedLines = new Set();
+                const allLines = new Set();
 
                 //Deep copy the smap
-                let map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
+                const map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
                 //Strip away any non SID related entities
                 //Also replace all source index arrays to a single value to reduce stdout
-                for (let j in map) {
-                    if (isNaN(parseInt(j))) {
-                        delete map[j];
+                for (const localIid in map) {
+                    if (isNaN(parseInt(localIid))) {
+                        delete map[localIid];
                     } else {
-                        map[j] = 1;
+                        map[localIid] = 1;
                     }
                 }
 
                 this._pushLines(allLines, map, localSid);
                 this._pushLines(touchedLines, this._branches[i], localSid);
 
-                ret[this._branchFilenameMap[i]] = {
+                payload[this._branchFilenameMap[i]] = {
                     smap: map,
                     branches: this._branches[i],
-                    
                     lines: {
                         all: Array.from(allLines),
                         touched: Array.from(touchedLines)
@@ -74,9 +73,9 @@ class Coverage {
             }
         }
 
-        ret[LAST_IID] = this._lastIid;
+        payload[LAST_IID] = this._lastIid;
 
-        return ret;
+        return payload;
     }
 
     getBranchInfo() {

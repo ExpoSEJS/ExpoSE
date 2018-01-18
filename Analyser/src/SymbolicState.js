@@ -252,6 +252,7 @@ class SymbolicState {
     symbolicField(base_c, base_s, field_c, field_s) {
         this.stats.seen('Symbolic Field');
 
+        //TODO: We do not enforce < 0 => undefined here
         if ((typeof base_c === "string" || base_c instanceof Array) && typeof field_c === "number") {
             if (field_c >= base_c.length) {
                 this.pushCondition(this.ctx.mkGe(field_s, base_s.getLength()));

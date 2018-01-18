@@ -66,7 +66,7 @@ class SymbolicExecution {
             
             base = this.state.getConcrete(base);
 
-            let n_args = Array(args.length);
+            const n_args = Array(args.length);
 
             for (let i = 0; i < args.length; i++) {
                 n_args[i] = this.state.getConcrete(args[i]);
@@ -136,7 +136,7 @@ class SymbolicExecution {
         if (this.state.isSymbolic(offset) && typeof this.state.getConcrete(offset) == 'string') {
             const base_c = this.state.getConcrete(base);
             const offset_c = this.state.getConcrete(offset);
-            for (let idx in base_c) {
+            for (const idx in base_c) {
                 if (offset_c != base_c[idx]) {
                     const condition = this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset));
                     this.state.pushCondition(this.state.ctx.mkNot(condition));
