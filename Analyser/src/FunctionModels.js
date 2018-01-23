@@ -350,7 +350,7 @@ function BuildModels(state) {
             const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
             const off_s = ctx.mkRealToInt(off_real);
             const target_s = state.asSymbolic(concretizeToString(args[0]));
-            const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off);
+            const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off_s);
             return new ConcolicValue(result, seq_index);
         }
     );
