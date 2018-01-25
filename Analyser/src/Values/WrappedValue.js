@@ -33,6 +33,28 @@ WrappedValue.getConcrete = function(val) {
     return WrappedValue.isWrapped(val) ? val.concrete : val;
 }
 
+class Types {
+    
+    constructor(initial) {
+        this._types = initial;
+    }
+
+    add(type) {
+        this._types.push(type);
+        return this;    
+    }
+
+    remove(type) {
+        const typeIdx = this._types.indexOf(type);
+        
+        if (typeIdx != -1) {
+            this._types.splice(typeIdx, 1);
+        }
+
+        return this;
+    }
+}
+
 /*
  * Copyright 2013 Samsung Information Systems America, Inc.
  *
@@ -53,9 +75,10 @@ WrappedValue.getConcrete = function(val) {
 
 class ConcolicValue extends WrappedValue {
     
-    constructor(concrete, symbolic) {
+    constructor(concrete, symbolic, alternatives) {
         super(concrete);
         this.symbolic = symbolic;
+        this.alternatives = alternatives;
     }
 
     toString() {
@@ -69,4 +92,4 @@ class ConcolicValue extends WrappedValue {
 
 ConcolicValue.getSymbolic = (val) => val instanceof ConcolicValue ? val.symbolic : undefined;
 
-export {WrappedValue, ConcolicValue};
+export {WrappedValue, Types, ConcolicValue};
