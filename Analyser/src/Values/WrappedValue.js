@@ -53,6 +53,10 @@ class Types {
 
         return this;
     }
+
+    serialize() {
+        return JSON.stringify(this._types);
+    }
 }
 
 /*
@@ -78,7 +82,7 @@ class ConcolicValue extends WrappedValue {
     constructor(concrete, symbolic, alternatives) {
         super(concrete);
         this.symbolic = symbolic;
-        this.alternatives = alternatives;
+        this.alternatives = alternatives || new Types();
     }
 
     toString() {
