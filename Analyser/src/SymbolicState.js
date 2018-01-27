@@ -195,7 +195,19 @@ class SymbolicState {
 
     _checkSat(clause, i, checks) {
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
-        return model ? this.getSolution(model) : undefined;
+        
+	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
+
+	if (model) {
+		this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
+	} else {
+		this.stats.seen('Failed Queries');
+		if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
+			this.stats.seen('Failed Queries (Max Refinements)');
+		}
+	}
+
+	return model ? this.getSolution(model) : undefined;
     }
 
     isSymbolic(val) {

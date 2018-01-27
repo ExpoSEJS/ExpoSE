@@ -71,13 +71,31 @@ function BuildModels(state) {
         function CheckCorrect(model) {
             const real_match = real.exec(model.eval(string_s).asConstant(model));
             const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
-            Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
-            return real_match && !Exists(real_match, sym_match, DoesntMatch);
-        }
+
+	    Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
+            
+	    const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
+   	    
+	    state.stats.seen('Regex Checks');	
+	    
+	    if (!is_correct) {
+		    state.stats.seen('Failed Regex Checks');
+	    }
+
+	    return is_correct;
+	}
 
         function CheckFailed(model) {
-            return !real.test(model.eval(string_s).asConstant(model));
-        }
+            const is_failed = !real.test(model.eval(string_s).asConstant(model));
+
+	    state.stats.seen('Regex Checks');
+	    
+	    if (!is_failed) {
+		    state.stats.seen('Failed Regex Checks'); 
+	    }
+
+            return is_failed;
+	}
 
         const NotMatch = Z3.Check(CheckCorrect, (query, model) => {
             const not = ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model))));
@@ -296,11 +314,13 @@ function BuildModels(state) {
         };
     }
 
-    function concretizeToString(symbol) {
+    function coerceToString(symbol) {
+        
         if (typeof state.getConcrete(symbol) !== 'string') {
             Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
-            return new ConcolicValue(cval, state.asSymbolic('' + state.getConcrete(symbol)));
+            return new ConcolicValue(state.getConcrete(symbol), state.asSymbolic('' + state.getConcrete(symbol)));
         }
+
         return symbol;
     }
 
@@ -310,7 +330,7 @@ function BuildModels(state) {
      */
     models[String] = symbolicHook(
         (_f, _base, args, _result) => state.isSymbolic(args[0]),
-        (_f, _base, args, result) => concretizeToString(args[0])
+        (_f, _base, args, result) => coerceToString(args[0])
     );
 
     models[String.prototype.substr] = symbolicHook(
@@ -349,7 +369,7 @@ function BuildModels(state) {
         (_f, base, args, result) => {
             const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
             const off_s = ctx.mkRealToInt(off_real);
-            const target_s = state.asSymbolic(concretizeToString(args[0]));
+            const target_s = state.asSymbolic(coerceToString(args[0]));
             const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off_s);
             return new ConcolicValue(result, seq_index);
         }
@@ -372,7 +392,7 @@ function BuildModels(state) {
 
     models[RegExp.prototype.test] = symbolicHookRe(
         (_f, _base, args, _r) => state.isSymbolic(args[0]),
-        (_f, base, args, result) => rewriteTestSticky(base, concretizeToString(args[0]), result)
+        (_f, base, args, result) => rewriteTestSticky(base, coerceToString(args[0]), result)
     );
 
     //Replace model for replace regex by string. Does not model replace with callback.
@@ -397,7 +417,7 @@ function BuildModels(state) {
     models[String.prototype.toLowerCase] = symbolicHook(
         (_f, base, _a, _r) => state.isSymbolic(base),
         (_f, base, _a, result) => {
-            base = concretizeToString(this, base);
+            base = coerceToString(base);
             state.pushCondition(ctx.mkSeqInRe(state.asSymbolic(base), Z3.Regex(ctx, /^[^A-Z]+$/).ast), true);
             return new ConcolicValue(result, state.asSymbolic(base));
         }
