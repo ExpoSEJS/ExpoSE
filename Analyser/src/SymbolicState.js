@@ -72,7 +72,7 @@ class SymbolicState {
         return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
     }
 
-    _addInput(pc, solution, pcIndex) {
+    _addInput(pc, solution, pcIndex, childInputs) {
         solution._bound = pcIndex + 1;
         childInputs.push({
             input: solution,
@@ -88,11 +88,11 @@ class SymbolicState {
         const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
         const solution = this._checkSat(newPC, i, allChecks);
 
-        if (!solution) {
-            Log.logHigh(`${ObjectHelper.asString(newPC)} is not satisfiable`);
-        } else {
-            this._addInput(newPC, solution, i);
+        if (solution) {
+            this._addInput(newPC, solution, i, childInputs);
             Log.logHigh(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
+        } else {
+            Log.logHigh(`${ObjectHelper.asString(newPC)} is not satisfiable`);
         }
     }
 
