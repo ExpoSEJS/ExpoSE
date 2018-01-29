@@ -72,27 +72,28 @@ class SymbolicState {
         return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
     }
 
-    _buildPC(childInputs, i) {
-        const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
-        const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
-        const solution = this._checkSat(newPC, i, allChecks);
-
-        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable with checks ${allChecks.length}`);
-
-        if (!solution) {
-            Log.logMid(`Unsatisfiable`);
-            return;
-        }
-        
+    _addInput(solution) {
         solution._bound = i + 1;
-            
         childInputs.push({
             input: solution,
             pc: this._stringPC(newPC),
             forkIid: this.pathCondition[i].forkIid
         });
-           
-        Log.logMid(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
+    }
+
+    _buildPC(childInputs, i) {
+        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable with checks ${allChecks.length}`);
+
+        const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
+        const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
+        const solution = this._checkSat(newPC, i, allChecks);
+
+        if (!solution) {
+            Log.logHigh(`${ObjectHelper.asString(newPC)} is not satisfiable`);
+        } else {
+            this._addInput(solution);
+            Log.logHigh(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
+        }
     }
 
     _buildAsserts(i) {
