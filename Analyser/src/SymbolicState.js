@@ -72,27 +72,28 @@ class SymbolicState {
         return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
     }
 
+    _addInput(pc, solution, pcIndex, childInputs) {
+        solution._bound = pcIndex + 1;
+        childInputs.push({
+            input: solution,
+            pc: this._stringPC(pc),
+            forkIid: this.pathCondition[pcIndex].forkIid
+        });
+    }
+
     _buildPC(childInputs, i) {
+        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable with checks ${allChecks.length}`);
+
         const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
         const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
         const solution = this._checkSat(newPC, i, allChecks);
 
-        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable with checks ${allChecks.length}`);
-
-        if (!solution) {
-            Log.logMid(`Unsatisfiable`);
-            return;
+        if (solution) {
+            this._addInput(newPC, solution, i, childInputs);
+            Log.logHigh(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
+        } else {
+            Log.logHigh(`${ObjectHelper.asString(newPC)} is not satisfiable`);
         }
-        
-        solution._bound = i + 1;
-            
-        childInputs.push({
-            input: solution,
-            pc: this._stringPC(newPC),
-            forkIid: this.pathCondition[i].forkIid
-        });
-           
-        Log.logMid(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
     }
 
     _buildAsserts(i) {
@@ -195,7 +196,19 @@ class SymbolicState {
 
     _checkSat(clause, i, checks) {
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
-        return model ? this.getSolution(model) : undefined;
+        
+	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
+
+	if (model) {
+		this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
+	} else {
+		this.stats.seen('Failed Queries');
+		if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
+			this.stats.seen('Failed Queries (Max Refinements)');
+		}
+	}
+
+	return model ? this.getSolution(model) : undefined;
     }
 
     isSymbolic(val) {
