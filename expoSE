@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function abs_target {
 	#Generate the absolute path of test script

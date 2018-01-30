@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
 #Setup runtime environment variables
 source ./scripts/expose_env

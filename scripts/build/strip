@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
 (EXPOSE_LOG_LEVEL=$EXPOSE_LOG_LEVEL ./scripts/build/build_strip_rc) > $1/.babelrc
 cd $1
