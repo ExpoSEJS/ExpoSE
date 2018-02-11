@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 mv ~/.bashrc ~/.bachrc_tmp_expose
 sed "s/.*#EXPOSE_ENTRY//g" < ~/.bachrc_tmp_expose > ~/.bashrc
 rm ~/.bachrc_tmp_expose

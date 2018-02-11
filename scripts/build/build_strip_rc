@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
 if [ $EXPOSE_LOG_LEVEL -lt 1 ]; then
 	echo "{\"plugins\":[[\"strip-function-call\",{\"strip\": [\"Log.logHigh\", \"Log.logMid\", \"Log.log\"]}]]}"

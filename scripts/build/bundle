@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
 cd $1
 echo "Bundling $1/$2 into $3"

@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
 #Node path should add libs in
 export NODE_PATH=$NODE_PATH:"$(./scripts/lib_path)"

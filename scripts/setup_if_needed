@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ -f ~/.expose_setup ]; then
 	echo "Setup Done exists, not setting up"

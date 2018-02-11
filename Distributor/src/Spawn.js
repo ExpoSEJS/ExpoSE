@@ -3,7 +3,6 @@
 "use strict";
 
 import {spawn} from 'child_process';
-import microtime from 'microtime';
 
 let StringDecoder = require('string_decoder').StringDecoder;
 let tmp = require('tmp');
@@ -53,7 +52,7 @@ class Spawn {
     }
 
     _recordEndTime() {
-        this._endTime = microtime.now();
+        this._endTime = (new Date()).getTime();
     }
 
     _processEnded(code, done) {
@@ -133,7 +132,7 @@ class Spawn {
             }
         }
 
-        this._startTime = microtime.now();
+        this._startTime = (new Date()).getTime();
 
         const prc = spawn(this.script, this.args, {
             env: this.env,

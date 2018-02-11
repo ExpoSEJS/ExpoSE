@@ -1,2 +1,2 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 echo "$(cd lib; pwd)/$(basename "$1")"

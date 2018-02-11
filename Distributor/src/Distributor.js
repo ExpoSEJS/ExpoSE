@@ -2,7 +2,6 @@
 "use strict";
 
 import Center from './Center';
-import microtime from 'microtime';
 import FileTransformer from './FileTransformer';
 
 const fs = require('fs');
@@ -100,7 +99,7 @@ if (process.argv.length >= 3) {
 
     console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.maxConcurrent);
 
-    const start = microtime.now();
+    const start = (new Date()).getTime();
     const center = new Center(options);
 
     process.on('SIGINT', function() {
@@ -120,7 +119,7 @@ if (process.argv.length >= 3) {
             fs.writeFileSync(options.jsonOut, JSON.stringify({
                 source: getTarget(),
                 start: start,
-                end: microtime.now(),
+                end: (new Date()).getTime(),
                 done: done
             }));
         }

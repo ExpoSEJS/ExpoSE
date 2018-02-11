@@ -8,5 +8,8 @@
     "start": "./expoSE ui",
     "test": "./expoSE test_suite",
     "postinstall": "./expoSE setup"
+  },
+  "dependencies": {
+    "bash": "0.0.1"
   }
 }
