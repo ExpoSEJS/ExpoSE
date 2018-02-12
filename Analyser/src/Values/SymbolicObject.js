@@ -1,13 +1,6 @@
 import {ConcolicValue} from './WrappedValue';
 
 /**
- * Implementation of untyped symbolic values
- */
-class PureSymbol extends ConcolicValue {
-
-}
-
-/**
  * Container for naive symbolic objects 
  */
 class ConcolicObject {
@@ -21,4 +14,4 @@ class ConcolicObject {
     getField(name) {}
 }
 
-export { ConcolicObject, PureSymbol };
+export { ConcolicObject };

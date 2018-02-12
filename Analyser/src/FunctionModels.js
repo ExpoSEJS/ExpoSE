@@ -472,12 +472,21 @@ function BuildModels(state) {
 
     Object._expose.makeSymbolic = function() { return 'MakeSymbolic'; };
     Object._expose.notAnError = function() { return NotAnErrorException; };
+    Object._expose.pureSymbol = function() { return 'PureSymbol'; }
 
     models[Object._expose.makeSymbolic] = symbolicHook(
         () => true,
         (_f, base, args, result) => { 
             Log.log(`Creating symbolic variable ${args[0]}`);
             return state.createSymbolicValue(args[0], args[1]);
+        }
+    );
+
+    models[Object._expose.pureSymbol] = symbolicHook(
+        () => true,
+        (_f, base, args, result) => { 
+            Log.log(`Creating pure symbolic variable ${args[0]}`);
+            return state.createPureSymbol(args[0]);
         }
     );
 

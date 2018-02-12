@@ -152,6 +152,26 @@ class SymbolicState {
         return sort;
     }
 
+    createPureSymbol(name) {
+        let pureType = this.createSymbolicValue(name + "_type", "undefined");
+
+        let res;
+
+        if (this.mkTestEq(pureType, this.concolic("string"))) {
+            res = this.createSymbolicValue(name, "seed_string");
+        } else if (this.mkTestEq(pureType, this.concolic("number"))) {
+            res = this.createSymbolicValue(name, 0);
+        } else if (this.mkTestEq(pureType, this.concolic("boolean"))) {
+            res = this.createSymbolicValue(name, false);
+        } else if (this.mkTestEq(pureType, this.concolic("null"))) {
+            res = null;
+        } else {
+            res = undefined;
+        }
+
+        return res;
+    }
+
     createSymbolicValue(name, concrete) {
 
         this.stats.seen('Symbolic Values');
@@ -354,6 +374,17 @@ class SymbolicState {
             default:
                 Log.log("Symbolic expressions with " + typeof val + " literals not yet supported.");
         }
+    }
+
+    concolic(val) {
+        return this.isSymbolic(val) ? val : new ConcolicValue(val, this.wrapConstant(val));
+    }
+
+    mkTestEq(left, right) {
+        console.log('WAAAARGH WAAARG ' + left.toString() + ' ' + right.toString());
+        const equalityTest = this.symbolicBinary('==', this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
+        this.pushCondition(equalityTest);
+        return this.getConcrete(left) == this.getConcrete(right);
     }
 }
 

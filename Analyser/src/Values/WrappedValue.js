@@ -87,15 +87,23 @@ class ConcolicValue extends WrappedValue {
     }
 
     toString() {
-        return 'Concolic(' + this.concrete + ', ' + this.symbolic +', ' + (this.rider ? this.rider.toString() : '') + ')';
+        return 'Concolic(' + this.concrete + ', ' + this.symbolic + ')';
     }
 
     clone() {
         return new ConcolicValue(this.concrete, this.symbolic);
     }
 
+    getConcrete() {
+        return this.concrete;
+    }
+
     getSymbolic() {
         return this.symbolic;
+    }
+
+    getType() {
+        return typeof this.getConcrete();
     }
 }
 
