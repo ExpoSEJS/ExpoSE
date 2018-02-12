@@ -77,10 +77,9 @@ class Types {
 
 class ConcolicValue extends WrappedValue {
     
-    constructor(concrete, symbolic, alternatives) {
+    constructor(concrete, symbolic) {
         super(concrete);
         this.symbolic = symbolic;
-        this.alternatives = alternatives;
     }
 
     toString() {

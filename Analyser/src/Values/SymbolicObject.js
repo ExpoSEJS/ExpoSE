@@ -10,9 +10,9 @@ class PureSymbol extends ConcolicValue {
 /**
  * Container for naive symbolic objects 
  */
-class ConcolicObject extends ConcolicValue {
+class ConcolicObject {
     
-    constructor(state) {
+    constructor(state, name) {
         this._state = state;
     }
 
@@ -20,3 +20,5 @@ class ConcolicObject extends ConcolicValue {
     setField(name, v) {}
     getField(name) {}
 }
+
+export { ConcolicObject, PureSymbol };
