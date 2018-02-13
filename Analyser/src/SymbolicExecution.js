@@ -350,17 +350,10 @@ class SymbolicExecution {
 
     _unarySymbolic(op, left, result_c) {
 
-        const left_s = this.state.asSymbolic(left);
-        const left_c = this.state.getConcrete(left);
-
-        result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
-
-        Log.logMid(`Symbolically evaluating unary ${op}(${left_s}), which has concrete result ${result_c}`);
-
-        const result_s = this.state.symbolicUnary(op, left_c, left_s);
+        Log.logMid(`Symbolically evaluating unary ${op}(${left_s})`);
 
         return {
-            result: result_s ? new ConcolicValue(result_c, result_s) : result_c
+            result: this.state.unary(op, left)
         };
     }
 

@@ -398,6 +398,14 @@ class SymbolicState {
         }
     }
 
+    unary(op, left) {
+
+        const result_c = SymbolicHelper.evalUnary(op, this.getConcrete(left)),
+              result_s = this.symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left));
+
+        return result_s ? new ConcolicValue(result_c, result_s) : result_c;
+    }
+
     wrapConstant(val) {
         this.stats.seen('Wrapped Constants');
         switch (typeof val) {
