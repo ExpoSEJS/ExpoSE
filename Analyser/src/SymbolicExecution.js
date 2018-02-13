@@ -312,16 +312,10 @@ class SymbolicExecution {
 
     _binarySymbolic(op, left, right, result_c) {
 
-        const left_c  = this.state.getConcrete(left),
-              right_c = this.state.getConcrete(right);
-
-        Log.logMid(`Symbolically evaluating binary ${op} which has concrete result ${result_c}`);
-
-        const result = SymbolicHelper.evalBinary(op, left_c, right_c),
-              result_s = this.state.symbolicBinary(op, left_c, this.state.asSymbolic(left), right_c, this.state.asSymbolic(right));
+        Log.logMid(`Symbolically evaluating binary ${op} ${left} ${right}`);
 
         return {
-            result: result_s ? new ConcolicValue(result, result_s) : result
+            result: this.state.binary(op, left, right)
         };
     }
 
@@ -368,22 +362,14 @@ class SymbolicExecution {
         };
     }
 
-    _toBool(val) {
-        const val_c = this.state.getConcrete(val);
-        const val_s = this.state.asSymbolic(val);
-        const result_s = this.state.symbolicCoerceToBool(val_c, val_s);
-        return result_s ? new ConcolicValue(!!val_c, result_s) : undefined;
-    }
-
     conditional(iid, result) {
         this.state.coverage.touch(iid);
 
         if (this.state.isSymbolic(result)) {
             Log.logMid(`Evaluating symbolic condition ${this.state.asSymbolic(result)} at ${this._location(iid)}`);
-            result = this._toBool(result);
 
             if (result) {
-                this.state.symbolicConditional(result);
+                this.state.conditional(this.state.toBool(result));
             } else {
                 Log.logMid(`Concretized ${result} because do not know how to coerce`);
             }

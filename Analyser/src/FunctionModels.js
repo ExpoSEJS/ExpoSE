@@ -154,7 +154,7 @@ function BuildModels(state) {
 
         const regex = Z3.Regex(ctx, real);
         const in_regex = RegexTest(regex, real, string, true);
-        state.symbolicConditional(in_regex);
+        state.conditional(in_regex);
 
         const string_s = state.asSymbolic(string);
 
@@ -435,7 +435,7 @@ function BuildModels(state) {
             const validRequiredDigitsSymbolic = c.state.ctx.mkAnd(lte20, gte0);
             const validRequiredDigits = c.state.getConcrete(args[0]) >= 0 && c.state.getConcrete(args[0]) <= 20;
 
-            c.state.symbolicConditional(new ConcolicValue(!!validRequiredDigits, validRequiredDigitsSymbolic));
+            c.state.conditional(new ConcolicValue(!!validRequiredDigits, validRequiredDigitsSymbolic));
 
             if (validRequiredDigits) {
                 //TODO: Need to coerce result to string

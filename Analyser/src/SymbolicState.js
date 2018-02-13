@@ -9,6 +9,7 @@ import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 import { SymbolicObject } from './Values/SymbolicObject';
 import External from './External';
 import Config from './Config';
+import SymbolicHelper from './SymbolicHelper';
 
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
@@ -46,8 +47,10 @@ class SymbolicState {
         });
     }
 
-    symbolicConditional(result) {
-        let [result_s, result_c] = [this.asSymbolic(result), this.getConcrete(result)];
+    conditional(result) {
+
+        const result_c = this.getConcrete(result),
+              result_s = this.asSymbolic(result);
 
         if (result_c === true) {
             Log.logMid(`Concrete result was true, pushing ${result_s}`);
@@ -56,7 +59,7 @@ class SymbolicState {
             Log.logMid(`Concrete result was false, pushing not of ${result_s}`);
             this.pushCondition(this.ctx.mkNot(result_s));
         } else {
-            Log.log(`ERROR: Undefined Result: ${result_c}, ${result_s.toString()}`);
+            Log.log(`ERROR: Symbolic Conditional on non-bool`);
         }
     }
 
@@ -238,18 +241,19 @@ class SymbolicState {
     _checkSat(clause, i, checks) {
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         
-	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
+    	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
 
-	if (model) {
-		this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
-	} else {
-		this.stats.seen('Failed Queries');
-		if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
-			this.stats.seen('Failed Queries (Max Refinements)');
-		}
-	}
+    	if (model) {
+    		this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
+    	} else {
+    		this.stats.seen('Failed Queries');
 
-	return model ? this.getSolution(model) : undefined;
+    		if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
+    			this.stats.seen('Failed Queries (Max Refinements)');
+    		}
+    	}
+
+    	return model ? this.getSolution(model) : undefined;
     }
 
     isWrapped(val) {
@@ -308,6 +312,12 @@ class SymbolicState {
         return undefined;
     }
 
+    binary(op, left, right) {
+        const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right)),
+              result_s = this.symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
+        return result_s ? new ConcolicValue(result_c, result_s) : result_c;
+    }
+
     symbolicField(base_c, base_s, field_c, field_s) {
         this.stats.seen('Symbolic Field');
 
@@ -342,28 +352,28 @@ class SymbolicState {
     	return undefined;
     }
 
-    symbolicCoerceToBool(val_c, val_s) {
-        let result = undefined;
+    toBool(val) {
+        const val_type = typeof this.getConcrete(val);
 
-        if (typeof val_c === "boolean") {
-            result = val_s;
-        } else if (typeof val_c === "number") {
-            result = this.symbolicBinary('!=', val_c, val_s, 0, this.wrapConstant(0));
-        } else if (typeof val_c === "string") {
-            result = this.symbolicBinary('!=', val_c, val_s, "", this.wrapConstant(""));
-        } else {
-            Log.logMid('Cannot coerce '+ val_c + ' to boolean');
+        switch (val_type) {
+            case "boolean":
+                return val;
+            case "number":
+                return this.binary('!=', val, this.concolic(0));
+            case "string":
+                return this.binary('!=', val, this.concolic(""));
+            default:
+                return undefined;
         }
-
-        return result;
     }
 
     symbolicUnary(op, left_c, left_s) {
         this.stats.seen('Symbolic Unary');
 
         switch (op) {
+
             case "!": {
-                let bool_s = this.symbolicCoerceToBool(left_c, left_s);
+                let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
                 return bool_s ? this.ctx.mkNot(bool_s) : undefined;
             }
 
@@ -413,7 +423,7 @@ class SymbolicState {
 
         const equalitySymbol = this.symbolicBinary('==', left_c, this.asSymbolic(left), right_c, this.asSymbolic(right));
         const equalityTest = new ConcolicValue(left_c == right_c, equalitySymbol);
-        this.symbolicConditional(equalityTest);
+        this.conditional(equalityTest);
         return this.getConcrete(equalityTest);
     }
 }
