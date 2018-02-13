@@ -39,18 +39,10 @@ class WrappedValue {
     valueOf() {
         return this.concrete ? this.concrete.valueOf() : this.concrete;
     }
-}
 
-WrappedValue.isWrapped = function(val) {
-    return val instanceof WrappedValue;
-}
-
-WrappedValue.clone = function(val) {
-    return val instanceof WrappedValue ? val.clone() : val;
-}
-
-WrappedValue.getConcrete = function(val) {
-    return WrappedValue.isWrapped(val) ? val.concrete : val;
+    getConcrete() {
+        return this.concrete;
+    }
 }
 
 class Types {

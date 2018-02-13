@@ -22,7 +22,8 @@ function buildTestList() {
     buildTest('bool/basic.js', 4, 1);
 
     //Pure Symbols
-    //buildTest('pure/pure_symbol.js', 8, 0)
+    buildTest('pure/pure_symbol.js', 8, 0);
+    buildTest('pure/pure_object.js', 10, 1);
 
     //Integers
     buildTest('integers/hello.js', 2, 0);

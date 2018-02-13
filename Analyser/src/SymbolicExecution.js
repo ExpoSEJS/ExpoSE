@@ -2,7 +2,8 @@
 
 "use strict";
 
-import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
+import {ConcolicValue} from './Values/WrappedValue';
+import {SymbolicObject} from './Values/SymbolicObject';
 import ObjectHelper from './Utilities/ObjectHelper';
 import SymbolicState from './SymbolicState';
 import SymbolicHelper from './SymbolicHelper';
@@ -133,6 +134,13 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
         Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
 
+        //TODO: This shortcut is ugly
+        if (base instanceof SymbolicObject) {
+            return {
+                result: base.getField(this.state, offset)
+            }
+        }
+
         if (this.state.isSymbolic(offset) && typeof this.state.getConcrete(offset) == 'string') {
             const base_c = this.state.getConcrete(base);
             const offset_c = this.state.getConcrete(offset);
@@ -157,16 +165,23 @@ class SymbolicExecution {
         Log.logHigh('Put field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
 
         return {
-            base: this.state.getConcrete(base),
-            offset: this.state.getConcrete(offset),
+            base: base,
+            offset: offset,
             val: val,
-            skip: false,
+            skip: this.state.isWrapped(base),
         };
     }
 
     putField(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
         Log.logHigh(`PutField ${base.toString()} at ${offset}`);
+
+        if (base instanceof SymbolicObject) {
+            return {
+                result: base.setField(this.state, this.state.getConcrete(offset), val)
+            }
+        }
+
         return { result: val };
     }
 

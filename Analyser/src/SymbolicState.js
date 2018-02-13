@@ -6,6 +6,7 @@ import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
 import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
+import { SymbolicObject } from './Values/SymbolicObject';
 import External from './External';
 import Config from './Config';
 
@@ -153,17 +154,28 @@ class SymbolicState {
     }
 
     createPureSymbol(name) {
+
+        this.stats.seen('Pure Symbols');
+
         let pureType = this.createSymbolicValue(name + "_type", "undefined");
 
         let res;
 
-        if (this.mkTestEq(pureType, this.concolic("string"))) {
+        if (this.assertEqual(pureType, this.concolic("string"))) {
             res = this.createSymbolicValue(name, "seed_string");
-        } else if (this.mkTestEq(pureType, this.concolic("number"))) {
+        } else if (this.assertEqual(pureType, this.concolic("number"))) {
             res = this.createSymbolicValue(name, 0);
-        } else if (this.mkTestEq(pureType, this.concolic("boolean"))) {
+        } else if (this.assertEqual(pureType, this.concolic("boolean"))) {
             res = this.createSymbolicValue(name, false);
-        } else if (this.mkTestEq(pureType, this.concolic("null"))) {
+        } else if (this.assertEqual(pureType, this.concolic("object"))) {
+            res = this.createSymbolicValue(name, {});
+        } else if (this.assertEqual(pureType, this.concolic("array_int"))) {
+            res = this.createSymbolicValue(name, [0]);
+        } else if (this.assertEqual(pureType, this.concolic("array_string"))) {
+            res = this.createSymbolicValue(name, [""]);
+        } else if (this.assertEqual(pureType, this.concolic("array_bool"))) {
+            res = this.createSymbolicValue(name, [false]);
+        } else if (this.assertEqual(pureType, this.concolic("null"))) {
             res = null;
         } else {
             res = undefined;
@@ -175,6 +187,11 @@ class SymbolicState {
     createSymbolicValue(name, concrete) {
 
         this.stats.seen('Symbolic Values');
+
+        //TODO: Very ugly short circuit
+        if (!(concrete instanceof Array) && typeof concrete === "object") {
+            return new SymbolicObject(name);
+        }
 
         let symbolic;
 
@@ -231,12 +248,16 @@ class SymbolicState {
 	return model ? this.getSolution(model) : undefined;
     }
 
+    isWrapped(val) {
+        return val instanceof WrappedValue;
+    }
+
     isSymbolic(val) {
         return !!ConcolicValue.getSymbolic(val);
     }
 
     getConcrete(val) {
-        return WrappedValue.getConcrete(val);
+        return val instanceof WrappedValue ? val.getConcrete() : val;
     }
 
     asSymbolic(val) {
@@ -380,11 +401,15 @@ class SymbolicState {
         return this.isSymbolic(val) ? val : new ConcolicValue(val, this.wrapConstant(val));
     }
 
-    mkTestEq(left, right) {
-        console.log('WAAAARGH WAAARG ' + left.toString() + ' ' + right.toString());
-        const equalityTest = this.symbolicBinary('==', this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
-        this.pushCondition(equalityTest);
-        return this.getConcrete(left) == this.getConcrete(right);
+    assertEqual(left, right) {
+
+        const left_c  = this.getConcrete(left),
+              right_c = this.getConcrete(right);
+
+        const equalitySymbol = this.symbolicBinary('==', left_c, this.asSymbolic(left), right_c, this.asSymbolic(right));
+        const equalityTest = new ConcolicValue(left_c == right_c, equalitySymbol);
+        this.symbolicConditional(equalityTest);
+        return this.getConcrete(equalityTest);
     }
 }
 
