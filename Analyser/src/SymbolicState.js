@@ -417,12 +417,7 @@ class SymbolicState {
     }
 
     assertEqual(left, right) {
-
-        const left_c  = this.getConcrete(left),
-              right_c = this.getConcrete(right);
-
-        const equalitySymbol = this.symbolicBinary('==', left_c, this.asSymbolic(left), right_c, this.asSymbolic(right));
-        const equalityTest = new ConcolicValue(left_c == right_c, equalitySymbol);
+        const equalityTest = this.binary('==', left, right);
         this.conditional(equalityTest);
         return this.getConcrete(equalityTest);
     }
