@@ -59,7 +59,7 @@ class SymbolicState {
             Log.logMid(`Concrete result was false, pushing not of ${result_s}`);
             this.pushCondition(this.ctx.mkNot(result_s));
         } else {
-            Log.log(`ERROR: Symbolic Conditional on non-bool`);
+            Log.log(`WARNING: Symbolic Conditional on non-bool, concretizing`);
         }
     }
 

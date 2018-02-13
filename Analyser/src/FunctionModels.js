@@ -228,6 +228,8 @@ function BuildModels(state) {
         
         if (real.sticky || real.global) {
 
+            state.stats.seen('Sticky / Global Regex');
+
             const lastIndex = real.lastIndex;
             const lastIndex_s = state.asSymbolic(real.lastIndex);
             const lastIndex_c = state.getConcrete(real.lastIndex);
@@ -250,10 +252,9 @@ function BuildModels(state) {
             const matchResult = RegexMatch(real, target, realResult);
 
             if (matchResult) {
-                const firstAdd = new ConcolicValue(lastIndex_c + state.getConcrete(matchResult.index), state.symbolicBinary('+', lastIndex_c, lastIndex_s, state.getConcrete(matchResult.index), state.asSymbolic(matchResult.index)));
-                const secondAdd = new ConcolicValue(state.getConcrete(firstAdd), state.getConcrete(matchResult[0]).length, 
-                    state.symbolicBinary('+', state.getConcrete(firstAdd), state.asSymbolic(firstAdd), state.getConcrete(matchResult[0].length), state.asSymbolic(matchResult[0]).getLength()));
-                real.lastIndex = secondAdd;
+                const matchLength = new ConcolicValue(state.getConcrete(matchResult[0]).length, state.asSymbolic(matchResult[0]).getLength());
+                const currentIndex = state.binary('+', lastIndex, matchResult.index);
+                real.lastIndex = state.binary('+', currentIndex, matchLength);
                 return true;
             }
         

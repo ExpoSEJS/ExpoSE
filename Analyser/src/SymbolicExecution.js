@@ -56,9 +56,9 @@ class SymbolicExecution {
          * Concretize the function if it is native and we do not have a custom model for it
          */
 
-        const modelled = !!this.models[f];
+        const isModelled = !!this.models[f];
 
-        if (!modelled && isNative(f)) {
+        if (!isModelled && isNative(f)) {
             
             this.state.stats.set('Concretized Function Calls', f.name);
 
@@ -84,11 +84,13 @@ class SymbolicExecution {
             f: f,
             base: base,
             args: args,
-            skip: modelled
+            skip: isModelled
         };
     }
 
-    //Called after a function completes execution
+    /**
+     * Called after a function completes execution
+     */
     invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
@@ -146,7 +148,7 @@ class SymbolicExecution {
             const offset_c = this.state.getConcrete(offset);
             for (const idx in base_c) {
                 if (offset_c != base_c[idx]) {
-                    const condition = this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset));
+                    const condition = this.state.binary('==', idx, offset);
                     this.state.pushCondition(this.state.ctx.mkNot(condition));
                 }
             }
