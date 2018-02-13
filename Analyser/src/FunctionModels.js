@@ -145,7 +145,7 @@ function BuildModels(state) {
 
         const regex = Z3.Regex(ctx, real);
         const in_regex = RegexTest(regex, real, string, true);
-        const search_in_re = ctx.mkIte(state.asSymbolic(in_regex), regex.startIndex, state.wrapConstant(-1));
+        const search_in_re = ctx.mkIte(state.asSymbolic(in_regex), regex.startIndex, state.constantSymbol(-1));
 
         return new ConcolicValue(result, search_in_re);
     }

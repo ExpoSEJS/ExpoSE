@@ -269,7 +269,7 @@ class SymbolicState {
     }
 
     asSymbolic(val) {
-        return ConcolicValue.getSymbolic(val) || this.wrapConstant(val);
+        return ConcolicValue.getSymbolic(val) || this.constantSymbol(val);
     }
 
     _symbolicBinary(op, left_c, left_s, right_c, right_s) {
@@ -406,7 +406,7 @@ class SymbolicState {
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
 
-    wrapConstant(val) {
+    constantSymbol(val) {
         this.stats.seen('Wrapped Constants');
         switch (typeof val) {
             case 'boolean':
@@ -421,7 +421,7 @@ class SymbolicState {
     }
 
     concolic(val) {
-        return this.isSymbolic(val) ? val : new ConcolicValue(val, this.wrapConstant(val));
+        return this.isSymbolic(val) ? val : new ConcolicValue(val, this.constantSymbol(val));
     }
 
     assertEqual(left, right) {
