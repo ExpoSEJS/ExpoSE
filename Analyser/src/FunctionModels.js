@@ -72,30 +72,30 @@ function BuildModels(state) {
             const real_match = real.exec(model.eval(string_s).asConstant(model));
             const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
 
-	    Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
-            
-	    const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
-   	    
-	    state.stats.seen('Regex Checks');	
-	    
-	    if (!is_correct) {
-		    state.stats.seen('Failed Regex Checks');
-	    }
+    	    Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
+                
+    	    const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
+       	    
+    	    state.stats.seen('Regex Checks');	
+    	    
+    	    if (!is_correct) {
+    		    state.stats.seen('Failed Regex Checks');
+    	    }
 
-	    return is_correct;
-	}
+    	    return is_correct;
+    	}
 
         function CheckFailed(model) {
             const is_failed = !real.test(model.eval(string_s).asConstant(model));
-
-	    state.stats.seen('Regex Checks');
-	    
-	    if (!is_failed) {
-		    state.stats.seen('Failed Regex Checks'); 
-	    }
+            
+            state.stats.seen('Regex Checks');
+            
+            if (!is_failed) {
+        	    state.stats.seen('Failed Regex Checks'); 
+            }
 
             return is_failed;
-	}
+        }
 
         const NotMatch = Z3.Check(CheckCorrect, (query, model) => {
             const not = ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model))));
@@ -105,7 +105,7 @@ function BuildModels(state) {
         const CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
             //CheckCorrect will check model has a proper match
             let real_match = real.exec(model.eval(string_s).asConstant(model));
-
+            
             if (real_match) {
                 real_match = real_match.map(match => match || '');
                 const query_list = regex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
@@ -135,7 +135,7 @@ function BuildModels(state) {
             EnableCaptures(regex, real, state.asSymbolic(string));
             const checks = BuildRefinements(regex, real, state.asSymbolic(string));
             in_s.checks.trueCheck = checks.trueCheck;
-            //in_s.checks.falseCheck = checks.false; Don't need as we currently don't enforce over-approx negation
+            in_s.checks.falseCheck = checks.false; Don't need as we currently don't enforce over-approx negation
         }
 
         return new ConcolicValue(in_c, in_s);
