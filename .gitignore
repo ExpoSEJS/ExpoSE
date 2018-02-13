@@ -16,7 +16,7 @@ obj-test/
 *lib.srcs
 *shell.srcs
 *npm-debug.log
-DS_Store
+.DS_Store
 *paper.synctex.gz
 *.aux
 *.log
