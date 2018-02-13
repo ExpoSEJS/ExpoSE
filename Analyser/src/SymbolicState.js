@@ -33,6 +33,7 @@ class SymbolicState {
 
         this.pathCondition = [];
         this.errors = [];
+        this.seen = [];
 
         this.stats = new Stats();
     }
@@ -157,7 +158,7 @@ class SymbolicState {
 
         this.stats.seen('Pure Symbols');
 
-        let pureType = this.createSymbolicValue(name + "_type", "undefined");
+        let pureType = this.createSymbolicValue(name + "_t", "undefined");
 
         let res;
 
@@ -184,6 +185,9 @@ class SymbolicState {
         return res;
     }
 
+    /**
+     * TODO: Symbol Renaming internalization
+     */
     createSymbolicValue(name, concrete) {
 
         this.stats.seen('Symbolic Values');
@@ -300,6 +304,7 @@ class SymbolicState {
                 Log.log(`Symbolic execution does not support operand ${op}, concretizing.`);
                 break;
         }
+
         return undefined;
     }
 

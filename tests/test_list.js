@@ -25,6 +25,9 @@ function buildTestList() {
     buildTest('pure/pure_symbol.js', 8, 0);
     buildTest('pure/pure_object.js', 10, 1);
 
+    //Test symbol renaming
+    buildTest('renaming/rename', 2, 2);
+
     //Integers
     buildTest('integers/hello.js', 2, 0);
     buildTest('integers/lt.js', 3, 0);

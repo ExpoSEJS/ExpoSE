@@ -279,7 +279,7 @@ class SymbolicExecution {
 
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
-        if (typeof left_c !== typeof right_c || Number.isNaN(left_c) || Number.isNaN(right_c)) {
+        if (typeof left_c != typeof right_c || Number.isNaN(left_c) || Number.isNaN(right_c)) {
             Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
             left = left_c;
             right = right_c;
@@ -298,6 +298,7 @@ class SymbolicExecution {
 
     binary(iid, op, left, right, result_c, isOpAssign, isSwitchCaseComparison, isComputed) {
         this.state.coverage.touch(iid);
+
         Log.logHigh('Op ' + op + ' left ' + ObjectHelper.asString(left) + ' right ' + ObjectHelper.asString(right) + ' result_c ' + ObjectHelper.asString(result_c) + ' at ' + this._location(iid));
 
         if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
