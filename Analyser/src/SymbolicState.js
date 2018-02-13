@@ -272,7 +272,7 @@ class SymbolicState {
         return ConcolicValue.getSymbolic(val) || this.wrapConstant(val);
     }
 
-    symbolicBinary(op, left_c, left_s, right_c, right_s) {
+    _symbolicBinary(op, left_c, left_s, right_c, right_s) {
         this.stats.seen('Symbolic Binary');
 
         switch (op) {
@@ -314,7 +314,7 @@ class SymbolicState {
 
     binary(op, left, right) {
         const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right)),
-              result_s = this.symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
+              result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
 
