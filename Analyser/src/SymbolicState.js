@@ -367,7 +367,7 @@ class SymbolicState {
         }
     }
 
-    symbolicUnary(op, left_c, left_s) {
+    _symbolicUnary(op, left_c, left_s) {
         this.stats.seen('Symbolic Unary');
 
         switch (op) {
@@ -401,7 +401,7 @@ class SymbolicState {
     unary(op, left) {
 
         const result_c = SymbolicHelper.evalUnary(op, this.getConcrete(left)),
-              result_s = this.symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left));
+              result_s = this._symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left));
 
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
