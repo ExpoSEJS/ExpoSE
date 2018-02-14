@@ -7,6 +7,8 @@ class Strategy {
 
 		//Cache the length of the total remaining so we don't have to loop to identify len
 		this._totalQueued = 0;
+
+		this._totalEaten = 0;
 	}
 
 	_findOrCreate(id) {
@@ -31,7 +33,8 @@ class Strategy {
 		this._totalQueued++;
 	}
 
-	_shuffle() {
+	_selectFromBucket(bucket) {
+		return bucket.entries.shift();
 	}
 
 	_selectLeastSeen() {
@@ -39,12 +42,25 @@ class Strategy {
 		this._buckets.sort((x, y) => x.seen - y.seen);
 		const firstNonEmptyBucket = this._buckets.find((x) => x.entries.length);
 		firstNonEmptyBucket.seen++;
-		return firstNonEmptyBucket.entries.shift();
+		return this._selectFromBucket(firstNonEmptyBucket);
+	}
+
+	_selectRandomEntry() {
+		const nonEmptyBuckets = this._buckets.filter(x => x.entries.length);
+		const selectedBucket = nonEmptyBuckets[Math.floor(Math.random() * nonEmptyBuckets.length)];
+		return this._selectFromBucket(selectedBucket);
 	}
 
 	next() {
+
 		this._totalQueued--;
-		return this._selectLeastSeen();
+		
+		//1 in 3 test cases to be selected completely at random
+		if ((this._totalEaten++) % 3 == 0) {
+			return this._selectRandomEntry();
+		} else {
+			return this._selectLeastSeen();
+		}
 	}
 
 	length() {
