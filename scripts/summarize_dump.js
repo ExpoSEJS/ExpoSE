@@ -43,11 +43,12 @@ function summ(dir) {
 		list.forEach(file => processFile(dir + '/' + file));
 		console.log(`${failed} / ${total} (${pct(failed, total)}) queries unsat, ${hitMax} because max refinements was hit`);
 		console.log(`Queries took an average of ${totalTime / total}ms (total time in solver ${totalTime}ms) (total queries ${total})`);
-		console.log(`${attempts} in ${total} queries (${pct(attempts, total)})`);
+		console.log(`${attempts} attempts in ${total} queries (${pct(attempts, total)})`);
 		console.log(`Max attempts: ${maxAttempts}`);
 		console.log(`Max attempts (with SAT): ${maxAttemptsGood}`);
 		console.log(`CEGAR-potential queries: ${complexExpressions}`);
 		console.log(`CEGAR-using quries: ${cegarUsing}`);
+		console.log(`${pct(hitMax, cegarUsing)} CEGAR uses hit max-limit`);
 	});
 }
 
