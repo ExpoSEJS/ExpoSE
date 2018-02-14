@@ -10,6 +10,7 @@ let maxAttempts = 0;
 let maxAttemptsGood = 0;
 let complexExpressions = 0;
 let cegarUsing = 0;
+let containedRe = 0;
 
 function processFile(file) {
 	let data = JSON.parse(fs.readFileSync(file));
@@ -22,6 +23,10 @@ function processFile(file) {
 	maxAttempts = Math.max(maxAttempts, data.attempts);
 	maxAttemptsGood = data.model ? Math.max(maxAttemptsGood, data.attempts) : maxAttemptsGood;
 	complexExpressions += data.checkCount ? 1 : 0;
+
+	if ((data.clause + data.solver).indexOf('re.') != -1) {
+		containedRe++;
+	}
 }
 
 function rnd(x, dp) {
@@ -41,7 +46,7 @@ function summ(dir) {
 		}
 
 		list.forEach(file => processFile(dir + '/' + file));
-		console.log(`${failed} / ${total} (${pct(failed, total)}) queries unsat, ${hitMax} because max refinements was hit`);
+		console.log(`${failed} / ${total} (${pct(failed, total)}) queries failed (unknown/unsat), ${hitMax} because max refinements was hit`);
 		console.log(`Queries took an average of ${totalTime / total}ms (total time in solver ${totalTime}ms) (total queries ${total})`);
 		console.log(`${attempts} attempts in ${total} queries (${pct(attempts, total)})`);
 		console.log(`Max attempts: ${maxAttempts}`);
@@ -49,6 +54,7 @@ function summ(dir) {
 		console.log(`CEGAR-potential queries: ${complexExpressions}`);
 		console.log(`CEGAR-using quries: ${cegarUsing}`);
 		console.log(`${pct(hitMax, cegarUsing)} CEGAR uses hit max-limit`);
+		console.log(`${containedRe} queries contained at least one RE`);
 	});
 }
 
