@@ -10,5 +10,6 @@ export default {
 	refinementsEnabled: !Default('DISABLE_REFINEMENTS', false),
 	outFilePath: Default('EXPOSE_OUT_PATH', undefined),
     outCoveragePath: Default('EXPOSE_COVERAGE_PATH', undefined),
+    outQueriesDir: Default('EXPOSE_QUERY_DUMP', undefined),
     concretizationsEnabled: Default('EXPOSE_PRINT_CONCRETIZATIONS', false)
 }

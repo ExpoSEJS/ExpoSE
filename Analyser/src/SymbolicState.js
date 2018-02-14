@@ -238,8 +238,49 @@ class SymbolicState {
         return solution;
     }
 
+    /**
+     * TODO: Find a better place for this
+     */
+    _logQuery(clause, solver, startTime, endTime, model, attempts, hitMax) {
+
+        if (!Config.outQueriesDir) {
+            return;
+        }
+
+        function makeid(count) {
+        var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";    
+            
+            for (var i = 0; i < count; i++) {
+                text += possible.charAt(Math.floor(Math.random() * possible.length)); 
+            }
+
+            return text;
+        }
+
+        const dumpData = {
+            clause: clause,
+            solver: solver,
+            model: model,
+            attempts: attempts,
+            startTime: startTime,
+            endTime: endTime,
+            hitMaxRefinements: hitMax
+        };
+
+        const dumpFileName = Config.outQueriesDir + '/' + (new Date()).getTime() + '_' + makeid(5);
+        
+        const fs = require('fs');
+        fs.writeFileSync(dumpFileName, JSON.stringify(dumpData));
+
+        Log.log(`Wrote ${dumpFileName}`);
+    }
+
     _checkSat(clause, i, checks) {
+
+        const startTime = (new Date()).getTime();
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
+        const endTime = (new Date()).getTime();
         
     	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
 
@@ -252,6 +293,8 @@ class SymbolicState {
     			this.stats.seen('Failed Queries (Max Refinements)');
     		}
     	}
+
+        this._logQuery(clause.toString(), this.slv.toString(), startTime, endTime, model ? model.toString() : undefined, Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS);
 
     	return model ? this.getSolution(model) : undefined;
     }
