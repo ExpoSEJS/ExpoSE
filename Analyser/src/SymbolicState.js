@@ -9,6 +9,7 @@ import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
 import { SymbolicObject } from './Values/SymbolicObject';
 import External from './External';
 import Config from './Config';
+import SymbolicHelper from './SymbolicHelper';
 
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
@@ -46,8 +47,10 @@ class SymbolicState {
         });
     }
 
-    symbolicConditional(result) {
-        let [result_s, result_c] = [this.asSymbolic(result), this.getConcrete(result)];
+    conditional(result) {
+
+        const result_c = this.getConcrete(result),
+              result_s = this.asSymbolic(result);
 
         if (result_c === true) {
             Log.logMid(`Concrete result was true, pushing ${result_s}`);
@@ -56,7 +59,7 @@ class SymbolicState {
             Log.logMid(`Concrete result was false, pushing not of ${result_s}`);
             this.pushCondition(this.ctx.mkNot(result_s));
         } else {
-            Log.log(`ERROR: Undefined Result: ${result_c}, ${result_s.toString()}`);
+            Log.log(`WARNING: Symbolic Conditional on non-bool, concretizing`);
         }
     }
 
@@ -235,21 +238,66 @@ class SymbolicState {
         return solution;
     }
 
-    _checkSat(clause, i, checks) {
-        let model = (new Z3.Query([clause], checks)).getModel(this.slv);
+    /**
+     * TODO: Find a better place for this
+     */
+    _logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {
+
+        if (!Config.outQueriesDir) {
+            return;
+        }
+
+        function makeid(count) {
+            let text = "";
+            const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";    
+            
+            for (let i = 0; i < count; i++) {
+                text += possible.charAt(Math.floor(Math.random() * possible.length)); 
+            }
+
+            return text;
+        }
+
+        const dumpData = {
+            clause: clause,
+            solver: solver,
+            model: model,
+            attempts: attempts,
+            startTime: startTime,
+            endTime: endTime,
+            hitMaxRefinements: hitMax,
+            checkCount: checkCount
+        };
+
+        const dumpFileName = Config.outQueriesDir + '/' + (new Date()).getTime() + '_' + makeid(5);
         
-	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
+        const fs = require('fs');
+        fs.writeFileSync(dumpFileName, JSON.stringify(dumpData));
 
-	if (model) {
-		this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
-	} else {
-		this.stats.seen('Failed Queries');
-		if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
-			this.stats.seen('Failed Queries (Max Refinements)');
-		}
-	}
+        Log.log(`Wrote ${dumpFileName}`);
+    }
 
-	return model ? this.getSolution(model) : undefined;
+    _checkSat(clause, i, checks) {
+
+        const startTime = (new Date()).getTime();
+        let model = (new Z3.Query([clause], checks)).getModel(this.slv);
+        const endTime = (new Date()).getTime();
+        
+    	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
+
+    	if (model) {
+    		this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
+    	} else {
+    		this.stats.seen('Failed Queries');
+
+    		if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
+    			this.stats.seen('Failed Queries (Max Refinements)');
+    		}
+    	}
+
+        this._logQuery(clause.toString(), this.slv.toString(), checks.length, startTime, endTime, model ? model.toString() : undefined, Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS);
+
+    	return model ? this.getSolution(model) : undefined;
     }
 
     isWrapped(val) {
@@ -265,10 +313,10 @@ class SymbolicState {
     }
 
     asSymbolic(val) {
-        return ConcolicValue.getSymbolic(val) || this.wrapConstant(val);
+        return ConcolicValue.getSymbolic(val) || this.constantSymbol(val);
     }
 
-    symbolicBinary(op, left_c, left_s, right_c, right_s) {
+    _symbolicBinary(op, left_c, left_s, right_c, right_s) {
         this.stats.seen('Symbolic Binary');
 
         switch (op) {
@@ -308,6 +356,12 @@ class SymbolicState {
         return undefined;
     }
 
+    binary(op, left, right) {
+        const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right)),
+              result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
+        return result_s ? new ConcolicValue(result_c, result_s) : result_c;
+    }
+
     symbolicField(base_c, base_s, field_c, field_s) {
         this.stats.seen('Symbolic Field');
 
@@ -342,28 +396,28 @@ class SymbolicState {
     	return undefined;
     }
 
-    symbolicCoerceToBool(val_c, val_s) {
-        let result = undefined;
+    toBool(val) {
+        const val_type = typeof this.getConcrete(val);
 
-        if (typeof val_c === "boolean") {
-            result = val_s;
-        } else if (typeof val_c === "number") {
-            result = this.symbolicBinary('!=', val_c, val_s, 0, this.wrapConstant(0));
-        } else if (typeof val_c === "string") {
-            result = this.symbolicBinary('!=', val_c, val_s, "", this.wrapConstant(""));
-        } else {
-            Log.logMid('Cannot coerce '+ val_c + ' to boolean');
+        switch (val_type) {
+            case "boolean":
+                return val;
+            case "number":
+                return this.binary('!=', val, this.concolic(0));
+            case "string":
+                return this.binary('!=', val, this.concolic(""));
+            default:
+                return undefined;
         }
-
-        return result;
     }
 
-    symbolicUnary(op, left_c, left_s) {
+    _symbolicUnary(op, left_c, left_s) {
         this.stats.seen('Symbolic Unary');
 
         switch (op) {
+
             case "!": {
-                let bool_s = this.symbolicCoerceToBool(left_c, left_s);
+                let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
                 return bool_s ? this.ctx.mkNot(bool_s) : undefined;
             }
 
@@ -388,7 +442,15 @@ class SymbolicState {
         }
     }
 
-    wrapConstant(val) {
+    unary(op, left) {
+
+        const result_c = SymbolicHelper.evalUnary(op, this.getConcrete(left)),
+              result_s = this._symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left));
+
+        return result_s ? new ConcolicValue(result_c, result_s) : result_c;
+    }
+
+    constantSymbol(val) {
         this.stats.seen('Wrapped Constants');
         switch (typeof val) {
             case 'boolean':
@@ -403,17 +465,12 @@ class SymbolicState {
     }
 
     concolic(val) {
-        return this.isSymbolic(val) ? val : new ConcolicValue(val, this.wrapConstant(val));
+        return this.isSymbolic(val) ? val : new ConcolicValue(val, this.constantSymbol(val));
     }
 
     assertEqual(left, right) {
-
-        const left_c  = this.getConcrete(left),
-              right_c = this.getConcrete(right);
-
-        const equalitySymbol = this.symbolicBinary('==', left_c, this.asSymbolic(left), right_c, this.asSymbolic(right));
-        const equalityTest = new ConcolicValue(left_c == right_c, equalitySymbol);
-        this.symbolicConditional(equalityTest);
+        const equalityTest = this.binary('==', left, right);
+        this.conditional(equalityTest);
         return this.getConcrete(equalityTest);
     }
 }

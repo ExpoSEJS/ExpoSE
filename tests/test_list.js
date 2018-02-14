@@ -29,7 +29,6 @@ function buildTestList() {
     buildTest('renaming/rename_simple', 3, 2);
     buildTest('renaming/rename', 12, 11);
 
-
     //Integers
     buildTest('integers/hello.js', 2, 0);
     buildTest('integers/lt.js', 3, 0);

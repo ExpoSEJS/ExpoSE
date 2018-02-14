@@ -10,6 +10,5 @@ if (A) {
 		throw 'Ouch';
 	}
 } else {
-	if (B) {
-	}
+	if (B) {}
 }

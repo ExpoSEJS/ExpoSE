@@ -56,9 +56,9 @@ class SymbolicExecution {
          * Concretize the function if it is native and we do not have a custom model for it
          */
 
-        const modelled = !!this.models[f];
+        const isModelled = !!this.models[f];
 
-        if (!modelled && isNative(f)) {
+        if (!isModelled && isNative(f)) {
             
             this.state.stats.set('Concretized Function Calls', f.name);
 
@@ -84,11 +84,13 @@ class SymbolicExecution {
             f: f,
             base: base,
             args: args,
-            skip: modelled
+            skip: isModelled
         };
     }
 
-    //Called after a function completes execution
+    /**
+     * Called after a function completes execution
+     */
     invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
@@ -146,7 +148,7 @@ class SymbolicExecution {
             const offset_c = this.state.getConcrete(offset);
             for (const idx in base_c) {
                 if (offset_c != base_c[idx]) {
-                    const condition = this.state.symbolicBinary('==', idx, this.state.asSymbolic(idx), offset_c, this.state.asSymbolic(offset));
+                    const condition = this.state.binary('==', idx, offset);
                     this.state.pushCondition(this.state.ctx.mkNot(condition));
                 }
             }
@@ -312,16 +314,10 @@ class SymbolicExecution {
 
     _binarySymbolic(op, left, right, result_c) {
 
-        const left_c  = this.state.getConcrete(left),
-              right_c = this.state.getConcrete(right);
-
-        Log.logMid(`Symbolically evaluating binary ${op} which has concrete result ${result_c}`);
-
-        const result = SymbolicHelper.evalBinary(op, left_c, right_c),
-              result_s = this.state.symbolicBinary(op, left_c, this.state.asSymbolic(left), right_c, this.state.asSymbolic(right));
+        Log.logMid(`Symbolically evaluating binary ${op} ${left} ${right}`);
 
         return {
-            result: result_s ? new ConcolicValue(result, result_s) : result
+            result: this.state.binary(op, left, right)
         };
     }
 
@@ -354,25 +350,11 @@ class SymbolicExecution {
 
     _unarySymbolic(op, left, result_c) {
 
-        const left_s = this.state.asSymbolic(left);
-        const left_c = this.state.getConcrete(left);
-
-        result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
-
-        Log.logMid(`Symbolically evaluating unary ${op}(${left_s}), which has concrete result ${result_c}`);
-
-        const result_s = this.state.symbolicUnary(op, left_c, left_s);
+        Log.logMid(`Symbolically evaluating unary ${op}(${left_s})`);
 
         return {
-            result: result_s ? new ConcolicValue(result_c, result_s) : result_c
+            result: this.state.unary(op, left)
         };
-    }
-
-    _toBool(val) {
-        const val_c = this.state.getConcrete(val);
-        const val_s = this.state.asSymbolic(val);
-        const result_s = this.state.symbolicCoerceToBool(val_c, val_s);
-        return result_s ? new ConcolicValue(!!val_c, result_s) : undefined;
     }
 
     conditional(iid, result) {
@@ -380,10 +362,9 @@ class SymbolicExecution {
 
         if (this.state.isSymbolic(result)) {
             Log.logMid(`Evaluating symbolic condition ${this.state.asSymbolic(result)} at ${this._location(iid)}`);
-            result = this._toBool(result);
 
             if (result) {
-                this.state.symbolicConditional(result);
+                this.state.conditional(this.state.toBool(result));
             } else {
                 Log.logMid(`Concretized ${result} because do not know how to coerce`);
             }

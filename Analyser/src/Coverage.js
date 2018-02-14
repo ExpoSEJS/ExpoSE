@@ -54,8 +54,6 @@ class Coverage {
                 for (const localIid in map) {
                     if (isNaN(parseInt(localIid))) {
                         delete map[localIid];
-                    } else {
-                        map[localIid] = 1;
                     }
                 }
 
@@ -100,10 +98,6 @@ class Coverage {
 
     last() {
         return this._lastIid || 0;
-    }
-
-    _branchToLines(sid, branch){
-        return this.sandbox.iidToLocation(sid, branch);
     }
 }
 

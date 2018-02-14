@@ -32,6 +32,11 @@ if [[ ${RECOMPILE} && ${RECOMPILE-x} ]]; then
 	fi
 fi
 
+if [[ ${EXPOSE_AUTODUMP} && ${EXPOSE_AUTODUMP-x} ]]; then
+	EXPOSE_QUERY_DUMP="$(mktemp -d)"	
+	echo "AutoDump enabled:" ${EXPOSE_QUERY_DUMP}
+fi
+
 if [ "$1" == "ui" ]; then
 	NO_COMPILE=1 ./scripts/start_ui
 	exit $?
@@ -39,9 +44,10 @@ elif [ "$1" == "uic" ]; then
 	./scripts/start_ui
 	exit $?
 elif [ "$1" == "ahg" ]; then
-    export NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules"
-    echo $NODE_PATH
-    EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
+	export NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules"
+	echo $NODE_PATH
+	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
+	node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
 elif [ "$1" == "replay" ]; then
 	source ./scripts/expose_env
 	TARGET_REAL_PATH="$(abs_target $2 $ORIGIN_PATH)"
@@ -52,6 +58,7 @@ elif [ "$1" == "test_suite" ]; then
 	exit $?
 else
 	TARGET_REAL_PATH="$(abs_target $1 $ORIGIN_PATH)"
-	./scripts/analyse $TARGET_REAL_PATH "${@:2}"
+	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse $TARGET_REAL_PATH "${@:2}"
+	node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
 	exit $?
 fi
