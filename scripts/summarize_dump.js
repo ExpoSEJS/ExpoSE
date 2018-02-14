@@ -28,4 +28,9 @@ function summ(dir) {
 	});
 }
 
-summ(process.argv[process.argv.length - 1]);
+if (process.argv.length > 2) {
+	summ(process.argv[process.argv.length - 1]);
+} else {
+	console.log('No query dump provided');
+}
+
