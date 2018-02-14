@@ -4,7 +4,7 @@ function Default(i, d) {
 
 export default {
 	incrementalSolverEnabled: !!Default('USE_INCREMENTAL_SOLVER', true),
-	maxRefinements: Number.parseInt(Default('MAX_REFINEMENTS', '30')),
+	maxRefinements: Number.parseInt(Default('MAX_REFINEMENTS', '50')),
 	regexEnabled: !Default('DISABLE_REGULAR_EXPRESSIONS', false),
 	capturesEnabled: !Default('DISABLE_CAPTURE_GROUPS', false),
 	refinementsEnabled: !Default('DISABLE_REFINEMENTS', false),

@@ -241,7 +241,7 @@ class SymbolicState {
     /**
      * TODO: Find a better place for this
      */
-    _logQuery(clause, solver, startTime, endTime, model, attempts, hitMax) {
+    _logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {
 
         if (!Config.outQueriesDir) {
             return;
@@ -265,7 +265,8 @@ class SymbolicState {
             attempts: attempts,
             startTime: startTime,
             endTime: endTime,
-            hitMaxRefinements: hitMax
+            hitMaxRefinements: hitMax,
+            checkCount: checkCount
         };
 
         const dumpFileName = Config.outQueriesDir + '/' + (new Date()).getTime() + '_' + makeid(5);
@@ -294,7 +295,7 @@ class SymbolicState {
     		}
     	}
 
-        this._logQuery(clause.toString(), this.slv.toString(), startTime, endTime, model ? model.toString() : undefined, Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS);
+        this._logQuery(clause.toString(), this.slv.toString(), checks.length, startTime, endTime, model ? model.toString() : undefined, Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS);
 
     	return model ? this.getSolution(model) : undefined;
     }
