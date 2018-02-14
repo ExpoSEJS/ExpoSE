@@ -46,7 +46,7 @@ function summ(dir) {
 		}
 
 		list.forEach(file => processFile(dir + '/' + file));
-		console.log(`${failed} / ${total} (${pct(failed, total)}) queries failed (unknown/unsat), ${hitMax} because max refinements was hit`);
+		console.log(`${failed} / ${total} (${pct(failed, total)}) queries failed (unknown/unsat), ${hitMax} (${pct(hitMax, failed)}) because max refinements was hit`);
 		console.log(`Queries took an average of ${totalTime / total}ms (total time in solver ${totalTime}ms) (total queries ${total})`);
 		console.log(`${attempts} attempts in ${total} queries (${pct(attempts, total)})`);
 		console.log(`Max attempts: ${maxAttempts}`);
