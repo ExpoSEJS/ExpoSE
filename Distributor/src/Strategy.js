@@ -1,46 +1,54 @@
 class Strategy {
 	
 	constructor() {
-		this._targets = [];
-		this._seen = {};
+
+		//Buckets can be sorted by fork point or randomly selected to change search strategy
+		this._buckets = [];
+
+		//Cache the length of the total remaining so we don't have to loop to identify len
+		this._totalQueued = 0;
 	}
 
-	add(target, alternative, coverage) {
+	_findOrCreate(id) {
+		let found = this._buckets.find(x => x.id == id);
 
-		//Range for RNG in a bracket
-        const BRACKET_SIZE = 10000;
-        const MAX_JUMP = 3;
-		const RANDOM_PRIORITY =  -(BRACKET_SIZE * MAX_JUMP) + Math.floor(Math.random() * (BRACKET_SIZE * MAX_JUMP * 2));
-
-		let priority = 0; 
-		
-		if (alternative) {
-			const forkPoint = alternative.forkIid;
-
-			if (!this._seen[forkPoint]) {
-				this._seen[forkPoint] = 1;
-			} else {
-				this._seen[forkPoint]++;
-			}
-
-			const BRACKET = this._seen[forkPoint];
-			priority = (BRACKET * BRACKET_SIZE) + RANDOM_PRIORITY;
+		if (!found) {
+			found = { id: id, entries: [], seen: 0 };
+			this._buckets.push(found);
 		}
 
-		this._targets.push({
-			target: target,
-			priority: priority
-		});
+		return found;
+	}
 
-		this._targets.sort((x, y) => x.priority - y.priority);
+	add(target, sourceInfo, coverage) {
+
+		// Manually added paths and some edge-cases don't have a forkIid, just make one up
+		const bucketId = sourceInfo ? sourceInfo.forkIid : 0;
+		const bucket = this._findOrCreate(bucketId);
+		bucket.entries.push(target);
+
+		//Update total queued list
+		this._totalQueued++;
+	}
+
+	_shuffle() {
+	}
+
+	_selectLeastSeen() {
+		//Sort buckets by seen, find the first non empty bucket and then use the entry
+		this._buckets.sort((x, y) => x.seen - y.seen);
+		const firstNonEmptyBucket = this._buckets.find((x) => x.entries.length);
+		firstNonEmptyBucket.seen++;
+		return firstNonEmptyBucket.entries.shift();
 	}
 
 	next() {
-		return this._targets.shift().target;
+		this._totalQueued--;
+		return this._selectLeastSeen();
 	}
 
 	length() {
-		return this._targets.length;
+		return this._totalQueued;
 	}
 }
 
