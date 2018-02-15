@@ -6,6 +6,10 @@ import iidToLocation from './Utilities/iidToLocation';
 
 const LAST_IID = 'LAST_IID';
 
+const IS_TOUCHED = 0x1;
+const CONDITIONAL_TRUE = 0x2;
+const CONDITIONAL_FALSE = 0x4;
+
 class Coverage {
 
     /**
@@ -92,8 +96,13 @@ class Coverage {
     }
 
     touch(iid) {
-        this.getBranchInfo()[iid] = 1;
+        this.getBranchInfo()[iid] |= IS_TOUCHED;
         this._lastIid = iid;
+    }
+
+    touch_cnd(iid, result) {
+        this.touch(iid);
+        this.getBranchInfo()[iid] |= (result ? CONDITIONAL_TRUE : CONDITIONAL_FALSE);
     }
 
     last() {

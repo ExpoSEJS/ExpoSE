@@ -3,6 +3,9 @@
 "use strict";
 
 const LAST_IID = 'LAST_IID';
+const IS_TOUCHED = 0x1;
+const CONDITIONAL_TRUE = 0x2;
+const CONDITIONAL_FALSE = 0x4;
 
 class Coverage {
 
@@ -13,8 +16,8 @@ class Coverage {
 	_getFile(file) {
 		if (!this._current[file]) {
 			this._current[file] = {
-				smap: [],
-				branches: [],
+				smap: {},
+				branches: {},
 				lines: {
                   all: new Set(),
                   touched: new Set()
@@ -29,8 +32,8 @@ class Coverage {
 	}
 
 	_mergeBranches(f, branches) {
-		for (let i in branches) {
-			f.branches[i] = 1;
+	    for (let i in branches) {
+			f.branches[i] |= branches[i];
 		}
 	}
 
@@ -61,7 +64,10 @@ class Coverage {
 
 		for (let i in file.smap) {
 			total++;
-			found = file.branches[i] ? found + 1 : found;
+			
+            if (file.branches[i] & IS_TOUCHED) {
+                found++;
+            }
 		}
 
 		return {
@@ -95,6 +101,35 @@ class Coverage {
         return total != 0 ? (found / total) : 0;
     }
 
+    _decisionResults(file) {
+        let conditionalIids = 0;
+        let trueTaken = 0;
+        let falseTaken = 0;
+        
+        for (let i in file.smap) {
+            if (i % 4 == 0) {
+                conditionalIids++;
+
+                if (file.branches[i] & CONDITIONAL_TRUE) {
+                    trueTaken++;
+                }
+
+                if (file.branches[i] & CONDITIONAL_FALSE) {
+                    falseTaken++;
+                }
+            }
+        }
+
+        const totalPossibleDecisions = 2 * conditionalIids;
+
+        return {
+            trueTaken: trueTaken,
+            falseTaken: falseTaken,
+            totalOptions: totalPossibleDecisions,
+            coverage: (trueTaken + falseTaken) / totalPossibleDecisions
+        }
+    }
+
     final(includeSmap) {
         let results = [];
 
@@ -105,7 +140,8 @@ class Coverage {
                 smap: includeSmap ? file.smap : undefined,
                 branches: includeSmap ? file.branches : undefined,
                 terms: this._termResults(file),
-                loc: this._locResults(file)
+                loc: this._locResults(file),
+                decisions: this._decisionResults(file)
             });
         }
 
