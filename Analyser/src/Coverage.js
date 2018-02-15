@@ -58,6 +58,8 @@ class Coverage {
                 for (const localIid in map) {
                     if (isNaN(parseInt(localIid))) {
                         delete map[localIid];
+                    } else {
+                        map[localIid] = 1;
                     }
                 }
 
