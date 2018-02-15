@@ -118,6 +118,7 @@ if (process.argv.length >= 3) {
             console.log(`\n*-- Writing JSON to ${options.jsonOut} --*`);
             fs.writeFileSync(options.jsonOut, JSON.stringify({
                 source: getTarget(),
+                finalCoverage: coverage.final(true) /* Include SMAP in the final coverage JSON */,
                 start: start,
                 end: (new Date()).getTime(),
                 done: done

@@ -95,13 +95,15 @@ class Coverage {
         return total != 0 ? (found / total) : 0;
     }
 
-    final() {
+    final(includeSmap) {
         let results = [];
 
         for (let fileName in this._current) {
             let file = this._getFile(fileName);
             results.push({
                 file: fileName,
+                smap: includeSmap ? file.smap : undefined,
+                branches: includeSmap ? file.branches : undefined,
                 terms: this._termResults(file),
                 loc: this._locResults(file)
             });

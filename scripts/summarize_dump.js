@@ -46,14 +46,26 @@ function summ(dir) {
 		}
 
 		list.forEach(file => processFile(dir + '/' + file));
-		console.log(`${failed} / ${total} (${pct(failed, total)}) queries failed (unknown/unsat), ${hitMax} (${pct(hitMax, failed)}) because max refinements was hit`);
-		console.log(`Queries took an average of ${totalTime / total}ms (total time in solver ${totalTime}ms) (total queries ${total})`);
+
+		console.log(`Queries took an average of ${rnd(totalTime / total, 2)}ms (total time in solver ${totalTime}ms) (total queries ${total})`);
+
+		console.log(`${failed} / ${total} (${pct(failed, total)}) queries failed (unknown/unsat)`);
+		console.log(`${hitMax} (${pct(hitMax, failed)}) queries failed (unknown result) because max refinements was hit.`);
+
 		console.log(`${attempts} attempts in ${total} queries (${pct(attempts, total)})`);
+		
+		//Attempts per query info
 		console.log(`Max attempts: ${maxAttempts}`);
 		console.log(`Max attempts (with SAT): ${maxAttemptsGood}`);
+		
+		//Cegar info
 		console.log(`CEGAR-potential queries: ${complexExpressions}`);
 		console.log(`CEGAR-using quries: ${cegarUsing}`);
-		console.log(`${pct(hitMax, cegarUsing)} CEGAR uses hit max-limit`);
+		
+		if (cegarUsing) {
+			console.log(`${pct(hitMax, cegarUsing)} CEGAR uses hit max-limit`);
+		}
+
 		console.log(`${containedRe} queries contained at least one RE`);
 	});
 }
