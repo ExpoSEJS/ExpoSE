@@ -396,31 +396,24 @@ class SymbolicState {
         switch (op) {
 
             case "!":
-                {
                     let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
                     return bool_s ? this.ctx.mkNot(bool_s) : undefined;
-                }
 
             case "+":
-                {
                     return typeof left_c === 'string' ? this.ctx.mkStrToInt(left_s) : left_s;
-                }
 
             case "-":
-
-                switch (typeof left_c) {
-                    case 'string':
-                        Log.log('Casting string to int, if its a real you will get incorrect result');
-                        return this.ctx.mkStrToInt(left_s);
+                
+                if (typeof left_c == 'string') {
+                    Log.log('Casting string to int, if its a real you will get incorrect result');
+                    return this.ctx.mkStrToInt(left_s);
                 }
 
                 return this.ctx.mkUnaryMinus(left_s);
-            case "typeof":
-                return undefined;
-            default:
-                Log.logMid("Unsupported operand: " + op);
-                return undefined;
         }
+
+        Log.log("Unsupported symbolic operand: " + op);
+        return undefined;
     }
 
     /**
