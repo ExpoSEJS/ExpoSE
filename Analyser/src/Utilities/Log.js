@@ -25,6 +25,7 @@ const path_dump_id = makeid(4);
  */
  
 class Log {
+
 	logHigh(msg) {
 		console.log('ExpoSE HIGH: ' + msg);
 	}

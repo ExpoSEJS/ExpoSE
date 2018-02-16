@@ -7,10 +7,12 @@ import Log from './Utilities/Log';
 export default {
     evalBinary: function(op, left, right) {
         switch (op) {
+
             case "==":
                 return (left == right);
             case "===":
                 return (left === right);
+
             case "!=":
                 return (left != right);
             case "!==":
@@ -20,6 +22,7 @@ export default {
                 return (left < right);
             case ">":
                 return (left > right);
+
             case "<=":
                 return (left <= right);
             case ">=":
@@ -29,10 +32,12 @@ export default {
                 return (left + right);
             case "-":
                 return (left - right);
+
             case "*":
                 return (left * right);
             case "/":
                 return (left / right);
+
             case "%":
                 return (left % right);
 
@@ -40,22 +45,27 @@ export default {
                 return (left >> right);
             case "<<":
                 return (left << right);
+
             case ">>>":
                 return (left >>> right);
 
-            case "&&":
-                return (left && right);
-            case "||":
-                return (left || right);
+
             case "&":
                 return (left & right);
+            case "&&":
+                return (left && right);
+
             case "|":
                 return (left | right);
+            case "||":
+                return (left || right);
+
             case "^":
                 return (left ^ right);
 
             case "instanceof":
                 return (left instanceof right);
+
             case "in":
                 return (left in right);
 

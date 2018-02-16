@@ -54,7 +54,7 @@ class SymbolicState {
     conditional(result) {
 
         const result_c = this.getConcrete(result),
-            result_s = this.asSymbolic(result);
+              result_s = this.asSymbolic(result);
 
         if (result_c === true) {
             Log.logMid(`Concrete result was true, pushing ${result_s}`);
@@ -361,21 +361,35 @@ class SymbolicState {
         return undefined;
     }
 
+    /**
+     * Coerce either a concrete or ConcolicValue to a boolean
+     * Concretizes the ConcolicValue if no coercion rule is known
+     */
     toBool(val) {
-        const val_type = typeof this.getConcrete(val);
+        
+        if (this.isSymbolic(val)) {
+            const val_type = typeof this.getConcrete(val);
 
-        switch (val_type) {
-            case "boolean":
-                return val;
-            case "number":
-                return this.binary('!=', val, this.concolic(0));
-            case "string":
-                return this.binary('!=', val, this.concolic(""));
-            default:
-                return undefined;
+            switch (val_type) {
+                case "boolean":
+                    return val;
+                case "number":
+                    return this.binary('!=', val, this.concolic(0));
+                case "string":
+                    return this.binary('!=', val, this.concolic(""));
+            }
+
+            Log.log('WARNING: Concretizing coercion to boolean (toBool) due to unknown type');
         }
+
+        return this.getConcrete(!!val);
     }
 
+    /**
+     * Perform a symbolic unary action.
+     * Expects an Expr and returns an Expr or undefined if we don't
+     * know how to do this op symbolically
+     */
     _symbolicUnary(op, left_c, left_s) {
         this.stats.seen('Symbolic Unary');
 
@@ -409,16 +423,25 @@ class SymbolicState {
         }
     }
 
+    /**
+     * Perform a unary op on a ConcolicValue or a concrete value
+     * Concretizes the ConcolicValue if we don't know how to do that action symbolically
+     */
     unary(op, left) {
 
         const result_c = SymbolicHelper.evalUnary(op, this.getConcrete(left)),
-            result_s = this._symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left));
+              result_s = this._symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left));
 
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
 
+    /**
+     * Return a symbol which will always be equal to the constant value val
+     * returns undefined if the theory is not supported.
+     */
     constantSymbol(val) {
         this.stats.seen('Wrapped Constants');
+        
         switch (typeof val) {
             case 'boolean':
                 return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
@@ -429,8 +452,16 @@ class SymbolicState {
             default:
                 Log.log("Symbolic expressions with " + typeof val + " literals not yet supported.");
         }
+
+        return undefined;
     }
 
+    /**
+     * If val is a symbolic value then return val otherwise wrap it
+     * with a constant symbol inside a ConcolicValue.
+     *
+     * Used to turn a concrete value into a constant symbol for symbolic ops.
+     */
     concolic(val) {
         return this.isSymbolic(val) ? val : new ConcolicValue(val, this.constantSymbol(val));
     }
