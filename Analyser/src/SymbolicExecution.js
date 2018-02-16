@@ -358,11 +358,9 @@ class SymbolicExecution {
     conditional(iid, result) {
         this.state.coverage.touch_cnd(iid, this.state.getConcrete(result));
 
-        result = this.state.toBool(result);
-
         if (this.state.isSymbolic(result)) {
             Log.logMid(`Evaluating symbolic condition ${this.state.asSymbolic(result)} at ${this._location(iid)}`);
-            this.state.conditional(result);
+            this.state.conditional(this.state.toBool(result));
         }
 
         return { result: this.state.getConcrete(result) };
