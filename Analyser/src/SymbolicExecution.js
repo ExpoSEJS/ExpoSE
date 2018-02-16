@@ -339,8 +339,6 @@ class SymbolicExecution {
 
         if (this.state.isSymbolic(left)) {
             return this._unarySymbolic(op, left, result_c);
-        } else if (this.state.isSymbolic(left)) {
-            result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
         }
 
         return {
@@ -378,10 +376,7 @@ class SymbolicExecution {
             throw `Tropigate failed because ${e} on program ${code} at ${e.stack}`;
         }
 
-        return {
-            code: code,
-            skip: false
-        };
+        return { code: code, skip: false };
     }
 
     instrumentCode(iid, code, newAst) {
