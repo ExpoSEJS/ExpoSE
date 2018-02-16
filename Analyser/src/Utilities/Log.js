@@ -2,6 +2,22 @@
 
 "use strict";
 
+import Config from '../Config';
+const fs = require('fs');
+
+function makeid(count) {
+    let text = "";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (let i = 0; i < count; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+}
+
+const path_dump_id = makeid(4);
+
 /**
  * Class to handle logging
  * Structured this way for historical reasons, unneeded 
@@ -19,6 +35,30 @@ class Log {
 
 	log(msg) {
 		console.log('ExpoSE: ' + msg);
+	}
+
+	logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {
+
+		if (!Config.outQueriesDir) {
+            return;
+        }
+
+        const dumpData = {
+            clause: clause,
+            solver: solver,
+            model: model,
+            attempts: attempts,
+            startTime: startTime,
+            endTime: endTime,
+            hitMaxRefinements: hitMax,
+            checkCount: checkCount
+        };
+
+        const dumpFileName = Config.outQueriesDir + '/' + path_dump_id +'_' + (new Date()).getTime() + '_' + makeid(5);
+
+        fs.writeFileSync(dumpFileName, JSON.stringify(dumpData));
+
+        this.log(`Wrote ${dumpFileName}`);
 	}
 }
 
