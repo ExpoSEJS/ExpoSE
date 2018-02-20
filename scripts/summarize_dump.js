@@ -12,8 +12,8 @@ let complexExpressions = 0;
 let cegarUsing = 0;
 let containedRe = 0;
 
-function processFile(file) {
-	let data = JSON.parse(fs.readFileSync(file));
+function processItem(data) {
+	data = JSON.parse(data);
 	total += 1;
 	failed += data.model ? 1 : 0;
 	hitMax += data.hitMaxRefinements ? 1 : 0;
@@ -27,6 +27,16 @@ function processFile(file) {
 	if ((data.clause + data.solver).indexOf('re.') != -1) {
 		containedRe++;
 	}
+}
+
+function processFile(file) {
+	let data = '' + fs.readFileSync(file);
+	data = data.split('\nEXPOSE_QUERY_DUMP_SEPERATOR\n');
+	data.forEach(element => {
+		if (element.trim().length != 0) {
+			processItem(element);
+		}
+	});
 }
 
 function rnd(x, dp) {

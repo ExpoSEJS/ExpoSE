@@ -55,10 +55,10 @@ class Log {
             checkCount: checkCount
         };
 
-        const dumpFileName = Config.outQueriesDir + '/' + path_dump_id +'_' + (new Date()).getTime() + '_' + makeid(5);
+        const dumpFileName = Config.outQueriesDir + '/' + path_dump_id;
 
-        fs.writeFileSync(dumpFileName, JSON.stringify(dumpData));
-
+        fs.appendFileSync(dumpFileName, JSON.stringify(dumpData) + '\nEXPOSE_QUERY_DUMP_SEPERATOR\n');
+        
         this.log(`Wrote ${dumpFileName}`);
 	}
 }

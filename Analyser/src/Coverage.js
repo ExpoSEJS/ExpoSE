@@ -9,6 +9,7 @@ const LAST_IID = 'LAST_IID';
 /**
  * Bits for coverage info propagation
  */
+
 const IS_TOUCHED = 0x1;
 const CONDITIONAL_TRUE = 0x2;
 const CONDITIONAL_FALSE = 0x4;
