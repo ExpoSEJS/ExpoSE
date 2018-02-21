@@ -51,7 +51,8 @@ class Log {
             startTime: startTime,
             endTime: endTime,
             hitMaxRefinements: hitMax,
-            checkCount: checkCount
+            checkCount: checkCount,
+            containedRe: (solver + clause).includes('str.in.re')
         };
 
         const dumpFileName = Config.outQueriesDir + '/' + path_dump_id;

@@ -24,7 +24,7 @@ function processItem(data) {
 	maxAttemptsGood = data.model ? Math.max(maxAttemptsGood, data.attempts) : maxAttemptsGood;
 	complexExpressions += data.checkCount ? 1 : 0;
 
-	if ((data.clause + data.solver).indexOf('re.') != -1) {
+	if (data.containedRe) {
 		containedRe++;
 	}
 }
