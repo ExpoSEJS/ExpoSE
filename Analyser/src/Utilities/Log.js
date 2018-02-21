@@ -46,7 +46,6 @@ class Log {
 
         const dumpData = {
             clause: clause,
-            solver: solver,
             model: model,
             attempts: attempts,
             startTime: startTime,
@@ -58,7 +57,7 @@ class Log {
         const dumpFileName = Config.outQueriesDir + '/' + path_dump_id;
 
         fs.appendFileSync(dumpFileName, JSON.stringify(dumpData) + '\nEXPOSE_QUERY_DUMP_SEPERATOR\n');
-        
+
         this.log(`Wrote ${dumpFileName}`);
 	}
 }
