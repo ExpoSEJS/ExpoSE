@@ -2,10 +2,10 @@
 "use strict";
 
 import Center from './Center';
-import FileTransformer from './FileTransformer';
+import Config from './Config';
+import CoverageMap from './CoverageMap';
 
 const fs = require('fs');
-const os = require('os');
 
 process.title = 'ExpoSE Distributor';
 
@@ -18,105 +18,29 @@ function getTarget() {
     return process.argv[process.argv.length - 1];
 }
 
-function argToType(arg, type) {
-    if (type == 'number') {
-        return parseInt(arg);
-    }
-    return arg;
-}
-
-function getArgument(name, type, dResult) {
-    return process.env[name] ? argToType(process.env[name], type) : dResult;
-}
-
-function maxConcurrent() {
-    const defaultCpuCores = os.cpus().length;
-    const fromArgOrDefault = getArgument('EXPOSE_MAX_CONCURRENT', 'number', defaultCpuCores);
-
-    console.log(`Number of CPU cores: ${defaultCpuCores}`);
-    console.log(`Max concurrent: ${fromArgOrDefault} concurrent test cases`);
-
-    return fromArgOrDefault;
-}
-
-function timeFrom(envArg, defaultVal) {
-    const SECOND = 1000;
-    const MINUTE = SECOND * 60;
-    const HOUR = MINUTE * 60;
-
-    function timeToMS(timeString) {
-        const suffix = timeString[timeString.length - 1];
-
-        if (suffix === 's') {
-            return SECOND * Number.parseInt(timeString.slice(0, -1)); 
-        } else if (suffix === 'm') {
-            return MINUTE * Number.parseInt(timeString.slice(0, -1));
-        } else if (suffix === 'h') {
-            return HOUR * Number.parseInt(timeString.slice(0, -1));
-        } else {
-            return Number.parseInt(timeString);
-        }
-    }
-
-    return timeToMS(getArgument(envArg, 'string', defaultVal));
-}
-
-function generateCoverageMap(lineInfo) {
-    for (const filename in lineInfo) {
-        FileTransformer(filename).then(data => {
-            console.log(`*- Experimental Line Coverage for ${filename} `);
-            const lines = data.split('\n');
-            const linesWithNumbers = lines.map((line, idx) => `${idx + 1}:${line}`);
-
-            const linesWithTouched = lines.map((line, idx) => {
-                const lineNumber = idx + 1;
-                if (!lineInfo[filename].all.find(i => i == lineNumber)) {
-                    return `s${line}`;
-                } else if (lineInfo[filename].touched.find(i => i == lineNumber)) {
-                    return `+${line}`;
-                } else {
-                    return `-${line}`;
-                }
-            });
-
-            linesWithTouched.forEach(line => console.log(line));
-        });
-    }
-}
-
 if (process.argv.length >= 3) {
     const target = getTarget();
 
-    const options = {
-        maxConcurrent: maxConcurrent(), //max number of tests to run concurrently
-        maxTime: timeFrom('EXPOSE_MAX_TIME', '2h'),
-        testMaxTime: timeFrom('EXPOSE_TEST_TIMEOUT', '20m'),
-        jsonOut: getArgument('EXPOSE_JSON_PATH', 'string', undefined), //By default ExpoSE does not generate JSON out
-        printPaths: getArgument('EXPOSE_PRINT_PATHS', 'number', false), //By default do not print paths to stdout
-        printDeltaCoverage: getArgument('EXPOSE_PRINT_COVERAGE', 'number', false),
-        analyseScript: getArgument('EXPOSE_PLAY_SCRIPT', 'string', './scripts/play')
-    };
-
-    console.log('ExpoSE Master: ' + target + ' max concurrent: ' + options.maxConcurrent);
+    console.log('ExpoSE Master: ' + target + ' max concurrent: ' + Config.maxConcurrent);
 
     const start = (new Date()).getTime();
-    const center = new Center(options);
+    const center = new Center(Config);
 
     process.on('SIGINT', function() {
         center.cancel();
     });
 
-    console.log('Setting timeout to ' + options.maxTime + 'ms');
+    console.log('Setting timeout to ' + Config.maxTime + 'ms');
 
     const maxTimeout = setTimeout(function() {
         center.cancel();
-    }, options.maxTime);
+    }, Config.maxTime);
 
     center.done((center, done, errors, coverage, stats) => {
 
-        if (options.jsonOut !== undefined) {
-            console.log(`\n*-- Writing JSON to ${options.jsonOut} --*`);
-            fs.writeFileSync(options.jsonOut, JSON.stringify({
+        if (Config.jsonOut !== undefined) {
+            console.log(`\n*-- Writing JSON to ${Config.jsonOut} --*`);
+            fs.writeFileSync(Config.jsonOut, JSON.stringify({
                 source: getTarget(),
                 finalCoverage: coverage.final(true) /* Include SMAP in the final coverage JSON */,
                 start: start,
@@ -158,8 +82,8 @@ if (process.argv.length >= 3) {
             console.log(`*- File ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}%`);
         });
 
-        if (options.printDeltaCoverage) {
-            generateCoverageMap(coverage.lines());
+        if (Config.printDeltaCoverage) {
+            CoverageMap(coverage.lines(), line => console.log(line));
         } else {
             console.log('*- Re-run with EXPOSE_PRINT_COVERAGE=1 to print line by line coverage information');
         }
