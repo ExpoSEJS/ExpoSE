@@ -4,8 +4,7 @@
 import Center from './Center';
 import Config from './Config';
 import CoverageMap from './CoverageMap';
-
-const fs = require('fs');
+import JsonWriter from './JsonWriter';
 
 process.title = 'ExpoSE Distributor';
 
@@ -14,12 +13,8 @@ process.on('disconnect', function() {
     process.exit();
 });
 
-function getTarget() {
-    return process.argv[process.argv.length - 1];
-}
-
 if (process.argv.length >= 3) {
-    const target = getTarget();
+    const target = process.argv[process.argv.length - 1];
 
     console.log('ExpoSE Master: ' + target + ' max concurrent: ' + Config.maxConcurrent);
 
@@ -38,15 +33,8 @@ if (process.argv.length >= 3) {
 
     center.done((center, done, errors, coverage, stats) => {
 
-        if (Config.jsonOut !== undefined) {
-            console.log(`\n*-- Writing JSON to ${Config.jsonOut} --*`);
-            fs.writeFileSync(Config.jsonOut, JSON.stringify({
-                source: getTarget(),
-                finalCoverage: coverage.final(true) /* Include SMAP in the final coverage JSON */,
-                start: start,
-                end: (new Date()).getTime(),
-                done: done
-            }));
+        if (Config.jsonOut) {
+            JsonWriter(Config.jsonOut, target, coverage, start, (new Date()).getTime(), done, Config);
         }
 
         console.log('\n*-- Stat Module Output --*')
