@@ -339,8 +339,6 @@ class SymbolicExecution {
 
         if (this.state.isSymbolic(left)) {
             return this._unarySymbolic(op, left, result_c);
-        } else if (this.state.isSymbolic(left)) {
-            result_c = SymbolicHelper.evalUnary(op, this.state.getConcrete(left));
         }
 
         return {
@@ -358,19 +356,11 @@ class SymbolicExecution {
     }
 
     conditional(iid, result) {
-        this.state.coverage.touch(iid);
+        this.state.coverage.touch_cnd(iid, this.state.getConcrete(result));
 
         if (this.state.isSymbolic(result)) {
             Log.logMid(`Evaluating symbolic condition ${this.state.asSymbolic(result)} at ${this._location(iid)}`);
-
-            if (result) {
-                this.state.conditional(this.state.toBool(result));
-            } else {
-                Log.logMid(`Concretized ${result} because do not know how to coerce`);
-            }
-
-        } else {
-            Log.logHigh(`Concrete test at ${this._location(iid)}`);
+            this.state.conditional(this.state.toBool(result));
         }
 
         return { result: this.state.getConcrete(result) };
@@ -384,10 +374,7 @@ class SymbolicExecution {
             throw `Tropigate failed because ${e} on program ${code} at ${e.stack}`;
         }
 
-        return {
-            code: code,
-            skip: false
-        };
+        return { code: code, skip: false };
     }
 
     instrumentCode(iid, code, newAst) {

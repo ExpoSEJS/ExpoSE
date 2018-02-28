@@ -12,8 +12,8 @@ let complexExpressions = 0;
 let cegarUsing = 0;
 let containedRe = 0;
 
-function processFile(file) {
-	let data = JSON.parse(fs.readFileSync(file));
+function processItem(data) {
+	data = JSON.parse(data);
 	total += 1;
 	failed += data.model ? 1 : 0;
 	hitMax += data.hitMaxRefinements ? 1 : 0;
@@ -24,9 +24,19 @@ function processFile(file) {
 	maxAttemptsGood = data.model ? Math.max(maxAttemptsGood, data.attempts) : maxAttemptsGood;
 	complexExpressions += data.checkCount ? 1 : 0;
 
-	if ((data.clause + data.solver).indexOf('re.') != -1) {
+	if (data.containedRe) {
 		containedRe++;
 	}
+}
+
+function processFile(file) {
+	let data = '' + fs.readFileSync(file);
+	data = data.split('\nEXPOSE_QUERY_DUMP_SEPERATOR\n');
+	data.forEach(element => {
+		if (element.trim().length != 0) {
+			processItem(element);
+		}
+	});
 }
 
 function rnd(x, dp) {
@@ -46,14 +56,26 @@ function summ(dir) {
 		}
 
 		list.forEach(file => processFile(dir + '/' + file));
-		console.log(`${failed} / ${total} (${pct(failed, total)}) queries failed (unknown/unsat), ${hitMax} (${pct(hitMax, failed)}) because max refinements was hit`);
-		console.log(`Queries took an average of ${totalTime / total}ms (total time in solver ${totalTime}ms) (total queries ${total})`);
+
+		console.log(`Queries took an average of ${rnd(totalTime / total, 2)}ms (total time in solver ${totalTime}ms) (total queries ${total})`);
+
+		console.log(`${failed} / ${total} (${pct(failed, total)}) queries failed (unknown/unsat)`);
+		console.log(`${hitMax} (${pct(hitMax, failed)}) queries failed (unknown result) because max refinements was hit.`);
+
 		console.log(`${attempts} attempts in ${total} queries (${pct(attempts, total)})`);
+		
+		//Attempts per query info
 		console.log(`Max attempts: ${maxAttempts}`);
 		console.log(`Max attempts (with SAT): ${maxAttemptsGood}`);
+		
+		//Cegar info
 		console.log(`CEGAR-potential queries: ${complexExpressions}`);
 		console.log(`CEGAR-using quries: ${cegarUsing}`);
-		console.log(`${pct(hitMax, cegarUsing)} CEGAR uses hit max-limit`);
+		
+		if (cegarUsing) {
+			console.log(`${pct(hitMax, cegarUsing)} CEGAR uses hit max-limit`);
+		}
+
 		console.log(`${containedRe} queries contained at least one RE`);
 	});
 }

@@ -1,12 +1,16 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
-
 "use strict";
 
 import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
-import {WrappedValue, ConcolicValue} from './Values/WrappedValue';
-import { SymbolicObject } from './Values/SymbolicObject';
+import {
+    WrappedValue,
+    ConcolicValue
+} from './Values/WrappedValue';
+import {
+    SymbolicObject
+} from './Values/SymbolicObject';
 import External from './External';
 import Config from './Config';
 import SymbolicHelper from './SymbolicHelper';
@@ -20,7 +24,7 @@ Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 class SymbolicState {
     constructor(input, sandbox) {
         this.ctx = new Z3.Context();
-        this.slv = new Z3.Solver(this.ctx, undefined, USE_INCREMENTAL_SOLVER);
+        this.slv = new Z3.Solver(this.ctx, Config.maxSolverTime, USE_INCREMENTAL_SOLVER);
 
         this.input = input;
 
@@ -38,9 +42,9 @@ class SymbolicState {
 
         this.stats = new Stats();
     }
-    
+
     pushCondition(cnd, binder) {
-    	this.pathCondition.push({
+        this.pathCondition.push({
             ast: cnd,
             binder: binder || false,
             forkIid: this.coverage.last()
@@ -122,7 +126,7 @@ class SymbolicState {
             if (!this.pathCondition[i].binder) {
                 this._buildPC(childInputs, i);
             }
-            
+
             //Push the current thing we're looking at to the solver
             this.slv.assert(this.pathCondition[i].ast);
             this.slv.push();
@@ -226,7 +230,7 @@ class SymbolicState {
     }
 
     getSolution(model) {
-    	let solution = {};
+        let solution = {};
 
         for (let name in this.inputSymbols) {
             let solutionAst = model.eval(this.inputSymbols[name]);
@@ -238,66 +242,27 @@ class SymbolicState {
         return solution;
     }
 
-    /**
-     * TODO: Find a better place for this
-     */
-    _logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {
-
-        if (!Config.outQueriesDir) {
-            return;
-        }
-
-        function makeid(count) {
-            let text = "";
-            const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";    
-            
-            for (let i = 0; i < count; i++) {
-                text += possible.charAt(Math.floor(Math.random() * possible.length)); 
-            }
-
-            return text;
-        }
-
-        const dumpData = {
-            clause: clause,
-            solver: solver,
-            model: model,
-            attempts: attempts,
-            startTime: startTime,
-            endTime: endTime,
-            hitMaxRefinements: hitMax,
-            checkCount: checkCount
-        };
-
-        const dumpFileName = Config.outQueriesDir + '/' + (new Date()).getTime() + '_' + makeid(5);
-        
-        const fs = require('fs');
-        fs.writeFileSync(dumpFileName, JSON.stringify(dumpData));
-
-        Log.log(`Wrote ${dumpFileName}`);
-    }
-
     _checkSat(clause, i, checks) {
 
         const startTime = (new Date()).getTime();
         let model = (new Z3.Query([clause], checks)).getModel(this.slv);
         const endTime = (new Date()).getTime();
-        
-    	this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
 
-    	if (model) {
-    		this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
-    	} else {
-    		this.stats.seen('Failed Queries');
+        this.stats.max('Max Queries (Any)', Z3.Query.LAST_ATTEMPTS);
 
-    		if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
-    			this.stats.seen('Failed Queries (Max Refinements)');
-    		}
-    	}
+        if (model) {
+            this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
+        } else {
+            this.stats.seen('Failed Queries');
 
-        this._logQuery(clause.toString(), this.slv.toString(), checks.length, startTime, endTime, model ? model.toString() : undefined, Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS);
+            if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
+                this.stats.seen('Failed Queries (Max Refinements)');
+            }
+        }
 
-    	return model ? this.getSolution(model) : undefined;
+        Log.logQuery(clause.toString(), this.slv.toString(), checks.length, startTime, endTime, model ? model.toString() : undefined, Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS);
+
+        return model ? this.getSolution(model) : undefined;
     }
 
     isWrapped(val) {
@@ -358,7 +323,7 @@ class SymbolicState {
 
     binary(op, left, right) {
         const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right)),
-              result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
+            result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
 
@@ -383,65 +348,78 @@ class SymbolicState {
                 return base_s.getAt(this.ctx.mkRealToInt(field_s));
             }
         }
-    	
+
         switch (field_c) {
-    		case 'length':
+            case 'length':
                 if (base_s.getLength()) {
                     return base_s.getLength();
                 }
-    		default:
-    			Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
-        }
-
-    	return undefined;
-    }
-
-    toBool(val) {
-        const val_type = typeof this.getConcrete(val);
-
-        switch (val_type) {
-            case "boolean":
-                return val;
-            case "number":
-                return this.binary('!=', val, this.concolic(0));
-            case "string":
-                return this.binary('!=', val, this.concolic(""));
             default:
-                return undefined;
+                Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
         }
+
+        return undefined;
     }
 
+    /**
+     * Coerce either a concrete or ConcolicValue to a boolean
+     * Concretizes the ConcolicValue if no coercion rule is known
+     */
+    toBool(val) {
+        
+        if (this.isSymbolic(val)) {
+            const val_type = typeof this.getConcrete(val);
+
+            switch (val_type) {
+                case "boolean":
+                    return val;
+                case "number":
+                    return this.binary('!=', val, this.concolic(0));
+                case "string":
+                    return this.binary('!=', val, this.concolic(""));
+            }
+
+            Log.log('WARNING: Concretizing coercion to boolean (toBool) due to unknown type');
+        }
+
+        return this.getConcrete(!!val);
+    }
+
+    /**
+     * Perform a symbolic unary action.
+     * Expects an Expr and returns an Expr or undefined if we don't
+     * know how to do this op symbolically
+     */
     _symbolicUnary(op, left_c, left_s) {
         this.stats.seen('Symbolic Unary');
 
         switch (op) {
 
-            case "!": {
-                let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
-                return bool_s ? this.ctx.mkNot(bool_s) : undefined;
-            }
+            case "!":
+                    let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
+                    return bool_s ? this.ctx.mkNot(bool_s) : undefined;
 
-            case "+": {
-                return typeof left_c === 'string' ? this.ctx.mkStrToInt(left_s) : left_s;
-            }
+            case "+":
+                    return typeof left_c === 'string' ? this.ctx.mkStrToInt(left_s) : left_s;
 
             case "-":
                 
-                switch (typeof left_c) {
-                    case 'string':
-                        Log.log('Casting string to int, if its a real you will get incorrect result');
-                        return this.ctx.mkStrToInt(left_s);
+                if (typeof left_c == 'string') {
+                    Log.log('Casting string to int, if its a real you will get incorrect result');
+                    return this.ctx.mkStrToInt(left_s);
                 }
 
                 return this.ctx.mkUnaryMinus(left_s);
-            case "typeof":
-                return undefined;
-            default:
-                Log.logMid("Unsupported operand: " + op);
-                return undefined;
         }
+
+        Log.log("Unsupported symbolic operand: " + op);
+        return undefined;
     }
 
+    /**
+     * Perform a unary op on a ConcolicValue or a concrete value
+     * Concretizes the ConcolicValue if we don't know how to do that action symbolically
+     */
     unary(op, left) {
 
         const result_c = SymbolicHelper.evalUnary(op, this.getConcrete(left)),
@@ -450,8 +428,13 @@ class SymbolicState {
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
 
+    /**
+     * Return a symbol which will always be equal to the constant value val
+     * returns undefined if the theory is not supported.
+     */
     constantSymbol(val) {
         this.stats.seen('Wrapped Constants');
+        
         switch (typeof val) {
             case 'boolean':
                 return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
@@ -462,8 +445,16 @@ class SymbolicState {
             default:
                 Log.log("Symbolic expressions with " + typeof val + " literals not yet supported.");
         }
+
+        return undefined;
     }
 
+    /**
+     * If val is a symbolic value then return val otherwise wrap it
+     * with a constant symbol inside a ConcolicValue.
+     *
+     * Used to turn a concrete value into a constant symbol for symbolic ops.
+     */
     concolic(val) {
         return this.isSymbolic(val) ? val : new ConcolicValue(val, this.constantSymbol(val));
     }
