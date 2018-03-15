@@ -142,6 +142,7 @@ class SymbolicState {
         let sort;
 
         switch (typeof concrete) {
+
             case 'boolean':
                 sort = this.boolSort;
                 break;
@@ -209,6 +210,7 @@ class SymbolicState {
         if (concrete instanceof Array) {
             this.stats.seen('Symbolic Arrays');
             symbolic = this.ctx.mkArray(name, this._getSort(concrete[0]));
+            this.pushCondition(this.ctx.mkGe(symbolic, this.ctx.mkIntVal(0)), true);
         } else {
             this.stats.seen('Symbolic Primitives');
             const sort = this._getSort(concrete);
