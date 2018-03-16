@@ -154,7 +154,7 @@ class SymbolicExecution {
         if (base instanceof SymbolicObject) {
             Log.logMid('Potential loss of precision, cocretize offset on SymbolicObject field lookups');
             return {
-                result: base.getField(this.state, this.state.getConcrete(offset));
+                result: base.getField(this.state, this.state.getConcrete(offset))
             }
         }
 
