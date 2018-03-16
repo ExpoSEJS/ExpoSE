@@ -30,6 +30,7 @@ function buildTestList() {
     buildTest('renaming/rename', 12, 11);
 
     //Array tests
+    buildTest('arrays/concrete_checks', 1, 0);
     buildTest('arrays/array_basic', 8, 3);
     buildTest('arrays/array_pure', 22, 7);
     buildTest('arrays/array_update', 2, 1);
