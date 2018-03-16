@@ -128,7 +128,7 @@ class SymbolicExecution {
         return {
             base: base,
             offset: offset,
-            skip: !this.state.isSymbolic(base) && !(base instanceof SymbolicObject) && !this.state.isSymbolic(offset)
+            skip: !this.state.isSymbolic(base) && !(base instanceof SymbolicObject) && !this.state.isSymbolic(offset) && !(offset instanceof SymbolicObject)
         };
     }
 
@@ -165,7 +165,7 @@ class SymbolicExecution {
              typeof this.state.getConcrete(offset) == 'string') {
             this._getFieldSymbolicOffset(base, offset);
             return {
-                result: base[this.state.getConcrete(offset)];
+                result: base[this.state.getConcrete(offset)]
             }
         } 
 
