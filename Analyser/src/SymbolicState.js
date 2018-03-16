@@ -65,6 +65,8 @@ class SymbolicState {
         } else {
             Log.log(`WARNING: Symbolic Conditional on non-bool, concretizing`);
         }
+        
+        return result_c;
     }
 
     /**
@@ -210,7 +212,7 @@ class SymbolicState {
         if (concrete instanceof Array) {
             this.stats.seen('Symbolic Arrays');
             symbolic = this.ctx.mkArray(name, this._getSort(concrete[0]));
-            this.pushCondition(this.ctx.mkGe(symbolic, this.ctx.mkIntVal(0)), true);
+            this.pushCondition(this.ctx.mkGe(symbolic.getLength(), this.ctx.mkIntVal(0)), true);
         } else {
             this.stats.seen('Symbolic Primitives');
             const sort = this._getSort(concrete);
@@ -339,15 +341,18 @@ class SymbolicState {
         function isRealNumber() {
             return typeof field_c === "number" && !Number.isNaN(field_c);
         }
-
-        //TODO: We do not enforce < 0 => undefined here
-        if (canHaveFields() && isRealNumber()) {
-            if (field_c >= base_c.length) {
-                this.pushCondition(this.ctx.mkGe(field_s, base_s.getLength()));
-                return undefined;
+ 
+        if (canHaveFields() && isRealNumber()) {          
+ 
+            const withinBounds = this.ctx.mkAnd(
+                this.ctx.mkGt(field_s, this.ctx.mkIntVal(-1)),
+                this.ctx.mkLt(field_s, base_s.getLength())
+            );
+            
+            if (this.conditional(new ConcolicValue(field_c > -1 && field_c < base_c.length, withinBounds))) {
+                return base_s.getField(this.ctx.mkRealToInt(field_s));
             } else {
-                this.pushCondition(this.ctx.mkLt(field_s, base_s.getLength()));
-                return base_s.getAt(this.ctx.mkRealToInt(field_s));
+                return undefined;
             }
         }
 
