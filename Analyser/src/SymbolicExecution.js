@@ -214,7 +214,7 @@ class SymbolicExecution {
             this.state.updateSymbolic(base, base_s);
             
             return {
-                result: this.state.asSymbolic(base).getField(offset, offset)
+                result: val
             }
         }
 

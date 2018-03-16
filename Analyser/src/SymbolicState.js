@@ -4,16 +4,18 @@
 import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
+import External from './External';
+import Config from './Config';
+import SymbolicHelper from './SymbolicHelper';
+
 import {
     WrappedValue,
     ConcolicValue
 } from './Values/WrappedValue';
+
 import {
     SymbolicObject
 } from './Values/SymbolicObject';
-import External from './External';
-import Config from './Config';
-import SymbolicHelper from './SymbolicHelper';
 
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
@@ -346,8 +348,8 @@ class SymbolicState {
             return typeof field_c === "number" && !Number.isNaN(field_c);
         }
  
-        if (canHaveFields() && isRealNumber()) {          
- 
+        if (canHaveFields() && isRealNumber()) { 
+
             const withinBounds = this.ctx.mkAnd(
                 this.ctx.mkGt(field_s, this.ctx.mkIntVal(-1)),
                 this.ctx.mkLt(field_s, base_s.getLength())
