@@ -128,7 +128,7 @@ class SymbolicExecution {
         return {
             base: base,
             offset: offset,
-            skip: !this.state.isSymbolic(base) && !(base instanceof SymbolicObject) && !this.state.isSymbolic(offset) && !(offset instanceof SymbolicObject)
+            skip: this.state.isWrapped(base) || this.state.isWrapped(offset)
         };
     }
 
@@ -186,7 +186,7 @@ class SymbolicExecution {
             base: base,
             offset: offset,
             val: val,
-            skip: this.state.isWrapped(base),
+            skip: this.state.isWrapped(base) || this.state.isWrapped(offset)
         };
     }
 
@@ -199,6 +199,26 @@ class SymbolicExecution {
                 result: base.setField(this.state, this.state.getConcrete(offset), val)
             }
         }
+
+        //TODO: Enumerate if symbolic offset and concrete input
+
+        if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array) {
+            Log.log('TODO: Check that setField is homogonous');
+
+            //SetField produce a new array
+            //Therefore the symbolic portion of base needs to be updated
+            const base_s = this.state.asSymbolic(base).setField(
+                this.state.asSymbolic(offset),
+                this.state.asSymbolic(val));
+
+            this.state.updateSymbolic(base, base_s);
+            
+            return {
+                result: this.state.asSymbolic(base).getField(offset, offset)
+            }
+        }
+
+        this.state.getConcrete(base)[this.state.getConcrete(offset)] = val;
 
         return { result: val };
     }
@@ -310,7 +330,7 @@ class SymbolicExecution {
             op: op,
             left: left,
             right: right,
-            skip: this.state.isSymbolic(left) || this.state.isSymbolic(right)
+            skip: this.state.isWrapped(left) || this.state.isWrapped(right)
         };
     }
 

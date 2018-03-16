@@ -180,7 +180,7 @@ class SymbolicState {
             res = this.createSymbolicValue(name, false);
         } else if (this.assertEqual(pureType, this.concolic("object"))) {
             res = this.createSymbolicValue(name, {});
-        } else if (this.assertEqual(pureType, this.concolic("array_int"))) {
+        } else if (this.assertEqual(pureType, this.concolic("array_number"))) {
             res = this.createSymbolicValue(name, [0]);
         } else if (this.assertEqual(pureType, this.concolic("array_string"))) {
             res = this.createSymbolicValue(name, [""]);
@@ -275,6 +275,10 @@ class SymbolicState {
 
     isSymbolic(val) {
         return !!ConcolicValue.getSymbolic(val);
+    }
+
+    updateSymbolic(val, val_s) {
+        return ConcolicValue.setSymbolic(val, val_s);
     }
 
     getConcrete(val) {
