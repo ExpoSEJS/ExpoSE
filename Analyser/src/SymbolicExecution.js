@@ -128,32 +128,48 @@ class SymbolicExecution {
         return {
             base: base,
             offset: offset,
-            skip: false
+            skip: !this.state.isSymbolic(base) && !(base instanceof SymbolicObject) && !this.state.isSymbolic(offset)
         };
     }
 
+    _getFieldSymbolicOffset(base, offset) {
+        const base_c = this.state.getConcrete(base);
+        const offset_c = this.state.getConcrete(offset);
+        for (const idx in base_c) {
+            if (offset_c != base_c[idx]) {
+                const condition = this.state.binary('==', idx, offset);
+                this.state.pushCondition(this.state.ctx.mkNot(condition));
+            }
+        }
+    }
+
+    /** 
+     * GetField will be skipped if the base or offset is not wrapped (SymbolicObject or isSymbolic)
+     */
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
         this.state.coverage.touch(iid);
         Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
 
-        //TODO: This shortcut is ugly
+        //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
         if (base instanceof SymbolicObject) {
+            Log.logMid('Potential loss of precision, cocretize offset on SymbolicObject field lookups');
             return {
-                result: base.getField(this.state, offset)
+                result: base.getField(this.state, this.state.getConcrete(offset));
             }
         }
 
-        if (this.state.isSymbolic(offset) && typeof this.state.getConcrete(offset) == 'string') {
-            const base_c = this.state.getConcrete(base);
-            const offset_c = this.state.getConcrete(offset);
-            for (const idx in base_c) {
-                if (offset_c != base_c[idx]) {
-                    const condition = this.state.binary('==', idx, offset);
-                    this.state.pushCondition(this.state.ctx.mkNot(condition));
-                }
+        //If we are evaluating a symbolic string offset on a concrete base then enumerate all fields
+        //Then return the concrete lookup
+        if (!this.state.isSymbolic(base) && 
+             this.state.isSymbolic(offset) &&
+             typeof this.state.getConcrete(offset) == 'string') {
+            this._getFieldSymbolicOffset(base, offset);
+            return {
+                result: base[this.state.getConcrete(offset)];
             }
-        }
+        } 
 
+        //Otherwise defer to symbolicField
         const result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
         const result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
 
