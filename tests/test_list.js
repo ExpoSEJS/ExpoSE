@@ -31,9 +31,10 @@ function buildTestList() {
 
     //Array tests
     buildTest('arrays/concrete_checks', 1, 0);
-    buildTest('arrays/array_basic', 8, 3);
-    buildTest('arrays/array_pure', 22, 7);
-    buildTest('arrays/array_update', 2, 1);
+    buildTest('arrays/basic', 8, 3);
+    buildTest('arrays/pure', 22, 7);
+    buildTest('arrays/update', 2, 1);
+    buildTest('arrays/manual_push', 7, 1);
 
     //Integers
     buildTest('integers/hello.js', 2, 0);
