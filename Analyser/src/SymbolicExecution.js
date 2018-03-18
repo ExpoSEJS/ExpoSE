@@ -211,8 +211,9 @@ class SymbolicExecution {
                 this.state.asSymbolic(offset),
                 this.state.asSymbolic(val));
 
+            this.state.getConcrete(base)[this.state.getConcrete(offset)] = val; 
             this.state.updateSymbolic(base, base_s);
-            
+
             return {
                 result: val
             }
