@@ -33,7 +33,7 @@ function buildTestList() {
     buildTest('arrays/concrete_checks', 1, 0);
     buildTest('arrays/basic', 8, 3);
     buildTest('arrays/pure', 22, 7);
-    buildTest('arrays/update', 3, 1);
+    buildTest('arrays/update', 3, 2);
     buildTest('arrays/manual_push', 7, 1);
 
     //Integers
