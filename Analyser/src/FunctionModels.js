@@ -454,7 +454,7 @@ function BuildModels(state) {
     let indexOfCounter = 0;
 
     function mkIndexSymbol(op) {
-        return ctx.mkInVar(`_{io}_${indexOfCounter++})`);
+        return ctx.mkIntVar(`_${op}_${indexOfCounter++})`);
     }
     
     let funcCounter = 0;
@@ -464,7 +464,7 @@ function BuildModels(state) {
     }
 
     models[Array.prototype.indexOf] = symbolicHook(
-        (_f, base, args, _r) => state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1]),
+        (_f, base, args, _r) => state.isSymbolic(base),
         (_f, base, args, result) => {
 
             const searchTarget = state.asSymbolic(args[0]);
@@ -473,12 +473,12 @@ function BuildModels(state) {
             let result_s = mkIndexSymbol('IndexOf');
            
             //The result is an integer -1 <= result_s < base.length
-            c.state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
-            c.state.pushCondition(ctx.mkGt(state.asSymbolic(base).getLength(), result_s), true);
+            state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
+            state.pushCondition(ctx.mkGt(state.asSymbolic(base).getLength(), result_s), true);
             
             // either result_s is a valid index for the searchtarget or -1
-            c.state.pushCondition(
-                ctx.mkXOr(
+            state.pushCondition(
+                ctx.mkOr(
                     ctx.mkEq(ctx.mkSelect(state.asSymbolic(base), result_s), searchTarget), 
                     ctx.mkEq(result_s, ctx.mkIntVal(-1))
                 ),
@@ -490,7 +490,7 @@ function BuildModels(state) {
             const i = ctx.mkBound(0, intSort);
             const match_func_decl_name = mkFunctionName('IndexOf');
             
-            const matchInArrayBody = ctx.mkAnd(
+            const matchInArrayBody = ctx.mkIff(
                 ctx.mkLt(i, result_s),
                 ctx.mkNot(
                     ctx.mkEq(
@@ -502,7 +502,7 @@ function BuildModels(state) {
 
             const noPriorUse = ctx.mkForAll([match_func_decl_name], intSort, matchInArrayBody, []);
 
-            c.state.pushCondition(
+            state.pushCondition(
                 ctx.mkImplies(
                     ctx.mkGt(result_s, ctx.mkIntVal(-1)),
                     noPriorUse
