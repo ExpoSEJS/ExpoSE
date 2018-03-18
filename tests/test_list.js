@@ -37,6 +37,9 @@ function buildTestList() {
     buildTest('arrays/manual_push', 7, 1);
     buildTest('arrays/index_of', 2, 1);
     buildTest('arrays/includes', 2, 1);
+    buildTest('arrays/string', 3, 1);
+    buildTest('arrays/includes_index_of', 3, 1);
+    buildTest('arrays/bool', 5, 3);
 
     //Integers
     buildTest('integers/hello.js', 2, 0);
