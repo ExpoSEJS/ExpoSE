@@ -2,6 +2,8 @@
 
 var a = symbolic A;
 
+console.log('Created new symbol');
+
 if (a) {
 	console.log('A is ' + a)
 }

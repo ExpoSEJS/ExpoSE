@@ -4,16 +4,18 @@
 import Log from './Utilities/Log';
 import ObjectHelper from './Utilities/ObjectHelper';
 import Coverage from './Coverage';
+import External from './External';
+import Config from './Config';
+import SymbolicHelper from './SymbolicHelper';
+
 import {
     WrappedValue,
     ConcolicValue
 } from './Values/WrappedValue';
+
 import {
     SymbolicObject
 } from './Values/SymbolicObject';
-import External from './External';
-import Config from './Config';
-import SymbolicHelper from './SymbolicHelper';
 
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
@@ -65,6 +67,8 @@ class SymbolicState {
         } else {
             Log.log(`WARNING: Symbolic Conditional on non-bool, concretizing`);
         }
+        
+        return result_c;
     }
 
     /**
@@ -142,6 +146,7 @@ class SymbolicState {
         let sort;
 
         switch (typeof concrete) {
+
             case 'boolean':
                 sort = this.boolSort;
                 break;
@@ -177,7 +182,7 @@ class SymbolicState {
             res = this.createSymbolicValue(name, false);
         } else if (this.assertEqual(pureType, this.concolic("object"))) {
             res = this.createSymbolicValue(name, {});
-        } else if (this.assertEqual(pureType, this.concolic("array_int"))) {
+        } else if (this.assertEqual(pureType, this.concolic("array_number"))) {
             res = this.createSymbolicValue(name, [0]);
         } else if (this.assertEqual(pureType, this.concolic("array_string"))) {
             res = this.createSymbolicValue(name, [""]);
@@ -209,6 +214,7 @@ class SymbolicState {
         if (concrete instanceof Array) {
             this.stats.seen('Symbolic Arrays');
             symbolic = this.ctx.mkArray(name, this._getSort(concrete[0]));
+            this.pushCondition(this.ctx.mkGe(symbolic.getLength(), this.ctx.mkIntVal(0)), true);
         } else {
             this.stats.seen('Symbolic Primitives');
             const sort = this._getSort(concrete);
@@ -271,6 +277,10 @@ class SymbolicState {
 
     isSymbolic(val) {
         return !!ConcolicValue.getSymbolic(val);
+    }
+
+    updateSymbolic(val, val_s) {
+        return ConcolicValue.setSymbolic(val, val_s);
     }
 
     getConcrete(val) {
@@ -337,15 +347,18 @@ class SymbolicState {
         function isRealNumber() {
             return typeof field_c === "number" && !Number.isNaN(field_c);
         }
+ 
+        if (canHaveFields() && isRealNumber()) { 
 
-        //TODO: We do not enforce < 0 => undefined here
-        if (canHaveFields() && isRealNumber()) {
-            if (field_c >= base_c.length) {
-                this.pushCondition(this.ctx.mkGe(field_s, base_s.getLength()));
-                return undefined;
+            const withinBounds = this.ctx.mkAnd(
+                this.ctx.mkGt(field_s, this.ctx.mkIntVal(-1)),
+                this.ctx.mkLt(field_s, base_s.getLength())
+            );
+            
+            if (this.conditional(new ConcolicValue(field_c > -1 && field_c < base_c.length, withinBounds))) {
+                return base_s.getField(this.ctx.mkRealToInt(field_s));
             } else {
-                this.pushCondition(this.ctx.mkLt(field_s, base_s.getLength()));
-                return base_s.getAt(this.ctx.mkRealToInt(field_s));
+                return undefined;
             }
         }
 

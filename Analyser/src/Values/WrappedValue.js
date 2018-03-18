@@ -99,6 +99,14 @@ class ConcolicValue extends WrappedValue {
     }
 }
 
-ConcolicValue.getSymbolic = (val) => val instanceof ConcolicValue ? val.getSymbolic() : undefined;
+ConcolicValue.getSymbolic = function(val) {
+    return val instanceof ConcolicValue ? val.symbolic : undefined;
+};
+
+ConcolicValue.setSymbolic = function(val, val_s) {
+    if (val instanceof ConcolicValue) {
+        val.symbolic = val_s;
+    }
+};
 
 export {WrappedValue, Types, ConcolicValue};
