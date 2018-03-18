@@ -489,9 +489,14 @@ function BuildModels(state) {
             const intSort = ctx.mkIntSort();
             const i = ctx.mkBound(0, intSort);
             const match_func_decl_name = mkFunctionName('IndexOf');
-            
-            const matchInArrayBody = ctx.mkIff(
+           
+            const iLessThanResult = ctx.mkPattern([
                 ctx.mkLt(i, result_s),
+                ctx.mkGe(i, ctx.mkIntVal(0))
+            ]);
+
+            const matchInArrayBody = ctx.mkImplies(
+                ctx.mkAnd(ctx.mkGe(i, ctx.mkIntVal(0)), ctx.mkLt(i, result_s)),
                 ctx.mkNot(
                     ctx.mkEq(
                         ctx.mkSelect(state.asSymbolic(base), i),
@@ -500,7 +505,7 @@ function BuildModels(state) {
                 )
             );
 
-            const noPriorUse = ctx.mkForAll([match_func_decl_name], intSort, matchInArrayBody, []);
+            const noPriorUse = ctx.mkForAll([match_func_decl_name], intSort, matchInArrayBody, [iLessThanResult]);
 
             state.pushCondition(
                 ctx.mkImplies(
