@@ -368,7 +368,7 @@ class SymbolicState {
                     return base_s.getLength();
                 }
             default:
-                Log.log('Unsupported symbolic field - concretizing' + base_c + ' and field ' + field_c);
+                Log.log('Unsupported symbolic field - concretizing ' + base_c + ' and field ' + field_c);
         }
 
         return undefined;
