@@ -541,8 +541,13 @@ function BuildModels(state) {
                 )
             );
 
+            const iPattern = ctx.mkPattern([
+                ctx.mkLt(i, state.asSymbolic(base).getLength()),
+                ctx.mkGe(i, ctx.mkIntVal(0))
+            ]);
+
             const func_decl_name = mkFunctionName('Includes');
-            const result_s = ctx.mkExists([func_decl_name], intSort, body, []);
+            const result_s = ctx.mkExists([func_decl_name], intSort, body, [iPattern]);
             
             return new ConcolicValue(result, result_s);
         }
