@@ -23,11 +23,14 @@ function buildTestList() {
 
     //Pure Symbols
     buildTest('pure/pure_symbol.js', 8, 0);
-    buildTest('pure/pure_object.js', 10, 1);
 
     //Test symbol renaming
     buildTest('renaming/rename_simple', 3, 2);
     buildTest('renaming/rename', 12, 11);
+
+    //Object Tests
+    buildTest('objects/concrete.js', 1, 0);
+    buildTest('objects/pure_object.js', 10, 1);
 
     //Array tests
     buildTest('arrays/concrete_checks', 1, 0);
