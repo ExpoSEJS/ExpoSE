@@ -98,26 +98,36 @@ function BuildModels(state) {
         }
 
         const NotMatch = Z3.Check(CheckCorrect, (query, model) => {
-            const not = ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model))));
+
+            const not = ctx.mkNot(
+                ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model)))
+            );
+
             return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
         });
 
+        /**
+         * Generate a fixed string refinement (c_0, c_n, ...) == (e_0, e_n, ...)
+         */
         const CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
-            //CheckCorrect will check model has a proper match
             let real_match = real.exec(model.eval(string_s).asConstant(model));
-            
-            if (real_match) {
-                real_match = real_match.map(match => match || '');
-                const query_list = regex.captures.map((cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap));
-                return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
-            } else {
+
+            if (!real_match) {
                 Log.log(`WARN: Broken regex detected ${regex.ast.toString()} vs ${real}`);
                 return [];
             }
+            
+            real_match = real_match.map(match => match || '');
+
+            const query_list = regex.captures.map(
+                (cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap)
+            );
+
+            return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
         });
 
         const CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
-            Log.log('BIG WARN: False check failed, possible divergence');
+            Log.log('ERROR: False check failed, possible divergence');
             return [];
         });
 
@@ -128,14 +138,19 @@ function BuildModels(state) {
     }
 
     function RegexTest(regex, real, string, careAboutCaptures) {
-        const in_s = ctx.mkSeqInRe(state.asSymbolic(string), regex.ast);
+
+        const in_s = ctx.mkSeqInRe(
+            state.asSymbolic(string),
+            regex.ast
+        );
+
         const in_c = real.test(state.getConcrete(string));
 
         if (regex.backreferences || careAboutCaptures) {
             EnableCaptures(regex, real, state.asSymbolic(string));
             const checks = BuildRefinements(regex, real, state.asSymbolic(string));
             in_s.checks.trueCheck = checks.trueCheck;
-            //in_s.checks.falseCheck = checks.falseCheck;
+            in_s.checks.falseCheck = checks.falseCheck;
         }
 
         return new ConcolicValue(in_c, in_s);
@@ -145,7 +160,12 @@ function BuildModels(state) {
 
         const regex = Z3.Regex(ctx, real);
         const in_regex = RegexTest(regex, real, string, true);
-        const search_in_re = ctx.mkIte(state.asSymbolic(in_regex), regex.startIndex, state.constantSymbol(-1));
+        
+        const search_in_re = ctx.mkIte(
+            state.asSymbolic(in_regex),
+            regex.startIndex,
+            state.constantSymbol(-1)
+        );
 
         return new ConcolicValue(result, search_in_re);
     }
@@ -209,9 +229,12 @@ function BuildModels(state) {
             len = ctx.mkRealToInt(len);
 
             //If the length is user-specified bound the length of the substring by the maximum size of the string ("123".slice(0, 8) === "123")
-            const exceedMax = ctx.mkGe(ctx.mkAdd(start_off, len), target.getLength());
-            len = ctx.mkIte(exceedMax, maxLength, len);
+            const exceedMax = ctx.mkGe(
+                ctx.mkAdd(start_off, len),
+                target.getLength()
+            );
 
+            len = ctx.mkIte(exceedMax, maxLength, len);
         } else {
             len = maxLength
         }
@@ -219,11 +242,18 @@ function BuildModels(state) {
         //If the start index is greater than or equal to the length of the string the empty string is returned
         const substr_s = ctx.mkSeqSubstr(target, start_off, len);
         const empty_s = ctx.mkString("");
-        const result_s = ctx.mkIte(ctx.mkGe(start_off, target.getLength()), empty_s, substr_s);
+        const result_s = ctx.mkIte(
+            ctx.mkGe(start_off, target.getLength()),
+            empty_s,
+            substr_s
+        );
 
         return new ConcolicValue(result, result_s);
     }
 
+    /**
+     * Applies the rules for a sticky flag to a regex operation
+     */
     function rewriteTestSticky(real, target, result) {
         
         if (real.sticky || real.global) {
@@ -252,7 +282,12 @@ function BuildModels(state) {
             const matchResult = RegexMatch(real, target, realResult);
 
             if (matchResult) {
-                const matchLength = new ConcolicValue(state.getConcrete(matchResult[0]).length, state.asSymbolic(matchResult[0]).getLength());
+
+                const matchLength = new ConcolicValue(
+                    state.getConcrete(matchResult[0]).length,
+                    state.asSymbolic(matchResult[0]).getLength()
+                );
+
                 const currentIndex = state.binary('+', lastIndex, matchResult.index);
                 real.lastIndex = state.binary('+', currentIndex, matchLength);
                 return true;
@@ -319,7 +354,10 @@ function BuildModels(state) {
         
         if (typeof state.getConcrete(symbol) !== 'string') {
             Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
-            return new ConcolicValue(state.getConcrete(symbol), state.asSymbolic('' + state.getConcrete(symbol)));
+            return new ConcolicValue(
+                state.getConcrete(symbol),
+                state.asSymbolic('' + state.getConcrete(symbol))
+            );
         }
 
         return symbol;
@@ -327,7 +365,7 @@ function BuildModels(state) {
 
 
     /**
-     * Model for String(xxx) in code to coerce something to a string
+     * Stubs string constructor with our (flaky) coerceToString fn
      */
     models[String] = symbolicHook(
         (_f, _base, args, _result) => state.isSymbolic(args[0]),
@@ -348,7 +386,11 @@ function BuildModels(state) {
     models[String.prototype.slice] = models[String.prototype.substr];
 
     models[String.prototype.charAt] = symbolicHook(
-        (_f, base, args, _r) => state.isSymbolic(base) || state.isSymbolic(args[0]),
+        (_f, base, args, _r) => {
+            const is_symbolic = (state.isSymbolic(base) || state.isSymbolic(args[0]));
+            const is_well_formed = typeof state.getConcrete(base) === "string" && typeof state.getConcrete(args[0]) === "number";
+            return is_symbolic && is_well_formed;
+        },
         (_f, base, args, result) => {
             const index_s = ctx.mkRealToInt(state.asSymbolic(args[0]));
             const char_s = ctx.mkSeqAt(state.asSymbolic(base), index_s);
