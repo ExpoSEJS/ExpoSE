@@ -150,7 +150,7 @@ function BuildModels(state) {
             EnableCaptures(regex, real, state.asSymbolic(string));
             const checks = BuildRefinements(regex, real, state.asSymbolic(string));
             in_s.checks.trueCheck = checks.trueCheck;
-            in_s.checks.falseCheck = checks.falseCheck;
+            //in_s.checks.falseCheck = checks.falseCheck;
         }
 
         return new ConcolicValue(in_c, in_s);

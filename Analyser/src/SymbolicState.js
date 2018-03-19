@@ -26,7 +26,11 @@ Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 class SymbolicState {
     constructor(input, sandbox) {
         this.ctx = new Z3.Context();
-        this.slv = new Z3.Solver(this.ctx, Config.maxSolverTime, USE_INCREMENTAL_SOLVER);
+        
+	this.slv = new Z3.Solver(this.ctx,
+		USE_INCREMENTAL_SOLVER,
+		[{ name: 'timeout', value: Config.maxSolverTime }]
+	);
 
         this.input = input;
 
