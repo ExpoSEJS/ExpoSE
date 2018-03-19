@@ -461,7 +461,12 @@ function BuildModels(state) {
         (_f, base, _a, _r) => state.isSymbolic(base),
         (_f, base, _a, result) => {
             base = coerceToString(base);
-            state.pushCondition(ctx.mkSeqInRe(state.asSymbolic(base), Z3.Regex(ctx, /^[^A-Z]+$/).ast), true);
+
+            state.pushCondition(
+                ctx.mkSeqInRe(state.asSymbolic(base), Z3.Regex(ctx, /^[^A-Z]+$/).ast),
+                true
+            );
+
             return new ConcolicValue(result, state.asSymbolic(base));
         }
     );
@@ -562,7 +567,11 @@ function BuildModels(state) {
     );
 
     models[Array.prototype.includes] = symbolicHook(
-        (_f, base, args, _r) => state.isSymbolic(base) && typeof state.getConcrete(args)[0] == typeof state.getConcrete(base)[0],
+        (_f, base, args, _r) => {
+            const is_symbolic = state.isSymbolic(base);
+            const is_well_formed =  typeof state.getConcrete(args[0]) == typeof state.getConcrete(base)[0];
+            return is_symbolic && is_well_formed;
+        },
         (_f, base, args, result) => {
 
             const searchTarget = state.asSymbolic(args[0]);
