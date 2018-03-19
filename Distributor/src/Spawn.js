@@ -134,21 +134,26 @@ class Spawn {
 
         this._startTime = (new Date()).getTime();
 
-        const prc = spawn(this.script, this.args, {
-            env: this.env,
-            disconnected: false
-        });
-        
-        prc.stdout.on('data', insertData.bind(this));
-        prc.stderr.on('data', insertData.bind(this));
+	try {
+		const prc = spawn(this.script, this.args, {
+		    env: this.env,
+		    disconnected: false
+		});
+		
+		prc.stdout.on('data', insertData.bind(this));
+		prc.stderr.on('data', insertData.bind(this));
 
-        prc.stdout.on('close', code => {
-            clearTimeout(this._killTimeout);
-            this._processEnded(code, done);
-        });
+		prc.stdout.on('close', code => {
+		    clearTimeout(this._killTimeout);
+		    this._processEnded(code, done);
+		});
 
-        this._killTimeout = this._buildTimeout(this.prc, done);
-        this._pid = prc.pid;
+		this._killTimeout = this._buildTimeout(this.prc, done);
+		this._pid = prc.pid;
+	} catch (ex) {
+		console.log('Distributor ERROR: ' + ex + ' just falling back to default error');
+		this._processEnded(99999, done);
+	}
 
         return this;
     }
