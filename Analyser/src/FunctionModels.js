@@ -350,6 +350,19 @@ function BuildModels(state) {
         };
     }
 
+    function ConcretizeIfSymbolic() {
+        return function(f, base, args, result) {
+            let is_symbolic = state.isSymbolic(base) || args.find(x => state.isSymbolic(x));
+            if (is_symbolic) {
+                Log.log('WARNING: Concretizing model for ' + f.name);
+                base = state.getConcrete(base);
+                args = args.map(x => state.getConcrete(x));
+            }
+
+            return f.apply(base, args);
+        };
+    }
+
     function coerceToString(symbol) {
         
         if (typeof state.getConcrete(symbol) !== 'string') {
@@ -615,8 +628,8 @@ function BuildModels(state) {
     models[Array.prototype.fill] = NoOp();
 
     //TODO: Test IsNative for apply, bind & call
-    models[Function.prototype.apply] = NoOp();
-    models[Function.prototype.call] = NoOp();
+    models[Function.prototype.apply] = ConcretizeIfSymbolic();
+    models[Function.prototype.call] = ConcretizeIfSymbolic();
 
     /**
      * Secret _expose hooks for symbols.js
