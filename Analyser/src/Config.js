@@ -1,12 +1,12 @@
 function Default(i, d) {
     const envvar = process.env[`EXPOSE_${i}`];
-	return envvar || d;
+    return envvar || d;
 }
 
 export default {
     incrementalSolverEnabled: !!Default('USE_INCREMENTAL_SOLVER', true),
     maxRefinements: Number.parseInt(Default('MAX_REFINEMENTS', '50')),
-    maxSolverTime: Number.parseInt(Default('MAX_SOLVER_TIME', 240000)),
+    maxSolverTime: Number.parseInt(Default('MAX_SOLVER_TIME', 900000)),
     regexEnabled: !Default('DISABLE_REGULAR_EXPRESSIONS', false),
     capturesEnabled: !Default('DISABLE_CAPTURE_GROUPS', false),
     refinementsEnabled: !Default('DISABLE_REFINEMENTS', false),
