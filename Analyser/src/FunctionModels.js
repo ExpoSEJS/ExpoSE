@@ -629,8 +629,8 @@ function BuildModels(state) {
     models[Array.prototype.fill] = NoOp();
 
     //TODO: Test IsNative for apply, bind & call
-    models[Function.prototype.apply] = ConcretizeIfSymbolic(0);
-    models[Function.prototype.call] = ConcretizeIfSymbolic(0);
+    models[Function.prototype.apply] = ConcretizeIfNative(0);
+    models[Function.prototype.call] = ConcretizeIfNative(0);
 
     /**
      * Secret _expose hooks for symbols.js
