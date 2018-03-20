@@ -7,7 +7,7 @@ import Coverage from './Coverage';
 import External from './External';
 import Config from './Config';
 import SymbolicHelper from './SymbolicHelper';
-import SymbolicObject from './Values/SymbolicObject';
+import { SymbolicObject } from './Values/SymbolicObject';
 import {
     WrappedValue,
     ConcolicValue
@@ -24,7 +24,7 @@ class SymbolicState {
         
         this.slv = new Z3.Solver(this.ctx,
             Config.incrementalSolverEnabled,
-		    [{ name: 'timeout', value: Config.maxSolverTime }]
+            [{ name: 'timeout', value: Config.maxSolverTime }]
 	    );
 
         this.input = input;

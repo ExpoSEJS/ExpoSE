@@ -1,5 +1,6 @@
 function Default(i, d) {
-	return process.env[`EXPOSE_${i}`] || d;
+    const envvar = process.env[`EXPOSE_${i}`];
+	return envvar || d;
 }
 
 export default {
