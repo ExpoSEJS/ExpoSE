@@ -351,9 +351,9 @@ function BuildModels(state) {
         };
     }
 
-    function ConcretizeIfNative(arg_num) {
+    function ConcretizeIfNative() {
         return function(f, base, args, result) {
-            let is_native = isNative(args[arg_num]);
+            let is_native = isNative(base);
             if (is_native) {
                 Log.log('WARNING: Concretizing model for ' + f.name);
                 base = state.getConcrete(base);
@@ -629,8 +629,8 @@ function BuildModels(state) {
     models[Array.prototype.fill] = NoOp();
 
     //TODO: Test IsNative for apply, bind & call
-    models[Function.prototype.apply] = ConcretizeIfNative(0);
-    models[Function.prototype.call] = ConcretizeIfNative(0);
+    models[Function.prototype.apply] = ConcretizeIfNative();
+    models[Function.prototype.call] = ConcretizeIfNative();
 
     /**
      * Secret _expose hooks for symbols.js
