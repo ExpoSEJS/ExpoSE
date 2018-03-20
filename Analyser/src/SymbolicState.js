@@ -347,6 +347,10 @@ class SymbolicState {
                 return this.ctx.mkLe(left_s, right_s);
             case "<":
                 return this.ctx.mkLt(left_s, right_s);
+            case "<<<":
+                return this.ctx.mkBitwiseShiftLeft(left_s, right_s);
+            case ">>>":
+                return this.ctx.mkBitwiseShiftRight(left_s, right_s);
             case "+":
                 return typeof left_c === 'string' ? this.ctx.mkSeqConcat([left_s, right_s]) : this.ctx.mkAdd(left_s, right_s);
             case "-":
