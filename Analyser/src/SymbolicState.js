@@ -167,11 +167,13 @@ class SymbolicState {
 
     _deepConcrete(arg) {
         arg = this.getConcrete(arg);
-        const descriptors = Object.getOwnPropertyDescriptors(arg);
-        
-        for (let i in descriptors) {
-            if (descriptors[i].writable) {
-                arg[i] = this.getConcrete(arg[i]);
+
+        if (arg instanceof Object) {
+            const descriptors = Object.getOwnPropertyDescriptors(arg); 
+            for (let i in descriptors) {
+                if (descriptors[i].writable) {
+                    arg[i] = this.getConcrete(arg[i]);
+                }
             }
         }
 
