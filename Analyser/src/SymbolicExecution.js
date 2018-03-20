@@ -59,21 +59,9 @@ class SymbolicExecution {
         const isModelled = !!this.models[f];
 
         if (!isModelled && isNative(f)) {
-            
-            this.state.stats.set('Concretized Function Calls', f.name);
-
-            Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
-            Log.logMid('TODO: Potential Issue: Not deep concretize in IsNative application');
-            
-            base = this.state.getConcrete(base);
-
-            const n_args = Array(args.length);
-
-            for (let i = 0; i < args.length; i++) {
-                n_args[i] = this.state.getConcrete(args[i]);
-            }
-
-            args = n_args;
+            const concretized = this.state.concretizeCall(f, base, args);
+            base = concretized.base;
+            args = concretized.args;
         }
 
         /**

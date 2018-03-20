@@ -165,6 +165,39 @@ class SymbolicState {
         return sort;
     }
 
+    _deepConcrete(arg) {
+        arg = this.getConcrete(arg);
+        const descriptors = Object.getOwnPropertyDescriptors(arg);
+        
+        for (let i in descriptors) {
+            if (descriptors[i].writable) {
+                arg[i] = this.getConcrete(arg[i]);
+            }
+        }
+
+        return arg;
+    }
+
+    concretizeCall(f, base, args) {
+        
+        this.stats.set('Concretized Function Calls', f.name);
+
+        Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
+        
+        base = this._deepConcrete(base);;
+
+        const n_args = Array(args.length);
+
+        for (let i = 0; i < args.length; i++) {
+            n_args[i] = this._deepConcrete(args[i]);
+        }
+
+        return {
+            base: base,
+            args: n_args
+        }
+    }
+
     createPureSymbol(name) {
 
         this.stats.seen('Pure Symbols');

@@ -356,8 +356,9 @@ function BuildModels(state) {
             let is_native = isNative(base);
             if (is_native) {
                 Log.log('WARNING: Concretizing model for ' + f.name);
-                base = state.getConcrete(base);
-                args = map.call(args, x => state.getConcrete(x));
+                const concretized = state.concretizeCall(f, base, args);
+                base = concretized.base;
+                args = concretized.args;
             }
 
             return f.apply(base, args);
