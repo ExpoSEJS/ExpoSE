@@ -7,30 +7,25 @@ import Coverage from './Coverage';
 import External from './External';
 import Config from './Config';
 import SymbolicHelper from './SymbolicHelper';
-
+import SymbolicObject from './Values/SymbolicObject';
 import {
     WrappedValue,
     ConcolicValue
 } from './Values/WrappedValue';
 
-import {
-    SymbolicObject
-} from './Values/SymbolicObject';
-
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
 
-const USE_INCREMENTAL_SOLVER = Config.incrementalSolverEnabled;
 Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
 class SymbolicState {
     constructor(input, sandbox) {
         this.ctx = new Z3.Context();
         
-	this.slv = new Z3.Solver(this.ctx,
-		USE_INCREMENTAL_SOLVER,
-		[{ name: 'timeout', value: Config.maxSolverTime }]
-	);
+        this.slv = new Z3.Solver(this.ctx,
+            Config.incrementalSolverEnabled,
+		    [{ name: 'timeout', value: Config.maxSolverTime }]
+	    );
 
         this.input = input;
 
