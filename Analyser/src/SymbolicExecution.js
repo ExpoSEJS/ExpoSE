@@ -306,7 +306,8 @@ class SymbolicExecution {
 
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
-        if (typeof left_c != typeof right_c || Number.isNaN(left_c) || Number.isNaN(right_c)) {
+        if (left_c === undefined || right_c === undefined || left_c === null || right_c === null || 
+            typeof left_c != typeof right_c || Number.isNaN(left_c) || Number.isNaN(right_c)) {
             Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
             left = left_c;
             right = right_c;
