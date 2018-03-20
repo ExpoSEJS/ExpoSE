@@ -6,6 +6,7 @@ import Log from './Utilities/Log';
 import Z3 from 'z3javascript';
 import Config from './Config';
 import NotAnErrorException from './NotAnErrorException';
+import { isNative } from './Utilities/IsNative';
 import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
 
 const find = Array.prototype.find;
@@ -350,10 +351,10 @@ function BuildModels(state) {
         };
     }
 
-    function ConcretizeIfSymbolic() {
+    function ConcretizeIfNative(arg_num) {
         return function(f, base, args, result) {
-            let is_symbolic = state.isSymbolic(base) || args.find(x => state.isSymbolic(x));
-            if (is_symbolic) {
+            let is_native = isNative(args[arg_num]);
+            if (is_native) {
                 Log.log('WARNING: Concretizing model for ' + f.name);
                 base = state.getConcrete(base);
                 args = args.map(x => state.getConcrete(x));
@@ -628,8 +629,8 @@ function BuildModels(state) {
     models[Array.prototype.fill] = NoOp();
 
     //TODO: Test IsNative for apply, bind & call
-    models[Function.prototype.apply] = ConcretizeIfSymbolic();
-    models[Function.prototype.call] = ConcretizeIfSymbolic();
+    models[Function.prototype.apply] = ConcretizeIfSymbolic(0);
+    models[Function.prototype.call] = ConcretizeIfSymbolic(0);
 
     /**
      * Secret _expose hooks for symbols.js
