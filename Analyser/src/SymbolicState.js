@@ -328,6 +328,10 @@ class SymbolicState {
     _symbolicBinary(op, left_c, left_s, right_c, right_s) {
         this.stats.seen('Symbolic Binary');
 
+        if (typeof right_c != typeof left_c) {
+            return undefined;
+        }
+
         switch (op) {
             case "===":
             case "==":
