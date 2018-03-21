@@ -543,6 +543,13 @@ function BuildModels(state) {
             state.updateSymbolic(base, array.setField(oldLength, value).setLength(newLength));
             return args[0];
         } else {
+
+            //TODO: Check that this mechanism for removing-symbolicness actually works
+            //TODO: The goal here is to concretize this result from here-on in as the concrete model might be non-homogonous
+            if (state.isSymbolic(base)) {
+                state.updateSymbolic(base, null);
+            }
+
             state.getConcrete(base).push(args[0]);
             return args[0];
         }    
@@ -563,6 +570,12 @@ function BuildModels(state) {
             state.updateSymbolic(base, array.setLength(newLength));
             return result;
         } else {
+            
+            //TODO: Check this works (See push)
+            if (state.isSymbolic(base)) {
+                state.updateSymbolic(base, null);
+            }
+
             return state.getConcrete(base).pop();
         }    
     } 
