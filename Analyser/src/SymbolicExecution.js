@@ -374,7 +374,7 @@ class SymbolicExecution {
 
     _unarySymbolic(op, left, result_c) {
 
-        Log.logMid(`Symbolically evaluating unary ${op}(${left_s})`);
+        Log.logMid(`Symbolically evaluating unary ${op}(${left})`);
 
         return {
             result: this.state.unary(op, left)
