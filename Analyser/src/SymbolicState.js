@@ -347,10 +347,12 @@ class SymbolicState {
                 return this.ctx.mkLe(left_s, right_s);
             case "<":
                 return this.ctx.mkLt(left_s, right_s);
+            case "<<":
             case "<<<":
                 left_s = this.ctx.mkRealToInt(left_s);
                 right_s = this.ctx.mkRealToInt(right_s);
                 return this.ctx.mkIntToReal(this.ctx.mkMul(left_s, this.ctx.mkPower(this.ctx.mkIntVal(2), right_s)));
+            case ">>":
             case ">>>":
                 left_s = this.ctx.mkRealToInt(left_s);
                 right_s = this.ctx.mkRealToInt(right_s);
