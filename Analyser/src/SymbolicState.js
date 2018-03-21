@@ -496,10 +496,8 @@ class SymbolicState {
      * Concretizes the ConcolicValue if we don't know how to do that action symbolically
      */
     unary(op, left) {
-
-        const result_c = SymbolicHelper.evalUnary(op, this.getConcrete(left)),
-              result_s = this._symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left));
-
+        const result_c = SymbolicHelper.evalUnary(op, this.getConcrete(left));
+        const result_s = this.isSymbolic(left) ? this._symbolicUnary(op, this.getConcrete(left), this.asSymbolic(left)) : undefined;
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
 
