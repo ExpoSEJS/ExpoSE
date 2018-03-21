@@ -361,20 +361,7 @@ class SymbolicExecution {
     unary(iid, op, left, result_c) {
         this.state.coverage.touch(iid);
 
-        Log.logHigh('Unary ' + op + ' left ' + ObjectHelper.asString(left) + ' result ' + ObjectHelper.asString(result_c));
-
-        if (this.state.isSymbolic(left)) {
-            return this._unarySymbolic(op, left, result_c);
-        }
-
-        return {
-            result: result_c
-        };
-    }
-
-    _unarySymbolic(op, left, result_c) {
-
-        Log.logMid(`Symbolically evaluating unary ${op}(${left})`);
+        Log.logHigh('Unary ' + op + ' left ' + ObjectHelper.asString(left) + ' result ' + ObjectHelper.asString(result_c)); 
 
         return {
             result: this.state.unary(op, left)
