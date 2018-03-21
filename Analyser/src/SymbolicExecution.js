@@ -312,7 +312,7 @@ class SymbolicExecution {
             const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
             const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
-            if (is_same_type && !is_null && is_real) {
+            if (!is_same_type || is_null || !is_real) {
                 Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
                 left = left_c;
                 right = right_c;
