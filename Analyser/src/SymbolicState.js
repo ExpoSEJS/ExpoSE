@@ -457,7 +457,21 @@ class SymbolicState {
         this.stats.seen('Symbolic Unary');
 
         switch (typeof(left_c)) {
-        
+       
+            case "boolean":
+
+                switch (op) {
+
+                    case "!":
+                        return this.ctx.mkNot(left_s);
+                    case "+":
+                        return this.ctx.mkIte(left_s, this.constantSymbol(1), this.constantSymbol(0));
+                    case "-":
+                        return this.ctx.mkIte(left_s, this.constantSymbol(-1), this.constantSymbol(0));
+                }
+
+                break;
+ 
             case "string":
 
                 switch (op) {
@@ -487,7 +501,7 @@ class SymbolicState {
                 break;
         }
 
-        Log.log("Unsupported symbolic operand: " + op);
+        Log.log(`Unsupported symbolic operand: ${op} on ${left_c} symbolic ${left_s}`);
         return undefined;
     }
 

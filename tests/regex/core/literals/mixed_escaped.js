@@ -5,8 +5,8 @@ if (isIn) {
 	if (x != 'Helloworldhow are you(today)huh?hu' && x != 'Helloworldhow are you(today)huh?huh') {
 		throw 'Unreachable';
 	} else {
-		throw 'Reachable';
+		throw 'Reachable 1';
 	}
 } else {
-	throw 'Reachable';
+	throw 'Reachable 2';
 }
