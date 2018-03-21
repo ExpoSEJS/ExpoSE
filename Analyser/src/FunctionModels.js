@@ -307,14 +307,16 @@ function BuildModels(state) {
      *
      * A function which makes up the new function model is returned
      */
-    function symbolicHook(condition, hook, featureDisabled) {
+    function symbolicHook(condition, hook, concretize = true, featureDisabled = false) {
         return function(f, base, args, result) {
 
             let thrown = undefined;
 
             //Defer throw until after hook has run
             try {
-                result = f.apply(state.getConcrete(base), map.call(args, arg => state.getConcrete(arg)));
+                const c_base = concretize ? state.getConcrete(base) : base;
+                const c_args = concretize ? map.call(args, arg => state.getConcrete(arg)) : args;
+                result = f.apply(c_base, c_args);
             } catch (e) {
                 thrown = e;
             }
@@ -341,7 +343,7 @@ function BuildModels(state) {
             //Intercept the hook to do regex stats
             state.stats.seen('Regular Expressions');
             return hook.apply(this, arguments);
-        }, !Config.regexEnabled);
+        }, true, !Config.regexEnabled);
     }
 
     function NoOp() {
@@ -525,6 +527,47 @@ function BuildModels(state) {
         return ctx.mkStringSymbol(`_fn_${fn}_${funcCounter++}_`);
     }
 
+    models[Array.prototype.push] = function(_f, base, args, _r) {
+        const is_symbolic = state.isSymbolic(base);
+        const args_well_formed = state.getConcrete(base) instanceof Array;
+        Log.log('TODO: Push prototype is not smart enough to decide array type');
+        if (is_symbolic) {
+            Log.log('Push symbolic prototype');
+            const array = state.asSymbolic(base);
+            const value = state.asSymbolic(args[0]);
+
+            const oldLength = array.getLength();
+            const newLength = ctx.mkAdd(oldLength, ctx.mkIntVal(1));
+
+            state.getConcrete(base).push(state.getConcrete(args[0]));
+            state.updateSymbolic(base, array.setField(oldLength, value).setLength(newLength));
+            return args[0];
+        } else {
+            state.getConcrete(base).push(args[0]);
+            return args[0];
+        }    
+    }
+
+    models[Array.prototype.pop] = function(_f, base, args, _r) {
+        const is_symbolic = state.isSymbolic(base);
+        const args_well_formed = state.getConcrete(base) instanceof Array;
+        Log.log('TODO: Push prototype is not smart enough to decide array type');
+        if (is_symbolic && args_well_formed) {
+            Log.log('Push symbolic prototype');
+            const array = state.asSymbolic(base);
+            const value = state.asSymbolic(args[0]);
+
+            const oldLength = array.getLength();
+            const newLength = ctx.mkAdd(oldLength, ctx.mkIntVal(-1));
+
+            const result = new ConcolicValue(state.getConcrete(base).pop(), state.getField(oldLength));
+            state.updateSymbolic(base, array.setLength(newLength));
+            return result;
+        } else {
+            return state.getConcrete(base).pop();
+        }    
+    } 
+
     models[Array.prototype.indexOf] = symbolicHook(
         (_f, base, args, _r) => state.isSymbolic(base),
         (_f, base, args, result) => {
@@ -619,7 +662,6 @@ function BuildModels(state) {
         }
     );
 
-    models[Array.prototype.push] = NoOp();
     models[Array.prototype.keys] = NoOp();
     models[Array.prototype.concat] = NoOp();
     models[Array.prototype.forEach] = NoOp();

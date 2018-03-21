@@ -94,11 +94,12 @@ class SymbolicState {
     }
 
     _buildPC(childInputs, i) {
-        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable with checks ${allChecks.length}`);
 
         const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
         const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
         const solution = this._checkSat(newPC, i, allChecks);
+
+        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable`);
 
         if (solution) {
             this._addInput(newPC, solution, i, childInputs);
