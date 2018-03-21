@@ -308,7 +308,7 @@ class SymbolicExecution {
             const left_c  = this.state.getConcrete(left),
                   right_c = this.state.getConcrete(right);
 
-            const is_same_type == typeof(left_c) === typeof(right_c);
+            const is_same_type = typeof(left_c) === typeof(right_c);
             const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
             const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
