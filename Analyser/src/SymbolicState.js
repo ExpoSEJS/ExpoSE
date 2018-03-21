@@ -466,7 +466,7 @@ class SymbolicState {
                         return bool_s ? this.ctx.mkNot(bool_s) : undefined;
                     case "+":
                          return this.ctx.mkStrToInt(left_s)
-                    case "-"
+                    case "-":
                          return this.ctx.mkUnaryMinus(this.ctx.mkStrToInt(left_s));
                 }
 
