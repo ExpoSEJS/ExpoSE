@@ -16,10 +16,6 @@ import External from './External';
 //Electron can't resolve external library's directly. The External packages makes that transparent
 const Tropigate = External('Tropigate');
 
-function isNumberReal(v) {
-    return !Number.isNaN(v) && Number.isFinite(v);
-}
-
 class SymbolicExecution {
 
     constructor(sandbox, initialInput, exitFn) {
@@ -311,7 +307,7 @@ class SymbolicExecution {
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
         if (left_c === undefined || right_c === undefined || left_c === null || right_c === null || 
-            typeof left_c != typeof right_c || !isNumberReal(left_c) || !isNumberReal(right_c)) {
+            typeof left_c != typeof right_c || !Number.isFinite(left_c) || !Number.isFinite(right_c)) {
             Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
             left = left_c;
             right = right_c;
