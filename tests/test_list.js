@@ -22,7 +22,8 @@ function buildTestList() {
     buildTest('bool/basic.js', 4, 1);
 
     //Pure Symbols
-    buildTest('pure/pure_symbol.js', 8, 0);
+    buildTest('pure/pure_symbol', 8, 0);
+    buildTest('pure/two_symbols', 84, 22); 
 
     //Test symbol renaming
     buildTest('renaming/rename_simple', 3, 2);
