@@ -398,7 +398,7 @@ class SymbolicState {
             return typeof field_c === "number" && Number.isFinite(field_c);
         }
 
-        if (canHaveFields() && isRealNumber(this.isRealNumber(field_c))) { 
+        if (canHaveFields() && isRealNumber()) { 
 
             const withinBounds = this.ctx.mkAnd(
                 this.ctx.mkGt(field_s, this.ctx.mkIntVal(-1)),
