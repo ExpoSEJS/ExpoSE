@@ -456,23 +456,35 @@ class SymbolicState {
     _symbolicUnary(op, left_c, left_s) {
         this.stats.seen('Symbolic Unary');
 
-        switch (op) {
+        switch (typeof(left_c)) {
+        
+            case "string":
 
-            case "!":
-                    let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
-                    return bool_s ? this.ctx.mkNot(bool_s) : undefined;
-
-            case "+":
-                    return typeof left_c === 'string' ? this.ctx.mkStrToInt(left_s) : left_s;
-
-            case "-":
-                
-                if (typeof left_c == 'string') {
-                    Log.log('Casting string to int, if its a real you will get incorrect result');
-                    return this.ctx.mkStrToInt(left_s);
+                switch (op) {
+                    case "!":
+                        let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
+                        return bool_s ? this.ctx.mkNot(bool_s) : undefined;
+                    case "+":
+                         return this.ctx.mkStrToInt(left_s)
+                    case "-"
+                         return this.ctx.mkUnaryMinus(this.ctx.mkStrToInt(left_s));
                 }
 
-                return this.ctx.mkUnaryMinus(left_s);
+                break;
+
+            case "number":
+                
+                switch (op) {
+                    case "!":
+                        let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
+                        return bool_s ? this.ctx.mkNot(bool_s) : undefined;
+                    case "+":
+                        return left_s;
+                    case "-":
+                        return this.ctx.mkUnaryMinus(left_s);
+                }
+
+                break;
         }
 
         Log.log("Unsupported symbolic operand: " + op);

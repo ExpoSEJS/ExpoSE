@@ -354,7 +354,7 @@ class SymbolicExecution {
         return {
             op: op,
             left: left,
-            skip: this.state.isSymbolic(left)
+            skip: this.state.isWrapped(left)
         }
     }
 
