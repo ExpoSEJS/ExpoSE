@@ -395,10 +395,10 @@ class SymbolicState {
         }
 
         function isRealNumber() {
-            return typeof field_c === "number" && !Number.isNaN(field_c);
+            return typeof field_c === "number" && Number.isFinite(field_c);
         }
- 
-        if (canHaveFields() && isRealNumber()) { 
+
+        if (canHaveFields() && isRealNumber(this.isRealNumber(field_c))) { 
 
             const withinBounds = this.ctx.mkAnd(
                 this.ctx.mkGt(field_s, this.ctx.mkIntVal(-1)),

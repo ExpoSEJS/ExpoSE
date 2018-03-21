@@ -300,19 +300,26 @@ class SymbolicExecution {
     }
 
     binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
-        
-        const left_c  = this.state.getConcrete(left),
-              right_c = this.state.getConcrete(right);
-
+ 
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
-        if (left_c === undefined || right_c === undefined || left_c === null || right_c === null || 
-            typeof left_c != typeof right_c || !Number.isFinite(left_c) || !Number.isFinite(right_c)) {
-            Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
-            left = left_c;
-            right = right_c;
-        } else {
-            Log.logHigh('Not concretizing ' + op + ' ' + left + ' ' + right + ' ' + typeof left_c + ' ' + typeof right_c);
+        if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
+ 
+            const left_c  = this.state.getConcrete(left),
+                  right_c = this.state.getConcrete(right);
+
+            const is_same_type == typeof(left_c) === typeof(right_c);
+            const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
+            const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
+ 
+            if (is_same_type && !is_null && is_real) {
+                Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
+                left = left_c;
+                right = right_c;
+            } else {
+                Log.logHigh('Not concretizing ' + op + ' ' + left + ' ' + right + ' ' + typeof left_c + ' ' + typeof right_c);
+            }
+
         }
 
         // Don't evaluate natively when args are symbolic
