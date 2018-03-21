@@ -144,7 +144,7 @@ class SymbolicState {
     _getSort(concrete) {
         let sort;
 
-        switch (typeof concrete) {
+        switch (typeof(concrete)) {
 
             case 'boolean':
                 sort = this.boolSort;
@@ -374,8 +374,8 @@ class SymbolicState {
     }
 
     binary(op, left, right) {
-        const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right)),
-              result_s = this._symbolicBinary(op,
+        const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right));
+        const result_s = this._symbolicBinary(op,
                             this.getConcrete(left),
                             this.asSymbolic(left),
                             this.getConcrete(right),
@@ -495,8 +495,8 @@ class SymbolicState {
      */
     constantSymbol(val) {
         this.stats.seen('Wrapped Constants');
-        
-        switch (typeof val) {
+     
+        switch (typeof(val)) {
             case 'boolean':
                 return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
             case 'number':
@@ -504,7 +504,7 @@ class SymbolicState {
             case 'string':
                 return this.ctx.mkString(val.toString());
             default:
-                Log.log("Symbolic expressions with " + typeof val + " literals not yet supported.");
+                Log.log("Symbolic expressions with " + typeof(val) + " literals not yet supported.");
         }
 
         return undefined;
