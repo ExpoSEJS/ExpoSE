@@ -44,8 +44,8 @@ function buildTestList() {
     buildTest('arrays/string', 3, 1);
     buildTest('arrays/includes_index_of', 3, 1);
     buildTest('arrays/bool', 5, 3);
-    buildtest('arrays/push', 2, 1);
-    buildtest('arrays/pop', 2, 1);
+    buildTest('arrays/push', 2, 1);
+    buildTest('arrays/pop', 2, 1);
 
     //Integers
     buildTest('integers/hello.js', 2, 0);
