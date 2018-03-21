@@ -555,7 +555,6 @@ function BuildModels(state) {
         if (is_symbolic && args_well_formed) {
             Log.log('Push symbolic prototype');
             const array = state.asSymbolic(base);
-            const value = state.asSymbolic(args[0]);
 
             const oldLength = array.getLength();
             const newLength = ctx.mkAdd(oldLength, ctx.mkIntVal(-1));
