@@ -46,6 +46,8 @@ function buildTestList() {
     buildTest('arrays/bool', 5, 3);
     buildTest('arrays/push', 2, 1);
     buildTest('arrays/pop', 2, 1);
+    buildTest('arrays/push_conc', 1, 0);
+    buildTest('arrays/pop_conc', 1, 0);
 
     //Integers
     buildTest('integers/hello.js', 2, 0);
