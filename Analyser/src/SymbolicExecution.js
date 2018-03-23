@@ -309,7 +309,7 @@ class SymbolicExecution {
                   right_c = this.state.getConcrete(right);
 
             //TODO: Work out how to check that boxed values are the same type
-            const is_same_type = typeof(left_c) === typeof(right_c);
+            const is_same_type = typeof(left_c) === typeof(right_c) || (left_c.valueOf && right_c.valueOf && left_c.valueOf() == right_c.valueOf());
             
             //We also consider boxed primatives to be primative
             const is_primative = typeof(left_c) != 'object' || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
@@ -340,22 +340,17 @@ class SymbolicExecution {
 
         Log.logHigh('Op ' + op + ' left ' + ObjectHelper.asString(left) + ' right ' + ObjectHelper.asString(right) + ' result_c ' + ObjectHelper.asString(result_c) + ' at ' + this._location(iid));
 
+        let result;
+
         if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
-            return this._binarySymbolic(op, left, right, result_c);
+            result = this.state.binary(op, left, right);
         } else {
-            return {
-                result: result_c
-            }
+            result = result_c;
         }
-    }
-
-    _binarySymbolic(op, left, right, result_c) {
-
-        Log.logMid(`Symbolically evaluating binary ${op} ${left} ${right}`);
 
         return {
-            result: this.state.binary(op, left, right)
-        };
+            result: result
+        }
     }
 
     unaryPre(iid, op, left) {
@@ -381,6 +376,9 @@ class SymbolicExecution {
 
     conditional(iid, result) {
         this.state.coverage.touch_cnd(iid, this.state.getConcrete(result));
+
+        console.log('Conditional: ' + result);
+        Log.logHigh(`Evaluating conditional ${ObjectHelper.asString(result)}`);
 
         if (this.state.isSymbolic(result)) {
             Log.logMid(`Evaluating symbolic condition ${this.state.asSymbolic(result)} at ${this._location(iid)}`);

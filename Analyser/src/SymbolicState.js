@@ -523,7 +523,11 @@ class SymbolicState {
      */
     constantSymbol(val) {
         this.stats.seen('Wrapped Constants');
-     
+
+        if (typeof(val) === "object") {
+            val = val.valueOf();
+        }
+ 
         switch (typeof(val)) {
             case 'boolean':
                 return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
