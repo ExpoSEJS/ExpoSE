@@ -170,13 +170,15 @@ class SymbolicState {
         return arg;
     }
 
-    concretizeCall(f, base, args) {
+    concretizeCall(f, base, args, report = true) {
         
         this.stats.set('Concretized Function Calls', f.name);
 
-        Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
-        
-        base = this._deepConcrete(base);;
+        if (report) {
+            Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
+        }        
+
+        base = this._deepConcrete(base);
 
         const n_args = Array(args.length);
 

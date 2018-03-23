@@ -690,11 +690,14 @@ function BuildModels(state) {
     /**
      * Models for methods on Object
      */
-    models[Object] = function(_f, base, args, _r) {
-        let result = Object.apply(state.getConcrete(base), map.apply(args, x => state.getConcrete(args)));
+    models[Object] = function(f, base, args, _r) {
+
+        let concrete = state.concretizeCall(f, base, args, false);
+
+        let result = Object.apply(concrete.base, concrete.args);
 
         if (state.isSymbolic(args[0])) {
-            result = new ConcolicValue(result, this.asSymbolic(args[0]));
+            result = new ConcolicValue(result, state.asSymbolic(args[0]));
         }
 
         return result;
