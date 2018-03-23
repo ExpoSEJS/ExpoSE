@@ -8,10 +8,7 @@ import External from './External';
 import Config from './Config';
 import SymbolicHelper from './SymbolicHelper';
 import { SymbolicObject } from './Values/SymbolicObject';
-import {
-    WrappedValue,
-    ConcolicValue
-} from './Values/WrappedValue';
+import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
 
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
@@ -28,20 +25,12 @@ class SymbolicState {
 	    );
 
         this.input = input;
-
-        this.boolSort = this.ctx.mkBoolSort();
-        this.stringSort = this.ctx.mkStringSort();
-        this.realSort = this.ctx.mkRealSort();
-
-        this.coverage = new Coverage(sandbox);
-
         this.inputSymbols = {};
-
         this.pathCondition = [];
-        this.errors = [];
-        this.seen = [];
 
         this.stats = new Stats();
+        this.coverage = new Coverage(sandbox);
+        this.errors = [];
     }
 
     pushCondition(cnd, binder) {
@@ -148,15 +137,15 @@ class SymbolicState {
         switch (typeof(concrete)) {
 
             case 'boolean':
-                sort = this.boolSort;
+                sort = this.ctx.mkBoolSort();
                 break;
 
             case 'number':
-                sort = this.realSort;
+                sort = this.ctx.mkRealSort();
                 break;
 
             case 'string':
-                sort = this.stringSort;
+                sort = this.ctx.mkStringSort();
                 break;
 
             default:
@@ -295,13 +284,19 @@ class SymbolicState {
             this.stats.max('Max Queries (Succesful)', Z3.Query.LAST_ATTEMPTS);
         } else {
             this.stats.seen('Failed Queries');
-
             if (Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS) {
                 this.stats.seen('Failed Queries (Max Refinements)');
             }
         }
 
-        Log.logQuery(clause.toString(), this.slv.toString(), checks.length, startTime, endTime, model ? model.toString() : undefined, Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS);
+        Log.logQuery(clause.toString(),
+            this.slv.toString(),
+            checks.length,
+            startTime,
+            endTime,
+            model ? model.toString() : undefined,
+            Z3.Query.LAST_ATTEMPTS, Z3.Query.LAST_ATTEMPTS == Z3.Query.MAX_REFINEMENTS
+        );
 
         return model ? this.getSolution(model) : undefined;
     }
@@ -376,18 +371,18 @@ class SymbolicState {
         return undefined;
     }
 
+    /** 
+     * Symbolic binary operation, expects two concolic values and an operator
+     */
     binary(op, left, right) {
         const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right));
-        const result_s = this._symbolicBinary(op,
-                            this.getConcrete(left),
-                            this.asSymbolic(left),
-                            this.getConcrete(right),
-                            this.asSymbolic(right)
-                         );
-
+        const result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
         return result_s ? new ConcolicValue(result_c, result_s) : result_c;
     }
 
+    /**
+     * Symbolic field lookup - currently only has support for symbolic arrays / strings
+     */
     symbolicField(base_c, base_s, field_c, field_s) {
         this.stats.seen('Symbolic Field');
 
@@ -547,6 +542,9 @@ class SymbolicState {
         return this.isSymbolic(val) ? val : new ConcolicValue(val, this.constantSymbol(val));
     }
 
+    /**
+     * Assert left == right on the path condition
+     */
     assertEqual(left, right) {
         const equalityTest = this.binary('==', left, right);
         this.conditional(equalityTest);

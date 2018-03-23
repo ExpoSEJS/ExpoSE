@@ -688,6 +688,19 @@ function BuildModels(state) {
     models[Function.prototype.call] = ConcretizeIfNative();
 
     /**
+     * Models for methods on Object
+     */
+    models[Object] = function(_f, base, args, _r) {
+        let result = Object.apply(state.getConcrete(base), map.apply(args, x => state.getConcrete(args)));
+
+        if (state.isSymbolic(args[0])) {
+            result = new ConcolicValue(result, this.asSymbolic(args[0]));
+        }
+
+        return result;
+    }
+
+    /**
      * Secret _expose hooks for symbols.js
      */
 
