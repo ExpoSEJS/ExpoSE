@@ -375,9 +375,7 @@ class SymbolicExecution {
     }
 
     conditional(iid, result) {
-        this.state.coverage.touch_cnd(iid, this.state.getConcrete(result));
-
-        console.log('Conditional: ' + result);
+        this.state.coverage.touch_cnd(iid, this.state.getConcrete(result)); 
         Log.logHigh(`Evaluating conditional ${ObjectHelper.asString(result)}`);
 
         if (this.state.isSymbolic(result)) {
