@@ -57,6 +57,7 @@ function buildTestList() {
     buildTest('integers/mul.js', 2, 0);
     buildTest('integers/breaker.js', 1, 0);
     buildTest('integers/infoflow.js', 17, 0);
+    buildTest('numbers/floor.js', 3, 2);
 
     //Eval
     buildTest('eval/test.js', 2, 1);
