@@ -307,8 +307,8 @@ class SymbolicExecution {
 
     binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
 
-        left = this._unbox(v);
-        right = this._unbox(v);
+        left = this._unbox(left);
+        right = this._unbox(left);
  
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
