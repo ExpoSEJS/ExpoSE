@@ -488,12 +488,12 @@ function BuildModels(state) {
         }
     );
 
-    models[floor] = symbolicHook(
+    models[Math.floor] = symbolicHook(
         (_f, base, args, _r) => c.state.isSymbolic(args[0]),
         (_f, base, args, _r) => ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0]))),
     );
 
-    models[ceil] = symbolicHook(
+    models[Math.ceil] = symbolicHook(
         (_f, base, args, _r) => c.state.isSymbolic(args[0]),
         (_f, base, args, _r) => ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0]))),
     );
