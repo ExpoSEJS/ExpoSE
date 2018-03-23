@@ -686,6 +686,7 @@ function BuildModels(state) {
     //TODO: Test IsNative for apply, bind & call
     models[Function.prototype.apply] = ConcretizeIfNative();
     models[Function.prototype.call] = ConcretizeIfNative();
+    models[Function.prototype.bind] = ConcretizeIfNative();
 
     /**
      * Models for methods on Object
