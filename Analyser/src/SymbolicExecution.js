@@ -299,14 +299,25 @@ class SymbolicExecution {
         };
     }
 
+    /**
+     * Unboxs Object('...') values
+     */
     _unbox(v) {
-        let v_c = this.state.getConcrete(v).valueOf();
+        let v_c = this.state.getConcrete(v);
         let v_s = this.state.asSymbolic(v);
+
+        if (v_c.valueOf) {
+            v_c = v_c.valueOf();
+        }
+
         return v_s ? new ConcolicValue(v_c, v_s) : v_c;
     }
 
     binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
 
+        /**
+         * TODO: Our treatment of unboxing is not standard and could introduce false paths
+         */
         left = this._unbox(left);
         right = this._unbox(left);
  
