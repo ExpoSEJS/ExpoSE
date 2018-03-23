@@ -312,7 +312,7 @@ class SymbolicExecution {
             const is_same_type = typeof(left_c) === typeof(right_c);
             
             //We also consider boxed primatives to be primative
-            const is_primative = typeof(left_c) != 'object' || (v_c instanceof Number || v_c instanceof String || v_c instanceof Boolean);
+            const is_primative = typeof(left_c) != 'object' || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
             const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
             const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
