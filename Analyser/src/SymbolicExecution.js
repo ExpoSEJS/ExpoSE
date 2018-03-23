@@ -299,28 +299,7 @@ class SymbolicExecution {
         };
     }
 
-    /**
-     * Unboxs Object('...') values
-     */
-    _unbox(v) {
-        let v_c = this.state.getConcrete(v);
-        let v_s = this.state.getSymbolic(v);
-
-        if (v_c instanceof Number || v_c instanceof String || v_c instanceof Boolean) {
-            v_c = v_c.valueOf();
-        }
-
-        return v_s ? new ConcolicValue(v_c, v_s) : v_c;
-    }
-
     binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
-
-        /**
-         * TODO: Our treatment of unboxing is not standard and could introduce false paths
-         * TODO: This is going to be a very very expensive op
-         */
-        left = this._unbox(left);
-        right = this._unbox(right);
  
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
@@ -329,8 +308,11 @@ class SymbolicExecution {
             const left_c  = this.state.getConcrete(left),
                   right_c = this.state.getConcrete(right);
 
+            //TODO: Work out how to check that boxed values are the same type
             const is_same_type = typeof(left_c) === typeof(right_c);
-            const is_primative = typeof(left_c) != 'object';
+            
+            //We also consider boxed primatives to be primative
+            const is_primative = typeof(left_c) != 'object' || (v_c instanceof Number || v_c instanceof String || v_c instanceof Boolean);
             const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
             const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
