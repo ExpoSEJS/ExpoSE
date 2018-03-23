@@ -317,6 +317,10 @@ class SymbolicState {
         return val instanceof WrappedValue ? val.getConcrete() : val;
     }
 
+    getSymbolic(val) {
+        return ConcolicValue.getSymbolic(val);
+    }
+
     asSymbolic(val) {
         return ConcolicValue.getSymbolic(val) || this.constantSymbol(val);
     }

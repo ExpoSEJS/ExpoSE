@@ -304,9 +304,9 @@ class SymbolicExecution {
      */
     _unbox(v) {
         let v_c = this.state.getConcrete(v);
-        let v_s = this.state.asSymbolic(v);
+        let v_s = this.state.getSymbolic(v);
 
-        if (v_c.valueOf) {
+        if (v_c instanceof Number || v_c instanceof String || v_c instanceof Boolean) {
             v_c = v_c.valueOf();
         }
 
@@ -317,9 +317,10 @@ class SymbolicExecution {
 
         /**
          * TODO: Our treatment of unboxing is not standard and could introduce false paths
+         * TODO: This is going to be a very very expensive op
          */
         left = this._unbox(left);
-        right = this._unbox(left);
+        right = this._unbox(right);
  
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
