@@ -30,6 +30,7 @@ function buildTestList() {
     buildTest('renaming/rename', 12, 11);
 
     //Object Tests
+    buildTest('objects/constructor', 2, 1);
     buildTest('objects/concrete.js', 1, 0);
     buildTest('objects/pure_object.js', 10, 1);
 
