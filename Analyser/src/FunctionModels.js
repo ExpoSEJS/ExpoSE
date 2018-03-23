@@ -696,7 +696,7 @@ function BuildModels(state) {
 
         let result = Object.apply(concrete.base, concrete.args);
 
-        if (!(concrete instanceof Object) && state.isSymbolic(args[0])) {
+        if (!(concrete.args[0] instanceof Object) && state.isSymbolic(args[0])) {
             result = new ConcolicValue(result, state.asSymbolic(args[0]));
         }
 
