@@ -299,7 +299,16 @@ class SymbolicExecution {
         };
     }
 
+    _unbox(v) {
+        let v_c = this.state.getConcrete(v).valueOf();
+        let v_s = this.state.asSymbolic(v);
+        return v_s ? new ConcolicValue(v_c, v_s) : v_c;
+    }
+
     binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
+
+        left = this._unbox(v);
+        right = this._unbox(v);
  
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
