@@ -54,8 +54,11 @@ class SymbolicExecution {
 
         /**
          * Concretize the function if it is native and we do not have a custom model for it
+         * TODO: We force concretization on toString functions to avoid recursive call from the lookup into this.models
+         * TODO: This is caused by getField(obj) calling obj.toString()
+         * TODO: A better solution to this needs to be found
          */
-        if (isNative(f) && !this.models[f]) {
+        if (isNative(f) && (f.name != 'toString' || !this.models[f])) {
             const concretized = this.state.concretizeCall(f, base, args);
             base = concretized.base;
             args = concretized.args;
