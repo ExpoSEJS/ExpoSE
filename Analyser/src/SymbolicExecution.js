@@ -50,9 +50,7 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
         Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
 
-        f = this.state.getConcrete(f);
-        
-        let skip = false;
+        f = this.state.getConcrete(f); 
 
         /**
          * Concretize the function if it is native and we do not have a custom model for it
@@ -61,7 +59,6 @@ class SymbolicExecution {
             const concretized = this.state.concretizeCall(f, base, args);
             base = concretized.base;
             args = concretized.args;
-            skip = true;
         }
 
         /**
@@ -71,7 +68,7 @@ class SymbolicExecution {
             f: f,
             base: base,
             args: args,
-            skip: skip
+            skip: !!this.models[f]
         };
     }
 
