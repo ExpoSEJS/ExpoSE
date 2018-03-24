@@ -55,10 +55,7 @@ class SymbolicExecution {
         /**
          * Concretize the function if it is native and we do not have a custom model for it
          */
-
-        const isModelled = !!this.models[f];
-
-        if (!isModelled && isNative(f)) {
+        if (isNative(f) && !this.models[f]) {
             const concretized = this.state.concretizeCall(f, base, args);
             base = concretized.base;
             args = concretized.args;
@@ -67,7 +64,6 @@ class SymbolicExecution {
         /**
          * End of conc
          */
-
         return {
             f: f,
             base: base,
