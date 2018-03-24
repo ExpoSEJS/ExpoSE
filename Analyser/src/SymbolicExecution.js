@@ -58,7 +58,7 @@ class SymbolicExecution {
          * TODO: This is caused by getField(obj) calling obj.toString()
          * TODO: A better solution to this needs to be found
          */
-        if (isNative(f) && (f.name != 'toString' || !this.models[f])) {
+        if (isNative(f) && (f.name == 'toString' || !this.models[f])) {
             const concretized = this.state.concretizeCall(f, base, args);
             base = concretized.base;
             args = concretized.args;
