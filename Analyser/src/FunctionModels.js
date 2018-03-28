@@ -356,9 +356,10 @@ function BuildModels(state) {
     function ConcretizeIfNative() {
         return function(f, base, args, result) {
             let is_native = isNative(base);
+
             if (is_native) {
                 Log.log('WARNING: Concretizing model for ' + f.name);
-                const concretized = state.concretizeCall(f, base, args);
+                const concretized = state.concretizeCall(f, base, args, false);
                 base = concretized.base;
                 args = concretized.args;
             }

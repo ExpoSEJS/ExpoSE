@@ -104,7 +104,7 @@ class SymbolicExecution {
 
     declare(iid, name, val, isArgument, argumentIndex, isCatchParam) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Declare ' + name + ' at ' + this._location(iid));
+        Log.logHigh(`decl ${name} at ${this._location(iid)}`);
         return {
             result: val
         };
@@ -139,7 +139,7 @@ class SymbolicExecution {
 
         //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
         if (base instanceof SymbolicObject) {
-            Log.logMid('Potential loss of precision, cocretize offset on SymbolicObject field lookups');
+            Log.logMid(`Potential loss of precision, cocretize offset on SymbolicObject field lookups`);
             return {
                 result: base.getField(this.state, this.state.getConcrete(offset))
             };
@@ -190,7 +190,7 @@ class SymbolicExecution {
         //TODO: Enumerate if symbolic offset and concrete input
 
         if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array) {
-            Log.log('TODO: Check that setField is homogonous');
+            Log.log(`TODO: Check that setField is homogonous`);
 
             //SetField produce a new array
             //Therefore the symbolic portion of base needs to be updated
