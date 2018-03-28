@@ -135,14 +135,14 @@ class SymbolicExecution {
      */
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
+        Log.logHigh(`Get field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
         //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
         if (base instanceof SymbolicObject) {
             Log.logMid('Potential loss of precision, cocretize offset on SymbolicObject field lookups');
             return {
                 result: base.getField(this.state, this.state.getConcrete(offset))
-            }
+            };
         }
 
         //If we are evaluating a symbolic string offset on a concrete base then enumerate all fields
@@ -153,7 +153,7 @@ class SymbolicExecution {
             this._getFieldSymbolicOffset(base, offset);
             return {
                 result: base[this.state.getConcrete(offset)]
-            }
+            };
         } 
 
         //Otherwise defer to symbolicField
@@ -167,7 +167,7 @@ class SymbolicExecution {
 
     putFieldPre(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Put field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
+        Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
         return {
             base: base,
