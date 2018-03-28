@@ -48,7 +48,7 @@ class SymbolicExecution {
 
     invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
+        Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
         f = this.state.getConcrete(f); 
 
