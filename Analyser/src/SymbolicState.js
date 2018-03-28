@@ -170,11 +170,10 @@ class SymbolicState {
         return arg;
     }
 
-    concretizeCall(f, base, args, report = true) {
-        
-        this.stats.set('Concretized Function Calls', f.name);
+    concretizeCall(f, base, args, report = true) { 
 
         if (report) {
+            this.stats.set('Concretized Function Calls', f.name);
             Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
         }        
 
