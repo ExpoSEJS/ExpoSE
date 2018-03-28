@@ -38,7 +38,7 @@ class SymbolicExecution {
             return;
         }
 
-        Log.log('Uncaught exception ' + e + (e.stack ? ('(stack ' + e.stack + ')') : ''));
+        Log.log(`Uncaught exception ${e} Stack: ${e.stack ? e.stack : ''}`);
 
         this.state.errors.push({
             error: '' + e,
