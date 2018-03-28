@@ -240,14 +240,12 @@ class SymbolicExecution {
 
     functionEnter(iid, f, dis, args) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Entering ' + ObjectHelper.asString(f) + ' ' + this._location(iid));
+        Log.logHigh(`Entering ${ObjectHelper.asString(f)} near ${this._location(iid)}`);
     }
 
     functionExit(iid, returnVal, wrappedExceptionVal) {
         this.state.coverage.touch(iid);
-
-        Log.logHigh('Exiting function ' + this._location(iid));
-
+        Log.logHigh(`Exiting function ${this._location(iid)}`);
         return {
             returnVal: returnVal,
             wrappedExceptionVal: wrappedExceptionVal,
@@ -270,7 +268,7 @@ class SymbolicExecution {
     scriptEnter(iid, instrumentedFileName, originalFileName) {
         this.state.coverage.touch(iid);
 
-        const enterString = "====== ENTERING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
+        const enterString = `====== ENTERING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
 
         if (this._scriptDepth() == 0) {
             Log.log(enterString);
@@ -284,7 +282,7 @@ class SymbolicExecution {
     scriptExit(iid, wrappedExceptionVal) {
         this.state.coverage.touch(iid);
         const originalFileName = this._removeScript();
-        const exitString = "====== EXITING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
+        const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
 
         if (this._scriptDepth() > 0) {
             Log.logMid(exitString);
