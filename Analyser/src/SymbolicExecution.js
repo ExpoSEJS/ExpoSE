@@ -154,7 +154,22 @@ class SymbolicExecution {
             return {
                 result: base[this.state.getConcrete(offset)]
             };
-        } 
+        }
+
+        //If the array is a symbolic int and the base is a concrete array then enumerate all the indices
+        if (!this.state.isSymbolic(base) &&
+             this.state.isSymbolic(offset) &&
+             this.state.getConcrete(base) instanceof Array &&
+             typeof this.state.getConcrete(offset) == 'number') {
+
+            for (let i = 0; i < this.state.getConcrete(base).length; i++) {
+                this.state.assertEqual(i, offset); 
+            }
+
+            return {
+                result: base[this.state.getConcrete(offset)]
+            }
+        }
 
         //Otherwise defer to symbolicField
         const result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
@@ -314,7 +329,7 @@ class SymbolicExecution {
             const is_same_type = typeof(left_c) === typeof(right_c) || (!is_null && left_c.valueOf() == right_c.valueOf());
             
             if (!is_same_type || !is_primative || is_null || !is_real) {
-                Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
+                Log.log(`Concretizing binary ${op} on operands of differing types. Type coercion not yet implemented symbolically. (${ObjectHelper.asString(left_c)}, ${ObjectHelper.asString(right_c)}) (${typeof left_c}, ${typeof right_c})`);
                 left = left_c;
                 right = right_c;
             } else {

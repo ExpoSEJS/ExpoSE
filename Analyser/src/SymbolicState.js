@@ -175,7 +175,7 @@ class SymbolicState {
         if (report) {
             this.stats.set('Concretized Function Calls', f.name);
             Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
-        }        
+        } 
 
         base = this._deepConcrete(base);
 
