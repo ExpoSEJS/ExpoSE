@@ -49,6 +49,7 @@ function buildTestList() {
     buildTest('arrays/pop', 2, 1);
     buildTest('arrays/push_conc', 1, 0);
     buildTest('arrays/pop_conc', 1, 0);
+    buildTest('arrays/enumerate_concrete', 4, 3);
 
     //Integers
     buildTest('integers/hello.js', 2, 0);
