@@ -13,8 +13,6 @@ import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
 
-Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
-
 class SymbolicState {
     constructor(input, sandbox) {
         this.ctx = new Z3.Context();
@@ -28,6 +26,8 @@ class SymbolicState {
             ]
 	    );
 
+        Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
+
         this.input = input;
         this.inputSymbols = {};
         this.pathCondition = [];
@@ -35,6 +35,47 @@ class SymbolicState {
         this.stats = new Stats();
         this.coverage = new Coverage(sandbox);
         this.errors = [];
+
+
+        this._unaryJumpTable = {
+            'boolean':  {
+                '+': function(val_s) {
+                    return ctx.mkIte(val_s, this.constantSymbol(1), this.constantSymbol(0));
+                },
+                '-': function(val_s) {
+                    return ctx.mkIte(val_s, this.constantSymbol(-1), this.constantSymbol(0));               
+                },
+                '!': function(val_s) {
+                    return ctx.mkNot(val_s);
+                }
+            }
+            'number': {
+                '!': function(val_s, val_c) {
+                    let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(val_c, val_s)));
+                    return bool_s ? ctx.mkNot(bool_s) : undefined;
+                },
+                '+': function(val_s) {
+                    return val_s;
+                },
+                '-': function(val_s) {
+                    return ctx.mkUnaryMinus(val_s);
+                }
+            },
+            'string': {
+                '!': function(val_s, val_c) {
+                    let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(val_c, val_s)));
+                    return bool_s ? ctx.mkNot(bool_s) : undefined;
+                },
+                '+': function(val_s) {
+                    return ctx.mkStrToInt(val_s);
+                },
+                '-': function(val_s) {
+                    return ctx.mkUnaryMinus(
+                        ctx.mkStrToInt(val_s)
+                    );
+               }
+            }
+        }
     }
 
     pushCondition(cnd, binder) {
@@ -460,53 +501,14 @@ class SymbolicState {
     _symbolicUnary(op, left_c, left_s) {
         this.stats.seen('Symbolic Unary');
 
-        switch (typeof(left_c)) {
-       
-            case "boolean":
+        const unaryFn = this._unaryJumpTable[typeof(left_c)][op];
 
-                switch (op) {
-
-                    case "!":
-                        return this.ctx.mkNot(left_s);
-                    case "+":
-                        return this.ctx.mkIte(left_s, this.constantSymbol(1), this.constantSymbol(0));
-                    case "-":
-                        return this.ctx.mkIte(left_s, this.constantSymbol(-1), this.constantSymbol(0));
-                }
-
-                break;
- 
-            case "string":
-
-                switch (op) {
-                    case "!":
-                        let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
-                        return bool_s ? this.ctx.mkNot(bool_s) : undefined;
-                    case "+":
-                         return this.ctx.mkStrToInt(left_s)
-                    case "-":
-                         return this.ctx.mkUnaryMinus(this.ctx.mkStrToInt(left_s));
-                }
-
-                break;
-
-            case "number":
-                
-                switch (op) {
-                    case "!":
-                        let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(left_c, left_s)));
-                        return bool_s ? this.ctx.mkNot(bool_s) : undefined;
-                    case "+":
-                        return left_s;
-                    case "-":
-                        return this.ctx.mkUnaryMinus(left_s);
-                }
-
-                break;
+        if (unaryFn) {
+            return unaryFn(left_s, left_c);
+        } else {
+            Log.log(`Unsupported symbolic operand: ${op} on ${left_c} symbolic ${left_s}`);
+            return undefined;
         }
-
-        Log.log(`Unsupported symbolic operand: ${op} on ${left_c} symbolic ${left_s}`);
-        return undefined;
     }
 
     /**
