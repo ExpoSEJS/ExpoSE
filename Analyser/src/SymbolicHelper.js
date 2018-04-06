@@ -40,7 +40,7 @@ const BinaryJumpTable = {
     'in': function(l, r) { return l in r; }
 };
 
-const UnaryJumpTable {
+const UnaryJumpTable = {
     '!': function(v) { return !v; },
     '~': function(v) { return ~v; },
     '-': function(v) { return -v; },
