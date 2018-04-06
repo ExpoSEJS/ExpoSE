@@ -23,7 +23,7 @@ class SymbolicState {
             Config.incrementalSolverEnabled,
             [
                 { name: 'timeout', value: Config.maxSolverTime },
-                { name: 'random_seed', value: Math.random() * 10000000 },
+                { name: 'random_seed', value: Math.random() * Math.pow(2, 32)},
                 { name: 'phase_selection', value: 5 }
             ]
 	    );
