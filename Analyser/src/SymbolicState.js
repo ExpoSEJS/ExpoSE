@@ -47,7 +47,7 @@ class SymbolicState {
                 '!': function(val_s) {
                     return ctx.mkNot(val_s);
                 }
-            }
+            },
             'number': {
                 '!': function(val_s, val_c) {
                     let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(val_c, val_s)));
