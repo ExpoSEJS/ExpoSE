@@ -21,7 +21,11 @@ class SymbolicState {
         
         this.slv = new Z3.Solver(this.ctx,
             Config.incrementalSolverEnabled,
-            [{ name: 'timeout', value: Config.maxSolverTime }]
+            [
+                { name: 'timeout', value: Config.maxSolverTime },
+                { name: 'random_seed', value: Math.floor(Math.random() * Math.pow(2, 32))},
+                { name: 'phase_selection', value: 5 }
+            ]
 	    );
 
         this.input = input;
@@ -169,13 +173,12 @@ class SymbolicState {
         return arg;
     }
 
-    concretizeCall(f, base, args, report = true) {
-        
-        this.stats.set('Concretized Function Calls', f.name);
+    concretizeCall(f, base, args, report = true) { 
 
         if (report) {
+            this.stats.set('Concretized Function Calls', f.name);
             Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
-        }        
+        } 
 
         base = this._deepConcrete(base);
 

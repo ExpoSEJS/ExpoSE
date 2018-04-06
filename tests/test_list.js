@@ -16,6 +16,7 @@ function buildTestList() {
     buildTest('core/recursion.js', 1, 0);
     buildTest('core/lamda.js', 1, 0);
     buildTest('core/conc_diff.js', 3, 2);
+    buildTest('core/spaced name.js', 2, 1);
 
     //Booleans
     buildTest('bool/hello.js', 2, 0);
@@ -49,6 +50,7 @@ function buildTestList() {
     buildTest('arrays/pop', 2, 1);
     buildTest('arrays/push_conc', 1, 0);
     buildTest('arrays/pop_conc', 1, 0);
+    buildTest('arrays/enumerate_concrete', 4, 3);
 
     //Integers
     buildTest('integers/hello.js', 2, 0);
@@ -104,6 +106,7 @@ function buildTestList() {
     buildTest('regex/core/alternation/words.js', 4, 4);
     buildTest('regex/core/alternation/exhaustive_simple.js', 5, 5);
     buildTest('regex/core/alternation/multiple_related.js', 7, 7);
+    buildTest('regex/core/johannes', 5, 4);
 
     buildTest('regex/core/literals/simple_one.js', 2, 1);
     buildTest('regex/core/literals/simple_two.js', 2, 1);

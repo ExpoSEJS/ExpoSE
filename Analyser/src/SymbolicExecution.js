@@ -38,7 +38,7 @@ class SymbolicExecution {
             return;
         }
 
-        Log.log('Uncaught exception ' + e + (e.stack ? ('(stack ' + e.stack + ')') : ''));
+        Log.log(`Uncaught exception ${e} Stack: ${e.stack ? e.stack : ''}`);
 
         this.state.errors.push({
             error: '' + e,
@@ -48,7 +48,7 @@ class SymbolicExecution {
 
     invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Execute function ' + ObjectHelper.asString(f) + ' at ' + this._location(iid));
+        Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
         f = this.state.getConcrete(f); 
 
@@ -104,7 +104,7 @@ class SymbolicExecution {
 
     declare(iid, name, val, isArgument, argumentIndex, isCatchParam) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Declare ' + name + ' at ' + this._location(iid));
+        Log.logHigh(`decl ${name} at ${this._location(iid)}`);
         return {
             result: val
         };
@@ -135,14 +135,14 @@ class SymbolicExecution {
      */
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Get field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
+        Log.logHigh(`Get field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
         //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
         if (base instanceof SymbolicObject) {
-            Log.logMid('Potential loss of precision, cocretize offset on SymbolicObject field lookups');
+            Log.logMid(`Potential loss of precision, cocretize offset on SymbolicObject field lookups`);
             return {
                 result: base.getField(this.state, this.state.getConcrete(offset))
-            }
+            };
         }
 
         //If we are evaluating a symbolic string offset on a concrete base then enumerate all fields
@@ -153,8 +153,23 @@ class SymbolicExecution {
             this._getFieldSymbolicOffset(base, offset);
             return {
                 result: base[this.state.getConcrete(offset)]
+            };
+        }
+
+        //If the array is a symbolic int and the base is a concrete array then enumerate all the indices
+        if (!this.state.isSymbolic(base) &&
+             this.state.isSymbolic(offset) &&
+             this.state.getConcrete(base) instanceof Array &&
+             typeof this.state.getConcrete(offset) == 'number') {
+
+            for (let i = 0; i < this.state.getConcrete(base).length; i++) {
+                this.state.assertEqual(i, offset); 
             }
-        } 
+
+            return {
+                result: base[this.state.getConcrete(offset)]
+            }
+        }
 
         //Otherwise defer to symbolicField
         const result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
@@ -167,7 +182,7 @@ class SymbolicExecution {
 
     putFieldPre(iid, base, offset, val, isComputed, isOpAssign) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Put field ' + ObjectHelper.asString(base) + '.' + ObjectHelper.asString(offset) + ' at ' + this._location(iid));
+        Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
         return {
             base: base,
@@ -190,7 +205,7 @@ class SymbolicExecution {
         //TODO: Enumerate if symbolic offset and concrete input
 
         if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array) {
-            Log.log('TODO: Check that setField is homogonous');
+            Log.log(`TODO: Check that setField is homogonous`);
 
             //SetField produce a new array
             //Therefore the symbolic portion of base needs to be updated
@@ -240,14 +255,12 @@ class SymbolicExecution {
 
     functionEnter(iid, f, dis, args) {
         this.state.coverage.touch(iid);
-        Log.logHigh('Entering ' + ObjectHelper.asString(f) + ' ' + this._location(iid));
+        Log.logHigh(`Entering ${ObjectHelper.asString(f)} near ${this._location(iid)}`);
     }
 
     functionExit(iid, returnVal, wrappedExceptionVal) {
         this.state.coverage.touch(iid);
-
-        Log.logHigh('Exiting function ' + this._location(iid));
-
+        Log.logHigh(`Exiting function ${this._location(iid)}`);
         return {
             returnVal: returnVal,
             wrappedExceptionVal: wrappedExceptionVal,
@@ -270,7 +283,7 @@ class SymbolicExecution {
     scriptEnter(iid, instrumentedFileName, originalFileName) {
         this.state.coverage.touch(iid);
 
-        const enterString = "====== ENTERING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
+        const enterString = `====== ENTERING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
 
         if (this._scriptDepth() == 0) {
             Log.log(enterString);
@@ -284,7 +297,7 @@ class SymbolicExecution {
     scriptExit(iid, wrappedExceptionVal) {
         this.state.coverage.touch(iid);
         const originalFileName = this._removeScript();
-        const exitString = "====== EXITING SCRIPT " + originalFileName + " depth " + this._scriptDepth() + " ======";
+        const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
 
         if (this._scriptDepth() > 0) {
             Log.logMid(exitString);
@@ -316,7 +329,7 @@ class SymbolicExecution {
             const is_same_type = typeof(left_c) === typeof(right_c) || (!is_null && left_c.valueOf() == right_c.valueOf());
             
             if (!is_same_type || !is_primative || is_null || !is_real) {
-                Log.log("Concretizing binary " + op + " on operands of differing types. Type coercion not yet implemented symbolically. (" + ObjectHelper.asString(left_c) + ", " + ObjectHelper.asString(right_c) + ') (' + typeof left_c + ', ' + typeof right_c + ')');
+                Log.log(`Concretizing binary ${op} on operands of differing types. Type coercion not yet implemented symbolically. (${ObjectHelper.asString(left_c)}, ${ObjectHelper.asString(right_c)}) (${typeof left_c}, ${typeof right_c})`);
                 left = left_c;
                 right = right_c;
             } else {

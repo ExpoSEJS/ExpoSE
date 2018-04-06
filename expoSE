@@ -2,7 +2,7 @@
 
 function abs_target {
 	#Generate the absolute path of test script
-	cd $2
+	cd "$2"
 	cd "$(dirname "$1")"
 	echo "$(printf "%s/%s\n" "$(pwd)" "$(basename "$1")")" 
 }
@@ -57,8 +57,8 @@ elif [ "$1" == "test_suite" ]; then
 	./scripts/run_tests
 	exit $?
 else
-	TARGET_REAL_PATH="$(abs_target $1 $ORIGIN_PATH)"
-	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse $TARGET_REAL_PATH "${@:2}"
+	TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
+	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
 	node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
 	exit $?
 fi

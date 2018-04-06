@@ -1,3 +1,26 @@
 #!/usr/bin/env bash
-echo "export EXPOSE_PATH=\"$(./scripts/abspath ./)\" #EXPOSE_ENTRY" >> ~/.bashrc
-echo "export PATH=\$PATH:\$EXPOSE_PATH" "#EXPOSE_ENTRY" >> ~/.bashrc
+
+read -p "Install to PATH (y/N): " -n 1 -r
+echo ""   # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    echo "Installing to path"
+    SOURCE_LINE="export EXPOSE_PATH=\"$(./scripts/abspath ./)\"; export PATH=\$PATH:\$EXPOSE_PATH #EXPOSE_ENTRY"
+
+    echo "Cleaning previous installations"
+    ./scripts/setup/cleanup_bashprofile ~/.bashrc
+    ./scripts/setup/cleanup_bashprofile ~/.bash_profile
+    ./scripts/setup/cleanup_bashprofile ~/.zshrc
+
+    if [ -f ~/.bashrc ]; then 
+        echo "${SOURCE_LINE}" >> ~/.bashrc
+    fi
+
+    if [ -f ~/.bash_profile ]; then
+        echo "${SOURCE_LINE}" >> ~/.bash_profile
+    fi
+
+    if [ -f ~/.zshrc ]; then
+        echo "${SOURCE_LINE}" >> ~/.zshrc
+    fi
+fi

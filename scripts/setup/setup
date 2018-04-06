@@ -11,14 +11,9 @@ echo "Setting Up Packages"
 
 touch ~/.bashrc
 
-echo "Cleaning previous installations"
-./scripts/setup/cleanup_bashprofile
-
 echo "Installing into PATH"
 ./scripts/setup/install_bashprofile
 
 ./scripts/build/build_analyser
-
-touch ~/.expose_setup
 
 exit 0

@@ -356,9 +356,10 @@ function BuildModels(state) {
     function ConcretizeIfNative() {
         return function(f, base, args, result) {
             let is_native = isNative(base);
+
             if (is_native) {
                 Log.log('WARNING: Concretizing model for ' + f.name);
-                const concretized = state.concretizeCall(f, base, args);
+                const concretized = state.concretizeCall(f, base, args, false);
                 base = concretized.base;
                 args = concretized.args;
             }
@@ -540,7 +541,7 @@ function BuildModels(state) {
     models[Array.prototype.push] = function(_f, base, args, _r) {
         const is_symbolic = state.isSymbolic(base);
         const args_well_formed = state.getConcrete(base) instanceof Array;
-        Log.log('TODO: Push prototype is not smart enough to decide array type');
+        Log.logMid('TODO: Push prototype is not smart enough to decide array type');
         if (is_symbolic) {
             Log.log('Push symbolic prototype');
             const array = state.asSymbolic(base);

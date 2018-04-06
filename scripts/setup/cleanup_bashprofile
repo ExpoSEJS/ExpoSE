@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
-mv ~/.bashrc ~/.bachrc_tmp_expose
-sed "s/.*#EXPOSE_ENTRY//g" < ~/.bachrc_tmp_expose > ~/.bashrc
-rm ~/.bachrc_tmp_expose
+if [ -f $1 ]; then
+    mv $1 ~/.bachrc_tmp_expose
+    sed "s/.*#EXPOSE_ENTRY//g" < ~/.bachrc_tmp_expose > $1
+    rm ~/.bachrc_tmp_expose
+fi
