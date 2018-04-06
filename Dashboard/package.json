@@ -11,7 +11,7 @@
     "electron": "^1.4.1"
   },
   "dependencies": {
-    "electron": "^1.4.15",
+    "electron": "^1.8.3",
     "photon": "^2.0.0",
     "tmp": "0.0.31"
   }
