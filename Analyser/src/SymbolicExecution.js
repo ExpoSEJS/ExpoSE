@@ -326,7 +326,7 @@ class SymbolicExecution {
             const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
             //TODO: Work out how to check that boxed values are the same type
-            const is_same_type = typeof(left_c) === typeof(right_c) || (!is_null && left_c.valueOf() == right_c.valueOf());
+            const is_same_type = typeof(left_c) === typeof(right_c) || (!is_null && left_c.valueOf() === right_c.valueOf());
             
             if (!is_same_type || !is_primative || is_null || !is_real) {
                 Log.log(`Concretizing binary ${op} on operands of differing types. Type coercion not yet implemented symbolically. (${ObjectHelper.asString(left_c)}, ${ObjectHelper.asString(right_c)}) (${typeof left_c}, ${typeof right_c})`);
