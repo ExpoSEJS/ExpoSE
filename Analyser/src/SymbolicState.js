@@ -36,7 +36,6 @@ class SymbolicState {
         this.coverage = new Coverage(sandbox);
         this.errors = [];
 
-
         this._unaryJumpTable = {
             'boolean':  {
                 '+': function(val_s) {

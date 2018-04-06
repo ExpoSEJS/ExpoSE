@@ -4,92 +4,56 @@
 
 import Log from './Utilities/Log';
 
+const BinaryJumpTable = {
+    '==': function(left, right) { return left == right; },
+    '===': function(left, right) { return left === right; },
+
+    '!=': function(left, right) { return left != right; },
+    '!==': function(left, right) { return left !== right; },
+
+    '<': function(left, right) { return left < right; },
+    '>': function(left, right) { return left > right; },
+
+    '<=': function(left, right) { return left <= right; },
+    '>=': function(left, right) { return left >= right; },
+    
+    '+': function(left, right) { return left + right; },
+    '-': function(left, right) { return left - right; },
+
+    '*': function(left, right) { return left * right; },
+    '/': function(left, right) { return left / right; },
+
+    '%': function(left, right) { return left % right; },
+    
+    '>>': function(left, right) { return left >> right; },
+    '<<': function(left, right) { return left << right; },
+    '>>>': function(left, right) { return left >>> right; },
+
+    '&': function(left, right) { return left & right; },
+    '&&': function(left, right) { return left && right; },
+
+    '|': function(l, r) { return l | r; },
+    '||': function(l, r) { return l || r; },
+
+    '^': function(l, r) { return l ^ r; },
+    'instanceof': function(l, r) { return l instanceof r; },
+    'in': function(l, r) { return l in r; }
+};
+
+const UnaryJumpTable {
+    '!': function(v) { return !v; },
+    '~': function(v) { return ~v; },
+    '-': function(v) { return -v; },
+    '+': function(v) { return +v; },
+    'typeof': function(v) { return typeof v; }
+};
+
 export default {
     evalBinary: function(op, left, right) {
-        switch (op) {
-
-            case "==":
-                return (left == right);
-            case "===":
-                return (left === right);
-
-            case "!=":
-                return (left != right);
-            case "!==":
-                return (left !== right);
-
-            case "<":
-                return (left < right);
-            case ">":
-                return (left > right);
-
-            case "<=":
-                return (left <= right);
-            case ">=":
-                return (left >= right);
-
-            case "+":
-                return (left + right);
-            case "-":
-                return (left - right);
-
-            case "*":
-                return (left * right);
-            case "/":
-                return (left / right);
-
-            case "%":
-                return (left % right);
-
-            case ">>":
-                return (left >> right);
-            case "<<":
-                return (left << right);
-
-            case ">>>":
-                return (left >>> right);
-
-
-            case "&":
-                return (left & right);
-            case "&&":
-                return (left && right);
-
-            case "|":
-                return (left | right);
-            case "||":
-                return (left || right);
-
-            case "^":
-                return (left ^ right);
-
-            case "instanceof":
-                return (left instanceof right);
-
-            case "in":
-                return (left in right);
-
-            default:
-                Log.log("Unsupported binary operator " + op + " for concrete evaluation.");
-                return undefined;
-        }
+        return BinaryJumpTable[op](left, right);
     },
 
     evalUnary: function(op, left) {
-        switch (op) {
-            case "!":
-                return !left;
-            case "~":
-                return ~left;
-            case "-":
-                return -left;
-            case "+":
-                return +left;
-            case "typeof":
-                return typeof left;
-            default:
-                Log.log("Unsupported unary operator " + op + " for concrete evaluation.");
-                return undefined;
-        }
+        return UnaryJumpTable[op](left);
     }
 };
