@@ -106,6 +106,7 @@ function buildTestList() {
     buildTest('regex/core/alternation/words.js', 4, 4);
     buildTest('regex/core/alternation/exhaustive_simple.js', 5, 5);
     buildTest('regex/core/alternation/multiple_related.js', 7, 7);
+    buildTest('regex/core/johannes', 5, 4);
 
     buildTest('regex/core/literals/simple_one.js', 2, 1);
     buildTest('regex/core/literals/simple_two.js', 2, 1);
