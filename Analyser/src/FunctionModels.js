@@ -468,7 +468,7 @@ function BuildModels(state) {
     );
 
     models[String.prototype.trim] = symbolicHook(
-        (_f, base, _a, _r) => state.isSymbolic(base),
+        (_f, base, _a, _r) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
         (_f, base, _a, result) => {
             Log.log('TODO: Trim model does not currently do anything');
             return new ConcolicValue(result, state.asSymbolic(base));
@@ -476,7 +476,7 @@ function BuildModels(state) {
     );
 
     models[String.prototype.toLowerCase] = symbolicHook(
-        (_f, base, _a, _r) => state.isSymbolic(base),
+        (_f, base, _a, _r) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
         (_f, base, _a, result) => {
             base = coerceToString(base);
 
@@ -592,7 +592,7 @@ function BuildModels(state) {
     } 
 
     models[Array.prototype.indexOf] = symbolicHook(
-        (_f, base, args, _r) => state.isSymbolic(base),
+        (_f, base, args, _r) => state.isSymbolic(base) && state.getConcrete(base) instanceof Array,
         (_f, base, args, result) => {
 
             const searchTarget = state.asSymbolic(args[0]);
@@ -650,7 +650,7 @@ function BuildModels(state) {
     models[Array.prototype.includes] = symbolicHook(
         (_f, base, args, _r) => {
             const is_symbolic = state.isSymbolic(base);
-            const is_well_formed =  typeof state.getConcrete(args[0]) == typeof state.getConcrete(base)[0];
+            const is_well_formed = state.getConcrete(base) instanceof Array;
             return is_symbolic && is_well_formed;
         },
         (_f, base, args, result) => {
@@ -703,9 +703,7 @@ function BuildModels(state) {
      * Models for methods on Object
      */
     models[Object] = function(f, base, args, _r) {
-
-        let concrete = state.concretizeCall(f, base, args, false);
-
+        const concrete = state.concretizeCall(f, base, args, false);
         let result = Object.apply(concrete.base, concrete.args);
 
         if (!(concrete.args[0] instanceof Object) && state.isSymbolic(args[0])) {
