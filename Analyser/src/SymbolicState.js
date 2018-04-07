@@ -13,6 +13,49 @@ import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
 const Stats = External('Stats');
 const Z3 = External('z3javascript');
 
+function BuildUnaryJumpTable(state) {
+    const ctx = state.ctx;
+    return {
+        'boolean':  {
+            '+': function(val_s) {
+                return ctx.mkIte(val_s, state.constantSymbol(1), state.constantSymbol(0));
+            },
+            '-': function(val_s) {
+                return ctx.mkIte(val_s, state.constantSymbol(-1), state.constantSymbol(0));               
+            },
+            '!': function(val_s) {
+                return ctx.mkNot(val_s);
+            }
+        },
+        'number': {
+            '!': function(val_s, val_c) {
+                let bool_s = state.asSymbolic(state.toBool(new ConcolicValue(val_c, val_s)));
+                return bool_s ? ctx.mkNot(bool_s) : undefined;
+            },
+            '+': function(val_s) {
+                return val_s;
+            },
+            '-': function(val_s) {
+                return ctx.mkUnaryMinus(val_s);
+            }
+        },
+        'string': {
+            '!': function(val_s, val_c) {
+                let bool_s = state.asSymbolic(state.toBool(new ConcolicValue(val_c, val_s)));
+                return bool_s ? ctx.mkNot(bool_s) : undefined;
+            },
+            '+': function(val_s) {
+                return ctx.mkStrToInt(val_s);
+            },
+            '-': function(val_s) {
+                return ctx.mkUnaryMinus(
+                    ctx.mkStrToInt(val_s)
+                );
+           }
+        }
+    } 
+}
+
 class SymbolicState {
     constructor(input, sandbox) {
         this.ctx = new Z3.Context();
@@ -36,46 +79,8 @@ class SymbolicState {
         this.coverage = new Coverage(sandbox);
         this.errors = [];
 
-        this._unaryJumpTable = {
-            'boolean':  {
-                '+': function(val_s) {
-                    return ctx.mkIte(val_s, this.constantSymbol(1), this.constantSymbol(0));
-                },
-                '-': function(val_s) {
-                    return ctx.mkIte(val_s, this.constantSymbol(-1), this.constantSymbol(0));               
-                },
-                '!': function(val_s) {
-                    return ctx.mkNot(val_s);
-                }
-            },
-            'number': {
-                '!': function(val_s, val_c) {
-                    let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(val_c, val_s)));
-                    return bool_s ? ctx.mkNot(bool_s) : undefined;
-                },
-                '+': function(val_s) {
-                    return val_s;
-                },
-                '-': function(val_s) {
-                    return ctx.mkUnaryMinus(val_s);
-                }
-            },
-            'string': {
-                '!': function(val_s, val_c) {
-                    let bool_s = this.asSymbolic(this.toBool(new ConcolicValue(val_c, val_s)));
-                    return bool_s ? ctx.mkNot(bool_s) : undefined;
-                },
-                '+': function(val_s) {
-                    return ctx.mkStrToInt(val_s);
-                },
-                '-': function(val_s) {
-                    return ctx.mkUnaryMinus(
-                        ctx.mkStrToInt(val_s)
-                    );
-               }
-            }
-        }
-    }
+        this._unaryJumpTable = BuildUnaryJumpTable(this);
+     }
 
     pushCondition(cnd, binder) {
         this.pathCondition.push({
