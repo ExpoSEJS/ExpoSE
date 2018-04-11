@@ -33,6 +33,10 @@ function Model() {
     this.add = function(fn, mdl) {
         this._models.push({ fn: fn, mdl: mdl });
     }
+
+    this.get = function(fn) {
+        return this._models.find(x => x == fn);
+    }
 }
 
 function BuildArrayModels(state, ctx, model) {
