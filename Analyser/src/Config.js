@@ -6,7 +6,7 @@ function Default(i, d) {
 export default {
     incrementalSolverEnabled: !!Default('USE_INCREMENTAL_SOLVER', true),
     maxRefinements: Number.parseInt(Default('MAX_REFINEMENTS', '50')),
-    maxSolverTime: Number.parseInt(Default('MAX_SOLVER_TIME', 900000)),
+    maxSolverTime: Number.parseInt(Default('MAX_SOLVER_TIME', 1800000)),
     regexEnabled: !Default('DISABLE_REGULAR_EXPRESSIONS', false),
     capturesEnabled: !Default('DISABLE_CAPTURE_GROUPS', false),
     refinementsEnabled: !Default('DISABLE_REFINEMENTS', false),
