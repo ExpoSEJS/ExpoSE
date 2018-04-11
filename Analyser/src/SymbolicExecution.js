@@ -52,13 +52,16 @@ class SymbolicExecution {
 
         f = this.state.getConcrete(f); 
 
+        const fn_model = this.models.get(f);
+        const needs_conc = isNative(f) && !fn_model;
+
         /**
          * Concretize the function if it is native and we do not have a custom model for it
          * TODO: We force concretization on toString functions to avoid recursive call from the lookup into this.models
          * TODO: This is caused by getField(obj) calling obj.toString()
          * TODO: A better solution to this needs to be found
          */
-        if (isNative(f) && (f.name == 'toString' || !this.models[f])) {
+        if (needs_conc) {
             const concretized = this.state.concretizeCall(f, base, args);
             base = concretized.base;
             args = concretized.args;
@@ -68,10 +71,10 @@ class SymbolicExecution {
          * End of conc
          */
         return {
-            f: f,
+            f: fn_model || f,
             base: base,
             args: args,
-            skip: !!this.models[f]
+            skip: false
         };
     }
 
@@ -81,7 +84,7 @@ class SymbolicExecution {
     invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
-        return { result: this.models[f] ? this.models[f](f, base, args, result) : result };
+        return { result: result };
     }
 
     literal(iid, val, hasGetterSetter) {
