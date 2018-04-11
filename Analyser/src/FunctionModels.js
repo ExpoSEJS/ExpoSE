@@ -34,7 +34,7 @@ function Model() {
         this._models.push({ 
             fn: fn,
             mdl: function() {
-                return mdl.call(null, fn, this, arguments);
+                return mdl.call(null, this, arguments);
             }
         });
     }
@@ -53,8 +53,8 @@ function BuildModels(state) {
 
     let model = new Model();
 
-    function ConcretizeIfNative() {
-        return function(f, base, args, result) {
+    function ConcretizeIfNative(f) {
+        return function(base, args) {
             let is_native = isNative(base);
 
             if (is_native) {
@@ -89,10 +89,12 @@ function BuildModels(state) {
      *
      * A function which makes up the new function model is returned
      */
-    function symbolicHook(condition, hook, concretize = true, featureDisabled = false) {
-        return function(f, base, args, result) {
+    function symbolicHook(f, condition, hook, concretize = true, featureDisabled = false) {
+        return function(base, args) {
 
             let thrown = undefined;
+            
+            let result;
 
             //Defer throw until after hook has run
             try {
@@ -105,8 +107,8 @@ function BuildModels(state) {
 
             Log.logMid(`Symbolic Testing ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)} and initial result ${ObjectHelper.asString(result)}`);
 
-            if (!featureDisabled && condition(f, base, args, result)) {
-                result = hook(f, base, args, result);
+            if (!featureDisabled && condition(base, args)) {
+                result = hook(base, args, result);
             }
 
             Log.logMid(`Result: ${'' + result} Thrown: ${'' + thrown}`);
@@ -120,16 +122,16 @@ function BuildModels(state) {
     }
 
     //Hook for regex methods, will only hook if regex is enabled
-    function symbolicHookRe(condition, hook) {
-        return symbolicHook(condition, function() {
+    function symbolicHookRe(f, condition, hook) {
+        return symbolicHook(f, condition, function() {
             //Intercept the hook to do regex stats
-            state.stats.seen('Regular Expressions');
+            state.stats.seen('Regex Function Model');
             return hook.apply(this, arguments);
         }, true, !Config.regexEnabled);
     }
 
-    function NoOp() {
-        return function(f, base, args, result) {
+    function NoOp(f) {
+        return function(base, args) {
             Log.logMid(`NoOp ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)}`);
             return f.apply(base, args);
         };
@@ -149,7 +151,7 @@ function BuildModels(state) {
             return ctx.mkStringSymbol(`_fn_${fn}_${funcCounter++}_`);
         }
 
-        model.add(Array.prototype.push, function(_f, base, args, _r) {
+        model.add(Array.prototype.push, function(base, args) {
             const is_symbolic = state.isSymbolic(base);
             const args_well_formed = state.getConcrete(base) instanceof Array;
             Log.logMid('TODO: Push prototype is not smart enough to decide array type');
@@ -177,7 +179,7 @@ function BuildModels(state) {
             }    
         });
 
-        model.add(Array.prototype.pop, function(_f, base, args, _r) {
+        model.add(Array.prototype.pop, function(base, args) {
             const is_symbolic = state.isSymbolic(base);
             const args_well_formed = state.getConcrete(base) instanceof Array;
             Log.log('TODO: Push prototype is not smart enough to decide array type');
@@ -204,8 +206,9 @@ function BuildModels(state) {
         });
 
         model.add(Array.prototype.indexOf, symbolicHook(
-            (_f, base, args, _r) => state.isSymbolic(base) && state.getConcrete(base) instanceof Array,
-            (_f, base, args, result) => {
+            Array.prototype.indexOf,
+            (base, args) => state.isSymbolic(base) && state.getConcrete(base) instanceof Array,
+            (base, args, result) => {
 
                 const searchTarget = state.asSymbolic(args[0]);
                 const startIndex = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
@@ -260,12 +263,13 @@ function BuildModels(state) {
         ));
 
         model.add(Array.prototype.includes, symbolicHook(
-            (_f, base, args, _r) => {
+            Array.prototype.includes,
+            (base, args) => {
                 const is_symbolic = state.isSymbolic(base);
                 const is_well_formed = state.getConcrete(base) instanceof Array;
                 return is_symbolic && is_well_formed;
             },
-            (_f, base, args, result) => {
+            (base, args, result) => {
 
                 const searchTarget = state.asSymbolic(args[0]);
 
@@ -471,7 +475,7 @@ function BuildModels(state) {
             return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexOrZero);
         }
 
-        function substringHelper(_f, base, args, result) {
+        function substringHelper(base, args, result) {
             state.stats.seen('Symbolic Substrings');
 
             const target = state.asSymbolic(base);
@@ -563,12 +567,14 @@ function BuildModels(state) {
          * Stubs string constructor with our (flaky) coerceToString fn
          */
         model.add(String, symbolicHook(
-            (_f, _base, args, _result) => state.isSymbolic(args[0]),
-            (_f, _base, args, result) => coerceToString(args[0])
+            String,
+            (_base, args) => state.isSymbolic(args[0]),
+            (_base, args, result) => coerceToString(args[0])
         ));
 
         const substrModel = symbolicHook(
-            (_f, base, args, _) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+            String.prototype.substr,
+            (base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
             substringHelper
         );
 
@@ -577,12 +583,13 @@ function BuildModels(state) {
         model.add(String.prototype.slice, substrModel);
 
         model.add(String.prototype.charAt, symbolicHook(
-            (_f, base, args, _r) => {
+            String.prototype.charAt,
+            (base, args) => {
                 const is_symbolic = (state.isSymbolic(base) || state.isSymbolic(args[0]));
                 const is_well_formed = typeof state.getConcrete(base) === "string" && typeof state.getConcrete(args[0]) === "number";
                 return is_symbolic && is_well_formed;
             },
-            (_f, base, args, result) => {
+            (base, args, result) => {
                 const index_s = ctx.mkRealToInt(state.asSymbolic(args[0]));
                 const char_s = ctx.mkSeqAt(state.asSymbolic(base), index_s);
                 return new ConcolicValue(result, char_s);
@@ -590,8 +597,9 @@ function BuildModels(state) {
         ));
 
         model.add(String.prototype.concat, symbolicHook(
-            (_f, base, args, _r) => state.isSymbolic(base) || find.call(args, arg => state.isSymbolic(arg)),
-            (_f, base, args, result) => {
+            String.prototype.concat,
+            (base, args) => state.isSymbolic(base) || find.call(args, arg => state.isSymbolic(arg)),
+            (base, args, result) => {
                 const arg_s_list = Array.prototype.map.call(args, arg => state.asSymbolic(arg));
                 const concat_s = ctx.mkSeqConcat([state.asSymbolic(base)].concat(arg_s_list));
                 return new ConcolicValue(result, concat_s);
@@ -599,8 +607,9 @@ function BuildModels(state) {
         ));
 
         model.add(String.prototype.indexOf, symbolicHook(
-            (_f, base, args, _r) => typeof state.getConcrete(base) === 'string' && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
-            (_f, base, args, result) => {
+            String.prototype.indexOf,
+            (base, args) => typeof state.getConcrete(base) === 'string' && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+            (base, args, result) => {
                 const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
                 const off_s = ctx.mkRealToInt(off_real);
                 const target_s = state.asSymbolic(coerceToString(args[0]));
@@ -610,47 +619,55 @@ function BuildModels(state) {
         ));
 
         model.add(String.prototype.search, symbolicHookRe(
-            (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp,
-            (_f, base, args, result) => RegexSearch(args[0], base, result)
+            String.prototype.search,
+            (base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
+            (base, args, result) => RegexSearch(args[0], base, result)
         ));
 
         model.add(String.prototype.match, symbolicHookRe(
-            (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp,
-            (_f, base, args, result) => RegexMatch(args[0], base, result)
+            String.prototype.match,
+            (base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
+            (base, args, result) => RegexMatch(args[0], base, result)
         ));
 
         model.add(RegExp.prototype.exec, symbolicHookRe(
-            (_f, base, args, _r) => base instanceof RegExp && state.isSymbolic(args[0]),
-            (_f, base, args, result) => RegexMatch(base, args[0], result)
+            RegExp.prototype.exec,
+            (base, args) => base instanceof RegExp && state.isSymbolic(args[0]),
+            (base, args, result) => RegexMatch(base, args[0], result)
         ));
 
         model.add(RegExp.prototype.test, symbolicHookRe(
-            (_f, _base, args, _r) => state.isSymbolic(args[0]),
-            (_f, base, args, result) => rewriteTestSticky(base, coerceToString(args[0]), result)
+            RegExp.prototype.test,
+            (_base, args) => state.isSymbolic(args[0]),
+            (base, args, result) => rewriteTestSticky(base, coerceToString(args[0]), result)
         ));
 
         //Replace model for replace regex by string. Does not model replace with callback.
         model.add(String.prototype.replace, symbolicHookRe(
-            (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
-            (_f, base, args, result) => state.getConcrete(base).secret_replace.apply(base, args)
+            String.prototype.replace,
+            (base, args) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
+            (base, args, result) => state.getConcrete(base).secret_replace.apply(base, args)
         ));
 
         model.add(String.prototype.split, symbolicHookRe(
-            (_f, base, args, _r) => state.isSymbolic(base) && args[0] instanceof RegExp,
-            (_f, base, args, result) => state.getConcrete(base).secret_split.apply(base, args)
+            String.prototype.split,
+            (base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
+            (base, args, result) => state.getConcrete(base).secret_split.apply(base, args)
         ));
 
         model.add(String.prototype.trim, symbolicHook(
-            (_f, base, _a, _r) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
-            (_f, base, _a, result) => {
+            String.prototype.trim,
+            (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
+            (base, _a, result) => {
                 Log.log('TODO: Trim model does not currently do anything');
                 return new ConcolicValue(result, state.asSymbolic(base));
             }
         ));
 
         model.add(String.prototype.toLowerCase, symbolicHook(
-            (_f, base, _a, _r) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
-            (_f, base, _a, result) => {
+            String.prototype.toLowerCase,
+            (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
+            (base, _a, result) => {
                 base = coerceToString(base);
 
                 state.pushCondition(
@@ -667,13 +684,15 @@ function BuildModels(state) {
     function BuildMathModels(state, ctx, model) {
 
         model.add(Math.floor, symbolicHook(
-            (_f, base, args, _r) => state.isSymbolic(args[0]),
-            (_f, base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
+            Math.floor,
+            (base, args) => state.isSymbolic(args[0]),
+            (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
         ));
 
         model.add(Math.ceil, symbolicHook(
-            (_f, base, args, _r) => state.isSymbolic(args[0]),
-            (_f, base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
+            Math.ceil,
+            (base, args) => state.isSymbolic(args[0]),
+            (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
         ));
 
         /*
@@ -708,24 +727,24 @@ function BuildModels(state) {
     BuildStringModels(state, ctx, model);
     BuildArrayModels(state, ctx, model);
     
-    model.add(Array.prototype.keys, NoOp());
-    model.add(Array.prototype.concat, NoOp());
-    model.add(Array.prototype.forEach, NoOp());
-    model.add(Array.prototype.filter, NoOp());
-    model.add(Array.prototype.map, NoOp());
-    model.add(Array.prototype.shift, NoOp());
-    model.add(Array.prototype.unshift, NoOp());
-    model.add(Array.prototype.fill, NoOp());
+    model.add(Array.prototype.keys, NoOp(Array.prototype.keys));
+    model.add(Array.prototype.concat, NoOp(Array.prototype.concat));
+    model.add(Array.prototype.forEach, NoOp(Array.prototype.forEach));
+    model.add(Array.prototype.filter, NoOp(Array.prototype.filter));
+    model.add(Array.prototype.map, NoOp(Array.prototype.map));
+    model.add(Array.prototype.shift, NoOp(Array.prototype.shift));
+    model.add(Array.prototype.unshift, NoOp(Array.prototype.unshift));
+    model.add(Array.prototype.fill, NoOp(Array.prototype.fill));
 
     //TODO: Test IsNative for apply, bind & call
-    model.add(Function.prototype.apply, ConcretizeIfNative());
-    model.add(Function.prototype.call, ConcretizeIfNative());
-    model.add(Function.prototype.bind, ConcretizeIfNative());
+    model.add(Function.prototype.apply, ConcretizeIfNative(Function.prototype.apply));
+    model.add(Function.prototype.call, ConcretizeIfNative(Function.prototype.call));
+    model.add(Function.prototype.bind, ConcretizeIfNative(Function.prototype.bind));
 
     /**
      * Models for methods on Object
      */
-    model.add(Object, function(f, base, args, _r) {
+    model.add(Object, function(base, args) {
         const concrete = state.concretizeCall(f, base, args, false);
         let result = Object.apply(concrete.base, concrete.args);
 
