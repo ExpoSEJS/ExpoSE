@@ -22,20 +22,25 @@ function isNativeCore(value) {
         (value && type == 'object' && reHostCtor.test(toString.call(value))) || false;
 }
 
-let nativeCache = {};
+function isNative(v) {
+    const type = typeof v;
+    if (type == 'function' || type == 'object') {
 
-/**
- * Check nativeCache to see if method has been cached
- * If miss, isNative, store, return
- * Else return cache
- */
-function isNative(value) {
-    if (nativeCache[value] !== undefined) {
-        return nativeCache[value];
-    } else {
-        let result = isNativeCore(value);
-        nativeCache[value] = result;
+        if (v[SECRET_CACHE_STR]) {
+            return v[SECRET_CACHE_STR]['isNative'];
+        }
+
+        let result = isNativeCore(v);
+        
+        try {
+            v[SECRET_CACHE_STR] = { isNative: result };
+        } catch (e) {
+            //TODO: We can't cache this result because non-enumerable? report
+        }        
+
         return result;
+    } else {
+        return false;
     }
 }
 

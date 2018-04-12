@@ -67,7 +67,7 @@ function BuildModels(state) {
                 args = concretized.args;
             }
 
-            return f.apply(fn_model ? base : fn_model, args);
+            return f.apply(fn_model || base, args);
         };
     }
 
