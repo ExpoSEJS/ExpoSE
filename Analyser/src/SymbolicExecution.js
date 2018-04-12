@@ -53,7 +53,7 @@ class SymbolicExecution {
         f = this.state.getConcrete(f); 
 
         const fn_model = this.models.get(f);
-        const needs_conc = isNative(f) && !fn_model;
+        const needs_conc = !fn_model && isNative(f); 
 
         /**
          * Concretize the function if it is native and we do not have a custom model for it
@@ -62,6 +62,7 @@ class SymbolicExecution {
          * TODO: A better solution to this needs to be found
          */
         if (needs_conc) {
+            console.log('Concretizing ' + f.name);
             const concretized = this.state.concretizeCall(f, base, args);
             base = concretized.base;
             args = concretized.args;

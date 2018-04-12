@@ -55,7 +55,10 @@ function BuildModels(state) {
 
     function ConcretizeIfNative(f) {
         return function(base, args) {
-            let is_native = isNative(base);
+
+            base = state.getConcrete(base);
+            const fn_model = model.get(base);
+            const is_native = !fn_model && isNative(base);
 
             if (is_native) {
                 Log.log('WARNING: Concretizing model for ' + f.name);
@@ -64,7 +67,7 @@ function BuildModels(state) {
                 args = concretized.args;
             }
 
-            return f.apply(base, args);
+            return f.apply(fn_model ? base : fn_model, args);
         };
     }
 
@@ -745,7 +748,7 @@ function BuildModels(state) {
      * Models for methods on Object
      */
     model.add(Object, function(base, args) {
-        const concrete = state.concretizeCall(f, base, args, false);
+        const concrete = state.concretizeCall(Object, base, args, false);
         let result = Object.apply(concrete.base, concrete.args);
 
         if (!(concrete.args[0] instanceof Object) && state.isSymbolic(args[0])) {
