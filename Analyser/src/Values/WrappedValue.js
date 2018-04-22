@@ -45,37 +45,15 @@ class WrappedValue {
     }
 }
 
-class Types {
-    
-    constructor(initial) {
-        this._types = initial;
-    }
-
-    add(type) {
-        this._types.push(type);
-        return this;    
-    }
-
-    remove(type) {
-        const typeIdx = this._types.indexOf(type);
-        
-        if (typeIdx != -1) {
-            this._types.splice(typeIdx, 1);
-        }
-
-        return this;
-    }
-
-    serialize() {
-        return JSON.stringify(this._types);
-    }
-}
-
 class ConcolicValue extends WrappedValue {
-    
-    constructor(concrete, symbolic) {
+
+    /**
+     * TODO: I'm not sure I like passing array type with concolic values to sanity check comparisons
+     */    
+    constructor(concrete, symbolic, arrayType = undefined) {
         super(concrete);
         this.symbolic = symbolic;
+        this._arrayType = arrayType;
     }
 
     toString() {
@@ -94,9 +72,10 @@ class ConcolicValue extends WrappedValue {
         return this.symbolic;
     }
 
-    getType() {
-        return typeof this.getConcrete();
+    getArrayType() {
+        return this._arrayType;
     }
+
 }
 
 ConcolicValue.getSymbolic = function(val) {
@@ -109,4 +88,4 @@ ConcolicValue.setSymbolic = function(val, val_s) {
     }
 };
 
-export {WrappedValue, Types, ConcolicValue};
+export {WrappedValue, ConcolicValue};

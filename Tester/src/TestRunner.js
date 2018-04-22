@@ -32,7 +32,7 @@ if (process.argv.length >= 3) {
     
     console.log('Test runner searching ' + target);
 
-    let numConcurrent = 2;
+    let numConcurrent = 6;
 
     let concurrent = getArgument('--concurrent', numConcurrent);
 

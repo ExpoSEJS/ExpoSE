@@ -207,7 +207,7 @@ class SymbolicExecution {
 
         //TODO: Enumerate if symbolic offset and concrete input
 
-        if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array) {
+        if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array && this.state.arrayType(base) == typeof(val)) {
             Log.log(`TODO: Check that setField is homogonous`);
 
             //SetField produce a new array

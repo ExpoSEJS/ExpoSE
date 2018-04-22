@@ -283,11 +283,13 @@ class SymbolicState {
         }
 
         let symbolic;
+        let arrayType;
 
         if (concrete instanceof Array) {
             this.stats.seen('Symbolic Arrays');
             symbolic = this.ctx.mkArray(name, this._getSort(concrete[0]));
             this.pushCondition(this.ctx.mkGe(symbolic.getLength(), this.ctx.mkIntVal(0)), true);
+            arrayType = typeof(concrete[0]);
         } else {
             this.stats.seen('Symbolic Primitives');
             const sort = this._getSort(concrete);
@@ -305,7 +307,7 @@ class SymbolicState {
         this.inputSymbols[name] = symbolic;
 
         Log.logMid(`Initializing fresh symbolic variable ${symbolic} using concrete value ${concrete}`);
-        return new ConcolicValue(concrete, symbolic);
+        return new ConcolicValue(concrete, symbolic, arrayType);
     }
 
     getSolution(model) {
@@ -364,6 +366,10 @@ class SymbolicState {
 
     getConcrete(val) {
         return val instanceof WrappedValue ? val.getConcrete() : val;
+    }
+
+    arrayType(val) {
+        return val instanceof WrappedValue ? val.getArrayType() : undefined;
     }
 
     getSymbolic(val) {

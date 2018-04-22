@@ -154,9 +154,11 @@ function BuildModels(state) {
         }
 
         model.add(Array.prototype.push, function(base, args) {
+
             const is_symbolic = state.isSymbolic(base);
-            const args_well_formed = state.getConcrete(base) instanceof Array;
-            Log.logMid('TODO: Push prototype is not smart enough to decide array type');
+            const args_well_formed = state.getConcrete(base) instanceof Array
+                    && state.arrayType(base) == typeof(state.getConcrete(args[0]));
+
             if (is_symbolic) {
                 Log.log('Push symbolic prototype');
                 const array = state.asSymbolic(base);
@@ -182,8 +184,11 @@ function BuildModels(state) {
         });
 
         model.add(Array.prototype.pop, function(base, args) {
+
             const is_symbolic = state.isSymbolic(base);
-            const args_well_formed = state.getConcrete(base) instanceof Array;
+            const args_well_formed = state.getConcrete(base) instanceof Array
+                    && state.arrayType(base) == typeof(state.getConcrete(args[0]));
+
             Log.log('TODO: Push prototype is not smart enough to decide array type');
             if (is_symbolic && args_well_formed) {
                 Log.log('Push symbolic prototype');
@@ -208,7 +213,12 @@ function BuildModels(state) {
 
         model.add(Array.prototype.indexOf, symbolicHook(
             Array.prototype.indexOf,
-            (base, args) => state.isSymbolic(base) && state.getConcrete(base) instanceof Array && typeof(args[0]) === typeof(base[0]) /* TODO: Give arrays a type on the concolic object rather than this */,
+            (base, args) => {
+                const is_symbolic = state.isSymbolic(base) && state.getConcrete(base) instanceof Array;
+                const is_same_type = state.arrayType(base) == typeof(state.getConcrete(args[0]));
+                console.log(state.arrayType(base) + ' vs ' + typeof(args[0]));
+                return is_symbolic; //&& is_same_type;
+            },
             (base, args, result) => {
 
                 const searchTarget = state.asSymbolic(args[0]);
@@ -267,8 +277,9 @@ function BuildModels(state) {
             Array.prototype.includes,
             (base, args) => {
                 const is_symbolic = state.isSymbolic(base);
-                const is_well_formed = state.getConcrete(base) instanceof Array;
-                return is_symbolic && is_well_formed;
+                const args_well_formed = state.getConcrete(base) instanceof Array
+                        && state.arrayType(base) == typeof(state.getConcrete(args[0]));
+                return is_symbolic && args_well_formed;
             },
             (base, args, result) => {
 

@@ -116,9 +116,13 @@ function buildTestList() {
     buildTest('regex/core/literals/non_alpha.js', 2, 2);
     buildTest('regex/core/literals/multiple.js', 6, 6);
 
-    buildTest('regex/core/escaping/hex.js', 5, 4);
-    buildTest('regex/core/escaping/unicode.js', 6, 5);
-    buildTest('regex/core/escaping/unicode_mode.js', 6, 5);
+    /**
+    *    TODO: Find out of unicode support is possible through some screwing with Z3 strings
+    *    buildTest('regex/core/escaping/hex.js', 5, 4);
+    *    buildTest('regex/core/escaping/unicode.js', 6, 5);
+    *    buildTest('regex/core/escaping/unicode_mode.js', 6, 5);
+    */
+
     buildTest('regex/core/escaping/ranges.js', 8, 8);
     buildTest('regex/core/escaping/negative_ranges.js', 3, 2);
     buildTest('regex/core/escaping/space_class.js', 8, 7);
