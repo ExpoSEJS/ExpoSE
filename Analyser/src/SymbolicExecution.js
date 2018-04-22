@@ -62,7 +62,6 @@ class SymbolicExecution {
          * TODO: A better solution to this needs to be found
          */
         if (needs_conc) {
-            console.log('Concretizing ' + f.name);
             const concretized = this.state.concretizeCall(f, base, args);
             base = concretized.base;
             args = concretized.args;

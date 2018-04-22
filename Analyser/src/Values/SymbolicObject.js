@@ -8,6 +8,7 @@ class SymbolicObject extends WrappedValue {
        	this._name = name;
         this._core = this.getConcrete();
         this._set = {};
+        this._lastIndex = 0;
     }
 
     setField(state, offset, v) {
@@ -23,7 +24,8 @@ class SymbolicObject extends WrappedValue {
     	state.stats.seen('Symbolic Object Field Lookups');
     	
     	if (!this._set[offset]) {
-    		this._core[offset] = state.createPureSymbol(this._name + '_' + offset);
+            //Can't use offset in name, if offset is a symbol is will crash
+    		this._core[offset] = state.createPureSymbol(this._name + '_elements_' + this._lastIndex++);
     	}
 
     	return this._core[offset];

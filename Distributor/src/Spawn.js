@@ -109,8 +109,16 @@ class Spawn {
       return ret.join(' ');
     }
 
+    _mkEnvReplay() {
+        let envStr = '';
+        for (let i in this.env) {
+            envStr += i + '="' + this.env[i] + '" ';
+        }
+        return envStr;
+    }
+
     makeReplayString() {
-        return EXPOSE_REPLAY_PATH + ' ' + this.shellescape(this.args);
+        return this._mkEnvReplay() + EXPOSE_REPLAY_PATH + ' ' + this.shellescape(this.args);
     }
 
     kill() {
