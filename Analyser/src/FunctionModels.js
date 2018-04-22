@@ -50,8 +50,7 @@ function Model() {
  */
 function BuildModels(state) {
     const ctx = state.ctx;
-
-    let model = new Model();
+    const model = new Model();
 
     function ConcretizeIfNative(f) {
         return function(base, args) {
@@ -203,21 +202,20 @@ function BuildModels(state) {
                     state.updateSymbolic(base, null);
                 }
 
-                console.log('Manual pop on ' + base);
                 return state.getConcrete(base).pop();
             }    
         });
 
         model.add(Array.prototype.indexOf, symbolicHook(
             Array.prototype.indexOf,
-            (base, args) => state.isSymbolic(base) && state.getConcrete(base) instanceof Array,
+            (base, args) => state.isSymbolic(base) && state.getConcrete(base) instanceof Array && typeof(args[0]) === typeof(base[0]) /* TODO: Give arrays a type on the concolic object rather than this */,
             (base, args, result) => {
 
                 const searchTarget = state.asSymbolic(args[0]);
                 const startIndex = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
 
                 let result_s = mkIndexSymbol('IndexOf');
-               
+
                 //The result is an integer -1 <= result_s < base.length
                 state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
                 state.pushCondition(ctx.mkGt(state.asSymbolic(base).getLength(), result_s), true);
