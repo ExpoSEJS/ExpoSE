@@ -6,6 +6,7 @@ import Spawn from './Spawn';
 import Strategy from './Strategy';
 import Coverage from './CoverageAggregator';
 import Stats from 'Stats';
+import Log from './Log';
 
 class Center {
 
@@ -92,7 +93,7 @@ class Center {
     }
 
     _printStatus() {
-        process.stdout.write('\r*** [' + this._done.length + ' done /' + this._strategy.length() +' queued / ' + this._running.length + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
+        Log('*** [' + this._done.length + ' done /' + this._strategy.length() +' queued / ' + this._running.length + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
     }
 
     _finishedTesting() {
