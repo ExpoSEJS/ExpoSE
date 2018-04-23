@@ -24,7 +24,7 @@ function isNativeCore(value) {
 
 function isNative(v) {
     const type = typeof v;
-    if (type == 'function' || type == 'object') {
+    if (type && (type == 'function' || type == 'object')) {
 
         if (v[SECRET_CACHE_STR]) {
             return v[SECRET_CACHE_STR]['isNative'];
