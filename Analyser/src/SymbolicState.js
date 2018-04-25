@@ -69,9 +69,6 @@ class SymbolicState {
             ]
 	    );
 
-        this.slv.fromString("(define-fun-rec str.repeat ((a String) (b Int)) String (if (<= b 0) \"\" (str.++ a (str.repeat a (- b 1)))))");
-        this.stringRepeat = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.repeat"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkStringSort());
-
         Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
         this.input = input;
@@ -83,7 +80,24 @@ class SymbolicState {
         this.errors = [];
 
         this._unaryJumpTable = BuildUnaryJumpTable(this);
-     }
+        this._setupSmtFunctions();
+    }
+
+    /** Set up a bunch of SMT functions used by the models **/
+    _setupSmtFunctions() {
+
+        this.slv.fromString("(define-fun-rec str.repeat ((a String) (b Int)) String (if (<= b 0) \"\" (str.++ a (str.repeat a (- b 1)))))");
+        this.stringRepeat = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.repeat"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkStringSort());
+
+        /** Set up trim methods **/
+        this.slv.fromString( 
+            "(define-fun str.isWhite ((c String)) Bool (= c \" \"))\n" + /** TODO: Make this reflect all the possible types of whitespace */
+            "(define-fun-rec str.whiteLeft ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteLeft s (+ i 1)) i))\n" +
+            "(define-fun-rec str.whiteRight ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteRight s (- i 1)) i))\n");
+ 
+        this.whiteLeft = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.whiteLeft"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkIntSort());
+        this.whiteRight = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.whiteRight"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkIntSort());
+    }
 
     pushCondition(cnd, binder) {
         this.pathCondition.push({

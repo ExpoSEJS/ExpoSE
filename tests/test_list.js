@@ -94,6 +94,7 @@ function buildTestList() {
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
     buildTest('strings/repeat.js', 3, 2);
+    buildTest('strings/trim.js', 3, 1);
 
     /**
      * Regular Expression Feature Test

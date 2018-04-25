@@ -682,12 +682,44 @@ function BuildModels(state) {
             }
         ));
 
+        function trimLeftSymbolic(base_s) {
+            const whiteLeft = ctx.mkApp(state.whiteLeft, [base_s, ctx.mkIntVal(0)]);
+            const strLen = base_s.getLength();
+            const totalLength = ctx.mkSub(strLen, whiteLeft);
+            return ctx.mkSeqSubstr(base_s, whiteLeft, totalLength);
+        }
+
+        function trimRightSymbolic(base_s) {
+            const strLen = base_s.getLength();
+            const whiteRight = ctx.mkApp(state.whiteRight, [base_s, strLen]);
+            const totalLength = ctx.mkAdd(whiteRight, ctx.mkIntVal(1));
+            return ctx.mkSeqSubstr(base_s, ctx.mkIntVal(0), totalLength);
+        }
+
+        model.add(String.prototype.trimRight, symbolicHook(
+            String.prototype.trim,
+            (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
+            (base, _a, result) => {
+                const base_s = state.asSymbolic(base);
+                return new ConcolicValue(result, trimRightSymbolic(base_s));
+            }
+        ));
+
+        model.add(String.prototype.trimLeft, symbolicHook(
+            String.prototype.trim,
+            (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
+            (base, _a, result) => {
+                const base_s = state.asSymbolic(base);
+                return new ConcolicValue(result, trimLeftSymbolic(base_s));
+            }
+        ));
+
         model.add(String.prototype.trim, symbolicHook(
             String.prototype.trim,
             (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
             (base, _a, result) => {
-                Log.log('TODO: Trim model does not currently do anything');
-                return new ConcolicValue(result, state.asSymbolic(base));
+                const base_s = state.asSymbolic(base);
+                return new ConcolicValue(result, trimRightSymbolic(trimLeftSymbolic(base_s)));
             }
         ));
 
