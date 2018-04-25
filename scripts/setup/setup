@@ -9,11 +9,12 @@ cp ./scripts/pre-push .git/hooks/
 echo "Setting Up Packages"
 ./scripts/setup/setup_packages
 
+echo "Building Analyser"
+./scripts/build/build_analyser
+
 touch ~/.bashrc
 
 echo "Installing into PATH"
 ./scripts/setup/install_bashprofile
-
-./scripts/build/build_analyser
 
 exit 0

@@ -667,6 +667,21 @@ function BuildModels(state) {
             (base, args, result) => state.getConcrete(base).secret_split.apply(base, args)
         ));
 
+        model.add(String.prototype.repeat, symbolicHook(
+            String.prototype.repeat,
+            (base, a) => state.isSymbolic(base) || state.isSymbolic(a[0]) 
+                && typeof(state.getConcrete(base)) == "string"
+                && typeof(state.getConcrete(a[0])) == "number",
+            (base, a, result) => {
+
+                const num_repeats = state.asSymbolic(a[0]);
+                state.pushCondition(ctx.mkGe(num_repeats, ctx.mkIntVal(0)));
+
+                const result_s = ctx.mkApp(state.stringRepeat, [state.asSymbolic(base), ctx.mkRealToInt(state.asSymbolic(a[0]))]);
+                return new ConcolicValue(result, result_s); 
+            }
+        ));
+
         model.add(String.prototype.trim, symbolicHook(
             String.prototype.trim,
             (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",

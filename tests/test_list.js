@@ -93,6 +93,7 @@ function buildTestList() {
     buildTest('strings/substr_tests.js', 7, 5);
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
+    buildTest('strings/repeat.js', 3, 2);
 
     /**
      * Regular Expression Feature Test

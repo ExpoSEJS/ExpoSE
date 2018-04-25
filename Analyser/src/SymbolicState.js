@@ -69,6 +69,9 @@ class SymbolicState {
             ]
 	    );
 
+        this.slv.fromString("(define-fun-rec str.repeat ((a String) (b Int)) String (if (<= b 0) \"\" (str.++ a (str.repeat a (- b 1)))))");
+        this.stringRepeat = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.repeat"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkStringSort());
+
         Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
         this.input = input;
@@ -168,6 +171,7 @@ class SymbolicState {
             if (!this.pathCondition[i].binder) {
                 this._buildPC(childInputs, i);
             }
+            console.log(this.slv.toString());
 
             //Push the current thing we're looking at to the solver
             this.slv.assert(this.pathCondition[i].ast);
