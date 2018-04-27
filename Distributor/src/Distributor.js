@@ -55,7 +55,7 @@ if (process.argv.length >= 3) {
 
         done.forEach(item => {
             const testStartSeconds = item.startTime - start;
-            console.log('*-- Test Case ' + JSON.stringify(item.input) + ' start ' + formatSeconds(testStartSeconds) + ' took ' + formatSeconds(item.time) + 's');
+            console.log('*-- Test Case ' + JSON.stringify(item.input) + ' Path Condition: ' + item.pc + ' start ' + formatSeconds(testStartSeconds) + ' took ' + formatSeconds(item.time) + 's');
 
             if (item.errors.length != 0) {
                 console.log('*-- Errors occured in test ' + JSON.stringify(item.input));
