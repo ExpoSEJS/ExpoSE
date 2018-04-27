@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ -f ~/.expose_setup ]; then
-	echo "Setup Done exists, not setting up"
+if [ -d ./Analyser/node_modules/ ]; then
+	echo "Setup done, run 'npm install' if you encounter issues"
 else
 	echo "Refreshing Setup (No setup file found)"
 	./scripts/setup/setup

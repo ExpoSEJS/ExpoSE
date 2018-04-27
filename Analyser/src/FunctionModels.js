@@ -666,12 +666,59 @@ function BuildModels(state) {
             (base, args, result) => state.getConcrete(base).secret_split.apply(base, args)
         ));
 
+        model.add(String.prototype.repeat, symbolicHook(
+            String.prototype.repeat,
+            (base, a) => state.isSymbolic(base) || state.isSymbolic(a[0]) 
+                && typeof(state.getConcrete(base)) == "string"
+                && typeof(state.getConcrete(a[0])) == "number",
+            (base, a, result) => {
+
+                const num_repeats = state.asSymbolic(a[0]);
+                state.pushCondition(ctx.mkGe(num_repeats, ctx.mkIntVal(0)));
+
+                const result_s = ctx.mkApp(state.stringRepeat, [state.asSymbolic(base), ctx.mkRealToInt(state.asSymbolic(a[0]))]);
+                return new ConcolicValue(result, result_s); 
+            }
+        ));
+
+        function trimLeftSymbolic(base_s) {
+            const whiteLeft = ctx.mkApp(state.whiteLeft, [base_s, ctx.mkIntVal(0)]);
+            const strLen = base_s.getLength();
+            const totalLength = ctx.mkSub(strLen, whiteLeft);
+            return ctx.mkSeqSubstr(base_s, whiteLeft, totalLength);
+        }
+
+        function trimRightSymbolic(base_s) {
+            const strLen = base_s.getLength();
+            const whiteRight = ctx.mkApp(state.whiteRight, [base_s, strLen]);
+            const totalLength = ctx.mkAdd(whiteRight, ctx.mkIntVal(1));
+            return ctx.mkSeqSubstr(base_s, ctx.mkIntVal(0), totalLength);
+        }
+
+        model.add(String.prototype.trimRight, symbolicHook(
+            String.prototype.trim,
+            (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
+            (base, _a, result) => {
+                const base_s = state.asSymbolic(base);
+                return new ConcolicValue(result, trimRightSymbolic(base_s));
+            }
+        ));
+
+        model.add(String.prototype.trimLeft, symbolicHook(
+            String.prototype.trim,
+            (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
+            (base, _a, result) => {
+                const base_s = state.asSymbolic(base);
+                return new ConcolicValue(result, trimLeftSymbolic(base_s));
+            }
+        ));
+
         model.add(String.prototype.trim, symbolicHook(
             String.prototype.trim,
             (base, _a) => state.isSymbolic(base) && typeof(state.getConcrete(base).valueOf()) === "string",
             (base, _a, result) => {
-                Log.log('TODO: Trim model does not currently do anything');
-                return new ConcolicValue(result, state.asSymbolic(base));
+                const base_s = state.asSymbolic(base);
+                return new ConcolicValue(result, trimRightSymbolic(trimLeftSymbolic(base_s)));
             }
         ));
 
