@@ -3,9 +3,7 @@
 "use strict";
 
 var s = require('S$');
-
 var x = s.symbol('A', 5);
-var a = symbolic A initial true;
 
 console.log("x is initialized to", x);
 console.log("a is initialized to", a);
