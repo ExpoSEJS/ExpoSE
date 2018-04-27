@@ -216,7 +216,6 @@ function BuildModels(state) {
             (base, args) => {
                 const is_symbolic = state.isSymbolic(base) && state.getConcrete(base) instanceof Array;
                 const is_same_type = state.arrayType(base) == typeof(state.getConcrete(args[0]));
-                console.log(state.arrayType(base) + ' vs ' + typeof(args[0]));
                 return is_symbolic; //&& is_same_type;
             },
             (base, args, result) => {
