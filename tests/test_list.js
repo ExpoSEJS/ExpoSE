@@ -52,13 +52,14 @@ function buildTestList() {
     buildTest('arrays/pop_conc', 1, 0);
     buildTest('arrays/enumerate_concrete', 4, 3);
 
-    //Integers
-    buildTest('integers/hello.js', 2, 0);
-    buildTest('integers/lt.js', 3, 0);
-    buildTest('integers/coerce.js', 2, 0);
-    buildTest('integers/mul.js', 2, 0);
-    buildTest('integers/breaker.js', 1, 0);
-    buildTest('integers/infoflow.js', 17, 0);
+    //Numbers
+    buildTest('numbers/ten.js', 2, 0);
+    buildTest('numbers/hello.js', 2, 0);
+    buildTest('numbers/lt.js', 3, 0);
+    buildTest('numbers/coerce.js', 2, 0);
+    buildTest('numbers/mul.js', 2, 0);
+    buildTest('numbers/breaker.js', 1, 0);
+    buildTest('numbers/infoflow.js', 17, 0);
     buildTest('numbers/floor.js', 3, 2);
 
     //Eval
