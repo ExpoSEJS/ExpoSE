@@ -118,7 +118,7 @@ class Spawn {
     }
 
     makeReplayString() {
-        return this._mkEnvReplay() + EXPOSE_REPLAY_PATH + ' ' + this.shellescape(this.args);
+        return /* this._mkEnvReplay() + */ EXPOSE_REPLAY_PATH + ' ' + this.shellescape(this.args);
     }
 
     kill() {
