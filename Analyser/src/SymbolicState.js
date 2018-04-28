@@ -129,7 +129,7 @@ class SymbolicState {
      *Formats PC to pretty string if length != 0
      */
     _stringPC(pc) {
-        return pc.length ? pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)).simplify().toPrettyString() : '';
+        return pc.length ? pc.reduce((prev, current) => this.ctx.mkAnd(prev, current)).simplify().toPrettyString().replace(/\s+/g, ' ').replace(/not /g, '¬') : '';
     }
 
     /**
