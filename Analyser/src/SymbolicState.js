@@ -136,8 +136,12 @@ class SymbolicState {
                 this_line = this_line.substr(1, this_line.length - 2);
             }
 
-            return prev + (prev.length ? ', ' : '') + this_line;
-        }, '') : '';
+            if (this_line == 'true' || this_line == 'false') {
+                return prev;
+            } else {
+                return prev + (prev.length ? ', ' : '') + this_line;
+                }, '') : '';
+            }
     }
 
     /**
