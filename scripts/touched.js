@@ -21,7 +21,6 @@ function printOut(coverage) {
             console.log(file.file);
 
             const lines = fileText.split('\n');
-            console.log('Num Lines: ' + lines.length);
 
             lines.forEach((line, lineno) => {
 
