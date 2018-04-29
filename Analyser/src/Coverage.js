@@ -53,7 +53,7 @@ class Coverage {
                         delete map[localIid];
                     } else {
                         const location = iidToLocation(this._sandbox, localSid, localIid); 
-                        map[localIid] = { line: location.uninstrumentedLineNumber, column: location.uninstrumentedCharacterNumber };
+                        map[localIid] = { line: location.uninstrumentedLineNumber, character: location.uninstrumentedCharacterNumber };
                     }
                 }
 

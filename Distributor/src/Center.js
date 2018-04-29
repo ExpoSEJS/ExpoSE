@@ -121,7 +121,7 @@ class Center {
         });
     }
 
-    _pushDone(test, input, pc, alternatives, errors) {
+    _pushDone(test, input, pc, alternatives, coverage, errors) {
         this._done.push({
             id: test.file.id,
             input: input,
@@ -130,6 +130,7 @@ class Center {
             time: test.time(),
             startTime: test.startTime(),
             coverage: this._coverage.current(),
+            case_coverage: this.options.perCaseCoverage ?  new Coverage().add(coverage).final(true) : undefined, 
             replay: test.makeReplayString(),
             alternatives: alternatives.length
         });
@@ -152,11 +153,11 @@ class Center {
         }
 
         if (finalOut) {
-            this._pushDone(test, finalOut.input, finalOut.pc, finalOut.alternatives, errors.concat(finalOut.errors));
+            this._pushDone(test, finalOut.input, finalOut.pc, finalOut.alternatives, coverage, errors.concat(finalOut.errors));
             this._expandAlternatives(test.file, finalOut.alternatives, coverage);
             this._stats.merge(finalOut.stats);
         } else {
-            this._pushDone(test, test.file.input, test.file.pc, [], errors.concat([{ error: 'Error extracting final output - a fatal error must have occured' }]));
+            this._pushDone(test, test.file.input, test.file.pc, [], coverage, errors.concat([{ error: 'Error extracting final output - a fatal error must have occured' }]));
         }
 
         this._postTest(test);

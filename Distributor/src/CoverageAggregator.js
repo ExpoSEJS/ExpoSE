@@ -57,6 +57,7 @@ class Coverage {
      * Merges new coverage data from a path with existing data
        */
     add(coverage) {
+
         for (let i in coverage) {
             if (i != LAST_IID) {
                 let file = this._getFile(i);
@@ -65,6 +66,8 @@ class Coverage {
                 this._mergeLineNumbers(file.lines.touched, file.lines.all, coverage[i].smap, coverage[i].branches); 
             }
         }
+
+        return this;
     }
 
 	_termResults(file) {
