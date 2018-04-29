@@ -40,13 +40,13 @@ class Coverage {
     _mergeLineNumbers(touched, all, smap, branches) {
         
         for (let idx in smap) {
-            if (!isNaN(idx)) {
+            if (!isNaN(idx) && smap[idx] && smap[idx].line) {
                 all.add(smap[idx].line);
             }
         }
 
         for (let idx in branches) {
-            if (!isNaN(idx) && branches[idx]) {
+            if (!isNaN(idx) && branches[idx] && smap[idx] && smap[idx].line) {
                 touched.add(smap[idx].line);
             }
         }
