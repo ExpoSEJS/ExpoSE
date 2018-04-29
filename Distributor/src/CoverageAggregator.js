@@ -37,10 +37,18 @@ class Coverage {
 		}
 	}
 
-    _mergeLineNumbers(set, lineNumbers) {
-        lineNumbers.forEach(lineNumber => {
-            set.add(lineNumber);
-        });
+    _mergeLineNumbers(touched, all, smap, branches) {
+        
+        for (let idx in smap) {
+            all.add(smap[idx].line);
+        }
+
+        for (let idx in branches) {
+            if (branches[idx]) {
+                touched.add(smap[idx].line);
+            }
+        }
+
     }
 
     /**
@@ -52,8 +60,7 @@ class Coverage {
                 let file = this._getFile(i);
                 this._addSMap(file, coverage[i].smap);
                 this._mergeBranches(file, coverage[i].branches);
-                this._mergeLineNumbers(file.lines.all, coverage[i].lines.all);
-                this._mergeLineNumbers(file.lines.touched, coverage[i].lines.touched);
+                this._mergeLineNumbers(file.lines.touched, file.lines.all, coverage[i].smap, coverage[i].branches); 
             }
         }
     }
