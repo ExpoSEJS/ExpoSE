@@ -29,17 +29,6 @@ class Coverage {
         this._lastIid = 0; //Store the last IID touched for search strategizer
     }
 
-    _pushLines(set, map, sid) {
-        for (const nextIid in map) {
-            if (!isNaN(parseInt(nextIid))) {
-                const location = iidToLocation(this._sandbox, sid, nextIid);
-                if (location) {
-                    set.add(location.uninstrumentedLineNumber);
-                }
-            }
-        }
-    }
-
     end() {
         const payload = {};
 
@@ -68,16 +57,9 @@ class Coverage {
                     }
                 }
 
-                this._pushLines(allLines, map, localSid);
-                this._pushLines(touchedLines, this._branches[i], localSid);
-
                 payload[this._branchFilenameMap[i]] = {
                     smap: map,
-                    branches: this._branches[i],
-                    lines: {
-                        all: Array.from(allLines),
-                        touched: Array.from(touchedLines)
-                    }
+                    branches: this._branches[i]
                 };
             }
         }
