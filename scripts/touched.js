@@ -32,7 +32,13 @@ function printOut(coverage) {
                         } else {
                             process.stdout.write('\033[31m');
                         }
-                    } else { 
+                    } else if (smapId !== undefined) {
+                        if (file.branches[smapId] & 0x1) {
+                            process.stdout.write('\033[32m');
+                        } else {
+                            process.stdout.write('\033[31m');
+                        }
+                    }  else { 
                         process.stdout.write('\033[30m');
                     }
 
