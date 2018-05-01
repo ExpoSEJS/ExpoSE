@@ -55,3 +55,6 @@ logFile.done.forEach(tc => {
     console.log('Test Case: ', tc.pc, JSON.stringify(tc.input));
     printOut(tc.case_coverage);
 });
+
+console.log('Final Coverage');
+printOut(logFile.finalCoverage);
