@@ -4,9 +4,14 @@
 
 export default function(sandbox, sid, iid) {
     const iid_string = sandbox.iidToLocation(sid, iid);
+
+    if (!iid_string) {
+        return undefined;
+    }
+
     const elems = iid_string.substr(1, iid_string.length - 2).split(':'); //Comes in the form (Filename:1:2:3:4)   
+    
     return {
-        fileName: elems[0],
         line_start: elems[1],
         char_start: elems[2],
         line_end: elems[3],
