@@ -3,21 +3,13 @@
 "use strict";
 
 export default function(sandbox, sid, iid) {
-    let ret;
-
-    if ((ret = sandbox.smap[sid])) {
-        const iidInfo = ret[iid];
-
-        if (!iidInfo) {
-            return null;
-        }
-        
-        return {
-            fileName: ret.originalCodeFileName,
-            instrumentedLineNumber: iidInfo[0],
-            instrumentedCharacterNumber: iidInfo[1],
-            uninstrumentedLineNumber: iidInfo[2],
-            uninstrumentedCharacterNumber: iidInfo[3]
-        };
-    }
+    const iid_string = sandbox.iidToLocation(sid, iid);
+    const elems = iid_string.substr(1, iid_string.length - 2).split(':'); //Comes in the form (Filename:1:2:3:4)   
+    return {
+        fileName: elems[0],
+        line_start: elems[1],
+        char_start: elems[2],
+        line_end: elems[3],
+        char_end: elems[4]
+    };
 }

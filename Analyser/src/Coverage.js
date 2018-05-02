@@ -52,8 +52,7 @@ class Coverage {
                     if (isNaN(parseInt(localIid))) {
                         delete map[localIid];
                     } else {
-                        const location = iidToLocation(this._sandbox, localSid, localIid); 
-                        map[localIid] = { line: location.uninstrumentedLineNumber, character: location.uninstrumentedCharacterNumber };
+                        map[localIid] = iidToLocation(this._sandbox, localSid, localIid);
                     }
                 }
 
