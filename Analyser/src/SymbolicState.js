@@ -239,7 +239,8 @@ class SymbolicState {
 
         if (arg instanceof Object) {
             for (let i in arg) {
-                if (arg.hasOwnProperty(i) && this.isSymbolic(arg[i])) {
+		const property = Object.getOwnPropertyDescriptor(arg[i]);
+                if (property && this.isSymbolic(property.value)) {
                     arg[i] = this._deepConcrete(arg[i]);
                 }
             }
