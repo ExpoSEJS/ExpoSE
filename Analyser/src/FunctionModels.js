@@ -741,12 +741,22 @@ function BuildModels(state) {
 
     function BuildMathModels(state, ctx, model) {
 
+        /** 
+         * TODO: Floor and Ceil should -1 or +1 if args[0] > or < the result
+         */
+        
         model.add(Math.floor, symbolicHook(
             Math.floor,
             (base, args) => state.isSymbolic(args[0]),
             (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
         ));
 
+        model.add(Math.ceil, symbolicHook(
+            Math.ceil,
+            (base, args) => state.isSymbolic(args[0]),
+            (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
+        ));
+        
         model.add(Math.ceil, symbolicHook(
             Math.ceil,
             (base, args) => state.isSymbolic(args[0]),
