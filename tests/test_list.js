@@ -61,6 +61,7 @@ function buildTestList() {
     buildTest('numbers/breaker.js', 1, 0);
     buildTest('numbers/infoflow.js', 17, 0);
     buildTest('numbers/floor.js', 3, 2);
+    buildTest('numbers/round.js', 2, 2);
 
     //Eval
     buildTest('eval/test.js', 2, 1);
