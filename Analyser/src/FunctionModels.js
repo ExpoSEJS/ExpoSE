@@ -757,7 +757,7 @@ function BuildModels(state) {
             (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
         ));
         
-        model.add(Math.ceil, symbolicHook(
+        model.add(Math.round, symbolicHook(
             Math.ceil,
             (base, args) => state.isSymbolic(args[0]),
             (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
