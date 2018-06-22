@@ -235,11 +235,12 @@ class SymbolicState {
     }
 
     _deepConcrete(arg) {
+        /** TODO: Deep concretize shouldn't only conc if val is symbolic */
         arg = this.getConcrete(arg);
 
         if (arg instanceof Object) {
             for (let i in arg) {
-		const property = Object.getOwnPropertyDescriptor(arg[i]);
+		        const property = Object.getOwnPropertyDescriptor(arg, i);
                 if (property && this.isSymbolic(property.value)) {
                     arg[i] = this._deepConcrete(arg[i]);
                 }
