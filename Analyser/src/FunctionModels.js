@@ -763,6 +763,15 @@ function BuildModels(state) {
             (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
         ));
 
+        model.add(Math.abs, symbolicHook(
+            Math.abs,
+            (base, args) => state.isSymbolic(args[0]),
+            (base, args, r) => {
+                const arg_s = state.asSymbolic(args[0]);
+                return new ConcolicValue(r, ctx.mkIte(ctx.mkLt(arg_s, state.asSymbolic(0)), ctx.mkUnaryMinus(arg_s), arg_s));
+            }
+        ));
+
         /*
         TODO: Fix this model
         models[Number.prototype.toFixed] = symbolicHook(
