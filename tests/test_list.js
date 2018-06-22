@@ -53,7 +53,7 @@ function buildTestList() {
     buildTest('arrays/enumerate_concrete', 4, 3);
 
     //Numbers
-    buildTest('numbers/abs.js', 2, 0);
+    buildTest('numbers/abs.js', 2, 2);
     buildTest('numbers/ten.js', 2, 0);
     buildTest('numbers/hello.js', 2, 0);
     buildTest('numbers/lt.js', 3, 0);
