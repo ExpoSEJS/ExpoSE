@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "Preparing to instrument" $1 "as" $2
+pwd
+
+function abs_target {
+	#Generate the absolute path of test script
+	cd "$2"
+	cd "$(dirname "$1")"
+	echo "$(printf "%s/%s\n" "$(pwd)" "$(basename "$1")")" 
+}
+
+#Store the current working directory to return after calculating abspath
+ORIGIN_PATH="$(pwd)"
+
+TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
+
+
+#cd to ExpoSE directory
+cd "$(dirname "${BASH_SOURCE[0]}")/../Analyser"
+
+ANALYSIS_PATH="$(pwd)/bin/bundle.js"
+cat ${ANALYSIS_PATH}
+
+node node_modules/jalangi2/src/js/commands/esnstrument_cli.js  --inlineIID --inlineSource ${TARGET_REAL_PATH} --out "$2" --analysis "${ANALYSIS_PATH}"

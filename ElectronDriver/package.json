@@ -11,9 +11,8 @@
   "dependencies": {
     "async": "^2.1.5",
     "browserify": "^14.1.0",
-    "electron": "1.8.4",
-    "jalangi2": "git+https://github.com/Samsung/jalangi2.git",
-    "z3javascript": "git+https://github.com/jawline/z3javascript.git"
+    "electron": "git+https://github.com/ExpoSEJS/electron.git",
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git"
   },
   "devDependencies": {
     "electron-rebuild": "^1.5.7"
