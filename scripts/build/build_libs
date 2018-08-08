@@ -14,11 +14,4 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-(./scripts/build/build lib/Tropigate src bin)
-
-if [ $? -ne 0 ]; then
-	echo "Tropigate failed to build"
-	exit 1
-fi
-
 exit 0
