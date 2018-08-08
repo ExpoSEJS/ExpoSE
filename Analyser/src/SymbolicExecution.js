@@ -11,10 +11,6 @@ import Log from './Utilities/Log';
 import NotAnErrorException from './NotAnErrorException';
 import {isNative} from './Utilities/IsNative';
 import ModelBuilder from './FunctionModels';
-import External from './External';
-
-//Electron can't resolve external library's directly. The External packages makes that transparent
-const Tropigate = External('Tropigate');
 
 class SymbolicExecution {
 
@@ -402,13 +398,6 @@ class SymbolicExecution {
     }
 
     instrumentCodePre(iid, code) {
-
-        try {
-            code = Tropigate(code);
-        } catch (e) {
-            throw `Tropigate failed because ${e} on program ${code} at ${e.stack}`;
-        }
-
         return { code: code, skip: false };
     }
 
