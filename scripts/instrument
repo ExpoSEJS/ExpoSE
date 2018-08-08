@@ -12,14 +12,23 @@ function abs_target {
 
 #Store the current working directory to return after calculating abspath
 ORIGIN_PATH="$(pwd)"
-
 TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
-
+OUT_REAL_PATH=$(abs_target "$2" "$ORIGIN_PATH")
 
 #cd to ExpoSE directory
 cd "$(dirname "${BASH_SOURCE[0]}")/../Analyser"
 
 ANALYSIS_PATH="$(pwd)/bin/bundle.js"
-cat ${ANALYSIS_PATH}
 
-node node_modules/jalangi2/src/js/commands/esnstrument_cli.js  --inlineIID --inlineSource ${TARGET_REAL_PATH} --out "$2" --analysis "${ANALYSIS_PATH}"
+echo "Preamble"
+
+# Generate the preamble
+echo "if (typeof __magic_preamble === 'undefined') { (typeof window !== 'undefined' ? window : global).__magic_preamble = true;" > "${OUT_REAL_PATH}"
+node node_modules/jalangi2/src/js/commands/preamble.js --analysis "${ANALYSIS_PATH}" >> "${OUT_REAL_PATH}"
+echo "}" >> "${OUT_REAL_PATH}"
+
+echo "Rewrite"
+
+# Insert the rewritten file
+node node_modules/jalangi2/src/js/commands/rewrite.js "${TARGET_REAL_PATH}" "${TARGET_REAL_PATH}_jalangi_.js"
+cat "${TARGET_REAL_PATH}_jalangi_.js" >> "${OUT_REAL_PATH}"
