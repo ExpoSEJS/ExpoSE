@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-mkdir -p bin
-babel --presets es2015,stage-0 -d bin src/
-exit $?
