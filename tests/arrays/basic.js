@@ -2,9 +2,10 @@
 
 "use strict";
 
-var x = symbolic X initial ['A'];
+var S$ = require('S$');
+var x = S$.symbol('X', ['A']);
 
-assume x.length < 4;
+S$.assume(x.length < 4);
 
 for (var i = 0; i < x.length; i++) {
 	if (x[i] == 'What') {

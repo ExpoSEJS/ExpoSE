@@ -1,4 +1,5 @@
-var x = symbolic X initial [false];
+var S$ = require('S$');
+var x = S$.symbol('X', [false]);
 
 if (x.includes(true)) {
 

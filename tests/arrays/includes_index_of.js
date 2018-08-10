@@ -1,4 +1,5 @@
-var x = symbolic X initial ['Hi'];
+var S$ = require('S$');
+var x = S$.symbol('X', ['Hi']);
 
 if (x.indexOf('What') != -1) {
 

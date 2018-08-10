@@ -1,7 +1,9 @@
 "use strict";
+
+var S$ = require('S$');
  
 // Expecting three paths
-var q = symbolic UnderTest initial [false];
+var q = S$.symbol('UnderTest', [false]);
 
 if (q[0] === true) {
 	throw 'Reachable 1';
