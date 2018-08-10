@@ -36,7 +36,7 @@ const input = process.argv[process.argv.length - 1];
 Log.logHigh('Built with VERY logging enabled');
 Log.logMid('Built with FINE logging enabled');
 Log.log('Built with BASE logging enabled');
-Log.log('Intial Input' + input);
+Log.log('Intial Input ' + input + '<' + JSON.stringify(input));
 
 process.title = 'ExpoSE Play ' + input;
 

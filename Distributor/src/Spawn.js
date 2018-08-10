@@ -143,6 +143,7 @@ class Spawn {
         this._startTime = (new Date()).getTime();
 
 	try {
+        console.log(this.script, JSON.stringify(this.args));
 		const prc = spawn(this.script, this.args, {
 		    env: this.env,
 		    disconnected: false

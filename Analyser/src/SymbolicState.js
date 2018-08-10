@@ -9,9 +9,8 @@ import Config from './Config';
 import SymbolicHelper from './SymbolicHelper';
 import { SymbolicObject } from './Values/SymbolicObject';
 import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
-
-const Stats = require('Stats');
-const Z3 = require('z3javascript');
+import Z3 from 'z3javascript';
+import Stats from 'Stats';
 
 function BuildUnaryJumpTable(state) {
     const ctx = state.ctx;
