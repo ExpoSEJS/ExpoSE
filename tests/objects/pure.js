@@ -1,4 +1,5 @@
-var test = symbolic X initial {};
+var S$ = require('S$');
+var test = S$.pureSymbol('X');
 
 if (test.hello == 'what') {
 	throw 'Reachable';

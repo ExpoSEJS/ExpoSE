@@ -1,4 +1,5 @@
-var x = symbolic X initial '';
+var S$ = require('S$');
+var x = S$.symbol('X', '');
 x = Object(x);
 
 console.log('What what what');

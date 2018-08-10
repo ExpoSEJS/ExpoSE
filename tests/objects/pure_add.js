@@ -1,4 +1,5 @@
-var X = symbolic X initial [0];
+var S$ = require('S$');
+var X = S$.symbol('X', [0]);
 
 if (X + undefined) {
     throw 'What';

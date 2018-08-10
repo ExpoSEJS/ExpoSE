@@ -1,3 +1,5 @@
+var S$ = require('S$');
+
 function Hello() {
 	console.log('Called Hello with ' + JSON.stringify(arguments));
 	if (arguments[4] == 'a') {
@@ -5,4 +7,4 @@ function Hello() {
 	}
 }
 
-Hello.apply(null, symbolic X initial []);
+Hello.apply(null, S$.symbol('X', []));

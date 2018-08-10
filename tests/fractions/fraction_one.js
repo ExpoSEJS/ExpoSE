@@ -2,10 +2,12 @@
 
 "use strict";
 
+var S$ = require('S$');
+
 console.log('Fraction Test');
 console.log('Loading Symbols');
 
-var x = symbolic X initial 0;
+var x = S$.symbol('X', 0);
 
 console.log('Made X');
 

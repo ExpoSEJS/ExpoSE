@@ -1,3 +1,7 @@
-var x = symbolic X initial false;
+var S$ = require('S$');
 
-if (x) { throw 'Reachable'; }
+var x = S$.symbol('X', false);
+
+if (x) {
+	throw 'Reachable';
+}

@@ -1,4 +1,5 @@
-var x = symbolic X initial 5;
+var S$ = require('S$');
+var x = S$.symbol('X', 5);
 
 if (Math.floor(x) == 6) {
     throw 'Reachable';

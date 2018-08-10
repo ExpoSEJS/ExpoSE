@@ -2,6 +2,8 @@
 
 "use strict";
 
+var S$ = require('S$');
+
 function flowTest(lo, hi) {
 
     console.log("Inputs: Hi:", hi, "Lo:", lo);
@@ -31,9 +33,9 @@ function flowTest(lo, hi) {
 
 function verify(f) {
 
-    var loInput = symbolic LO initial 0;
-    var hiInput1 = symbolic HI1 initial 10;
-    var hiInput2 = symbolic HI2 initial 10;
+    var loInput = S$.symbol('LO', 0);
+    var hiInput1 = S$.symbol('HI1', 10);
+    var hiInput2 = S$.symbol('HI2', 10);
 
     var loOutput1 = f(loInput, hiInput1);
     var loOutput2 = f(loInput, hiInput2);

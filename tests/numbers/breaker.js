@@ -2,5 +2,7 @@
 
 "use strict";
 
-var loInput = symbolic LO initial 0;
+var S$ = require('S$');
+
+var loInput = S$.symbol('LO', 0);
 var result = loInput * 42;

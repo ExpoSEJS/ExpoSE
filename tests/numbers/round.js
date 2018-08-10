@@ -1,5 +1,7 @@
-var value = symbolic VALUE initial 1;
-var decimal = symbolic DECIMAL initial 3;
+var S$ = require('S$');
+
+var value = S$.symbol('VALUE', 1);
+var decimal = S$.symbol('DECIMAL', 3);
 var rounded = Math.round(decimal);
 
 if (value != rounded) {

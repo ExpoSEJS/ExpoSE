@@ -1,4 +1,6 @@
-if (symbolic X initial false) {
+var S$ = require('S$');
+
+if (S$.symbol('X', false)) {
 	console.log('Hello');
 } else {
 	console.log('Goodbye');

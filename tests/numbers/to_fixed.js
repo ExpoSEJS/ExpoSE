@@ -5,8 +5,9 @@
 
 "use strict";
 
-var x = symbolic Int initial 52;
-var length = symbolic Int initial 3;
+var S$ = require('S$');
+var x = S$.symbol('Int', 52);
+var length = S$.symbol('Int', 3);
 
 console.log("x is initialized to", x);
 console.log("length is initialized to", length);

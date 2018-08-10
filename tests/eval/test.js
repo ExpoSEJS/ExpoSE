@@ -1,7 +1,8 @@
-var x = symbolic X initial 5;
+var S$ = require('S$');
+var x = S$.symbol('X', 5);
 
 var y = eval('6');
 
 if (x > y) {
-	assert x < y;
+	S$.assert(x < y);
 }

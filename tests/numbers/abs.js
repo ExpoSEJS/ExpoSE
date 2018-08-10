@@ -1,4 +1,5 @@
-var x = symbolic X initial 0;
+var S$ = require('S$');
+var x = S$.symbol('X', 0);
 
 if (Math.abs(x) == x) {
     throw 'R1';

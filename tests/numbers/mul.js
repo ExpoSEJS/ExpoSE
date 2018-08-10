@@ -2,8 +2,9 @@
 
 "use strict";
 
-var x = symbolic X initial 10;
+var S$ = require('S$');
+var x = S$.symbol('X', 10);
 
 if (x * 100 > 150) {
-	assert x * 100 > 150;
+	S$.assert(x * 100 > 150);
 }

@@ -1,5 +1,7 @@
-var x = symbolic X initial 5;
-var y = symbolic Y initial false;
+var S$ = require('S$');
+
+var x = S$.symbol('X', 5);
+var y = S$.symbol('Y', false);
 
 if (x == 0 && y == false) {} //Force x to false at least once
 
