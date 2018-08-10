@@ -1,6 +1,6 @@
 //Simple test of Term {X}
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^(abc){3}$/.test(x)) {
 	if (x == 'abcabcabc') throw 'Reachable';

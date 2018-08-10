@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var isIn = /^Hello(world)how are you\(today\)huh\?huh?$/.test(x);
 
 if (isIn) {

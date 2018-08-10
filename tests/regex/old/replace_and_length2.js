@@ -2,9 +2,9 @@
 
 "use strict";
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (x.length > 0 && x !== 'hello' && x.replace('h...o', '') === '') {
-	assert x.length != 0;
+	S$.assert(x.length != 0);
 	console.log('A length: ' + x.length);
 }

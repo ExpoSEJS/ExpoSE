@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^\u{EEFF}$/u.test(x)) {
 	if (x != '\uEEFF') throw 'Unreachable';

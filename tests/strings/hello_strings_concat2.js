@@ -2,7 +2,8 @@
 
 "use strict";
 
-var a = symbolic DOGS initial 'HELL';
+var S$ = require('S$');
+var a = S$.symbol("DOGS", 'HELL');
 var q = a + "DOGS666";
 
-assert q.length !== 6;
+S$.assert(q.length !== 6);

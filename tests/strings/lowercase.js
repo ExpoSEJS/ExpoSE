@@ -1,7 +1,8 @@
 //to lowercase smoke test
 //Does not exhaustively test, just our weak model
 
-var x = symbolic X initial '';
+var S$ = require('S$');
+var x = S$.symbol("X", '');
 
 if (x.toLowerCase() == 'what_is_my_name') {
 	throw 'Reachable';

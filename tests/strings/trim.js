@@ -1,6 +1,7 @@
-var x = symbolic X initial '';
+var S$ = require('S$');
+var x = S$.symbol("X", '');
 
-assume x.length == 15;
+S$.assume(x.length == 15);
 
 if (x.trim() == 'Hello') {
     throw 'Reachable';

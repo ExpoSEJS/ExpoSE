@@ -1,6 +1,6 @@
 'use strict';
 
-var q = symbolic q initial '';
+var q = S$.symbol("q", '');
 
 //Implict anchor => /--.+=.*?/ (will let anything in after the =)
 if (/^--.+=/.test(q)) {

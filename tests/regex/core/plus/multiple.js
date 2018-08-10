@@ -1,6 +1,6 @@
 //Test the + operator
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^a+$/.test(x)) {
 	throw 'Reachable';

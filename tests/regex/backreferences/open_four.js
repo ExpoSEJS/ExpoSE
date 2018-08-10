@@ -1,6 +1,6 @@
 //Test modeling of looped references to open capture groups (Local captures)
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^(([a-z])\2)+(([1-9])\4)+$/.test(x)) {
 

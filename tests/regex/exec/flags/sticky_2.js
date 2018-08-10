@@ -1,7 +1,7 @@
 var re = /hello/y;
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
-assume x.length < 15;
+S$.assume(x.length < 15);
 
 var i = 0;
 

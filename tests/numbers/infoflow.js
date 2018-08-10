@@ -41,7 +41,7 @@ function verify(f) {
     var loOutput2 = f(loInput, hiInput2);
 
     if (hiInput1 !== 777 && hiInput2 !== 777) {
-        assert loOutput1 === loOutput2;;
+        S$.assert(loOutput1 === loOutput2;);
     }
 }
 

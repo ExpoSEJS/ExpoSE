@@ -2,7 +2,8 @@
 
 "use strict";
 
-var a = symbolic A initial 'hello';
+var S$ = require('S$');
+var a = S$.symbol("A", 'hello');
 
 if (a === "goodbye") {
 	console.log('PASS');

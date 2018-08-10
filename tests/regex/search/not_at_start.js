@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /(a|b)$/;
 var nl = x.search(b);
 

@@ -1,9 +1,9 @@
 //Tests replace on a global regex
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /(a|b)/g;
 
-assume x.length < 5;
+S$.assume(x.length < 5);
 
 if (x != 'Test' && x.replace(b, 'Test') == 'Test') {
 	

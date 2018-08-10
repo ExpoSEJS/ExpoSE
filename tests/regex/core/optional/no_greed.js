@@ -1,7 +1,7 @@
 //Simple optional enumerates all strings possible from a simple optional
 //Tests that ?? is the same as ? without captures (In test)
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^a??b??c??$/.test(x)) {
 	if (x == '') throw 'Reachable';

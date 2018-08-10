@@ -1,8 +1,8 @@
 //Tests a simple string search
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
-assume x.length < 7;
+S$.assume(x.length < 7);
 
 var b = /(a*)/;
 var nl = x.search(b);

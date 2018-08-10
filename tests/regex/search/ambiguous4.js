@@ -1,10 +1,10 @@
 //Tests a simple string search
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /[a-z]*/;
 var nl = x.search(b);
 
-assume x.length <= 5;
+S$.assume(x.length <= 5);
 
 //The first set of as should be the match, but if greediness is not enforced either will be accepted
 if (x == 'hello') {

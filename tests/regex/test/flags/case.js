@@ -1,5 +1,5 @@
 //Test that multiline changes ^ into (\n or ^) and $ into (\n or $)
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^ABC$/i.test(x)) {
 	if (x == 'abc') throw 'Reachable';

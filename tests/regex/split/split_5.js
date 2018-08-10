@@ -1,9 +1,9 @@
 //Tests replace on a global regex
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /.../;
 
-assume x.length < 2;
+S$.assume(x.length < 2);
 
 x = x.split(b);
 

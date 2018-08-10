@@ -1,6 +1,6 @@
 //Combine optional, non-greedy optional and non optional terms in the same regex and test
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^a?bcd(bcde)??$/.test(x)) {
 	if (x == 'bcd') throw 'Reachable';

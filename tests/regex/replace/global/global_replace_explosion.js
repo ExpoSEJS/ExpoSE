@@ -1,10 +1,10 @@
 //Generate a test case 
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /(a|b)/g;
 
-assume x.length > 1000;
-assume x[786] = 'b';
+S$.assume(x.length > 1000);
+S$.assume(x[786] = 'b');
 
 if (x.replace(b, 'Test') == 'Test') {
 	

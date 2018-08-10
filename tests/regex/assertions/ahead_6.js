@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 var re = /^(?=([a-z])).$/;
 var re2 = /^[0-9]$/;

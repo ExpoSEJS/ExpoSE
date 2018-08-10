@@ -2,7 +2,8 @@
 
 "use strict";
 
-var a = symbolic HI initial 'hello';
+var S$ = require('S$');
+var a = S$.symbol("HI", 'hello');
 var q = a + "DOGS";
 
 if (q.length == 6) {

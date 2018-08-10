@@ -1,6 +1,7 @@
-var x = symbolic X initial "hello";
+var S$ = require('S$');
+var x = S$.symbol("X", "hello");
 
-assume x.length == 5;
+S$.assume(x.length == 5);
 
 if (x.slice(1, 1) == "w") {
 	throw 'Reachable';

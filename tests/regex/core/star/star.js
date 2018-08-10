@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^he*llo_world*$/.test(x)) {
 	if (x == 'heello_worlddddd') throw 'Reachable';

@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 //Form Feed
 if (/^\f$/.test(x)) {

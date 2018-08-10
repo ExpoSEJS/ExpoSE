@@ -1,6 +1,6 @@
 //Test greedyness brought on by ambiguities in quantifiers
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var regex = /^(hello)+(.+)$/;
 var b = x.match(regex);
 

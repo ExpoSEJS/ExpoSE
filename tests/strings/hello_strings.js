@@ -2,12 +2,13 @@
 
 "use strict";
 
-var a = symbolic HELLO initial 'HELLO';
-var b = symbolic NO initial 'NOPE';
+var S$ = require('S$');
+var a = S$.symbol("HELLO", 'HELLO');
+var b = S$.symbol("NO", 'NOPE');
 
 if (a === b) {
 	console.log('Yes');
-	assert a == b;
+	S$.assert(a == b);
 } else {
 	console.log('Nope');
 }

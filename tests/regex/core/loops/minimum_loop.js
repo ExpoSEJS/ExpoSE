@@ -1,9 +1,9 @@
 //Simple test of Term {Min,}
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 //Restriction to avoid infinite feasible paths for dynamic analysis
-assume x.length < 20;
+S$.assume(x.length < 20);
 
 if (/^(abc){3,}$/.test(x)) {
 

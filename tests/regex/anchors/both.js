@@ -1,10 +1,10 @@
 'use strict';
 
-var q = symbolic q initial '';
+var q = S$.symbol("q", '');
 
 //This assumption is required to make the testcase solve in reasonable time with Z3
 //This is not due to the regular expression but in fact due to the q.length and str.at
-assume q.length < 10;
+S$.assume(q.length < 10);
 
 if (/^--.+=$/.test(q)) {
 

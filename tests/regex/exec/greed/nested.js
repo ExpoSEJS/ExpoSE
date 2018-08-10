@@ -1,6 +1,6 @@
 //Tests nested depth greedy (Ambiguous) regular expressions with captures
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /^((.)(.))?$/.exec(x);
 
 if (b) {

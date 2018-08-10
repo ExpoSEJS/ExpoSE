@@ -1,6 +1,6 @@
 'use strict';
 
-var q = symbolic q initial '';
+var q = S$.symbol("q", '');
 
 if (/^a|b|c$/.test(q)) {
 

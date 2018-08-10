@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var regex = /(abc)(d)/
 var b = x.match(regex);
 

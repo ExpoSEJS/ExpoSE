@@ -6,6 +6,6 @@ x['Hello'] = 32;
 
 x[false] = true;
 
-assert x[false] == true;
-assert x['Hello'] = 32;
-assert x[4] == 'Hi';
+S$.assert(x[false] == true);
+S$.assert(x['Hello'] = 32);
+S$.assert(x[4] == 'Hi');

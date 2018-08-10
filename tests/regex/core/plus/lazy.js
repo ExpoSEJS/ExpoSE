@@ -1,7 +1,7 @@
 //Same as plus.js
 //Tries to show that +? and + are equivalent for test
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^(hello)+?(world)+?$/.test(x)) {
 
@@ -51,7 +51,7 @@ if (/^h+?$/.test(x)) {
 }
 
 if (/^z+?$/.test(x)) {
-	assume x.length < 5;
+	S$.assume(x.length < 5);
 	
 	for (var i = 0; i < x.length; i++) {
 		if (x[i] != 'z') {

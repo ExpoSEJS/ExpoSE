@@ -1,11 +1,11 @@
 //Tests replace on a global regex
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /(a)/;
 
 x = x.split(b);
 
-assume x.length < 100;
+S$.assume(x.length < 100);
 
 if (x.length == 16) {
 	if (x[x.length - 1] == 'hello') {

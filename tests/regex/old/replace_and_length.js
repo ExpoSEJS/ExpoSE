@@ -2,7 +2,7 @@
 
 "use strict";
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (x == 'HELLO WORLD') {
 

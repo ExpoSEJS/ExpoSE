@@ -1,6 +1,6 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
-assume x.length < 10;
+S$.assume(x.length < 10);
 
 if (/^z+$/.test(x)) {
 	

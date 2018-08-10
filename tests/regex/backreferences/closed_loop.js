@@ -1,6 +1,6 @@
 //Test a looped bref on a closed capture
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^(.)\1+$/.test(x)) {
 	

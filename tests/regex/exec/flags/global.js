@@ -1,7 +1,7 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /abc/g.exec(x);
 
-assume x.length < 4;
+S$.assume(x.length < 4);
 
 if (b.exec(x)) {
 	

@@ -1,6 +1,6 @@
 //Test ambiguous regular expressions which include alternation or optional terms (?)
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /^(a)+?$/.exec(x);
 
 if (b) {

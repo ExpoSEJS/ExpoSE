@@ -2,8 +2,9 @@
 
 "use strict";
 
-var x = symbolic X initial 10;
-var s = symbolic S initial "foo";
+var S$ = require('S$');
+var x = S$.symbol("X", 10);
+var s = S$.symbol("S", "foo");
 
 console.log("x is initialized to", x);
 console.log("s is initialized to", s);

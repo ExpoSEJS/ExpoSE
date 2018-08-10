@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^Hello|Goodbye|Whats Up$/.test(x)) {
 	if (x == 'Hello') throw 'Reachable';

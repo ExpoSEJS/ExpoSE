@@ -8,7 +8,7 @@ var x = s.symbol('A', 5);
 console.log("x is initialized to", x);
 
 if (x > 0) {
-	assert x > 0;
+	S$.assert(x > 0);
 } else {
-	assert x <= 0;
+	S$.assert(x <= 0);
 }

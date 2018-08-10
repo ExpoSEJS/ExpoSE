@@ -15,9 +15,9 @@ function f(x, maxLen) {
     }
 }
 
-var len = symbolic L initial 3;
-var str = symbolic A initial 'foo';
+var len = S$.symbol("L", 3);
+var str = S$.symbol("A", 'foo');
 
-assume str.length < 10;
+S$.assume(str.length < 10);
 
 f(str, len);

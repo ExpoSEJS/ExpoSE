@@ -1,6 +1,6 @@
 //Tests a replace on a non global regex
 
-var x = symbolic X initial 'a';
+var x = S$.symbol("X", 'a');
 var b = /^(a|b)$/;
 
 x = x.replace(b, 'hello');

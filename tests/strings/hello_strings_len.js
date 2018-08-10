@@ -2,7 +2,8 @@
 
 "use strict";
 
-var q = symbolic HI initial 'HELLO';
+var S$ = require('S$');
+var q = S$.symbol("HI", 'HELLO');
 
 if (q.length == 15) {
 	console.log('YES');

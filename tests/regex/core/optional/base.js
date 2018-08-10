@@ -1,6 +1,6 @@
 //Simple optional enumerates all strings possible from a simple optional
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^a?b?c?$/.test(x)) {
 	if (x == '') throw 'Reachable';

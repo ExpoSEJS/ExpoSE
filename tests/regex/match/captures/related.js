@@ -1,6 +1,6 @@
 //In this test a string constraint is used to force a relation between two captured strings
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var regex = /^(.+)q(.+)$/ 
 var b = x.match(regex);
 

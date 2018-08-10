@@ -1,6 +1,6 @@
 //Simple alternation test
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^(a|b|hello|dog)$/.test(x)) {
 	if (x == 'a') throw 'Reachable';

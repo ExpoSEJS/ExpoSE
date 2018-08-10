@@ -1,8 +1,8 @@
 //Test that multiline changes ^ into (\n or ^) and $ into (\n or $)
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var re = /abc/y;
 
-assume x.length < 4;
+S$.assume(x.length < 4);
 
 if (re.test(x)) {
 	

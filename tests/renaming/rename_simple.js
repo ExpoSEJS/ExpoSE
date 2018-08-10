@@ -1,7 +1,7 @@
 //Test variable renaming scheme
 
-var x = symbolic X initial 0;
-var y = symbolic X initial 10;
+var x = S$.symbol("X", 0);
+var y = S$.symbol("X", 10);
 
 console.log('Wat');
 

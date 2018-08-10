@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^[^abcd]$/.test(x)) {
 	if (x == 'a') throw 'Unreachable';

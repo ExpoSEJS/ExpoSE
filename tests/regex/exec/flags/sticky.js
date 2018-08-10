@@ -1,9 +1,9 @@
 //Test the lastIndex property of the sticky flag
 
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 var b = /abc/y.exec(x);
 
-assume x.length < 4;
+S$.assume(x.length < 4);
 
 if (b.exec(x)) {
 	

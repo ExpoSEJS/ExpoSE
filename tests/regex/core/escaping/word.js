@@ -1,4 +1,4 @@
-var x = symbolic X initial '';
+var x = S$.symbol("X", '');
 
 if (/^\w$/.test(x)) {
 	if (!/^[a-zA-Z0-9_]$/.test(x)) {
