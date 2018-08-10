@@ -3,7 +3,7 @@
 var S$ = require('S$');
 
 setTimeout(function() {
-	var x = S$.assume('A', 5);
+	var x = S$.symbol('X', 5);
 	
 	if (x > 10) {
 		console.log('X > 10');
