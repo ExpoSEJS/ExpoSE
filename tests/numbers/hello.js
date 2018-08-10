@@ -2,8 +2,8 @@
 
 "use strict";
 
-var s = require('S$');
-var x = s.symbol('A', 5);
+var S$ = require('S$');
+var x = S$.symbol('A', 5);
 
 console.log("x is initialized to", x);
 

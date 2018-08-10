@@ -1,3 +1,5 @@
+var S$ = require('S$');
+
 var x = {};
 
 x[4] = 'Hi';

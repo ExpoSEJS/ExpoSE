@@ -1,5 +1,6 @@
 //Tests a simple string search
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var b = /^abc$/;
 var nl = x.search(b);
