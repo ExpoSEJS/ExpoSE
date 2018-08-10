@@ -1,5 +1,6 @@
 //Combine optional, non-greedy optional and non optional terms in the same regex and test
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^a?bcd(bcde)??$/.test(x)) {

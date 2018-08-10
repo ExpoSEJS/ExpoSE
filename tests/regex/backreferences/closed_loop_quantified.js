@@ -1,5 +1,5 @@
 //Test a looped bref on a closed capture
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 S$.assume(x.length < 10);

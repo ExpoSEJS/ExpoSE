@@ -1,5 +1,5 @@
 'use strict';
-
+var S$ = require('S$');
 var q = S$.symbol("q", '');
 
 if (/--.+=/.test(q)) {

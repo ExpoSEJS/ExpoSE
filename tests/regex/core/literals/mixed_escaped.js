@@ -1,3 +1,4 @@
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var isIn = /^Hello(world)how are you\(today\)huh\?huh?$/.test(x);
 

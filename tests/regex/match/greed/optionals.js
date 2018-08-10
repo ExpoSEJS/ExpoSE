@@ -1,5 +1,5 @@
 //Test ambiguous regular expressions which include alternation or optional terms (?)
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var regex = /^(a)+?$/
 var b = x.match(regex);

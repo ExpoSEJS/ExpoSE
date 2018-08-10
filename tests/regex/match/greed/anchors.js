@@ -1,5 +1,5 @@
 //Test ambiguities brought about by greediness and anchors
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var regex = /.../
 var b = x.match(regex);

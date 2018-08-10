@@ -1,3 +1,4 @@
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 //Z3 doesn't support Unicode in RE officially so there is no guarentee unicode sequences will work

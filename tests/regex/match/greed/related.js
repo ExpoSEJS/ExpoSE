@@ -1,6 +1,6 @@
 //In this test a string constraint is used to force a relation between two captured strings
 //The Regex in question though places the implicit constraint that C2 can only ever be one character wide though
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var regex = /^(.+)(.+)$/ 
 var b = x.match(regex);

@@ -1,6 +1,6 @@
 //Test variable renaming scheme
-
-var x = symbolic X;
+var S$ = require('S$');
+var x = S$.pureSymbol("X");
 var y = S$.symbol("X", 10);
 
 console.log('Wat');

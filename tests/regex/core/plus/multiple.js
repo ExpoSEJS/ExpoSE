@@ -1,5 +1,6 @@
 //Test the + operator
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^a+$/.test(x)) {

@@ -1,5 +1,5 @@
 //Test modeling of looped references to open capture groups (Local captures)
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^((.)\2)+$/.test(x)) {

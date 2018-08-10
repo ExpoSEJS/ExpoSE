@@ -1,4 +1,5 @@
 //Test the assertion of lookahead must be a word
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^\b.$/.test(x)) {

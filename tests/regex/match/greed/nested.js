@@ -1,5 +1,5 @@
 //Tests nested depth greedy (Ambiguous) regular expressions with captures
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var regex = /^((.)(.))?$/;
 var b = x.match(regex);

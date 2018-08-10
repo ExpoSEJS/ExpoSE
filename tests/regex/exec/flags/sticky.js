@@ -1,5 +1,5 @@
 //Test the lastIndex property of the sticky flag
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var b = /abc/y.exec(x);
 

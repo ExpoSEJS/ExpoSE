@@ -1,5 +1,5 @@
 //Simple test of Term {Min, Max}
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^(abc){3,6}$/.test(x)) {

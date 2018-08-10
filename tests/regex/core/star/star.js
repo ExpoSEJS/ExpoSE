@@ -1,3 +1,4 @@
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^he*llo_world*$/.test(x)) {

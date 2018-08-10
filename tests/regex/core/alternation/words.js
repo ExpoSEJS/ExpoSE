@@ -1,3 +1,4 @@
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^Hello|Goodbye|Whats Up$/.test(x)) {

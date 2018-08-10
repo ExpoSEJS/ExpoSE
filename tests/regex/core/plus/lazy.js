@@ -1,6 +1,7 @@
 //Same as plus.js
 //Tries to show that +? and + are equivalent for test
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^(hello)+?(world)+?$/.test(x)) {

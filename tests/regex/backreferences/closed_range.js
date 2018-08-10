@@ -1,5 +1,5 @@
 //Test a single backreference of a closed capture group
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^([ab])\1([ab])\2([ab])\1$/.test(x)) {

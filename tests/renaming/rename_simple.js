@@ -1,5 +1,5 @@
 //Test variable renaming scheme
-
+var S$ = require('S$');
 var x = S$.symbol("X", 0);
 var y = S$.symbol("X", 10);
 

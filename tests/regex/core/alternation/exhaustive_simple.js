@@ -1,5 +1,5 @@
 //Simple alternation test
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^(a|b|hello|dog)$/.test(x)) {

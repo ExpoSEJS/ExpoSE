@@ -1,5 +1,6 @@
 //Test the lastIndex property of the sticky flag
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var b = /^(a{1,3}?)(a)?$/.exec(x);
 

@@ -1,5 +1,6 @@
 //Simple optional enumerates all strings possible from a simple optional
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^a?b?c?$/.test(x)) {

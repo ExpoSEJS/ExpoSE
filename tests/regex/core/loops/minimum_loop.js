@@ -1,5 +1,5 @@
 //Simple test of Term {Min,}
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 //Restriction to avoid infinite feasible paths for dynamic analysis

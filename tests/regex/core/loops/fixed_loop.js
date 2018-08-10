@@ -1,5 +1,5 @@
 //Simple test of Term {X}
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^(abc){3}$/.test(x)) {

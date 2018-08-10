@@ -1,3 +1,4 @@
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var regex = /(abc)(d)/
 var b = x.match(regex);

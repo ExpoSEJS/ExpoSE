@@ -1,5 +1,5 @@
 //Test greedyness brought on by ambiguities in quantifiers
-
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var regex = /^(hello)+(.+)$/;
 var b = x.match(regex);

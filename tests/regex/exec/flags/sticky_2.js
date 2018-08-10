@@ -1,3 +1,4 @@
+var S$ = require('S$');
 var re = /hello/y;
 var x = S$.symbol("X", '');
 

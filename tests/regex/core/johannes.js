@@ -1,5 +1,7 @@
 "use strict";
 
+var S$ = require('S$');
+
 function f(x, maxLen) {
     var s = x.match(/<([a-z]+)>(.*?)<\/\1>/);
     if (s) {

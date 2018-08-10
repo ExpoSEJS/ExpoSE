@@ -1,6 +1,7 @@
 //Lazy based on star.js
 //Tests that *? has the same properties as * in test
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 if (/^he*?llo_world*?$/.test(x)) {

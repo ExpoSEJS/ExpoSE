@@ -1,5 +1,5 @@
 'use strict';
-
+var S$ = require('S$');
 var q = S$.symbol("q", '');
 
 //This assumption is required to make the testcase solve in reasonable time with Z3
