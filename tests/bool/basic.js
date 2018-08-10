@@ -2,8 +2,10 @@
 
 "use strict";
 
-var A = symbolic A initial true;
-var B = symbolic B initial true;
+var S$ = require('S$');
+
+var A = S$.symbol('A', true);
+var B = S$.symbol('B', true);
 
 if (A) {
 	if (B) {

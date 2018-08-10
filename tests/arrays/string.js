@@ -1,4 +1,5 @@
-var stdargs = symbolic X initial ['P'];
+var S$ = require('S$');
+var stdargs = S$.symbol('X', ['P']);
 
 if (stdargs[3] == 'Hello') {
 

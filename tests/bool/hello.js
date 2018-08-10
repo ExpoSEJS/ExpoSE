@@ -2,18 +2,20 @@
 
 "use strict";
 
+var S$ = require('S$');
+
 console.log('Start');
 
-var q = symbolic Q initial true;
+var q = S$.symbol('Q', true);
 
 console.log('Create');
 
 if (!q) {
-	assert !q;
+	S$.assert(!q);
 }
 
 if (q) {
-	assert q;
+	S$.assert(q);
 }
 
 console.log('Path Finished');

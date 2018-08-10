@@ -2,7 +2,9 @@
 
 "use strict";
 
-var x = symbolic X;
+
+var S$ = require('S$');
+var x = S$.pureSymbol('X');
 
 if (x instanceof Array) {
 	assume x.length < 4;
