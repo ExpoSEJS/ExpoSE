@@ -1,4 +1,3 @@
-import Tropigate from 'Tropigate';
 const fs = require('fs');
 
 export default function(filename) {
@@ -7,7 +6,7 @@ export default function(filename) {
 			if (err) {
 				reject(err);
 			} else {
-				resolve(Tropigate(data));
+				resolve('' + data);
 			}
 		});
 	});
