@@ -1,5 +1,4 @@
 const fs = require('fs');
-const Tropigate = require('Tropigate').default;
 
 const logFile = JSON.parse(fs.readFileSync(process.argv[process.argv.length - 1]));
 
@@ -17,7 +16,7 @@ function findInSmap(line, col, smap) {
 function printOut(coverage) {
     for (file of coverage) {
         if (!file.file.includes('symbols')) { //Ignore harness
-            const fileText = Tropigate('' + fs.readFileSync(file.file));
+            const fileText = '' + fs.readFileSync(file.file);
             console.log(file.file);
 
             const lines = fileText.split('\n');
