@@ -8,4 +8,4 @@ export NODE_PATH=$NODE_PATH:"$(pwd)/node_modules/":"$(pwd)/../lib/"
 echo $NODE_PATH
 
 #TODO: Refactor out all these hardcoded node modules paths
- ./node_modules/browserify/bin/cmd.js -u=z3javascript -u=process $2 --outfile $3
+ ./node_modules/browserify/bin/cmd.js -u=z3javascript -u=electron -u=process $2 --outfile $3

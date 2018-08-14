@@ -5,6 +5,8 @@ const {app, Menu, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
 
+app.commandLine.appendSwitch('proxy-server', '127.0.0.1:8080');
+
 let mainWindow;
 
 function createWindow () {

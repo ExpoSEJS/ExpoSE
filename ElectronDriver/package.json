@@ -4,14 +4,14 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron . --proxy-server=127.0.0.1:8080"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "async": "^2.1.5",
     "browserify": "^14.1.0",
-    "electron": "git+https://github.com/ExpoSEJS/electron.git",
+    "electron": "*",
     "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git"
   },
   "devDependencies": {

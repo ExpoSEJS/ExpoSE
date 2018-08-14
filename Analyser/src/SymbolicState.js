@@ -9,8 +9,15 @@ import Config from './Config';
 import SymbolicHelper from './SymbolicHelper';
 import { SymbolicObject } from './Values/SymbolicObject';
 import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
-import Z3 from 'z3javascript';
 import Stats from 'Stats';
+
+let Z3;
+
+if (typeof window === 'undefined') {
+    Z3 = require('z3javascript').default;
+} else {
+    Z3 = require('electron').remote.require('z3javascript');
+}
 
 function BuildUnaryJumpTable(state) {
     const ctx = state.ctx;
