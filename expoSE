@@ -64,6 +64,7 @@ else
 	TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
     echo $TARGET_REAL_PATH
 	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
-	node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
-	exit $?
+	OUT_CODE=$?
+    node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
+	exit $OUT_CODE
 fi

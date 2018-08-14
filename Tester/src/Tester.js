@@ -4,7 +4,7 @@
 
 import {spawn} from 'child_process';
 
-const EXPOSE_TEST_SCRIPT = './scripts/analyse';
+const EXPOSE_TEST_SCRIPT = './expoSE';
 
 class Tester {
 
