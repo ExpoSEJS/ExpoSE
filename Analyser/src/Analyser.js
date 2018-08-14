@@ -34,14 +34,14 @@ ObjectHelper.safe(NotAnErrorException.prototype);
 const argv = 
     typeof window !== 'undefined' ?
     require('electron').remote.process.argv :
-    process;
+    process.argv;
 
 const input = argv[argv.length - 1];
 
 Log.logHigh('Built with VERY logging enabled');
 Log.logMid('Built with FINE logging enabled');
 Log.log('Built with BASE logging enabled');
-Log.log('Intial Input ' + input + '<' + JSON.stringify(input));
+Log.log('Intial Input ' + input);
 
 process.title = 'ExpoSE Play ' + input;
 

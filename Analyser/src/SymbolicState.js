@@ -11,13 +11,8 @@ import { SymbolicObject } from './Values/SymbolicObject';
 import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
 import Stats from 'Stats';
 
-let Z3;
-
-if (typeof window === 'undefined') {
-    Z3 = require('z3javascript').default;
-} else {
-    Z3 = require('electron').remote.require('z3javascript');
-}
+//This is a bit ugly. If window is defined we require Electron RPC require rather than window level require to get z3javascript handle
+const Z3 = (typeof window === 'undefined' ? require : require('electron').remote.require)('z3javascript').default;
 
 function BuildUnaryJumpTable(state) {
     const ctx = state.ctx;

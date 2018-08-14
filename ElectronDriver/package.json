@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "start": "Z3_PATH=\"../Analyser/node_modules/z3javascript/bin/libz3.dylib\" electron . --proxy-server=127.0.0.1:8080 \\\"{\"_bound\":0}\\\""
+    "start": "Z3_PATH=\"../Analyser/node_modules/z3javascript/bin/libz3.dylib\" electron . --proxy-server=127.0.0.1:8080 HELLO_WORL"
   },
   "author": "",
   "license": "ISC",
