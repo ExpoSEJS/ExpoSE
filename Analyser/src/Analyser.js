@@ -31,7 +31,12 @@ ObjectHelper.safe(NotAnErrorException.prototype);
  * End the SafeToString table
  */
 
-const input = process.argv[process.argv.length - 1];
+const argv = 
+    typeof window !== 'undefined' ?
+    require('electron').remote.process.argv :
+    process;
+
+const input = argv[argv.length - 1];
 
 Log.logHigh('Built with VERY logging enabled');
 Log.logMid('Built with FINE logging enabled');
