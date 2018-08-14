@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
 function abs_target {
-	#Generate the absolute path of test script
-	cd "$2"
-	cd "$(dirname "$1")"
-	echo "$(printf "%s/%s\n" "$(pwd)" "$(basename "$1")")" 
+    if [[ ${1} =~ ^https?://.+ ]]; then
+        echo $1
+    else
+        #Generate the absolute path of test script
+        cd "$2"
+        cd "$(dirname "$1")"
+        echo "$(printf "%s/%s\n" "$(pwd)" "$(basename "$1")")" 
+    fi
 }
 
 #Store the current working directory to return after calculating abspath
@@ -58,6 +62,7 @@ elif [ "$1" == "test_suite" ]; then
 	exit $?
 else
 	TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
+    echo $TARGET_REAL_PATH
 	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
 	node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
 	exit $?

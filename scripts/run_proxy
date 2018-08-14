@@ -1,4 +1,5 @@
 #!/bin/bash
+RECOMPILE=1 ./expoSE
 cd Analyser
 rm -rf cache
 mitmdump --quiet --anticache -s "node_modules/jalangi2/scripts/proxy.py --inlineIID --inlineSource --analysis bin/bundle.js"

@@ -17,6 +17,7 @@ function makeid(count) {
 }
 
 const path_dump_id = makeid(4);
+const log_path = console.log; 
 
 /**
  * Class to handle logging
@@ -27,15 +28,15 @@ const path_dump_id = makeid(4);
 class Log {
 
 	logHigh(msg) {
-		console.log('ExpoSE HIGH: ' + msg);
+		log_path('ExpoSE HIGH: ' + msg);
 	}
 
 	logMid(msg) {
-		console.log('ExpoSE MID: ' + msg);
+		log_path('ExpoSE MID: ' + msg);
 	}
 
 	log(msg) {
-		console.log('ExpoSE: ' + msg);
+		log_path('ExpoSE: ' + msg);
 	}
 
 	logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {

@@ -3,8 +3,5 @@
 #Setup runtime environment variables
 source ./scripts/expose_env
 
-#Generate the real path to script if it is relative
-TARGET_REAL_PATH="$(./scripts/abspath "$1")"
-
 #Invoke analyser
-(node Distributor/bin/Distributor.js "$TARGET_REAL_PATH" ${@:2})
+(node Distributor/bin/Distributor.js "$1" ${@:2})

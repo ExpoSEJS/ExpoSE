@@ -1,3 +1,7 @@
+import External from './External';
+
+const process = External.load('process');
+
 function Default(i, d) {
     const envvar = process.env[`EXPOSE_${i}`];
     return envvar || d;

@@ -7,6 +7,8 @@ const url = require('url');
 
 app.commandLine.appendSwitch('proxy-server', '127.0.0.1:8080');
 
+console.log(process.argv[process.argv.length - 2])
+
 let mainWindow;
 
 function createWindow () {
@@ -19,12 +21,8 @@ function createWindow () {
   })
 
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: "example.com",
-    protocol: 'http:',
-    slashes: true
-  }))
-
+//  mainWindow.loadURL(process.argv[process.argv.length - 2]);
+  mainWindow.loadURL('https://google.com');
   mainWindow.on('closed', function () {
     mainWindow = null;
   });

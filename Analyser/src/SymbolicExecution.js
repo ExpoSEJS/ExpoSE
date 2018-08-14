@@ -11,6 +11,9 @@ import Log from './Utilities/Log';
 import NotAnErrorException from './NotAnErrorException';
 import {isNative} from './Utilities/IsNative';
 import ModelBuilder from './FunctionModels';
+import External from './External';
+
+const process = External.load('process');
 
 class SymbolicExecution {
 
@@ -20,11 +23,21 @@ class SymbolicExecution {
         this.models = ModelBuilder(this.state);
         this._fileList = new Array();
 
-        //Bind any uncaught exceptions to the uncaught exception handler
-        process.on('uncaughtException', this._uncaughtException.bind(this));
+        if (typeof window !== 'undefined') {
+            let that = this;
 
-        //Bind the exit handler to the exit callback supplied
-        process.on('exit', exitFn.bind(null, this.state, this.state.coverage));
+            window.onbeforeunload = function() {
+                exitFn(that.state, that.state.coverage);
+                process.exit(0);
+            }
+        } else {
+            //Bind any uncaught exceptions to the uncaught exception handler
+            process.on('uncaughtException', this._uncaughtException.bind(this));
+
+            //Bind the exit handler to the exit callback supplied
+            process.on('exit', exitFn.bind(null, this.state, this.state.coverage));
+        }
+
     }
 
     _uncaughtException(e) {

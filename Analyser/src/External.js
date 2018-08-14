@@ -2,6 +2,18 @@
 
 "use strict";
 
-export default function (library) {
-	return require(library);
-}
+export default {
+
+    load: function (library) {
+        if (this.is_external()) {
+            return require('electron').remote.require(library);
+        } else {
+	        return require(library);
+        }
+    },
+
+    is_external: function() {
+        return typeof window !== 'undefined';
+    }
+
+};

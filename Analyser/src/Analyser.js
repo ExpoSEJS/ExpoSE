@@ -13,30 +13,12 @@ import {ConcolicValue, WrappedValue} from './Values/WrappedValue';
 import NotAnErrorException from './NotAnErrorException';
 import Config from './Config';
 import Log from './Utilities/Log';
-import Z3 from 'z3javascript';
-import fs from 'fs';
+import External from './External';
 
-/**
- * Set up the methods and classes which ObjectHelper considers safe to string
- */
+const fs = External.load('fs');
+const process = External.load('process');
 
-ObjectHelper.safe(Z3.Expr.prototype);
-ObjectHelper.safe(Z3.Model.prototype);
-ObjectHelper.safe(Z3.Context.prototype);
-ObjectHelper.safe(WrappedValue.prototype);
-ObjectHelper.safe(ConcolicValue.prototype)
-ObjectHelper.safe(NotAnErrorException.prototype);
-
-/**
- * End the SafeToString table
- */
-
-const argv = 
-    typeof window !== 'undefined' ?
-    require('electron').remote.process.argv :
-    process.argv;
-
-const input = argv[argv.length - 1];
+const input = process.argv[process.argv.length - 1];
 
 Log.logHigh('Built with VERY logging enabled');
 Log.logMid('Built with FINE logging enabled');

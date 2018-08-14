@@ -12,7 +12,7 @@ import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
 import Stats from 'Stats';
 
 //This is a bit ugly. If window is defined we require Electron RPC require rather than window level require to get z3javascript handle
-const Z3 = (typeof window === 'undefined' ? require : require('electron').remote.require)('z3javascript').default;
+const Z3 = External.load('z3javascript').default;
 
 function BuildUnaryJumpTable(state) {
     const ctx = state.ctx;
