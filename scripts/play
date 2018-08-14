@@ -1,6 +1,2 @@
 #!/usr/bin/env bash
-if [ -z ${DEBUG} ]; then
-	(cd Analyser && node ./node_modules/jalangi2/src/js/commands/jalangi.js --inlineIID --inlineSource --analysis bin/Analyser.js "${@:1}")
-else
-	(cd Analyser && node --inspect --debug-brk ./node_modules/jalangi2/src/js/commands/jalangi.js --inlineIID --inlineSource --analysis bin/Analyser.js "${@:1}")
-fi
+(cd Analyser && node ./node_modules/jalangi2/src/js/commands/jalangi.js --inlineIID --inlineSource --analysis bin/Analyser.js "${@:1}")

@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+(cd ElectronDriver && node node_modules/electron/cli.js . "${@:1}")
