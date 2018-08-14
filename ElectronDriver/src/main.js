@@ -21,8 +21,7 @@ function createWindow () {
   })
 
   // and load the index.html of the app.
-//  mainWindow.loadURL(process.argv[process.argv.length - 2]);
-  mainWindow.loadURL('https://google.com');
+  mainWindow.loadURL(process.argv[process.argv.length - 2]);
   mainWindow.on('closed', function () {
     mainWindow = null;
   });
