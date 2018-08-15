@@ -1,0 +1,15 @@
+#!/bin/bash
+./scripts/build/build_analyser
+
+PID="$(./scripts/run_proxy)"
+
+echo "Proxy PID" $PID
+sleep 15s
+
+echo "${@}"
+
+EXPOSE_PLAY_SCRIPT=./scripts/play_electron ./expoSE "${@}"
+
+echo "Kill ${PID}"
+kill $PID
+echo "Fin"
