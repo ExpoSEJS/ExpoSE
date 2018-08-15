@@ -58,6 +58,7 @@ elif [ "$1" == "replay" ]; then
 	./scripts/play $TARGET_REAL_PATH "${@:3}"
 	exit $?
 elif [ "$1" == "test_suite" ]; then
+    unset RECOMPILE
 	./scripts/run_tests
 	exit $?
 else
