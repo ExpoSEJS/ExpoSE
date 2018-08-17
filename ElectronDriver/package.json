@@ -15,6 +15,6 @@
     "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git"
   },
   "devDependencies": {
-    "electron-rebuild": "^1.5.7"
+    "electron-rebuild": "^1.8.2"
   }
 }

@@ -26,10 +26,10 @@ class SymbolicExecution {
         if (typeof window !== 'undefined') {
             let that = this;
 
-            window.onbeforeunload = function() {
+            /*window.onbeforeunload = function() {
                 exitFn(that.state, that.state.coverage);
                 process.exit(0);
-            }
+            }*/
         } else {
             //Bind any uncaught exceptions to the uncaught exception handler
             process.on('uncaughtException', this._uncaughtException.bind(this));

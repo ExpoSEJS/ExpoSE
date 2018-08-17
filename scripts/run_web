@@ -4,7 +4,7 @@
 PID="$(./scripts/run_proxy)"
 
 echo "Proxy PID" $PID
-sleep 15s
+sleep 5s
 
 echo "${@}"
 
