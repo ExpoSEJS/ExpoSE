@@ -1,11 +1,15 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
+console.log('Initializing');
+
 const {app, Menu, BrowserWindow} = require('electron');
 
 const path = require('path');
 const url = require('url');
 
 app.commandLine.appendSwitch('proxy-server', '127.0.0.1:8080');
+
+console.log('Proxy Starting');
 
 console.log(process.argv[process.argv.length - 2])
 
