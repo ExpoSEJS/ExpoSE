@@ -6,9 +6,15 @@
 
 <script>
 
-var x = Object._expose.makeSymbolic('A', 'A');
+var x = Object._expose.makeSymbolic('A', 5);
+
+let state = J$.analysis.state;
+//state.binary('==', x, 10);
 
 if (x) {
+	window.navigator.location = "yousuck.com";
+} else {
+	window.navigator.location = "byebye.com";
 }
 
 </script>

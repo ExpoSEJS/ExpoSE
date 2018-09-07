@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
 
-echo "Starting proxy"
 cd Analyser
-
-echo "Clearing cache"
 rm -rf cache
-
-echo "MITM Call"
-mitmdump --anticache -s "node_modules/jalangi2/scripts/proxy.py --inlineIID --inlineSource --analysis bin/bundle.js" &
+mitmdump --anticache -s "node_modules/jalangi2/scripts/proxy.py --inlineIID --inlineSource --analysis bin/bundle.js" &> ~/mitmlog &
 
 echo $!

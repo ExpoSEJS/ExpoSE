@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
-ELECTRON_ENABLE_LOGGING=1 (cd ElectronDriver && node node_modules/electron/cli.js . "${@:1}")
+export ELECTRON_ENABLE_LOGGING=1
+export ELECTRON_ENABLE_STACK_DUMPING=true
+(cd Browser && $(npm bin)/electron-forge start . -- "${@:1}")

@@ -13,8 +13,6 @@ import {isNative} from './Utilities/IsNative';
 import ModelBuilder from './FunctionModels';
 import External from './External';
 
-const process = External.load('process');
-
 class SymbolicExecution {
 
     constructor(sandbox, initialInput, exitFn) {
@@ -26,12 +24,17 @@ class SymbolicExecution {
         if (typeof window !== 'undefined') {
             let that = this;
 
-            /*window.onbeforeunload = function() {
+
+            window.onbeforeunload = function() {
                 exitFn(that.state, that.state.coverage);
-                process.exit(0);
-            }*/
+		require('electron').remote.getCurrentWindow().close();
+            }
+
         } else {
-            //Bind any uncaught exceptions to the uncaught exception handler
+	    
+	    const process = External.load('process');
+            
+	    //Bind any uncaught exceptions to the uncaught exception handler
             process.on('uncaughtException', this._uncaughtException.bind(this));
 
             //Bind the exit handler to the exit callback supplied

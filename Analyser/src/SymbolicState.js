@@ -308,6 +308,8 @@ class SymbolicState {
      */
     createSymbolicValue(name, concrete) {
 
+	Log.logMid(`Args ${JSON.stringify(arguments)} ${name} ${concrete}`);
+
         this.stats.seen('Symbolic Values');
 
         //TODO: Very ugly short circuit
@@ -415,6 +417,8 @@ class SymbolicState {
 
     _symbolicBinary(op, left_c, left_s, right_c, right_s) {
         this.stats.seen('Symbolic Binary');
+
+	Log.logMid(`Symbolic Binary: ${JSON.stringify(arguments)}`);
 
         switch (op) {
             case "===":
