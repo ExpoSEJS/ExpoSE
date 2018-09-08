@@ -6,15 +6,12 @@
 
 <script>
 
-var x = Object._expose.makeSymbolic('A', 5);
+var x = Object._expose.makeSymbolic('A', 'Initial Input');
 
-let state = J$.analysis.state;
-//state.binary('==', x, 10);
-
-if (x) {
-	window.navigator.location = "yousuck.com";
+if (/Mozilla/.test(x)) {
+	window.onbeforeunload();
 } else {
-	window.navigator.location = "byebye.com";
+	window.onbeforeunload();
 }
 
 </script>
