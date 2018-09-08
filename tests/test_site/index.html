@@ -7,11 +7,18 @@
 <script>
 
 var x = Object._expose.makeSymbolic('A', 'Initial Input');
+var y = Object._expose.makeSymbolic('B', 5);
 
-if (/Mozilla/.test(x)) {
-	window.onbeforeunload();
-} else {
-	window.onbeforeunload();
+if (y > 0) {
+
+    for (let i = y; i < 10; i++) {}
+
+    if (/Mozilla/.test(x)) {
+	    window.onbeforeunload();
+    } else {
+	    window.onbeforeunload();
+    }
+
 }
 
 </script>
