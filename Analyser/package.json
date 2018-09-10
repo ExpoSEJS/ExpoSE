@@ -10,7 +10,7 @@
     "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git"
   },
   "scripts": {
-    "postinstall": "./postinstall"
+    "postinstall": "./scripts/postinstall"
   },
   "license": "",
   "main": "src/SymbolicExecution.js",
