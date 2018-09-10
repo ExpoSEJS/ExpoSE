@@ -17,12 +17,6 @@ ORIGIN_PATH="$(pwd)"
 #cd to ExpoSE directory
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-#If command is setup run setup script and exit
-if [ "$1" == "setup" ]; then
-	./scripts/setup/setup
-	exit $?
-fi
-
 if [[ ${EXPOSE_LOG_LEVEL} && ${EXPOSE_LOG_LEVEL-x} ]]; then
 	RECOMPILE="1"
 fi
