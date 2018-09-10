@@ -17,14 +17,6 @@ ORIGIN_PATH="$(pwd)"
 #cd to ExpoSE directory
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-#If command is setup run setup script and exit
-if [ "$1" == "setup" ]; then
-	./scripts/setup/setup
-	exit $?
-fi
-
-./scripts/setup_if_needed
-
 if [[ ${EXPOSE_LOG_LEVEL} && ${EXPOSE_LOG_LEVEL-x} ]]; then
 	RECOMPILE="1"
 fi
@@ -43,9 +35,6 @@ fi
 
 if [ "$1" == "ui" ]; then
 	NO_COMPILE=1 ./scripts/start_ui
-	exit $?
-elif [ "$1" == "uic" ]; then
-	./scripts/start_ui
 	exit $?
 elif [ "$1" == "ahg" ]; then
 	export NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules"

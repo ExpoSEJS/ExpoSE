@@ -10,9 +10,9 @@ Requires `node` version v7.5.0 (other versions may work but are not tested), `np
 
 `mitmproxy` (Depends libxml2-dev, libxslt-dev, libssl-dev) is required for electron analysis.
 
-### First time setup
+### Installation
 
-When executing `npm start` for the first time, ExpoSE performs the initial setup, which can take up to 30 minutes for collecting and installing dependencies. The install script will attempt to add expoSE to your bash profile during the process. To manually setup expose execute `./expoSE setup`
+Execute `npm install` inside the ExpoSE directory for a clean installation.
 
 ### ExpoSE GUI
 

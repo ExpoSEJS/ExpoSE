@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-if [ -d ./Analyser/node_modules/ ]; then
-	echo "Setup done, run 'npm install' if you encounter issues"
-else
-	echo "Refreshing Setup (No setup file found)"
-	./scripts/setup/setup
-fi
