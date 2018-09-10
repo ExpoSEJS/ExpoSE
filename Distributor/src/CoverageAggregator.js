@@ -17,11 +17,7 @@ class Coverage {
 		if (!this._current[file]) {
 			this._current[file] = {
 				smap: {},
-				branches: {},
-				lines: {
-                  all: new Set(),
-                  touched: new Set()
-                }
+				branches: {}
 			};
 		}
 		return this._current[file];
@@ -57,13 +53,12 @@ class Coverage {
      * Merges new coverage data from a path with existing data
        */
     add(coverage) {
-
+        
         for (let i in coverage) {
             if (i != LAST_IID) {
                 let file = this._getFile(i);
                 this._addSMap(file, coverage[i].smap);
                 this._mergeBranches(file, coverage[i].branches);
-                this._mergeLineNumbers(file.lines.touched, file.lines.all, coverage[i].smap, coverage[i].branches); 
             }
         }
 
@@ -91,18 +86,28 @@ class Coverage {
 
     _locResults(file) {
 
-        console.log(`LOC Result: ${JSON.stringify(file)}`);
+        let touchedLines = new Set();
+        let totalLines = new Set();
 
-        let touchedLines = Array.from(file.lines.touched).sort((a, b) => a - b);
-        let allLines = Array.from(file.lines.all).sort((a, b) => a - b);
+        for (let i in file.smap) {
+            const lineNumber = file.smap[i][0];
+            totalLines.add(lineNumber);
+
+            if (file.branches[i] & IS_TOUCHED) {
+                touchedLines.add(lineNumber);
+            }
+        }
+
+        touchedLines = Array.from(touchedLines);
+        totalLines = Array.from(totalLines);
 
         return {
             touched: touchedLines,
-            all: allLines,
+            all: totalLines,
             found: touchedLines.length,
-            total: allLines.length,
-            coverage: touchedLines.length / allLines.length
-        }
+            total: totalLines.length,
+            coverage: touchedLines.length / totalLines.length
+        };
     }
 
     _total(list, field) {

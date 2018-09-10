@@ -43,7 +43,6 @@ class Coverage {
                 const map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
                 //Strip away any non SID related entities
-                //Also replace all source index arrays to a single value to reduce stdout
                 for (const localIid in map) {
                     if (isNaN(parseInt(localIid))) {
                         delete map[localIid];
