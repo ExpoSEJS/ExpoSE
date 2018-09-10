@@ -1,0 +1,7 @@
+language: node_js
+
+install: make
+    - npm install
+
+script:
+    - npm test
