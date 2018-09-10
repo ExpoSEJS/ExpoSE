@@ -39,10 +39,6 @@ class Coverage {
 
             if (this._branches[i] !== undefined) {
 
-                //TODO: Return an Array[0,1,2] instead of 2 sets
-                const touchedLines = new Set();
-                const allLines = new Set();
-
                 //Deep copy the smap
                 const map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 

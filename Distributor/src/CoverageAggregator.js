@@ -90,8 +90,12 @@ class Coverage {
 	}
 
     _locResults(file) {
+
+        console.log(`LOC Result: ${JSON.stringify(file)}`);
+
         let touchedLines = Array.from(file.lines.touched).sort((a, b) => a - b);
         let allLines = Array.from(file.lines.all).sort((a, b) => a - b);
+
         return {
             touched: touchedLines,
             all: allLines,

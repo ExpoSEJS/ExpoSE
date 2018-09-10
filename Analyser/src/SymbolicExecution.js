@@ -24,10 +24,9 @@ class SymbolicExecution {
         if (typeof window !== 'undefined') {
             let that = this;
 
-
-            window.onbeforeunload = function() {
+            window.__finished = function() {
                 exitFn(that.state, that.state.coverage);
-		require('electron').remote.getCurrentWindow().close();
+		        require('electron').remote.getCurrentWindow().close();
             }
 
         } else {
