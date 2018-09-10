@@ -16,13 +16,7 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 language: node_js
+node_js: "lts/*"
 
-node_js:
-    - "node"
-    - "lts/*"
-
-install:
-    - npm install --clang=1
-
-script:
-    - npm test
+install: npm install --clang=1
+script: npm test
