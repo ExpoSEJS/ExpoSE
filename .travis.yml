@@ -5,7 +5,7 @@ node_js:
     - "lts/*"
 
 install:
-    - npm install
+    - CC=clang CXX=clang++ npm install --clang=1
 
 script:
     - npm test
