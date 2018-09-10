@@ -1,3 +1,5 @@
+dist: trusty
+
 matrix:
     include:
         - os: linux
@@ -20,7 +22,7 @@ node_js:
     - "lts/*"
 
 install:
-    - CC=clang CXX=clang++ npm install --clang=1
+    - npm install --clang=1
 
 script:
     - npm test
