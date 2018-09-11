@@ -22,26 +22,44 @@ class SymbolicExecution {
         this._fileList = new Array();
 
         if (typeof window !== 'undefined') {
-            let that = this;
+        
+            function overrideStr(obj, field) {
+                let hval = Object._expose.makeSymbolic(field, '');   
+                Object.defineProperty(obj, field, {
+                    get: function() { return hval; },
+                    set: function(v) { hval = v; return v; }
+                });
+            }
+
+            overrideStr(window.navigator, 'userAgent');
+            overrideStr(window.document, 'cookie');
+            overrideStr(window.document, 'lastModified');
+            overrideStr(window.document, 'referer');
 
             const currentWindow = require('electron').remote.getCurrentWindow();
 
-            window.__finished = function() {
-                exitFn(that.state, that.state.coverage);
+            setTimeout(() => {
+                console.log('Finish timeout (callback)');
+                this.finished();
                 currentWindow.close();
-            }
+            }, 1000 * 20);
 
+            console.log('Browser mode setup finished');
         } else {
 	    
-	    const process = External.load('process');
+	        const process = External.load('process');
             
-	    //Bind any uncaught exceptions to the uncaught exception handler
+	        //Bind any uncaught exceptions to the uncaught exception handler
             process.on('uncaughtException', this._uncaughtException.bind(this));
 
             //Bind the exit handler to the exit callback supplied
-            process.on('exit', exitFn.bind(null, this.state, this.state.coverage));
+            process.on('exit', this.finished.bind(this));
         }
 
+    }
+
+    finished() {
+        this._exitFn(this.state, this.state.coverage);
     }
 
     _uncaughtException(e) {
