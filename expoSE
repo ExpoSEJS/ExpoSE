@@ -51,10 +51,28 @@ elif [ "$1" == "test_suite" ]; then
 	./scripts/run_tests
 	exit $?
 else
-	TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
-    echo $TARGET_REAL_PATH
-	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
-	OUT_CODE=$?
+
+    if [[ $1 =~ ^http(s)?:// ]]; then #Web URL, launch web mode
+        
+        echo "Web Mode, Starting Proxy"
+        PID="$(./scripts/run_proxy)"
+
+        EXPOSE_PLAY_SCRIPT="./scripts/play_electron"
+        TARGET_REAL_PATH="$1"
+
+    else #Normal execution (Node.js mode)
+        TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
+    fi
+
+    EXPOSE_PLAY_SCRIPT=${EXPOSE_PLAY_SCRIPT} EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
+    OUT_CODE=$?
+
     node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
-	exit $OUT_CODE
+
+    if [[ -z $PID ]]; then
+        echo "Killing server"
+        kill $PID
+    fi
+	
+    exit $OUT_CODE
 fi
