@@ -6,7 +6,7 @@
   "author": "Blake Loring",
   "scripts": {
     "start": "./expoSE ui",
-    "test": "./expoSE test_suite",
+    "test": "./scripts/run_tests",
     "postinstall": "./scripts/setup/setup"
   },
   "dependencies": {

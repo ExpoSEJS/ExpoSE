@@ -21,11 +21,15 @@ if [[ ${EXPOSE_LOG_LEVEL} && ${EXPOSE_LOG_LEVEL-x} ]]; then
 	RECOMPILE="1"
 fi
 
+#If the RECOMPILE flag is set then call the recompile script
 if [[ ${RECOMPILE} && ${RECOMPILE-x} ]]; then
-	./scripts/build/build_analyser
+
+	./scripts/build/build_all
+
 	if [ $? -ne 0 ]; then
 		exit 1
 	fi
+
 fi
 
 if [[ ${EXPOSE_AUTODUMP} && ${EXPOSE_AUTODUMP-x} ]]; then
@@ -40,18 +44,14 @@ if [ "$1" == "ui" ]; then #Launch the user interface
 	exit $?
 
 elif [ "$1" == "ahg" ]; then
-	export NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules"
-	echo $NODE_PATH
-	EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
+
+	NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules" EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
 	node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
+
 elif [ "$1" == "replay" ]; then
 	source ./scripts/expose_env
 	TARGET_REAL_PATH="$(abs_target $2 $ORIGIN_PATH)"
 	./scripts/play $TARGET_REAL_PATH "${@:3}"
-	exit $?
-elif [ "$1" == "test_suite" ]; then
-    unset RECOMPILE
-	./scripts/run_tests
 	exit $?
 else
 
