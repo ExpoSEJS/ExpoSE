@@ -60,10 +60,9 @@ else
         PID="$(./scripts/run_proxy)"
 
         EXPOSE_PLAY_SCRIPT="./scripts/play_electron"
-        TARGET_REAL_PATH="$1"
-    else #Normal execution (Node.js mode)
-        TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
     fi
+    
+    TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
 
     EXPOSE_PLAY_SCRIPT=${EXPOSE_PLAY_SCRIPT} EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
     OUT_CODE=$?
