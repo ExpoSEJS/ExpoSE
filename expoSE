@@ -32,11 +32,6 @@ if [[ ${RECOMPILE} && ${RECOMPILE-x} ]]; then
 
 fi
 
-if [[ ${EXPOSE_AUTODUMP} && ${EXPOSE_AUTODUMP-x} ]]; then
-	EXPOSE_QUERY_DUMP="$(mktemp -d)"	
-	echo "AutoDump enabled:" ${EXPOSE_QUERY_DUMP}
-fi
-
 if [ "$1" == "ui" ]; then #Launch the user interface
 
     export PATH=$PATH:$(pwd)
@@ -46,7 +41,6 @@ if [ "$1" == "ui" ]; then #Launch the user interface
 elif [ "$1" == "ahg" ]; then
 
 	NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules" EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
-	node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
 
 elif [ "$1" == "replay" ]; then
 	source ./scripts/expose_env
@@ -61,13 +55,12 @@ else
 
         EXPOSE_PLAY_SCRIPT="./scripts/play_electron"
     fi
-    
+   
+    #Rewrite the file path (Will not rewrite things prefixed by http/s 
     TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
 
     EXPOSE_PLAY_SCRIPT=${EXPOSE_PLAY_SCRIPT} EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
     OUT_CODE=$?
-
-    node scripts/summarize_dump ${EXPOSE_QUERY_DUMP}
 
     if [[ -z $PID ]]; then
         echo "Killing server"
