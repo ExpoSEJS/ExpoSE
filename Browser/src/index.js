@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 
-console.log('Args: ' + JSON.stringify(process.argv));
-app.commandLine.appendSwitch('proxy-server', '127.0.0.1:8080');
+app.commandLine.appendSwitch('ignore-certificate-errors');
+app.commandLine.appendSwitch('disable-web-security');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -13,16 +13,18 @@ const createWindow = () => {
     title: `ExpoSE ${process.argv[process.argv.length - 2]} ${process.argv[process.argv.length - 1]}`,
     width: 800,
     height: 600,
+    webPreferences: {
+      webSecurity: false
+    }
   });
 
   mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
     mainWindow.loadURL(process.argv[process.argv.length - 2]);
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   });
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
-    console.log('Main window closed');
     mainWindow = null;
   });
 };

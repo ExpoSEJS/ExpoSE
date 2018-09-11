@@ -7,7 +7,7 @@ echo "Setting Up Packages"
 ./scripts/setup/setup_packages
 
 echo "Building Analyser"
-./scripts/build/build_analyser
+./scripts/build/build_all
 
 touch ~/.bashrc
 

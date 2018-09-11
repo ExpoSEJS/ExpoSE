@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+./scripts/build/build_all
 ./scripts/build/build_tester
 
 if [ $? -ne 0 ]; then

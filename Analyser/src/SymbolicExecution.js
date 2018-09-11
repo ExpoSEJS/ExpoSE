@@ -24,9 +24,11 @@ class SymbolicExecution {
         if (typeof window !== 'undefined') {
             let that = this;
 
+            const currentWindow = require('electron').remote.getCurrentWindow();
+
             window.__finished = function() {
                 exitFn(that.state, that.state.coverage);
-		        require('electron').remote.getCurrentWindow().close();
+                currentWindow.close();
             }
 
         } else {
