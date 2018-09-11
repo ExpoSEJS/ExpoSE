@@ -841,6 +841,31 @@ function BuildModels(state) {
     Object._expose.notAnError = function() { return NotAnErrorException; };
     Object._expose.pureSymbol = function(name) { return state.createPureSymbol(name); }
 
+    if (typeof(window) !== 'undefined') {
+
+        console.log('Window set');
+     
+        function overrideStr(obj, field) {
+            let hval = Object._expose.makeSymbolic(field, '');   
+            Object.defineProperty(obj, field, {
+                get: function() { return hval; },
+                set: function(v) { hval = v; return v; }
+            });
+        }
+
+        overrideStr(window.navigator, 'userAgent');
+        overrideStr(window.document, 'cookie');
+        overrideStr(window.document, 'lastModified');
+        overrideStr(window.document, 'referer');
+
+        setTimeout(function() {
+            console.log('FINISH CALLED WAAAAAAAAAAAAAAAAAAAH');
+            window.__finished();
+        }, 1000 * 10);
+
+        console.log('CB Setup');
+    }
+
     return model;
 }
 
