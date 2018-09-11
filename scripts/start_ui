@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-export PATH=$PATH:$(pwd)
-cd Dashboard
-npm start

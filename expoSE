@@ -33,9 +33,12 @@ if [[ ${EXPOSE_AUTODUMP} && ${EXPOSE_AUTODUMP-x} ]]; then
 	echo "AutoDump enabled:" ${EXPOSE_QUERY_DUMP}
 fi
 
-if [ "$1" == "ui" ]; then
-	NO_COMPILE=1 ./scripts/start_ui
+if [ "$1" == "ui" ]; then #Launch the user interface
+
+    export PATH=$PATH:$(pwd)
+    (cd Dashboard && npm start);
 	exit $?
+
 elif [ "$1" == "ahg" ]; then
 	export NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules"
 	echo $NODE_PATH
