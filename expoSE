@@ -52,7 +52,7 @@ else
     if [[ $1 =~ ^http(s)?:// ]]; then #Web URL, launch web mode
         echo "Web Mode, Starting Proxy"
         PID="$(./scripts/run_proxy)"
-
+        sleep 3s
         EXPOSE_PLAY_SCRIPT="./scripts/play_electron"
     fi
    
