@@ -20,6 +20,7 @@ class SymbolicExecution {
         this.state = new SymbolicState(initialInput, this._sandbox);
         this.models = ModelBuilder(this.state);
         this._fileList = new Array();
+        this._exitFn = exitFn;
 
         if (typeof window !== 'undefined') {
         
