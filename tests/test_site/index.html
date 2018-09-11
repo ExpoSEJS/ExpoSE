@@ -4,15 +4,43 @@
 
 <body>
 
+<h1>Formy McFormForm</h1>
+
+This page is called formy mcformform. It has <b>Tex</b> and stuff on it. Will that break ExpoSE? probably.
+
 <script>
 
-var x = Object._expose.makeSymbolic('A', 'Initial Input');
-var y = Object._expose.makeSymbolic('B', 5);
+function overrideStr(obj, field) {
+    let hiddenVal = Object._expose.makeSymbolic(field, '');
+    Object.defineProperty(obj, field, {
+        get: function() {
+            return hiddenVal;
+        },
+        set: function(v) {
+            hiddenVal = v;
+        }
+    });
+}
 
-if (y > 0) {
+overrideStr(window.navigator, 'userAgent');
+overrideStr(document, 'cookie');
+overrideStr(document, 'lastModified');
+overrideStr(document, 'referer');
 
-    for (let i = y; i < 10; i++) {}
-    if (/Mozilla/.test(x)) {} else {}
+/*
+overrideStr(location, 'origin');
+overrideStr(location, 'host');
+*/
+
+if (document.cookie == "Hi") { console.log('TC 3'); }
+
+if (location.host == "google.com") { console.log('What does this do'); }
+if (location.origin == "google") { console.log('Yes?'); }
+
+if (/Mozilla/.test(navigator.userAgent)) {
+    console.log('TC 1');
+} else if (/Edge/.test(navigator.userAgent)) {
+    console.log('TC 2');
 }
 
 window.__finished();
