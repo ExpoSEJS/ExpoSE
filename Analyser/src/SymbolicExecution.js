@@ -23,19 +23,6 @@ class SymbolicExecution {
         this._exitFn = exitFn;
 
         if (typeof window !== 'undefined') {
-        
-            function overrideStr(obj, field) {
-                let hval = Object._expose.makeSymbolic(field, '');   
-                Object.defineProperty(obj, field, {
-                    get: function() { return hval; },
-                    set: function(v) { hval = v; return v; }
-                });
-            }
-
-            overrideStr(window.navigator, 'userAgent');
-            overrideStr(window.document, 'cookie');
-            overrideStr(window.document, 'lastModified');
-            overrideStr(window.document, 'referer');
 
             const currentWindow = require('electron').remote.getCurrentWindow();
 
@@ -169,6 +156,42 @@ class SymbolicExecution {
      * GetField will be skipped if the base or offset is not wrapped (SymbolicObject or isSymbolic)
      */
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
+
+        //TODO: This is a horrible hacky way of making certain request attributes symbolic
+        //TODO: Fix this!
+        if (typeof(window) != 'undefined') {
+            
+            if (base == window.navigator) {
+                if (offset == 'userAgent') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+            }
+
+            if (base == window.document) {
+                if (offset == 'cookie') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }            
+
+                if (offset == 'lastModified') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+
+                if (offset == 'referer') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                } 
+            }
+
+            if (base == window.location) {
+                if (offset == 'origin') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+                if (offset == 'host') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+            }
+
+        }
+
         this.state.coverage.touch(iid);
         Log.logHigh(`Get field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
