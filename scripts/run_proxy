@@ -2,6 +2,6 @@
 
 cd Analyser
 rm -rf cache
-mitmdump --anticache -s "node_modules/jalangi2/scripts/proxy.py --inlineIID --inlineSource --analysis bin/bundle.js" &> ~/mitmlog &
+mitmdump -s "node_modules/jalangi2/scripts/proxy.py --inlineIID --inlineSource --analysis bin/bundle.js" &> ~/mitmlog &
 
 echo $!
