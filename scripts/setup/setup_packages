@@ -5,3 +5,4 @@
 (./scripts/setup/setup_pkg Tester)
 (./scripts/setup/setup_pkg Distributor)
 (./scripts/setup/setup_pkg Dashboard)
+(./scripts/setup/setup_pkg Browser)

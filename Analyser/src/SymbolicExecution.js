@@ -20,28 +20,34 @@ class SymbolicExecution {
         this.state = new SymbolicState(initialInput, this._sandbox);
         this.models = ModelBuilder(this.state);
         this._fileList = new Array();
+        this._exitFn = exitFn;
 
         if (typeof window !== 'undefined') {
-            let that = this;
 
             const currentWindow = require('electron').remote.getCurrentWindow();
 
-            window.__finished = function() {
-                exitFn(that.state, that.state.coverage);
+            setTimeout(() => {
+                console.log('Finish timeout (callback)');
+                this.finished();
                 currentWindow.close();
-            }
+            }, 1000 * 20);
 
+            console.log('Browser mode setup finished');
         } else {
 	    
-	    const process = External.load('process');
+	        const process = External.load('process');
             
-	    //Bind any uncaught exceptions to the uncaught exception handler
+	        //Bind any uncaught exceptions to the uncaught exception handler
             process.on('uncaughtException', this._uncaughtException.bind(this));
 
             //Bind the exit handler to the exit callback supplied
-            process.on('exit', exitFn.bind(null, this.state, this.state.coverage));
+            process.on('exit', this.finished.bind(this));
         }
 
+    }
+
+    finished() {
+        this._exitFn(this.state, this.state.coverage);
     }
 
     _uncaughtException(e) {
@@ -150,6 +156,42 @@ class SymbolicExecution {
      * GetField will be skipped if the base or offset is not wrapped (SymbolicObject or isSymbolic)
      */
     getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
+
+        //TODO: This is a horrible hacky way of making certain request attributes symbolic
+        //TODO: Fix this!
+        if (typeof(window) != 'undefined') {
+            
+            if (base == window.navigator) {
+                if (offset == 'userAgent') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+            }
+
+            if (base == window.document) {
+                if (offset == 'cookie') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }            
+
+                if (offset == 'lastModified') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+
+                if (offset == 'referer') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                } 
+            }
+
+            if (base == window.location) {
+                if (offset == 'origin') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+                if (offset == 'host') {
+                    return { result: Object._expose.makeSymbolic(offset, '') };
+                }
+            }
+
+        }
+
         this.state.coverage.touch(iid);
         Log.logHigh(`Get field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 

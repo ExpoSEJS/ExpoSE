@@ -10,28 +10,6 @@ This page is called formy mcformform. It has <b>Tex</b> and stuff on it. Will th
 
 <script>
 
-function overrideStr(obj, field) {
-    let hiddenVal = Object._expose.makeSymbolic(field, '');
-    Object.defineProperty(obj, field, {
-        get: function() {
-            return hiddenVal;
-        },
-        set: function(v) {
-            hiddenVal = v;
-        }
-    });
-}
-
-overrideStr(window.navigator, 'userAgent');
-overrideStr(document, 'cookie');
-overrideStr(document, 'lastModified');
-overrideStr(document, 'referer');
-
-/*
-overrideStr(location, 'origin');
-overrideStr(location, 'host');
-*/
-
 if (document.cookie == "Hi") { console.log('TC 3'); }
 
 if (location.host == "google.com") { console.log('What does this do'); }
@@ -42,8 +20,6 @@ if (/Mozilla/.test(navigator.userAgent)) {
 } else if (/Edge/.test(navigator.userAgent)) {
     console.log('TC 2');
 }
-
-window.__finished();
 
 </script>
 
