@@ -62,7 +62,7 @@ else
     EXPOSE_PLAY_SCRIPT=${EXPOSE_PLAY_SCRIPT} EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
     OUT_CODE=$?
 
-    if [[ -z $PID ]]; then
+    if [[ ! -z $PID ]]; then
         echo "Killing server"
         kill $PID
     fi

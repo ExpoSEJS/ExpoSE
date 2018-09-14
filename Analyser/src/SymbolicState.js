@@ -66,7 +66,8 @@ class SymbolicState {
             [
                 { name: 'timeout', value: Config.maxSolverTime },
                 { name: 'random_seed', value: Math.floor(Math.random() * Math.pow(2, 32))},
-                { name: 'phase_selection', value: 5 }
+                { name: 'phase_selection', value: 5 },
+                { name: 'smt.string_solver', value: 'z3str3' }
             ]
 	    );
 
