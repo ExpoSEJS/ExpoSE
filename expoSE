@@ -43,10 +43,11 @@ elif [ "$1" == "ahg" ]; then
 	NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules" EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
 
 elif [ "$1" == "replay" ]; then
+
 	source ./scripts/expose_env
-	TARGET_REAL_PATH="$(abs_target $2 $ORIGIN_PATH)"
-	./scripts/play $TARGET_REAL_PATH "${@:3}"
+	./scripts/play "$(abs_target $2 $ORIGIN_PATH)" "${@:3}"
 	exit $?
+
 else
 
     if [[ $1 =~ ^http(s)?:// ]]; then #Web URL, launch web mode
@@ -56,10 +57,7 @@ else
         EXPOSE_PLAY_SCRIPT="./scripts/play_electron"
     fi
    
-    #Rewrite the file path (Will not rewrite things prefixed by http/s 
-    TARGET_REAL_PATH=$(abs_target "$1" "$ORIGIN_PATH")
-
-    EXPOSE_PLAY_SCRIPT=${EXPOSE_PLAY_SCRIPT} EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$TARGET_REAL_PATH" "${@:2}"
+    EXPOSE_PLAY_SCRIPT=${EXPOSE_PLAY_SCRIPT} EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$(abs_target "$1" "$ORIGIN_PATH")" "${@:2}"
     OUT_CODE=$?
 
     if [[ ! -z $PID ]]; then
