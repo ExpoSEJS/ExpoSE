@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+find ./ -path *node_modules/ -prune -o -type f -name "*.js" -exec ./scripts/licensing/relicense {} \;
