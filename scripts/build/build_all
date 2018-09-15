@@ -24,4 +24,11 @@ if [ $? -ne "0" ]; then
 	exit 1
 fi
 
+$(npm bin)/eslint .eslintrc.json
+
+if [ $? -ne "0"]; then
+    echo "ESLint Failed"
+    exit 1
+fi
+
 exit $?
