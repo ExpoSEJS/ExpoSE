@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
+
 
 /*
  * Original Concolic Value License
@@ -33,7 +33,7 @@ class WrappedValue {
     }
 
     toString() {
-        return 'Wrapped(' + this.concrete + ', ' + (this.rider ? this.rider.toString() : '') + ')';
+        return "Wrapped(" + this.concrete + ", " + (this.rider ? this.rider.toString() : "") + ")";
     }
 
     valueOf() {
@@ -57,7 +57,7 @@ class ConcolicValue extends WrappedValue {
     }
 
     toString() {
-        return 'Concolic(' + this.concrete + ', ' + this.symbolic + ')';
+        return "Concolic(" + this.concrete + ", " + this.symbolic + ")";
     }
 
     clone() {

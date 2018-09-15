@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #Setup runtime environment variables
-source ./scripts/expose_env
+source ./scripts/env
 
 #Invoke analyser
 (node Distributor/bin/Distributor.js "$1" ${@:2})

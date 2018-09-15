@@ -1,34 +1,51 @@
 {
+
     "env": {
         "node": true,
         "es6": true,
         "commonjs": true
     },
+
     "extends": "eslint:recommended",
+
     "parserOptions": {
+        "ecmaVersion": 6,
         "sourceType": "module"
     },
+
     "rules": {
+
         "indent": [
             "error",
             4
         ],
+
         "linebreak-style": [
             "error",
             "unix"
         ],
+
+        "no-useless-escape": [
+            "warn"
+        ],
+
         "quotes": [
             "warn",
-            "single"
+            "double"
         ],
+
         "semi": [
             "error",
             "always"
         ],
+
         "strict": [
             "error",
             "safe"
         ],
+
+        "no-unused-vars": [2, {"args": "after-used", "argsIgnorePattern": "^_"}],
+
         "no-console":"off"
     }
 }

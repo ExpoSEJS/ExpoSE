@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+function abspath {
+    cd "$(dirname "$1")"
+    printf "%s/\n" "$(pwd)"
+}
+
 echo "Installing to path"
-SOURCE_LINE="export EXPOSE_PATH=\"$(./scripts/abspath ./)\"; export PATH=\$PATH:\$EXPOSE_PATH #EXPOSE_ENTRY"
+SOURCE_LINE="export EXPOSE_PATH=\"$(abspath ./)\"; export PATH=\$PATH:\$EXPOSE_PATH #EXPOSE_ENTRY"
+echo ${SOURCE_LINE}
 
 echo "Cleaning previous installations"
 ./scripts/setup/cleanup_bashprofile ~/.bashrc

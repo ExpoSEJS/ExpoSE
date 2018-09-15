@@ -1,8 +1,8 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
 
-const LAST_IID = 'LAST_IID';
+
+const LAST_IID = "LAST_IID";
 const IS_TOUCHED = 0x1;
 const CONDITIONAL_TRUE = 0x2;
 const CONDITIONAL_FALSE = 0x4;
@@ -13,25 +13,25 @@ class Coverage {
         this._current = {};
     }
 
-	_getFile(file) {
-		if (!this._current[file]) {
-			this._current[file] = {
-				smap: {},
-				branches: {}
-			};
-		}
-		return this._current[file];
-	}
+    _getFile(file) {
+        if (!this._current[file]) {
+            this._current[file] = {
+                smap: {},
+                branches: {}
+            };
+        }
+        return this._current[file];
+    }
 
-	_addSMap(f, smap) {
-		f.smap = smap;
-	}
+    _addSMap(f, smap) {
+        f.smap = smap;
+    }
 
-	_mergeBranches(f, branches) {
-	    for (let i in branches) {
-			f.branches[i] |= branches[i];
-		}
-	}
+    _mergeBranches(f, branches) {
+        for (let i in branches) {
+            f.branches[i] |= branches[i];
+        }
+    }
 
     _mergeLineNumbers(touched, all, smap, branches) {
         
@@ -65,24 +65,24 @@ class Coverage {
         return this;
     }
 
-	_termResults(file) {
-		let found = 0;
-		let total = 0;
+    _termResults(file) {
+        let found = 0;
+        let total = 0;
 
-		for (let i in file.smap) {
-			total++;
+        for (let i in file.smap) {
+            total++;
 			
             if (file.branches[i] & IS_TOUCHED) {
                 found++;
             }
-		}
+        }
 
-		return {
-			found: found,
-			total: total,
-			coverage: found / total
-		}
-	}
+        return {
+            found: found,
+            total: total,
+            coverage: found / total
+        };
+    }
 
     _locResults(file) {
 
@@ -148,7 +148,7 @@ class Coverage {
             falseTaken: falseTaken,
             totalOptions: totalPossibleDecisions,
             coverage: (trueTaken + falseTaken) / totalPossibleDecisions
-        }
+        };
     }
 
     final(includeSmap) {
@@ -166,7 +166,7 @@ class Coverage {
             });
         }
 
-        let [loc, terms] = [this._total(results, 'loc'), this._total(results, 'terms')];
+        let [loc, terms] = [this._total(results, "loc"), this._total(results, "terms")];
 
         results.loc = loc;
         results.terms = terms;

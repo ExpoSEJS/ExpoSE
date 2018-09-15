@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+$(npm bin)/eslint --fix .eslintrc.json **/src/**.js
+
+if [ $? -ne 0 ]; then
+    echo "ESLint Failed"
+    exit 1
+fi
+
 ./scripts/build/build_libs
 
 if [ $? -ne 0 ]; then

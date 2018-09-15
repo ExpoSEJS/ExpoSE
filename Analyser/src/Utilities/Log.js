@@ -1,9 +1,9 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
 
-import Config from '../Config';
-const fs = require('fs');
+
+import Config from "../Config";
+const fs = require("fs");
 
 function makeid(count) {
     let text = "";
@@ -27,21 +27,21 @@ const log_path = console.log;
  
 class Log {
 
-	logHigh(msg) {
-		log_path('ExpoSE HIGH: ' + msg);
-	}
+    logHigh(msg) {
+        log_path("ExpoSE HIGH: " + msg);
+    }
 
-	logMid(msg) {
-		log_path('ExpoSE MID: ' + msg);
-	}
+    logMid(msg) {
+        log_path("ExpoSE MID: " + msg);
+    }
 
-	log(msg) {
-		log_path('ExpoSE: ' + msg);
-	}
+    log(msg) {
+        log_path("ExpoSE: " + msg);
+    }
 
-	logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {
+    logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {
 
-		if (!Config.outQueriesDir) {
+        if (!Config.outQueriesDir) {
             return;
         }
 
@@ -53,15 +53,15 @@ class Log {
             endTime: endTime,
             hitMaxRefinements: hitMax,
             checkCount: checkCount,
-            containedRe: (solver + clause).includes('str.in.re')
+            containedRe: (solver + clause).includes("str.in.re")
         };
 
-        const dumpFileName = Config.outQueriesDir + '/' + path_dump_id;
+        const dumpFileName = Config.outQueriesDir + "/" + path_dump_id;
 
-        fs.appendFileSync(dumpFileName, JSON.stringify(dumpData) + '\nEXPOSE_QUERY_DUMP_SEPERATOR\n');
+        fs.appendFileSync(dumpFileName, JSON.stringify(dumpData) + "\nEXPOSE_QUERY_DUMP_SEPERATOR\n");
 
         this.log(`Wrote ${dumpFileName}`);
-	}
+    }
 }
 
 export default new Log();
