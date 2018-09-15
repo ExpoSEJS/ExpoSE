@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
+/*global J$*/
 
 // do not remove the following comment
 // JALANGI DO NOT INSTRUMENT
@@ -8,9 +8,6 @@
 // Symbolic execution analyser entry point
 
 import SymbolicExecution from "./SymbolicExecution";
-import ObjectHelper from "./Utilities/ObjectHelper";
-import {ConcolicValue, WrappedValue} from "./Values/WrappedValue";
-import NotAnErrorException from "./NotAnErrorException";
 import Config from "./Config";
 import Log from "./Utilities/Log";
 import External from "./External";
@@ -47,13 +44,13 @@ J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => 
         fs.writeFileSync(Config.outCoveragePath, JSON.stringify(coverage.end()));
         Log.log("Wrote final coverage to " + Config.outCoveragePath);
     } else {
-    	Log.log("No final coverage path supplied");
+        Log.log("No final coverage path supplied");
     }
 
     if (Config.outFilePath) {
         fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
         Log.log("Wrote final output to " + Config.outFilePath);
     } else {
-    	Log.log("No final output path supplied");
+        Log.log("No final output path supplied");
     }
 });

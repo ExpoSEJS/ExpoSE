@@ -1,19 +1,19 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
-"use strict";
 
-import ObjectHelper from './Utilities/ObjectHelper';
-import Log from './Utilities/Log';
-import Z3 from 'z3javascript';
-import Config from './Config';
-import NotAnErrorException from './NotAnErrorException';
-import { isNative } from './Utilities/IsNative';
-import { WrappedValue, ConcolicValue } from './Values/WrappedValue';
+
+import ObjectHelper from "./Utilities/ObjectHelper";
+import Log from "./Utilities/Log";
+import Z3 from "z3javascript";
+import Config from "./Config";
+import NotAnErrorException from "./NotAnErrorException";
+import { isNative } from "./Utilities/IsNative";
+import { ConcolicValue } from "./Values/WrappedValue";
 
 const find = Array.prototype.find;
 const map = Array.prototype.map;
 
 function DoesntMatch(l, r) {
-    return l === undefined ? r !== '' : l !== r;
+    return l === undefined ? r !== "" : l !== r;
 }
 
 function Exists(array1, array2, pred) {
@@ -37,12 +37,12 @@ function Model() {
                 return mdl.call(null, this, arguments);
             }
         });
-    }
+    };
 
     this.get = function(fn) {
         const found = this._models.find(x => x.fn == fn);
         return found ? found.mdl : null;
-    }
+    };
 }
 
 /**
@@ -60,7 +60,7 @@ function BuildModels(state) {
             const is_native = !fn_model && isNative(base);
 
             if (is_native) {
-                Log.log('WARNING: Concretizing model for ' + f.name + ' ' + JSON.stringify(base));
+                Log.log("WARNING: Concretizing model for " + f.name + " " + JSON.stringify(base));
                 const concretized = state.concretizeCall(f, base, args, false);
                 base = concretized.base;
                 args = concretized.args;
@@ -72,11 +72,11 @@ function BuildModels(state) {
 
     function coerceToString(symbol) {
         
-        if (typeof state.getConcrete(symbol) !== 'string') {
+        if (typeof state.getConcrete(symbol) !== "string") {
             Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
             return new ConcolicValue(
                 state.getConcrete(symbol),
-                state.asSymbolic('' + state.getConcrete(symbol))
+                state.asSymbolic("" + state.getConcrete(symbol))
             );
         }
 
@@ -113,7 +113,7 @@ function BuildModels(state) {
                 result = hook(base, args, result);
             }
 
-            Log.logMid(`Result: ${'' + result} Thrown: ${'' + thrown}`);
+            Log.logMid(`Result: ${"" + result} Thrown: ${"" + thrown}`);
 
             if (thrown) {
                 throw thrown;
@@ -127,7 +127,7 @@ function BuildModels(state) {
     function symbolicHookRe(f, condition, hook) {
         return symbolicHook(f, condition, function() {
             //Intercept the hook to do regex stats
-            state.stats.seen('Regex Function Model');
+            state.stats.seen("Regex Function Model");
             return hook.apply(this, arguments);
         }, true, !Config.regexEnabled);
     }
@@ -159,8 +159,8 @@ function BuildModels(state) {
             const args_well_formed = state.getConcrete(base) instanceof Array
                     && state.arrayType(base) == typeof(state.getConcrete(args[0]));
 
-            if (is_symbolic) {
-                Log.log('Push symbolic prototype');
+            if (is_symbolic && args_well_formed) {
+                Log.log("Push symbolic prototype");
                 const array = state.asSymbolic(base);
                 const value = state.asSymbolic(args[0]);
 
@@ -189,9 +189,9 @@ function BuildModels(state) {
             const args_well_formed = state.getConcrete(base) instanceof Array
                     && state.arrayType(base) == typeof(state.getConcrete(args[0]));
 
-            Log.log('TODO: Push prototype is not smart enough to decide array type');
+            Log.log("TODO: Push prototype is not smart enough to decide array type");
             if (is_symbolic && args_well_formed) {
-                Log.log('Push symbolic prototype');
+                Log.log("Push symbolic prototype");
                 const array = state.asSymbolic(base);
 
                 const oldLength = array.getLength();
@@ -213,17 +213,14 @@ function BuildModels(state) {
 
         model.add(Array.prototype.indexOf, symbolicHook(
             Array.prototype.indexOf,
-            (base, args) => {
+            (base, _args) => {
                 const is_symbolic = state.isSymbolic(base) && state.getConcrete(base) instanceof Array;
-                const is_same_type = state.arrayType(base) == typeof(state.getConcrete(args[0]));
-                return is_symbolic; //&& is_same_type;
+                return is_symbolic;
             },
             (base, args, result) => {
 
                 const searchTarget = state.asSymbolic(args[0]);
-                const startIndex = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
-
-                let result_s = mkIndexSymbol('IndexOf');
+                let result_s = mkIndexSymbol("IndexOf");
 
                 //The result is an integer -1 <= result_s < base.length
                 state.pushCondition(ctx.mkGe(result_s, ctx.mkIntVal(-1)), true);
@@ -241,7 +238,7 @@ function BuildModels(state) {
                 // If result != -1 then forall 0 < i < result select base i != target
                 const intSort = ctx.mkIntSort();
                 const i = ctx.mkBound(0, intSort);
-                const match_func_decl_name = mkFunctionName('IndexOf');
+                const match_func_decl_name = mkFunctionName("IndexOf");
                
                 const iLessThanResult = ctx.mkPattern([
                     ctx.mkLt(i, result_s),
@@ -305,7 +302,7 @@ function BuildModels(state) {
                     ctx.mkGe(i, ctx.mkIntVal(0))
                 ]);
 
-                const func_decl_name = mkFunctionName('Includes');
+                const func_decl_name = mkFunctionName("Includes");
                 const result_s = ctx.mkExists([func_decl_name], intSort, body, [iPattern]);
                 
                 return new ConcolicValue(result, result_s);
@@ -318,10 +315,10 @@ function BuildModels(state) {
         function EnableCaptures(regex, real, string_s) {
             
             if (!Config.capturesEnabled) {
-                Log.log('Captures disabled - potential loss of precision');
+                Log.log("Captures disabled - potential loss of precision");
             }
 
-            Log.logMid('Captures Enabled - Adding Implications');
+            Log.logMid("Captures Enabled - Adding Implications");
 
             const implies = ctx.mkImplies(ctx.mkSeqInRe(string_s, regex.ast),
                 ctx.mkEq(string_s, regex.implier));
@@ -334,14 +331,14 @@ function BuildModels(state) {
         function BuildRefinements(regex, real, string_s) {
 
             if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
-                Log.log('Refinements disabled - potential accuracy loss');
+                Log.log("Refinements disabled - potential accuracy loss");
                 return {
                     trueCheck: [],
                     falseCheck: []
                 };
             }
             
-            Log.log('Refinements Enabled - Adding checks');
+            Log.log("Refinements Enabled - Adding checks");
 
             function CheckCorrect(model) {
                 const real_match = real.exec(model.eval(string_s).asConstant(model));
@@ -351,10 +348,10 @@ function BuildModels(state) {
                     
                 const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
                 
-                state.stats.seen('Regex Checks');	
+                state.stats.seen("Regex Checks");	
                 
                 if (!is_correct) {
-                    state.stats.seen('Failed Regex Checks');
+                    state.stats.seen("Failed Regex Checks");
                 }
 
                 return is_correct;
@@ -363,10 +360,10 @@ function BuildModels(state) {
             function CheckFailed(model) {
                 const is_failed = !real.test(model.eval(string_s).asConstant(model));
                 
-                state.stats.seen('Regex Checks');
+                state.stats.seen("Regex Checks");
                 
                 if (!is_failed) {
-                    state.stats.seen('Failed Regex Checks'); 
+                    state.stats.seen("Failed Regex Checks"); 
                 }
 
                 return is_failed;
@@ -392,7 +389,7 @@ function BuildModels(state) {
                     return [];
                 }
                 
-                real_match = real_match.map(match => match || '');
+                real_match = real_match.map(match => match || "");
 
                 const query_list = regex.captures.map(
                     (cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap)
@@ -401,8 +398,8 @@ function BuildModels(state) {
                 return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
             });
 
-            const CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
-                Log.log('ERROR: False check failed, possible divergence');
+            const CheckNotIn = Z3.Check(CheckFailed, (_query, _model) => {
+                Log.log("ERROR: False check failed, possible divergence");
                 return [];
             });
 
@@ -451,13 +448,11 @@ function BuildModels(state) {
             const in_regex = RegexTest(regex, real, string, true);
             state.conditional(in_regex);
 
-            const string_s = state.asSymbolic(string);
-
             if (Config.capturesEnabled && state.getConcrete(in_regex)) {
 
                 const rewrittenResult = result.map((current_c, idx) => {
                     //TODO: This is really nasty, current_c should be a
-                    const current_rewrite = current_c === undefined ? '' : current_c;
+                    const current_rewrite = current_c === undefined ? "" : current_c;
                     return new ConcolicValue(current_rewrite, regex.captures[idx]);
                 });
 
@@ -487,7 +482,7 @@ function BuildModels(state) {
         }
 
         function substringHelper(base, args, result) {
-            state.stats.seen('Symbolic Substrings');
+            state.stats.seen("Symbolic Substrings");
 
             const target = state.asSymbolic(base);
 
@@ -511,7 +506,7 @@ function BuildModels(state) {
 
                 len = ctx.mkIte(exceedMax, maxLength, len);
             } else {
-                len = maxLength
+                len = maxLength;
             }
 
             //If the start index is greater than or equal to the length of the string the empty string is returned
@@ -529,14 +524,13 @@ function BuildModels(state) {
         /**
          * Applies the rules for a sticky flag to a regex operation
          */
-        function rewriteTestSticky(real, target, result) {
+        function rewriteTestSticky(real, target, _result) {
             
             if (real.sticky || real.global) {
 
-                state.stats.seen('Sticky / Global Regex');
+                state.stats.seen("Sticky / Global Regex");
 
                 const lastIndex = real.lastIndex;
-                const lastIndex_s = state.asSymbolic(real.lastIndex);
                 const lastIndex_c = state.getConcrete(real.lastIndex);
                 real.lastIndex = lastIndex_c;
 
@@ -563,8 +557,8 @@ function BuildModels(state) {
                         state.asSymbolic(matchResult[0]).getLength()
                     );
 
-                    const currentIndex = state.binary('+', lastIndex, matchResult.index);
-                    real.lastIndex = state.binary('+', currentIndex, matchLength);
+                    const currentIndex = state.binary("+", lastIndex, matchResult.index);
+                    real.lastIndex = state.binary("+", currentIndex, matchLength);
                     return true;
                 }
             
@@ -580,7 +574,7 @@ function BuildModels(state) {
         model.add(String, symbolicHook(
             String,
             (_base, args) => state.isSymbolic(args[0]),
-            (_base, args, result) => coerceToString(args[0])
+            (_base, args, _result) => coerceToString(args[0])
         ));
 
         const substrModel = symbolicHook(
@@ -619,7 +613,7 @@ function BuildModels(state) {
 
         model.add(String.prototype.indexOf, symbolicHook(
             String.prototype.indexOf,
-            (base, args) => typeof state.getConcrete(base) === 'string' && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+            (base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
             (base, args, result) => {
                 const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
                 const off_s = ctx.mkRealToInt(off_real);
@@ -656,14 +650,14 @@ function BuildModels(state) {
         //Replace model for replace regex by string. Does not model replace with callback.
         model.add(String.prototype.replace, symbolicHookRe(
             String.prototype.replace,
-            (base, args) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === 'string',
-            (base, args, result) => state.getConcrete(base).secret_replace.apply(base, args)
+            (base, args) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === "string",
+            (base, args, _result) => state.getConcrete(base).secret_replace.apply(base, args)
         ));
 
         model.add(String.prototype.split, symbolicHookRe(
             String.prototype.split,
             (base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-            (base, args, result) => state.getConcrete(base).secret_split.apply(base, args)
+            (base, args, _result) => state.getConcrete(base).secret_split.apply(base, args)
         ));
 
         model.add(String.prototype.repeat, symbolicHook(
@@ -748,19 +742,31 @@ function BuildModels(state) {
         model.add(Math.floor, symbolicHook(
             Math.floor,
             (base, args) => state.isSymbolic(args[0]),
-            (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
+            (base, args, r) => {
+                const intArg = ctx.mkRealToInt(state.asSymbolic(args[0]));
+                const floored = ctx.mkIntToReal(intArg);
+                return new ConcolicValue(r, floored);
+            }
         ));
 
         model.add(Math.ceil, symbolicHook(
-            Math.ceil,
+            Math.floor,
             (base, args) => state.isSymbolic(args[0]),
-            (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
+            (base, args, r) => {
+                const intArg = ctx.mkRealToInt(state.asSymbolic(args[0]));
+                const floored = ctx.mkIntToReal(intArg);
+                return new ConcolicValue(r, floored);
+            }
         ));
-        
+
         model.add(Math.round, symbolicHook(
-            Math.ceil,
+            Math.floor,
             (base, args) => state.isSymbolic(args[0]),
-            (base, args, r) => new ConcolicValue(r, ctx.mkIntToReal(ctx.mkRealToInt(state.asSymbolic(args[0])))),
+            (base, args, r) => {
+                const intArg = ctx.mkRealToInt(state.asSymbolic(args[0]));
+                const floored = ctx.mkIntToReal(intArg);
+                return new ConcolicValue(r, floored);
+            }
         ));
 
         model.add(Math.abs, symbolicHook(
@@ -839,7 +845,7 @@ function BuildModels(state) {
     Object._expose = {};
     Object._expose.makeSymbolic = function(name, initial) { return state.createSymbolicValue(name, initial); };
     Object._expose.notAnError = function() { return NotAnErrorException; };
-    Object._expose.pureSymbol = function(name) { return state.createPureSymbol(name); }
+    Object._expose.pureSymbol = function(name) { return state.createPureSymbol(name); };
 
     return model;
 }

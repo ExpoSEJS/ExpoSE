@@ -8,7 +8,7 @@ export default {
         if (this.is_external()) {
             return require("electron").remote.require(library);
         } else {
-	        return require(library);
+            return require(library);
         }
     },
 

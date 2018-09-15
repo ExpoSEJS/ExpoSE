@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2014@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
+/*global window*/
 
 import {ConcolicValue} from "./Values/WrappedValue";
 import {SymbolicObject} from "./Values/SymbolicObject";
@@ -22,7 +22,6 @@ class SymbolicExecution {
         this._exitFn = exitFn;
 
         if (typeof window !== "undefined") {
-
             const currentWindow = require("electron").remote.getCurrentWindow();
 
             setTimeout(() => {
@@ -32,11 +31,10 @@ class SymbolicExecution {
             }, 1000 * 20);
 
             console.log("Browser mode setup finished");
-        } else {
-	    
-	        const process = External.load("process");
+        } else { 
+            const process = External.load("process");
             
-	        //Bind any uncaught exceptions to the uncaught exception handler
+            //Bind any uncaught exceptions to the uncaught exception handler
             process.on("uncaughtException", this._uncaughtException.bind(this));
 
             //Bind the exit handler to the exit callback supplied
@@ -64,7 +62,7 @@ class SymbolicExecution {
         });
     }
 
-    invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
+    invokeFunPre(iid, f, base, args, _isConstructor, _isMethod) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
@@ -99,13 +97,13 @@ class SymbolicExecution {
     /**
      * Called after a function completes execution
      */
-    invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
+    invokeFun(iid, f, base, args, result, _isConstructor, _isMethod) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
         return { result: result };
     }
 
-    literal(iid, val, hasGetterSetter) {
+    literal(iid, val, _hasGetterSetter) {
         this.state.coverage.touch(iid);
         return { result: val };
     }
@@ -123,7 +121,7 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
     }
 
-    declare(iid, name, val, isArgument, argumentIndex, isCatchParam) {
+    declare(iid, name, val, _isArgument, _argumentIndex, _isCatchParam) {
         this.state.coverage.touch(iid);
         Log.logHigh(`decl ${name} at ${this._location(iid)}`);
         return {
@@ -131,7 +129,7 @@ class SymbolicExecution {
         };
     }
 
-    getFieldPre(iid, base, offset, isComputed, isOpAssign, isMethodCall) {
+    getFieldPre(iid, base, offset, _isComputed, _isOpAssign, _isMethodCall) {
         this.state.coverage.touch(iid);
         return {
             base: base,
@@ -154,7 +152,7 @@ class SymbolicExecution {
     /** 
      * GetField will be skipped if the base or offset is not wrapped (SymbolicObject or isSymbolic)
      */
-    getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
+    getField(iid, base, offset, _val, _isComputed, _isOpAssign, _isMethodCall) {
 
         //TODO: This is a horrible hacky way of making certain request attributes symbolic
         //TODO: Fix this!
