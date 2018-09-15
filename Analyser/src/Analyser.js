@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
+
 
 // do not remove the following comment
 // JALANGI DO NOT INSTRUMENT
@@ -28,12 +28,12 @@ Log.log('Intial Input ' + input);
 process.title = 'ExpoSE Play ' + input;
 
 process.on('disconnect', function() {
-  Log.log('Premature termination - Parent exit')
-  process.exit();
+    Log.log('Premature termination - Parent exit');
+    process.exit();
 });
 
 J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => {
-    Log.log("Finished play with PC " + state.pathCondition.map(x => x.ast));
+    Log.log('Finished play with PC ' + state.pathCondition.map(x => x.ast));
 
     const finalOut = {
         pc: state.finalPC(),
@@ -44,16 +44,16 @@ J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => 
     };
 
     if (Config.outCoveragePath) {
-		fs.writeFileSync(Config.outCoveragePath, JSON.stringify(coverage.end()));
-		Log.log('Wrote final coverage to ' + Config.outCoveragePath);
+        fs.writeFileSync(Config.outCoveragePath, JSON.stringify(coverage.end()));
+        Log.log('Wrote final coverage to ' + Config.outCoveragePath);
     } else {
     	Log.log('No final coverage path supplied');
-	}
+    }
 
-	if (Config.outFilePath) {
-		fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
+    if (Config.outFilePath) {
+        fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
         Log.log('Wrote final output to ' + Config.outFilePath);
-	} else {
+    } else {
     	Log.log('No final output path supplied');
-	}
+    }
 });

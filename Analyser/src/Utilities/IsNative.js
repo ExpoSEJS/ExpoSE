@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
+
 
 /** 
  * Some code is from https://gist.github.com/jdalton/5e34d890105aca44399f by John-David Dalton
@@ -12,8 +12,8 @@ const SECRET_CACHE_STR = '__checked_isNative__before__';
 
 var reNative = RegExp('^' +
     String(toString)
-    .replace(/[.*+?^${}()|[\]\/\\]/g, '\\$&')
-    .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+        .replace(/[.*+?^${}()|[\]\/\\]/g, '\\$&')
+        .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 );
 
 function isNativeCore(value) {

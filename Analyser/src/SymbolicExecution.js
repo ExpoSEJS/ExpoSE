@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2014@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
+
 
 import {ConcolicValue} from './Values/WrappedValue';
 import {SymbolicObject} from './Values/SymbolicObject';
@@ -197,7 +197,7 @@ class SymbolicExecution {
 
         //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
         if (base instanceof SymbolicObject) {
-            Log.logMid(`Potential loss of precision, cocretize offset on SymbolicObject field lookups`);
+            Log.logMid('Potential loss of precision, cocretize offset on SymbolicObject field lookups');
             return {
                 result: base.getField(this.state, this.state.getConcrete(offset))
             };
@@ -226,7 +226,7 @@ class SymbolicExecution {
 
             return {
                 result: base[this.state.getConcrete(offset)]
-            }
+            };
         }
 
         //Otherwise defer to symbolicField
@@ -257,13 +257,13 @@ class SymbolicExecution {
         if (base instanceof SymbolicObject) {
             return {
                 result: base.setField(this.state, this.state.getConcrete(offset), val)
-            }
+            };
         }
 
         //TODO: Enumerate if symbolic offset and concrete input
 
         if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array && this.state.arrayType(base) == typeof(val)) {
-            Log.log(`TODO: Check that setField is homogonous`);
+            Log.log('TODO: Check that setField is homogonous');
 
             //SetField produce a new array
             //Therefore the symbolic portion of base needs to be updated
@@ -276,7 +276,7 @@ class SymbolicExecution {
 
             return {
                 result: val
-            }
+            };
         }
 
         this.state.getConcrete(base)[this.state.getConcrete(offset)] = val;
@@ -376,12 +376,12 @@ class SymbolicExecution {
         if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
  
             const left_c  = this.state.getConcrete(left),
-                  right_c = this.state.getConcrete(right);
+                right_c = this.state.getConcrete(right);
 
             //We also consider boxed primatives to be primative
             const is_primative = typeof(left_c) != 'object' || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
             const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
-            const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
+            const is_real = typeof(left_c) == 'number' ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
             //TODO: Work out how to check that boxed values are the same type
             const is_same_type = typeof(left_c) === typeof(right_c) || (!is_null && left_c.valueOf() === right_c.valueOf());
@@ -420,7 +420,7 @@ class SymbolicExecution {
 
         return {
             result: result
-        }
+        };
     }
 
     unaryPre(iid, op, left) {
@@ -431,7 +431,7 @@ class SymbolicExecution {
             op: op,
             left: left,
             skip: this.state.isWrapped(left)
-        }
+        };
     }
 
     unary(iid, op, left, result_c) {
