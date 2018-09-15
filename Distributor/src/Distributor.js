@@ -9,7 +9,7 @@ import JsonWriter from "./JsonWriter";
 process.title = "ExpoSE Distributor";
 
 process.on("disconnect", function() {
-    Log.log("Premature termination - Parent exit");
+    console.log("Premature termination - Parent exit");
     process.exit();
 });
 
