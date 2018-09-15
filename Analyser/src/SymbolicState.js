@@ -68,7 +68,7 @@ class SymbolicState {
                 { name: "random_seed", value: Math.floor(Math.random() * Math.pow(2, 32))},
                 { name: "phase_selection", value: 5 }
             ]
-	    );
+        );
 
         Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
@@ -241,7 +241,7 @@ class SymbolicState {
 
         if (arg instanceof Object) {
             for (let i in arg) {
-		        const property = Object.getOwnPropertyDescriptor(arg, i);
+                const property = Object.getOwnPropertyDescriptor(arg, i);
                 if (property && this.isSymbolic(property.value)) {
                     arg[i] = this._deepConcrete(arg[i]);
                 }
@@ -505,12 +505,23 @@ class SymbolicState {
         }
 
         switch (field_c) {
-        case "length":
+
+        case "length": {
+
             if (base_s.getLength()) {
                 return base_s.getLength();
+            } else {
+                Log.log("No length field on symbolic value");
             }
-        default:
+
+            break;
+        }
+
+        default: {
             Log.log("Unsupported symbolic field - concretizing " + base_c + " and field " + field_c);
+            break;
+        }
+
         }
 
         return undefined;
