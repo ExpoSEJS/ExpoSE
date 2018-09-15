@@ -44,7 +44,6 @@ elif [ "$1" == "ahg" ]; then
 
 elif [ "$1" == "replay" ]; then
 
-	source ./scripts/expose_env
 	./scripts/play "$(abs_target $2 $ORIGIN_PATH)" "${@:3}"
 	exit $?
 
