@@ -100,7 +100,7 @@ class Spawn {
         a.forEach(function(s) {
 
             if (/[^A-Za-z0-9_\/:=-]/.test(s)) {
-                s = "'" + s.replace(/'/g,"'\\''") + "'";
+                s = "'" + s.replace(/'/g, "'\\''") + "'";
             }
 
             ret.push(s);

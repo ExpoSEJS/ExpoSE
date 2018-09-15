@@ -25,6 +25,10 @@
             "unix"
         ],
 
+        "no-useless-escape": [
+            "warn"
+        ],
+
         "quotes": [
             "warn",
             "double"
