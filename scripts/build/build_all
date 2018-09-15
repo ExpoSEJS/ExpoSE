@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+$(npm bin)/eslint --fix .eslintrc.json **/src/**
+
+if [ $? -ne "0"]; then
+    echo "ESLint Failed"
+    exit 1
+fi
+
 ./scripts/build/build_libs
 
 if [ $? -ne 0 ]; then
@@ -22,13 +29,6 @@ fi
 if [ $? -ne "0" ]; then
 	echo "Analyser failed to build"
 	exit 1
-fi
-
-$(npm bin)/eslint .eslintrc.json **/src/**
-
-if [ $? -ne "0"]; then
-    echo "ESLint Failed"
-    exit 1
 fi
 
 exit $?
