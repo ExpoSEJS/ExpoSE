@@ -6,7 +6,6 @@ import {ConcolicValue} from "./Values/WrappedValue";
 import {SymbolicObject} from "./Values/SymbolicObject";
 import ObjectHelper from "./Utilities/ObjectHelper";
 import SymbolicState from "./SymbolicState";
-import SymbolicHelper from "./SymbolicHelper";
 import Log from "./Utilities/Log";
 import NotAnErrorException from "./NotAnErrorException";
 import {isNative} from "./Utilities/IsNative";
@@ -238,7 +237,7 @@ class SymbolicExecution {
         };
     }
 
-    putFieldPre(iid, base, offset, val, isComputed, isOpAssign) {
+    putFieldPre(iid, base, offset, val, _isComputed, _isOpAssign) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
@@ -250,7 +249,7 @@ class SymbolicExecution {
         };
     }
 
-    putField(iid, base, offset, val, isComputed, isOpAssign) {
+    putField(iid, base, offset, val, _isComputed, _isOpAssign) {
         this.state.coverage.touch(iid);
         Log.logHigh(`PutField ${base.toString()} at ${offset}`);
 
@@ -284,13 +283,13 @@ class SymbolicExecution {
         return { result: val };
     }
 
-    read(iid, name, val, isGlobal, isScriptLocal) {
+    read(iid, name, val, _isGlobal, _isScriptLocal) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Read ${name} at ${this._location(iid)}`);
         return { result: val };
     }
 
-    write(iid, name, val, lhs, isGlobal, isScriptLocal) {
+    write(iid, name, val, _lhs, _isGlobal, _isScriptLocal) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Write ${name} at ${this._location(iid)}`);
         return { result: val };
@@ -311,7 +310,7 @@ class SymbolicExecution {
         return { result: val };
     }
 
-    functionEnter(iid, f, dis, args) {
+    functionEnter(iid, f, _dis, _args) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Entering ${ObjectHelper.asString(f)} near ${this._location(iid)}`);
     }
@@ -369,7 +368,7 @@ class SymbolicExecution {
         };
     }
 
-    binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
+    binaryPre(iid, op, left, right, _isOpAssign, _isSwitchCaseComparison, _isComputed) {
  
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
@@ -405,7 +404,7 @@ class SymbolicExecution {
         };
     }
 
-    binary(iid, op, left, right, result_c, isOpAssign, isSwitchCaseComparison, isComputed) {
+    binary(iid, op, left, right, result_c, _isOpAssign, _isSwitchCaseComparison, _isComputed) {
         this.state.coverage.touch(iid);
 
         Log.logHigh("Op " + op + " left " + ObjectHelper.asString(left) + " right " + ObjectHelper.asString(right) + " result_c " + ObjectHelper.asString(result_c) + " at " + this._location(iid));
@@ -460,7 +459,7 @@ class SymbolicExecution {
         return { code: code, skip: false };
     }
 
-    instrumentCode(iid, code, newAst) {
+    instrumentCode(iid, code, _newAst) {
         return { result: code };
     }
 

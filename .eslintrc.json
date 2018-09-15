@@ -40,6 +40,8 @@
             "safe"
         ],
 
+        "no-unused-vars": [2, {"args": "after-used", "argsIgnorePattern": "^_"}],
+
         "no-console":"off"
     }
 }
