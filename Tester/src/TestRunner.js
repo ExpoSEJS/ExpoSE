@@ -27,14 +27,12 @@ function getArgument(name, dResult) {
 }
 
 if (process.argv.length >= 3) {
-	let target = getTarget();
-	let fn = getFn();
+	const target = getTarget();
+	const fn = getFn();
     
     console.log('Test runner searching ' + target);
 
-    let numConcurrent = 6;
-
-    let concurrent = getArgument('--concurrent', numConcurrent);
+    const concurrent = getArgument('--concurrent', 1);
 
     console.log('Launching with max concurrent of ' + concurrent);
 
