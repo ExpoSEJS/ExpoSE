@@ -15,10 +15,6 @@ function timeutil(start, x) {
     return toSeconds(x - start.startTime);
 }
 
-function averageList(list) {
-    return list.reduce((last, cur) => last + cur.time, 0) / list.length;
-}
-
 function handlePercentage(summary, outFile, mode, doneCb) {
     let jobList = summary.jobs;
 
@@ -28,7 +24,7 @@ function handlePercentage(summary, outFile, mode, doneCb) {
 
     let lastCoverage = 0;
 
-    jobList.forEach((x, i) => {
+    jobList.forEach(x => {
         coverageLines += "" + time(x.endTime) + ", " + Math.max(graph_sorter.aggregateCoverage(x)[mode], lastCoverage) + "\n";
         lastCoverage = graph_sorter.aggregateCoverage(x)[mode];
     });
@@ -55,7 +51,7 @@ function buildGraphData(summary, done) {
 
     const COVERAGE_MODES = ["lines", "terms"];
 
-    let coverageFiles = COVERAGE_MODES.map(mode => tmp.fileSync());
+    let coverageFiles = COVERAGE_MODES.map(() => tmp.fileSync());
     let rateOutFile = tmp.fileSync();
 
     let finished = 0;

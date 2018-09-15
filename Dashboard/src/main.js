@@ -2,7 +2,7 @@
 
 
 
-const {app, Menu, BrowserWindow} = require("electron");
+const {app, BrowserWindow} = require("electron");
 
 const path = require("path");
 const url = require("url");
@@ -33,8 +33,6 @@ function createWindow () {
 }
 
 app.on("ready", function() {
-    const menu = Menu.buildFromTemplate([]);
-    //Menu.setApplicationMenu(menu);
     createWindow();
 });
 

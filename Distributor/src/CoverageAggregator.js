@@ -28,7 +28,7 @@ class Coverage {
     }
 
     _mergeBranches(f, branches) {
-	    for (let i in branches) {
+        for (let i in branches) {
             f.branches[i] |= branches[i];
         }
     }

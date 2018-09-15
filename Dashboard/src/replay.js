@@ -1,9 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
-
 const electron = require("electron");
-const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const url = require("url");
@@ -14,12 +11,12 @@ function createReplay(file, input) {
     let i = replays.length;
 
     let replay = new BrowserWindow({
-	    width: 500,
-	    height: 600
- 	});
+        width: 500,
+        height: 600
+    });
 
- 	replay.replayFile = file;
- 	replay.replayInput = input;
+    replay.replayFile = file;
+    replay.replayInput = input;
 
     // and load the index.html of the app.
     replay.loadURL(url.format({

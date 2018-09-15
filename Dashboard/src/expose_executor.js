@@ -29,17 +29,12 @@ function Executor(filepath, input, data, done) {
 
     let prc = spawn(EXPOSE_PATH, args, {
         stdio: ["ignore", "pipe", "pipe"],
-    	env: env,
+        env: env,
         disconnected: false
     });
 
     prc.final = "";
     prc.running = true;
-
-    function record(d) {
-    	this.final += d;
-    	data(d);
-    }
 
     prc.stdout.on("data", function(d) {
         this.final += d;
@@ -47,9 +42,9 @@ function Executor(filepath, input, data, done) {
     }.bind(prc));
     prc.stderr.on("data", data);
 
-    prc.stdout.on("close", function(c) {
+    prc.stdout.on("close", () => {
         fs.readFile(jsonOutFile.name, (err, data) => {
-            this.running = false;
+            prc.running = false;
             if (err) {
                 done(err);
             } else {
@@ -57,7 +52,7 @@ function Executor(filepath, input, data, done) {
                 done(undefined, "" + data);
             }
         });
-    }.bind(prc));
+    });
 
     return prc;
 }
