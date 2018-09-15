@@ -1,12 +1,12 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
 
-import Spawn from './Spawn';
-import Strategy from './Strategy';
-import Coverage from './CoverageAggregator';
-import Stats from 'Stats';
-import Log from './Log';
+
+import Spawn from "./Spawn";
+import Strategy from "./Strategy";
+import Coverage from "./CoverageAggregator";
+import Stats from "Stats";
+import Log from "./Log";
 
 class Center {
 
@@ -93,7 +93,7 @@ class Center {
     }
 
     _printStatus() {
-        Log('*** [' + this._done.length + ' done /' + this._strategy.length() +' queued / ' + this._running.length + ' running / ' + this._errors + ' errors / ' + this._coverage.current().loc.toFixed(2) * 100 + '% coverage ] ***');
+        Log("*** [" + this._done.length + " done /" + this._strategy.length() +" queued / " + this._running.length + " running / " + this._errors + " errors / " + this._coverage.current().loc.toFixed(2) * 100 + "% coverage ] ***");
     }
 
     _finishedTesting() {
@@ -145,7 +145,7 @@ class Center {
         let errors = fsErrors;
 
         if (code != 0) {
-            errors.push({error: 'Exit code non-zero'});
+            errors.push({error: "Exit code non-zero"});
         }
 
         if (coverage) {
@@ -157,7 +157,7 @@ class Center {
             this._expandAlternatives(test.file, finalOut.alternatives, coverage);
             this._stats.merge(finalOut.stats);
         } else {
-            this._pushDone(test, test.file.input, test.file.pc, [], coverage, errors.concat([{ error: 'Error extracting final output - a fatal error must have occured' }]));
+            this._pushDone(test, test.file.input, test.file.pc, [], coverage, errors.concat([{ error: "Error extracting final output - a fatal error must have occured" }]));
         }
 
         this._postTest(test);

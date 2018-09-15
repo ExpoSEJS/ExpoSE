@@ -33,7 +33,7 @@ class WrappedValue {
     }
 
     toString() {
-        return 'Wrapped(' + this.concrete + ', ' + (this.rider ? this.rider.toString() : '') + ')';
+        return "Wrapped(" + this.concrete + ", " + (this.rider ? this.rider.toString() : "") + ")";
     }
 
     valueOf() {
@@ -57,7 +57,7 @@ class ConcolicValue extends WrappedValue {
     }
 
     toString() {
-        return 'Concolic(' + this.concrete + ', ' + this.symbolic + ')';
+        return "Concolic(" + this.concrete + ", " + this.symbolic + ")";
     }
 
     clone() {

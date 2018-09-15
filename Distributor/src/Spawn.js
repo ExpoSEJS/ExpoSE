@@ -1,19 +1,17 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
 
-import {spawn} from 'child_process';
 
-let StringDecoder = require('string_decoder').StringDecoder;
-let tmp = require('tmp');
-let decoder = new StringDecoder('utf8');
+import {spawn} from "child_process";
 
-const fs = require('fs');
-const kill = require('tree-kill');
+let StringDecoder = require("string_decoder").StringDecoder;
+let tmp = require("tmp");
+let decoder = new StringDecoder("utf8");
 
-//Some number non zero to say process was killed
-const PROCESS_KILLED = 999999;
-const EXPOSE_REPLAY_PATH = 'expoSE replay';
+const fs = require("fs");
+const kill = require("tree-kill");
+
+const EXPOSE_REPLAY_PATH = "expoSE replay";
 
 class Spawn {
 
@@ -34,7 +32,7 @@ class Spawn {
         try {
             return JSON.parse(data);
         } catch (e) {
-            errors.push({error: 'Exception E: ' + e + ' of ' + type + ' on ' + data});
+            errors.push({error: "Exception E: " + e + " of " + type + " on " + data});
             return null;
         }
     }
@@ -81,51 +79,53 @@ class Spawn {
             }
         }
 
-        fs.readFile(this.tmpOutFile.name, {encoding: 'utf8'}, function(err, data) {
+        fs.readFile(this.tmpOutFile.name, {encoding: "utf8"}, function(err, data) {
             if (!err) {
-                finalOut = test._tryParse(data, 'test data', errors);
+                finalOut = test._tryParse(data, "test data", errors);
             }
             cb(err);
         });
 
-        fs.readFile(this.tmpCoverageFile.name, {encoding: 'utf8'}, function(err, data) {
+        fs.readFile(this.tmpCoverageFile.name, {encoding: "utf8"}, function(err, data) {
             if (!err) {
-                coverage = test._tryParse(data, 'coverage data', errors);
+                coverage = test._tryParse(data, "coverage data", errors);
             }
             cb(err);
         });
     }
 
     shellescape(a) {
-      let ret = [];
+        let ret = [];
 
-      a.forEach(function(s) {
-        if (/[^A-Za-z0-9_\/:=-]/.test(s)) {
-          s = "'" + s.replace(/'/g,"'\\''") + "'";
-        }
-        ret.push(s);
-      });
+        a.forEach(function(s) {
 
-      return ret.join(' ');
+            if (/[^A-Za-z0-9_\/:=-]/.test(s)) {
+                s = "'" + s.replace(/'/g,"'\\''") + "'";
+            }
+
+            ret.push(s);
+        });
+
+        return ret.join(" ");
     }
 
     _mkEnvReplay() {
-        let envStr = '';
+        let envStr = "";
         for (let i in this.env) {
-            envStr += i + '="' + this.env[i] + '" ';
+            envStr += i + "=\"" + this.env[i] + "\" ";
         }
         return envStr;
     }
 
     makeReplayString() {
-        return /* this._mkEnvReplay() + */ EXPOSE_REPLAY_PATH + ' ' + this.shellescape(this.args);
+        return /* this._mkEnvReplay() + */ EXPOSE_REPLAY_PATH + " " + this.shellescape(this.args);
     }
 
     kill() {
-        kill(this._pid, 'SIGKILL');  
+        kill(this._pid, "SIGKILL");  
     }
 
-    _buildTimeout(prc, done) {
+    _buildTimeout() {
         return setTimeout(() => {
             this.kill();
         }, this.options.timeout);
@@ -142,26 +142,26 @@ class Spawn {
 
         this._startTime = (new Date()).getTime();
 
-	try {
-       		const prc = spawn(this.script, this.args, {
-		    env: this.env,
-		    disconnected: false
-		});
+        try {
+            const prc = spawn(this.script, this.args, {
+                env: this.env,
+                disconnected: false
+            });
 		
-		prc.stdout.on('data', insertData.bind(this));
-		prc.stderr.on('data', insertData.bind(this));
+            prc.stdout.on("data", insertData.bind(this));
+            prc.stderr.on("data", insertData.bind(this));
 
-		prc.stdout.on('close', code => {
-		    clearTimeout(this._killTimeout);
-		    this._processEnded(code, done);
-		});
+            prc.stdout.on("close", code => {
+                clearTimeout(this._killTimeout);
+                this._processEnded(code, done);
+            });
 
-		this._killTimeout = this._buildTimeout(this.prc, done);
-		this._pid = prc.pid;
-	} catch (ex) {
-		console.log('Distributor ERROR: ' + ex + ' just falling back to default error');
-		this._processEnded(99999, done);
-	}
+            this._killTimeout = this._buildTimeout();
+            this._pid = prc.pid;
+        } catch (ex) {
+            console.log("Distributor ERROR: " + ex + " just falling back to default error");
+            this._processEnded(99999, done);
+        }
 
         return this;
     }

@@ -2,16 +2,16 @@
 
 
 
-import {ConcolicValue} from './Values/WrappedValue';
-import {SymbolicObject} from './Values/SymbolicObject';
-import ObjectHelper from './Utilities/ObjectHelper';
-import SymbolicState from './SymbolicState';
-import SymbolicHelper from './SymbolicHelper';
-import Log from './Utilities/Log';
-import NotAnErrorException from './NotAnErrorException';
-import {isNative} from './Utilities/IsNative';
-import ModelBuilder from './FunctionModels';
-import External from './External';
+import {ConcolicValue} from "./Values/WrappedValue";
+import {SymbolicObject} from "./Values/SymbolicObject";
+import ObjectHelper from "./Utilities/ObjectHelper";
+import SymbolicState from "./SymbolicState";
+import SymbolicHelper from "./SymbolicHelper";
+import Log from "./Utilities/Log";
+import NotAnErrorException from "./NotAnErrorException";
+import {isNative} from "./Utilities/IsNative";
+import ModelBuilder from "./FunctionModels";
+import External from "./External";
 
 class SymbolicExecution {
 
@@ -22,26 +22,26 @@ class SymbolicExecution {
         this._fileList = new Array();
         this._exitFn = exitFn;
 
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
 
-            const currentWindow = require('electron').remote.getCurrentWindow();
+            const currentWindow = require("electron").remote.getCurrentWindow();
 
             setTimeout(() => {
-                console.log('Finish timeout (callback)');
+                console.log("Finish timeout (callback)");
                 this.finished();
                 currentWindow.close();
             }, 1000 * 20);
 
-            console.log('Browser mode setup finished');
+            console.log("Browser mode setup finished");
         } else {
 	    
-	        const process = External.load('process');
+	        const process = External.load("process");
             
 	        //Bind any uncaught exceptions to the uncaught exception handler
-            process.on('uncaughtException', this._uncaughtException.bind(this));
+            process.on("uncaughtException", this._uncaughtException.bind(this));
 
             //Bind the exit handler to the exit callback supplied
-            process.on('exit', this.finished.bind(this));
+            process.on("exit", this.finished.bind(this));
         }
 
     }
@@ -57,10 +57,10 @@ class SymbolicExecution {
             return;
         }
 
-        Log.log(`Uncaught exception ${e} Stack: ${e.stack ? e.stack : ''}`);
+        Log.log(`Uncaught exception ${e} Stack: ${e.stack ? e.stack : ""}`);
 
         this.state.errors.push({
-            error: '' + e,
+            error: "" + e,
             stack: e.stack
         });
     }
@@ -146,7 +146,7 @@ class SymbolicExecution {
         const offset_c = this.state.getConcrete(offset);
         for (const idx in base_c) {
             if (offset_c != base_c[idx]) {
-                const condition = this.state.binary('==', idx, offset);
+                const condition = this.state.binary("==", idx, offset);
                 this.state.pushCondition(this.state.ctx.mkNot(condition));
             }
         }
@@ -159,34 +159,34 @@ class SymbolicExecution {
 
         //TODO: This is a horrible hacky way of making certain request attributes symbolic
         //TODO: Fix this!
-        if (typeof(window) != 'undefined') {
+        if (typeof(window) != "undefined") {
             
             if (base == window.navigator) {
-                if (offset == 'userAgent') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "userAgent") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
             }
 
             if (base == window.document) {
-                if (offset == 'cookie') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "cookie") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }            
 
-                if (offset == 'lastModified') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "lastModified") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
 
-                if (offset == 'referer') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "referer") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 } 
             }
 
             if (base == window.location) {
-                if (offset == 'origin') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "origin") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
-                if (offset == 'host') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "host") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
             }
 
@@ -197,7 +197,7 @@ class SymbolicExecution {
 
         //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
         if (base instanceof SymbolicObject) {
-            Log.logMid('Potential loss of precision, cocretize offset on SymbolicObject field lookups');
+            Log.logMid("Potential loss of precision, cocretize offset on SymbolicObject field lookups");
             return {
                 result: base.getField(this.state, this.state.getConcrete(offset))
             };
@@ -207,7 +207,7 @@ class SymbolicExecution {
         //Then return the concrete lookup
         if (!this.state.isSymbolic(base) && 
              this.state.isSymbolic(offset) &&
-             typeof this.state.getConcrete(offset) == 'string') {
+             typeof this.state.getConcrete(offset) == "string") {
             this._getFieldSymbolicOffset(base, offset);
             return {
                 result: base[this.state.getConcrete(offset)]
@@ -218,7 +218,7 @@ class SymbolicExecution {
         if (!this.state.isSymbolic(base) &&
              this.state.isSymbolic(offset) &&
              this.state.getConcrete(base) instanceof Array &&
-             typeof this.state.getConcrete(offset) == 'number') {
+             typeof this.state.getConcrete(offset) == "number") {
 
             for (let i = 0; i < this.state.getConcrete(base).length; i++) {
                 this.state.assertEqual(i, offset); 
@@ -263,7 +263,7 @@ class SymbolicExecution {
         //TODO: Enumerate if symbolic offset and concrete input
 
         if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array && this.state.arrayType(base) == typeof(val)) {
-            Log.log('TODO: Check that setField is homogonous');
+            Log.log("TODO: Check that setField is homogonous");
 
             //SetField produce a new array
             //Therefore the symbolic portion of base needs to be updated
@@ -379,9 +379,9 @@ class SymbolicExecution {
                 right_c = this.state.getConcrete(right);
 
             //We also consider boxed primatives to be primative
-            const is_primative = typeof(left_c) != 'object' || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
+            const is_primative = typeof(left_c) != "object" || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
             const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
-            const is_real = typeof(left_c) == 'number' ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
+            const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
             //TODO: Work out how to check that boxed values are the same type
             const is_same_type = typeof(left_c) === typeof(right_c) || (!is_null && left_c.valueOf() === right_c.valueOf());
@@ -391,7 +391,7 @@ class SymbolicExecution {
                 left = left_c;
                 right = right_c;
             } else {
-                Log.logHigh('Not concretizing ' + op + ' ' + left + ' ' + right + ' ' + typeof left_c + ' ' + typeof right_c);
+                Log.logHigh("Not concretizing " + op + " " + left + " " + right + " " + typeof left_c + " " + typeof right_c);
             }
 
         }
@@ -408,7 +408,7 @@ class SymbolicExecution {
     binary(iid, op, left, right, result_c, isOpAssign, isSwitchCaseComparison, isComputed) {
         this.state.coverage.touch(iid);
 
-        Log.logHigh('Op ' + op + ' left ' + ObjectHelper.asString(left) + ' right ' + ObjectHelper.asString(right) + ' result_c ' + ObjectHelper.asString(result_c) + ' at ' + this._location(iid));
+        Log.logHigh("Op " + op + " left " + ObjectHelper.asString(left) + " right " + ObjectHelper.asString(right) + " result_c " + ObjectHelper.asString(result_c) + " at " + this._location(iid));
 
         let result;
 
@@ -437,7 +437,7 @@ class SymbolicExecution {
     unary(iid, op, left, result_c) {
         this.state.coverage.touch(iid);
 
-        Log.logHigh('Unary ' + op + ' left ' + ObjectHelper.asString(left) + ' result ' + ObjectHelper.asString(result_c)); 
+        Log.logHigh("Unary " + op + " left " + ObjectHelper.asString(left) + " result " + ObjectHelper.asString(result_c)); 
 
         return {
             result: this.state.unary(op, left)

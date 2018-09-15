@@ -7,33 +7,33 @@
 //
 // Symbolic execution analyser entry point
 
-import SymbolicExecution from './SymbolicExecution';
-import ObjectHelper from './Utilities/ObjectHelper';
-import {ConcolicValue, WrappedValue} from './Values/WrappedValue';
-import NotAnErrorException from './NotAnErrorException';
-import Config from './Config';
-import Log from './Utilities/Log';
-import External from './External';
+import SymbolicExecution from "./SymbolicExecution";
+import ObjectHelper from "./Utilities/ObjectHelper";
+import {ConcolicValue, WrappedValue} from "./Values/WrappedValue";
+import NotAnErrorException from "./NotAnErrorException";
+import Config from "./Config";
+import Log from "./Utilities/Log";
+import External from "./External";
 
-const fs = External.load('fs');
-const process = External.load('process');
+const fs = External.load("fs");
+const process = External.load("process");
 
 const input = process.argv[process.argv.length - 1];
 
-Log.logHigh('Built with VERY logging enabled');
-Log.logMid('Built with FINE logging enabled');
-Log.log('Built with BASE logging enabled');
-Log.log('Intial Input ' + input);
+Log.logHigh("Built with VERY logging enabled");
+Log.logMid("Built with FINE logging enabled");
+Log.log("Built with BASE logging enabled");
+Log.log("Intial Input " + input);
 
-process.title = 'ExpoSE Play ' + input;
+process.title = "ExpoSE Play " + input;
 
-process.on('disconnect', function() {
-    Log.log('Premature termination - Parent exit');
+process.on("disconnect", function() {
+    Log.log("Premature termination - Parent exit");
     process.exit();
 });
 
 J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => {
-    Log.log('Finished play with PC ' + state.pathCondition.map(x => x.ast));
+    Log.log("Finished play with PC " + state.pathCondition.map(x => x.ast));
 
     const finalOut = {
         pc: state.finalPC(),
@@ -45,15 +45,15 @@ J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => 
 
     if (Config.outCoveragePath) {
         fs.writeFileSync(Config.outCoveragePath, JSON.stringify(coverage.end()));
-        Log.log('Wrote final coverage to ' + Config.outCoveragePath);
+        Log.log("Wrote final coverage to " + Config.outCoveragePath);
     } else {
-    	Log.log('No final coverage path supplied');
+    	Log.log("No final coverage path supplied");
     }
 
     if (Config.outFilePath) {
         fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
-        Log.log('Wrote final output to ' + Config.outFilePath);
+        Log.log("Wrote final output to " + Config.outFilePath);
     } else {
-    	Log.log('No final output path supplied');
+    	Log.log("No final output path supplied");
     }
 });

@@ -2,7 +2,7 @@
 
 $(npm bin)/eslint --fix .eslintrc.json **/src/**
 
-if [ $? -ne "0"]; then
+if [ $? -ne 0 ]; then
     echo "ESLint Failed"
     exit 1
 fi

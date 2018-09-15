@@ -9,5 +9,5 @@ export default function(sandbox, sid, iid) {
         return undefined;
     }
 
-    return iid_string.substr(1, iid_string.length - 2).split(':').slice(1); //Comes in the form (Filename:1:2:3:4)   
+    return iid_string.substr(1, iid_string.length - 2).split(":").slice(1); //Comes in the form (Filename:1:2:3:4)   
 }

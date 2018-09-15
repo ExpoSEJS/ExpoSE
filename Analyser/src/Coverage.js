@@ -2,9 +2,9 @@
 
 
 
-import iidToLocation from './Utilities/iidToLocation';
+import iidToLocation from "./Utilities/iidToLocation";
 
-const LAST_IID = 'LAST_IID';
+const LAST_IID = "LAST_IID";
 
 /**
  * Bits for coverage info propagation
