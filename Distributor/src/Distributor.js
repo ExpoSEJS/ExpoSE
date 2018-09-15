@@ -34,7 +34,7 @@ if (process.argv.length >= 3) {
     center.done((center, done, errors, coverage, stats) => {
 
         if (Config.jsonOut) {
-            JsonWriter(Config.jsonOut, target, coverage, start, (new Date()).getTime(), done, Config);
+            JsonWriter(Config.jsonOut, target, coverage, start, (new Date()).getTime(), done);
         }
 
         console.log("\n*-- Stat Module Output --*");

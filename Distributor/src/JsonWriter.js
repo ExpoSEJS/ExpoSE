@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 
-export default function(file, target, coverage, start, end, test_list, config) {
+export default function(file, target, coverage, start, end, test_list) {
     console.log(`\n*-- Writing JSON to ${file} --*`);
     fs.writeFile(file, JSON.stringify({
         source: target,
