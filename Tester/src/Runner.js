@@ -1,9 +1,9 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
 
-import Tester from './Tester';
-import Walker from './Walker';
+
+import Tester from "./Tester";
+import Walker from "./Walker";
 
 class Runner {
 
@@ -61,16 +61,16 @@ class Runner {
     }
 
     _printStatus() {
-        process.stdout.write('\r*** [' + this.done + '/' + this.filesTotal +'] [' + this._running + ' running] [' + this._errors + ' errors] ***');
+        process.stdout.write("\r*** [" + this.done + "/" + this.filesTotal +"] [" + this._running + " running] [" + this._errors + " errors] ***");
     }
 
     finishedTesting() {
-        console.log('\n**************************');
-        console.log('*         Summary        *');
-        console.log('**************************');
-        console.log('*        ' + this.done + ' complete     *');
-        console.log('*        ' + this._errors + ' errors        *');
-        console.log('**************************');
+        console.log("\n**************************");
+        console.log("*         Summary        *");
+        console.log("**************************");
+        console.log("*        " + this.done + " complete     *");
+        console.log("*        " + this._errors + " errors        *");
+        console.log("**************************");
         this.cbs.forEach(cb => cb(this._errors));
     }
 
@@ -78,8 +78,8 @@ class Runner {
         this.done++;
 
         if (code !== file.expectErrors) {
-            process.stderr.write('\n' + file.path + ' failed with errors (' + code + '). Printing output\n');
-            process.stderr.write(test.out + '\n');
+            process.stderr.write("\n" + file.path + " failed with errors (" + code + "). Printing output\n");
+            process.stderr.write(test.out + "\n");
             this._errors++;
         }
 

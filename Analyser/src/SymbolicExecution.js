@@ -1,17 +1,16 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2014@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-"use strict";
+/*global window*/
 
-import {ConcolicValue} from './Values/WrappedValue';
-import {SymbolicObject} from './Values/SymbolicObject';
-import ObjectHelper from './Utilities/ObjectHelper';
-import SymbolicState from './SymbolicState';
-import SymbolicHelper from './SymbolicHelper';
-import Log from './Utilities/Log';
-import NotAnErrorException from './NotAnErrorException';
-import {isNative} from './Utilities/IsNative';
-import ModelBuilder from './FunctionModels';
-import External from './External';
+import {ConcolicValue} from "./Values/WrappedValue";
+import {SymbolicObject} from "./Values/SymbolicObject";
+import ObjectHelper from "./Utilities/ObjectHelper";
+import SymbolicState from "./SymbolicState";
+import Log from "./Utilities/Log";
+import NotAnErrorException from "./NotAnErrorException";
+import {isNative} from "./Utilities/IsNative";
+import ModelBuilder from "./FunctionModels";
+import External from "./External";
 
 class SymbolicExecution {
 
@@ -22,26 +21,24 @@ class SymbolicExecution {
         this._fileList = new Array();
         this._exitFn = exitFn;
 
-        if (typeof window !== 'undefined') {
-
-            const currentWindow = require('electron').remote.getCurrentWindow();
+        if (typeof window !== "undefined") {
+            const currentWindow = require("electron").remote.getCurrentWindow();
 
             setTimeout(() => {
-                console.log('Finish timeout (callback)');
+                console.log("Finish timeout (callback)");
                 this.finished();
                 currentWindow.close();
             }, 1000 * 20);
 
-            console.log('Browser mode setup finished');
-        } else {
-	    
-	        const process = External.load('process');
+            console.log("Browser mode setup finished");
+        } else { 
+            const process = External.load("process");
             
-	        //Bind any uncaught exceptions to the uncaught exception handler
-            process.on('uncaughtException', this._uncaughtException.bind(this));
+            //Bind any uncaught exceptions to the uncaught exception handler
+            process.on("uncaughtException", this._uncaughtException.bind(this));
 
             //Bind the exit handler to the exit callback supplied
-            process.on('exit', this.finished.bind(this));
+            process.on("exit", this.finished.bind(this));
         }
 
     }
@@ -57,15 +54,15 @@ class SymbolicExecution {
             return;
         }
 
-        Log.log(`Uncaught exception ${e} Stack: ${e.stack ? e.stack : ''}`);
+        Log.log(`Uncaught exception ${e} Stack: ${e.stack ? e.stack : ""}`);
 
         this.state.errors.push({
-            error: '' + e,
+            error: "" + e,
             stack: e.stack
         });
     }
 
-    invokeFunPre(iid, f, base, args, isConstructor, isMethod) {
+    invokeFunPre(iid, f, base, args, _isConstructor, _isMethod) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
@@ -100,13 +97,13 @@ class SymbolicExecution {
     /**
      * Called after a function completes execution
      */
-    invokeFun(iid, f, base, args, result, isConstructor, isMethod) {
+    invokeFun(iid, f, base, args, result, _isConstructor, _isMethod) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
         return { result: result };
     }
 
-    literal(iid, val, hasGetterSetter) {
+    literal(iid, val, _hasGetterSetter) {
         this.state.coverage.touch(iid);
         return { result: val };
     }
@@ -124,7 +121,7 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
     }
 
-    declare(iid, name, val, isArgument, argumentIndex, isCatchParam) {
+    declare(iid, name, val, _isArgument, _argumentIndex, _isCatchParam) {
         this.state.coverage.touch(iid);
         Log.logHigh(`decl ${name} at ${this._location(iid)}`);
         return {
@@ -132,7 +129,7 @@ class SymbolicExecution {
         };
     }
 
-    getFieldPre(iid, base, offset, isComputed, isOpAssign, isMethodCall) {
+    getFieldPre(iid, base, offset, _isComputed, _isOpAssign, _isMethodCall) {
         this.state.coverage.touch(iid);
         return {
             base: base,
@@ -146,7 +143,7 @@ class SymbolicExecution {
         const offset_c = this.state.getConcrete(offset);
         for (const idx in base_c) {
             if (offset_c != base_c[idx]) {
-                const condition = this.state.binary('==', idx, offset);
+                const condition = this.state.binary("==", idx, offset);
                 this.state.pushCondition(this.state.ctx.mkNot(condition));
             }
         }
@@ -155,38 +152,38 @@ class SymbolicExecution {
     /** 
      * GetField will be skipped if the base or offset is not wrapped (SymbolicObject or isSymbolic)
      */
-    getField(iid, base, offset, val, isComputed, isOpAssign, isMethodCall) {
+    getField(iid, base, offset, _val, _isComputed, _isOpAssign, _isMethodCall) {
 
         //TODO: This is a horrible hacky way of making certain request attributes symbolic
         //TODO: Fix this!
-        if (typeof(window) != 'undefined') {
+        if (typeof(window) != "undefined") {
             
             if (base == window.navigator) {
-                if (offset == 'userAgent') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "userAgent") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
             }
 
             if (base == window.document) {
-                if (offset == 'cookie') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "cookie") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }            
 
-                if (offset == 'lastModified') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "lastModified") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
 
-                if (offset == 'referer') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "referer") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 } 
             }
 
             if (base == window.location) {
-                if (offset == 'origin') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "origin") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
-                if (offset == 'host') {
-                    return { result: Object._expose.makeSymbolic(offset, '') };
+                if (offset == "host") {
+                    return { result: Object._expose.makeSymbolic(offset, "") };
                 }
             }
 
@@ -197,7 +194,7 @@ class SymbolicExecution {
 
         //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
         if (base instanceof SymbolicObject) {
-            Log.logMid(`Potential loss of precision, cocretize offset on SymbolicObject field lookups`);
+            Log.logMid("Potential loss of precision, cocretize offset on SymbolicObject field lookups");
             return {
                 result: base.getField(this.state, this.state.getConcrete(offset))
             };
@@ -207,7 +204,7 @@ class SymbolicExecution {
         //Then return the concrete lookup
         if (!this.state.isSymbolic(base) && 
              this.state.isSymbolic(offset) &&
-             typeof this.state.getConcrete(offset) == 'string') {
+             typeof this.state.getConcrete(offset) == "string") {
             this._getFieldSymbolicOffset(base, offset);
             return {
                 result: base[this.state.getConcrete(offset)]
@@ -218,7 +215,7 @@ class SymbolicExecution {
         if (!this.state.isSymbolic(base) &&
              this.state.isSymbolic(offset) &&
              this.state.getConcrete(base) instanceof Array &&
-             typeof this.state.getConcrete(offset) == 'number') {
+             typeof this.state.getConcrete(offset) == "number") {
 
             for (let i = 0; i < this.state.getConcrete(base).length; i++) {
                 this.state.assertEqual(i, offset); 
@@ -226,7 +223,7 @@ class SymbolicExecution {
 
             return {
                 result: base[this.state.getConcrete(offset)]
-            }
+            };
         }
 
         //Otherwise defer to symbolicField
@@ -238,7 +235,7 @@ class SymbolicExecution {
         };
     }
 
-    putFieldPre(iid, base, offset, val, isComputed, isOpAssign) {
+    putFieldPre(iid, base, offset, val, _isComputed, _isOpAssign) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
@@ -250,20 +247,20 @@ class SymbolicExecution {
         };
     }
 
-    putField(iid, base, offset, val, isComputed, isOpAssign) {
+    putField(iid, base, offset, val, _isComputed, _isOpAssign) {
         this.state.coverage.touch(iid);
         Log.logHigh(`PutField ${base.toString()} at ${offset}`);
 
         if (base instanceof SymbolicObject) {
             return {
                 result: base.setField(this.state, this.state.getConcrete(offset), val)
-            }
+            };
         }
 
         //TODO: Enumerate if symbolic offset and concrete input
 
         if (this.state.isSymbolic(base) && this.state.getConcrete(base) instanceof Array && this.state.arrayType(base) == typeof(val)) {
-            Log.log(`TODO: Check that setField is homogonous`);
+            Log.log("TODO: Check that setField is homogonous");
 
             //SetField produce a new array
             //Therefore the symbolic portion of base needs to be updated
@@ -276,7 +273,7 @@ class SymbolicExecution {
 
             return {
                 result: val
-            }
+            };
         }
 
         this.state.getConcrete(base)[this.state.getConcrete(offset)] = val;
@@ -284,13 +281,13 @@ class SymbolicExecution {
         return { result: val };
     }
 
-    read(iid, name, val, isGlobal, isScriptLocal) {
+    read(iid, name, val, _isGlobal, _isScriptLocal) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Read ${name} at ${this._location(iid)}`);
         return { result: val };
     }
 
-    write(iid, name, val, lhs, isGlobal, isScriptLocal) {
+    write(iid, name, val, _lhs, _isGlobal, _isScriptLocal) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Write ${name} at ${this._location(iid)}`);
         return { result: val };
@@ -311,7 +308,7 @@ class SymbolicExecution {
         return { result: val };
     }
 
-    functionEnter(iid, f, dis, args) {
+    functionEnter(iid, f, _dis, _args) {
         this.state.coverage.touch(iid);
         Log.logHigh(`Entering ${ObjectHelper.asString(f)} near ${this._location(iid)}`);
     }
@@ -369,17 +366,17 @@ class SymbolicExecution {
         };
     }
 
-    binaryPre(iid, op, left, right, isOpAssign, isSwitchCaseComparison, isComputed) {
+    binaryPre(iid, op, left, right, _isOpAssign, _isSwitchCaseComparison, _isComputed) {
  
         //Don't do symbolic logic if the symbolic values are diff types
         //Concretise instead
         if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
  
             const left_c  = this.state.getConcrete(left),
-                  right_c = this.state.getConcrete(right);
+                right_c = this.state.getConcrete(right);
 
             //We also consider boxed primatives to be primative
-            const is_primative = typeof(left_c) != 'object' || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
+            const is_primative = typeof(left_c) != "object" || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
             const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
             const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
  
@@ -391,7 +388,7 @@ class SymbolicExecution {
                 left = left_c;
                 right = right_c;
             } else {
-                Log.logHigh('Not concretizing ' + op + ' ' + left + ' ' + right + ' ' + typeof left_c + ' ' + typeof right_c);
+                Log.logHigh("Not concretizing " + op + " " + left + " " + right + " " + typeof left_c + " " + typeof right_c);
             }
 
         }
@@ -405,10 +402,10 @@ class SymbolicExecution {
         };
     }
 
-    binary(iid, op, left, right, result_c, isOpAssign, isSwitchCaseComparison, isComputed) {
+    binary(iid, op, left, right, result_c, _isOpAssign, _isSwitchCaseComparison, _isComputed) {
         this.state.coverage.touch(iid);
 
-        Log.logHigh('Op ' + op + ' left ' + ObjectHelper.asString(left) + ' right ' + ObjectHelper.asString(right) + ' result_c ' + ObjectHelper.asString(result_c) + ' at ' + this._location(iid));
+        Log.logHigh("Op " + op + " left " + ObjectHelper.asString(left) + " right " + ObjectHelper.asString(right) + " result_c " + ObjectHelper.asString(result_c) + " at " + this._location(iid));
 
         let result;
 
@@ -420,7 +417,7 @@ class SymbolicExecution {
 
         return {
             result: result
-        }
+        };
     }
 
     unaryPre(iid, op, left) {
@@ -431,13 +428,13 @@ class SymbolicExecution {
             op: op,
             left: left,
             skip: this.state.isWrapped(left)
-        }
+        };
     }
 
     unary(iid, op, left, result_c) {
         this.state.coverage.touch(iid);
 
-        Log.logHigh('Unary ' + op + ' left ' + ObjectHelper.asString(left) + ' result ' + ObjectHelper.asString(result_c)); 
+        Log.logHigh("Unary " + op + " left " + ObjectHelper.asString(left) + " result " + ObjectHelper.asString(result_c)); 
 
         return {
             result: this.state.unary(op, left)
@@ -460,7 +457,7 @@ class SymbolicExecution {
         return { code: code, skip: false };
     }
 
-    instrumentCode(iid, code, newAst) {
+    instrumentCode(iid, code, _newAst) {
         return { result: code };
     }
 
