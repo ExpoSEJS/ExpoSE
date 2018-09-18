@@ -5,14 +5,11 @@ function is_external() {
 }
 
 //Cache electron so require doesn't get rewritten
-const require = is_external() ? require("electron").remote.require : require;
+const ld = is_external() ? require("electron").remote.require : require;
 
 export default {
-
     load: function (library) {
-        return require(library);
+        return ld(library);
     },
-
     is_external: is_external
-
 };
