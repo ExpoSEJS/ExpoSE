@@ -30,15 +30,8 @@ process.on("disconnect", function() {
 });
 
 J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => {
-    Log.log("Finished play with PC " + state.pathCondition.map(x => x.ast));
 
-    const finalOut = {
-        pc: state.finalPC(),
-        input: state.input,
-        errors: state.errors,
-        alternatives: state.alternatives(),
-        stats: state.stats.export()
-    };
+    Log.log("Finished play with PC " + state.pathCondition.map(x => x.ast));
 
     if (Config.outCoveragePath) {
         fs.writeFileSync(Config.outCoveragePath, JSON.stringify(coverage.end()));
@@ -47,10 +40,21 @@ J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => 
         Log.log("No final coverage path supplied");
     }
 
-    if (Config.outFilePath) {
-        fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
-        Log.log("Wrote final output to " + Config.outFilePath);
-    } else {
-        Log.log("No final output path supplied");
-    }
+    //We record the alternatives list as the results develop to make the output tool more resilient to SMT crashes
+    state.alternatives((current) => {
+        const finalOut = {
+            pc: state.finalPC(),
+            input: state.input,
+            errors: state.errors,
+            alternatives: current,
+            stats: state.stats.export()
+        };
+
+        if (Config.outFilePath) {
+            fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
+            Log.log("Wrote final output to " + Config.outFilePath);
+        } else {
+            Log.log("No final output path supplied");
+        }
+    });
 });

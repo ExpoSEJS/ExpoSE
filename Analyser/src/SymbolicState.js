@@ -161,7 +161,7 @@ class SymbolicState {
         });
     }
 
-    _buildPC(childInputs, i) {
+    _buildPC(childInputs, i, inputCallback) {
 
         const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
         const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
@@ -172,6 +172,11 @@ class SymbolicState {
         if (solution) {
             this._addInput(newPC, solution, i, childInputs);
             Log.logHigh(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
+
+            if (inputCallback) {
+                inputCallback(childInputs);
+            }
+
         } else {
             Log.logHigh(`${ObjectHelper.asString(newPC)} is not satisfiable`);
         }
@@ -181,7 +186,7 @@ class SymbolicState {
         return this.pathCondition.slice(0, i).map(x => x.ast);
     }
 
-    alternatives() {
+    alternatives(inputCallback) {
         let childInputs = [];
 
         if (this.input._bound > this.pathCondition.length) {
@@ -196,7 +201,7 @@ class SymbolicState {
 
             //TODO: Make checks on expressions smarter
             if (!this.pathCondition[i].binder) {
-                this._buildPC(childInputs, i);
+                this._buildPC(childInputs, i, inputCallback);
             }
 
             Log.logMid(this.slv.toString());
@@ -204,14 +209,12 @@ class SymbolicState {
             //Push the current thing we're looking at to the solver
             this.slv.assert(this.pathCondition[i].ast);
             this.slv.push();
-
-            //TODO: Record State
         }
 
         this.slv.reset();
 
-        // Generational search would now Run&Check all new child inputs
-        return childInputs;
+        //Guarentee inputCallback is called at least once
+        inputCallback(childInputs);
     }
 
     _getSort(concrete) {
