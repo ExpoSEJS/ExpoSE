@@ -36,7 +36,7 @@ function isNative(v) {
             v[SECRET_CACHE_STR] = { isNative: result };
         } catch (e) {
             //TODO: We can't cache this result because non-enumerable? report
-        }        
+        }
 
         return result;
     } else {
