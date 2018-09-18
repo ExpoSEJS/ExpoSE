@@ -198,11 +198,14 @@ class SymbolicState {
             if (!this.pathCondition[i].binder) {
                 this._buildPC(childInputs, i);
             }
-            console.log(this.slv.toString());
+
+            Log.logMid(this.slv.toString());
 
             //Push the current thing we're looking at to the solver
             this.slv.assert(this.pathCondition[i].ast);
             this.slv.push();
+
+            //TODO: Record State
         }
 
         this.slv.reset();
