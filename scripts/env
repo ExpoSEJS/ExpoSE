@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #Node path should add libs in
-export NODE_PATH=$NODE_PATH:"$(./scripts/lib_path)"
+export NODE_PATH=$NODE_PATH:"$(cd lib; pwd)"
 
 #Z3_PATH dictates where z3_js will look for Z3 in
 if [ -e ${Z3_PATH+x} ]; then
