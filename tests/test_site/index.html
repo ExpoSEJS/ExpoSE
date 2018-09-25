@@ -10,19 +10,36 @@ This page is called formy mcformform. It has <b>Tex</b> and stuff on it. Will th
 
 <script>
 
-if (document.cookie == "Hi") { console.log('TC 3'); }
+const config = { attributes: true, childList: true, subtree: true };
+const callback = function(mutationsList, observer) {
+//    console.log(JSON.stringify(arguments));
+    for(let mutation of mutationsList) {
+        if (mutation.type == 'childList') {
+            console.log('A child node has been added or removed.');
+//            mutationsList.forEach(mutation => console.log(mutation));
+        }
+        else if (mutation.type == 'attributes') {
+            console.log('The ' + mutation.attributeName + ' attribute was modified.');
+        }
+    }
+};
 
-if (location.host == "google.com") { console.log('What does this do'); }
-if (location.origin == "google") { console.log('Yes?'); }
+let observer = new MutationObserver(callback);
+observer.observe(document, config);
 
-if (/Mozilla/.test(navigator.userAgent)) {
-    console.log('TC 1');
-} else if (/Edge/.test(navigator.userAgent)) {
-    console.log('TC 2');
+const pageStyle = document.createElement('link');
+
+if (/Apple/.test(document.cookie) || /iPhone/.test(document.cookie)) {
+    pageStyle.href = "/iPhone.css";
+} else {
+    pageStyle.href = "/Unknown.css";
 }
 
+pageStyle.rel = "stylesheet";
+pageStyle.type = "text/css";
+
+document.head.appendChild(pageStyle);
 </script>
 
 </body>
-
 </html>

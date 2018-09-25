@@ -20,9 +20,10 @@ const createWindow = () => {
         }
     });
 
-    mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
-        mainWindow.loadURL(process.argv[process.argv.length - 2]);
-        mainWindow.webContents.openDevTools();
+    mainWindow.webContents.session.clearCache(function() {
+        mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
+            mainWindow.loadURL(process.argv[process.argv.length - 2]);
+        });
     });
 
     // Emitted when the window is closed.
