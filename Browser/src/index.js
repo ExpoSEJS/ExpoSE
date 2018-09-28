@@ -20,6 +20,10 @@ const createWindow = () => {
         }
     });
 
+    mainWindow.on("page-title-updated", (e) => {
+        e.preventDefault();
+    });
+
     mainWindow.webContents.session.clearCache(function() {
         mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
             mainWindow.loadURL(process.argv[process.argv.length - 2]);
