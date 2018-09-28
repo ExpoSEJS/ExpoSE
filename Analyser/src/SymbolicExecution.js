@@ -69,7 +69,8 @@ class SymbolicExecution {
         f = this.state.getConcrete(f); 
 
         if ((f.name == "appendChild" || f.name == "prependChild") && args[0].src) {
-            console.log(`LOAD EVENT PC="${this.state.finalPC()}" SOURCE="${args[0].src}"`);
+            const sourceString = this.state.asSymbolic(args[0].src).toString();
+            console.log(`LOAD EVENT PC="${this.state.finalPC()}" SOURCE="${sourceString}"`);
         }
 
         const fn_model = this.models.get(f);
