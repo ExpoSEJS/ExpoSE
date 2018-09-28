@@ -22,15 +22,15 @@ class SymbolicExecution {
         this._exitFn = exitFn;
 
         if (typeof window !== "undefined") {
-            const currentWindow = require("electron").remote.getCurrentWindow();
 
             setTimeout(() => {
                 console.log("Finish timeout (callback)");
                 this.finished();
-                currentWindow.close();
+                External.close();
             }, 1000 * 20);
 
             console.log("Browser mode setup finished");
+
         } else { 
             const process = External.load("process");
             
