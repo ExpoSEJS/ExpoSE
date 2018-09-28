@@ -40,7 +40,7 @@ if [ "$1" == "ui" ]; then #Launch the user interface
 
 elif [ "$1" == "ahg" ]; then
 
-	NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules" EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ./lib/Harness/src/harness.js "${@:3}"
+	NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules" EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ../lib/Harness/src/harness.js "${@:3}"
 
 elif [ "$1" == "replay" ]; then
 

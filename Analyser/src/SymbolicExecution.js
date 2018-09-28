@@ -28,7 +28,7 @@ class SymbolicExecution {
                 console.log("Finish timeout (callback)");
                 this.finished();
                 currentWindow.close();
-            }, 1000 * 20);
+            }, 1000 * 120);
 
             console.log("Browser mode setup finished");
         } else { 
@@ -67,6 +67,10 @@ class SymbolicExecution {
         Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
         f = this.state.getConcrete(f); 
+
+        if ((f.name == "appendChild" || f.name == "prependChild") && args[0].src) {
+            console.log(`LOAD EVENT PC="${this.state.finalPC()}" SOURCE="${args[0].src}"`);
+        }
 
         const fn_model = this.models.get(f);
         const needs_conc = !fn_model && isNative(f); 
