@@ -42,6 +42,7 @@
     }
   },
   "dependencies": {
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {

@@ -564,8 +564,8 @@ class SymbolicState {
      */
     _symbolicUnary(op, left_c, left_s) {
         this.stats.seen("Symbolic Unary");
-
-        const unaryFn = this._unaryJumpTable[typeof(left_c)][op];
+ 
+        const unaryFn = this._unaryJumpTable[typeof(left_c)] ? this._unaryJumpTable[typeof(left_c)][op] : undefined;
 
         if (unaryFn) {
             return unaryFn(left_s, left_c);
