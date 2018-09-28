@@ -6,10 +6,18 @@ function is_external() {
 
 //Cache electron so require doesn't get rewritten
 const ld = is_external() ? require("electron").remote.require : require;
+const electronWindow = is_external() ? require("electron").remote.getCurrentWindow() : null;
 
 export default {
     load: function (library) {
         return ld(library);
+    },
+    close: function() {
+        if (electronWindow) {
+            electronWindow.close();
+        } else {
+            process.exit(0);
+        }
     },
     is_external: is_external
 };
