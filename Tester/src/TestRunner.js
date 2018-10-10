@@ -28,7 +28,7 @@ if (process.argv.length >= 3) {
     
     console.log("Test runner searching " + target);
 
-    const concurrent = getArgument("--concurrent", 4);
+    const concurrent = getArgument("--concurrent", 8);
 
     console.log("Launching with max concurrent of " + concurrent);
 
