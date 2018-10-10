@@ -75,11 +75,11 @@ class SymbolicExecution {
 
 
         if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && args[0].src) {
-            report(args[0].src);
+            report.call(this, args[0].src);
         }
 
         if (f.name == "open") {
-            report(args[1]);
+            report(this, args[1]);
         }
 
         const fn_model = this.models.get(f);
