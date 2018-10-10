@@ -68,18 +68,18 @@ class SymbolicExecution {
 
         f = this.state.getConcrete(f);
 
-        function report(src) { 
+        const report = (src) => { 
             const sourceString = this.state.asSymbolic(src).toString();
             console.log(`LOAD EVENT PC="${this.state.finalPC()}" SOURCE="${sourceString}"`);
-        }
+        };
 
 
         if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && args[0].src) {
-            report.call(this, args[0].src);
+            report(args[0].src);
         }
 
         if (f.name == "open") {
-            report(this, args[1]);
+            report(args[1]);
         }
 
         const fn_model = this.models.get(f);
