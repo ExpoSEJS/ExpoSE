@@ -66,11 +66,20 @@ class SymbolicExecution {
         this.state.coverage.touch(iid);
         Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
-        f = this.state.getConcrete(f); 
+        f = this.state.getConcrete(f);
 
-        if ((f.name == "appendChild" || f.name == "prependChild") && args[0].src) {
-            const sourceString = this.state.asSymbolic(args[0].src).toString();
+        function report(src) { 
+            const sourceString = this.state.asSymbolic(src).toString();
             console.log(`LOAD EVENT PC="${this.state.finalPC()}" SOURCE="${sourceString}"`);
+        }
+
+
+        if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && args[0].src) {
+            report(args[0].src);
+        }
+
+        if (f.name == "open") {
+            report(args[1]);
         }
 
         const fn_model = this.models.get(f);
