@@ -26,6 +26,7 @@ if (process.argv.length >= 3) {
     });
 
     console.log("Setting timeout to " + Config.maxTime + "ms");
+    console.log("Setting test timeouts to " + Config.testMaxTime + "ms");
 
     const maxTimeout = setTimeout(function() {
         center.cancel();
