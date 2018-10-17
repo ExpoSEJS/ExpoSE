@@ -13,7 +13,12 @@ const find = Array.prototype.find;
 const map = Array.prototype.map;
 
 function DoesntMatch(l, r) {
-    return l === undefined ? r !== "" : l !== r;
+    if (l == undefined) {
+        const is_match = (r == "") || (r == undefined);
+        return !is_match;
+    } else {
+        return l == r;
+    } 
 }
 
 function Exists(array1, array2, pred) {
@@ -398,9 +403,10 @@ function BuildModels(state) {
                 return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
             });
 
-            const CheckNotIn = Z3.Check(CheckFailed, (_query, _model) => {
-                Log.log("ERROR: False check failed, possible divergence");
-                return [];
+            const CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
+                const existing_queries = query.expr.slice(0);
+                const not_eq = ctx.mkNot(ctx.mkEq(string_s, model.eval(string_s)));
+                return [new Z3.Query(existing_queries.concat([not_eq]))];
             });
 
             return {
@@ -444,22 +450,26 @@ function BuildModels(state) {
 
         function RegexMatch(real, string, result) {
 
-            const regex = Z3.Regex(ctx, real);
-            const in_regex = RegexTest(regex, real, string, true);
-            state.conditional(in_regex);
+            if (real.global) {
+                result = String.prototype.secret_global_match.call(string, real);
+            } else {
 
-            if (Config.capturesEnabled && state.getConcrete(in_regex)) {
+                const regex = Z3.Regex(ctx, real);
+                const in_regex = RegexTest(regex, real, string, true);
+                state.conditional(in_regex);
 
-                const rewrittenResult = result.map((current_c, idx) => {
-                    //TODO: This is really nasty, current_c should be a
-                    const current_rewrite = current_c === undefined ? "" : current_c;
-                    return new ConcolicValue(current_rewrite, regex.captures[idx]);
-                });
+                if (Config.capturesEnabled && state.getConcrete(in_regex)) {
+                    const rewrittenResult = result.map((current_c, idx) => {
+                        //TODO: This is really nasty, current_c should be a
+                        const current_rewrite = current_c === undefined ? "" : current_c;
+                        return new ConcolicValue(current_rewrite, regex.captures[idx]);
+                    });
 
-                rewrittenResult.index = new ConcolicValue(result.index, regex.startIndex);
-                rewrittenResult.input = string;
+                    rewrittenResult.index = new ConcolicValue(result.index, regex.startIndex);
+                    rewrittenResult.input = string;
 
-                result = rewrittenResult;
+                    result = rewrittenResult;
+                }
             }
 
             return result;

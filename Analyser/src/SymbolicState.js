@@ -165,9 +165,10 @@ class SymbolicState {
 
         const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
         const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
-        const solution = this._checkSat(newPC, i, allChecks);
 
-        Log.logMid(`Checking if ${ObjectHelper.asString(newPC)} is satisfiable`);
+        Log.logMid(`Checking if ${newPC.toString()} is satisfiable`);
+
+        const solution = this._checkSat(newPC, i, allChecks);
 
         if (solution) {
             this._addInput(newPC, solution, i, childInputs);
@@ -178,7 +179,7 @@ class SymbolicState {
             }
 
         } else {
-            Log.logHigh(`${ObjectHelper.asString(newPC)} is not satisfiable`);
+            Log.logHigh(`${newPC.toString()} is not satisfiable`);
         }
     }
 
@@ -592,7 +593,7 @@ class SymbolicState {
     constantSymbol(val) {
         this.stats.seen("Wrapped Constants");
 
-        if (typeof(val) === "object") {
+        if (val && typeof(val) === "object") {
             val = val.valueOf();
         }
  
