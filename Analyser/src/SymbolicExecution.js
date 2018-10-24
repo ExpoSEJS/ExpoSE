@@ -70,7 +70,7 @@ class SymbolicExecution {
 
         const report = (src) => { 
             const sourceString = this.state.asSymbolic(src).toString();
-            console.log(`LOAD EVENT PC="${this.state.finalPC()}" SOURCE="${sourceString}"`);
+            console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
         };
 
 
