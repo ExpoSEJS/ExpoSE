@@ -67,9 +67,14 @@ if (process.argv.length >= 3) {
 
         console.log("*-- Coverage Data");
 
+        let totalLines = 0;
+
         coverage.final().forEach(d => {
-            console.log(`*- File ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}%`);
+            console.log(`*- File ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}% Lines Of Code: ${d.loc.all.length} -*`);
+            totalLines += d.loc.all.length;
         });
+
+        console.log(`*-- Total Lines Of Code ${totalLines}`);
 
         if (Config.printDeltaCoverage) {
             CoverageMap(coverage.lines(), line => console.log(line));
@@ -78,6 +83,7 @@ if (process.argv.length >= 3) {
         }
 
         console.log("** ExpoSE Finished. " + done.length + " paths with " + errors + " errors **");
+
         process.exitCode = errors;
         clearTimeout(maxTimeout);
     }).start(target);

@@ -285,6 +285,14 @@ class SymbolicExecution {
             this.state.getConcrete(base)[this.state.getConcrete(offset)] = val; 
             this.state.updateSymbolic(base, base_s);
 
+            if (offset === "innerHTML") {
+                const tv = this.state.getConcrete(val);
+                if (typeof(tv) === "string" && tv.includes("src=")) {
+                    const sourceString = this.state.asSymbolic(val).toString();
+                    console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);   
+                }
+            }
+
             return {
                 result: val
             };
