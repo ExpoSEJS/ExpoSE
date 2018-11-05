@@ -1,6 +1,8 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2014@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
 /*global window*/
+/*global Element*/
+/*global document*/
 
 import {ConcolicValue} from "./Values/WrappedValue";
 import {SymbolicObject} from "./Values/SymbolicObject";
@@ -285,7 +287,7 @@ class SymbolicExecution {
             this.state.getConcrete(base)[this.state.getConcrete(offset)] = val; 
             this.state.updateSymbolic(base, base_s);
 
-            if (offset === "innerHTML") {
+            if (typeof(document) !== "undefined" && this.state.getConcrete(base) instanceof Element && document.contains(this.state.getConcrete(base)) && offset === "innerHTML") {
                 const tv = this.state.getConcrete(val);
                 if (typeof(tv) === "string" && tv.includes("src=")) {
                     const sourceString = this.state.asSymbolic(val).toString();
