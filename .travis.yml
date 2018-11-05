@@ -16,7 +16,7 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 language: node_js
-node_js: "lts/8.12.0"
+node_js: "8.12.0"
 
 install: npm install --clang=1
 script: npm test
