@@ -345,6 +345,8 @@ function BuildModels(state) {
             
             Log.log("Refinements Enabled - Adding checks");
 
+            state.stats.seen("Regex Which May Need Checks");
+
             function CheckCorrect(model) {
                 const real_match = real.exec(model.eval(string_s).asConstant(model));
                 const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
