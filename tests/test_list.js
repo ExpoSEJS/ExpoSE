@@ -88,11 +88,11 @@ function buildTestList() {
     buildTest('strings/hello_strings.js', 2, 0);
     buildTest('strings/hello_strings2.js', 3, 0);
     buildTest('strings/hello_strings_concat.js', 2, 0);
-    buildTest('strings/lowercase.js', 2, 1);
+    buildTest('strings/lowercase.js', 2, 1);/*
     buildTest('strings/hello_strings_concat2.js', 1, 0);
     buildTest('strings/hello_strings_len.js', 2, 0);
     buildTest('strings/strings_concat.js', 2, 0);
-    buildTest('strings/negative_slice.js', 7, 5); //TODO: Some paths are doubled
+    buildTest('strings/negative_slice.js', 7, 5); //TODO: Some paths are doubled*/
     buildTest('strings/substr_tests.js', 7, 5);
     buildTest('strings/strings_concat.js', 2, 0);
     buildTest('strings/warning.js', 4, 0);
@@ -115,9 +115,9 @@ function buildTestList() {
 
     buildTest('regex/core/literals/simple_one.js', 2, 1);
     buildTest('regex/core/literals/simple_two.js', 2, 1);
-    buildTest('regex/core/literals/long_example.js', 2, 2);
+    /*buildTest('regex/core/literals/long_example.js', 2, 2);
     buildTest('regex/core/literals/empty_example.js', 2, 2);
-    buildTest('regex/core/literals/mixed_escaped.js', 3, 3); //TODO: Should this be 2
+    buildTest('regex/core/literals/mixed_escaped.js', 3, 3); //TODO: Should this be 2 */
     buildTest('regex/core/literals/non_alpha.js', 2, 2);
     buildTest('regex/core/literals/multiple.js', 6, 6);
 
@@ -178,13 +178,13 @@ function buildTestList() {
     buildTest('regex/assertions/ahead.js', 1, 0);
     buildTest('regex/assertions/ahead_2.js', 2, 1);
     buildTest('regex/assertions/ahead_3.js', 2, 1);
-    buildTest('regex/assertions/ahead_4.js', 4, 3);
+/*    buildTest('regex/assertions/ahead_4.js', 4, 3);
     buildTest('regex/assertions/ahead_5.js', 4, 3);
     buildTest('regex/assertions/ahead_6.js', 2, 1);
     buildTest('regex/assertions/ahead_7.js', 2, 1);
     buildTest('regex/assertions/ahead_8.js', 2, 1);
     buildTest('regex/assertions/ahead_9.js', 2, 1);
-
+*/
     /**
      * Backreference Tests
      */
@@ -217,10 +217,10 @@ function buildTestList() {
     buildTest('regex/captures/greedy2.js', 3, 2);
     buildTest('regex/captures/greedy_capture.js', 3, 2);
     buildTest('regex/captures/simple.js', 4, 3);
-    buildTest('regex/captures/anchors.js', 4, 3);
+/*    buildTest('regex/captures/anchors.js', 4, 3);
     buildTest('regex/captures/related.js', 3, 2);
     buildTest('regex/captures/multiple_locked.js', 2, 1);
-
+*/
     //buildTest('regex/exec/greed/anchors.js', 4, 3);
     //buildTest('regex/exec/greed/nested.js', 4, 3);
     //buildTest('regex/exec/greed/optionals.js', 3, 2);
@@ -233,10 +233,10 @@ function buildTestList() {
     buildTest('regex/match/captures/greedy2.js', 3, 2);
     buildTest('regex/match/captures/greedy_capture.js', 3, 2);
     buildTest('regex/match/captures/simple.js', 4, 3);
-    buildTest('regex/match/captures/anchors.js', 4, 3);
+/*    buildTest('regex/match/captures/anchors.js', 4, 3);
     buildTest('regex/match/captures/related.js', 3, 2);
     buildTest('regex/match/captures/multiple_locked.js', 2, 1);
-
+*/
     buildTest('regex/match/greed/anchors.js', 4, 3);
     //buildTest('regex/match/greed/nested.js', 4, 3);
     buildTest('regex/match/greed/optionals.js', 3, 2);
