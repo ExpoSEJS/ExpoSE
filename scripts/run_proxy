@@ -2,6 +2,34 @@
 
 cd Analyser
 rm -rf cache
-mitmdump --ssl-insecure -s "node_modules/jalangi2/scripts/proxy.py" --set args="--inlineIID --inlineSource --analysis bin/bundle.js" &> ~/mitmlog &
 
-echo $!
+MITM_FILE="$(mktemp /tmp/mitmlog.XXXXXXXXX)"
+
+echo "" > "${MITM_FILE}"
+
+mitmdump --ssl-insecure -s "node_modules/jalangi2/scripts/proxy.py" --set args="--inlineIID --inlineSource --analysis bin/bundle.js" &> "${MITM_FILE}" &
+
+MITM_PID="$!"
+
+while true;
+do
+
+	#Test for error 
+	if grep -q "Error" "${MITM_FILE}"; then
+		echo "Error in mitmproxy"
+		cat "${MITM_FILE}"
+		unset MITM_PID;
+		unset MITM_FILE;
+		break;
+	fi
+
+	if grep -q "Proxy server listening" "${MITM_FILE}"; then
+		echo "Listening."
+		break;
+	fi
+
+done 
+
+echo ${MITM_PID}
+
+cd ..

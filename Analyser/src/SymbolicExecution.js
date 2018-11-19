@@ -175,7 +175,7 @@ class SymbolicExecution {
             
             if (base == window.navigator) {
                 if (offset == "userAgent") {
-                    return { result: Object._expose.makeSymbolic(offset, "") };
+                    return { result: Object._expose.makeSymbolic(offset, window.navigator.userAgent) };
                 }
             }
 
@@ -185,20 +185,20 @@ class SymbolicExecution {
                 }            
 
                 if (offset == "lastModified") {
-                    return { result: Object._expose.makeSymbolic(offset, "") };
+                    return { result: Object._expose.makeSymbolic(offset, window.document.lastModified) };
                 }
 
                 if (offset == "referer") {
-                    return { result: Object._expose.makeSymbolic(offset, "") };
+                    return { result: Object._expose.makeSymbolic(offset, window.document.referer) };
                 } 
             }
 
             if (base == window.location) {
                 if (offset == "origin") {
-                    return { result: Object._expose.makeSymbolic(offset, "") };
+                    return { result: Object._expose.makeSymbolic(offset, window.location.origin) };
                 }
                 if (offset == "host") {
-                    return { result: Object._expose.makeSymbolic(offset, "") };
+                    return { result: Object._expose.makeSymbolic(offset, window.location.host) };
                 }
             }
 

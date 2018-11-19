@@ -49,19 +49,22 @@ elif [ "$1" == "replay" ]; then
 
 else
 
-    if [[ $1 =~ ^http(s)?:// ]]; then #Web URL, launch web mode
-        echo "Web Mode, Starting Proxy"
-        PID="$(./scripts/run_proxy)"
-        sleep 5s
-        EXPOSE_PLAY_SCRIPT="./scripts/play_electron"
-    fi
+	if [[ $1 =~ ^http(s)?:// ]]; then #Web URL, launch web mode
+		echo "Web Mode, Starting Proxy"
+		. ./scripts/run_proxy
+		EXPOSE_PLAY_SCRIPT="./scripts/play_electron"
+		if [[ -z ${MITM_PID} ]]; then
+			exit 1
+		fi
+	fi
    
     EXPOSE_PLAY_SCRIPT=${EXPOSE_PLAY_SCRIPT} EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP ./scripts/analyse "$(abs_target "$1" "$ORIGIN_PATH")" "${@:2}"
     OUT_CODE=$?
 
-    if [[ ! -z $PID ]]; then
+    if [[ ! -z $MITM_PID ]]; then
         echo "Killing server"
-        kill $PID
+        kill -9 $MITM_PID
+				rm "${MITM_FILE}"
     fi
 	
     exit $OUT_CODE
