@@ -682,7 +682,7 @@ function BuildModels(state) {
                 const num_repeats = state.asSymbolic(a[0]);
                 state.pushCondition(ctx.mkGe(num_repeats, ctx.mkIntVal(0)));
 
-                const result_s = ctx.mkApp(state.stringRepeat, [state.asSymbolic(base), ctx.mkRealToInt(state.asSymbolic(a[0]))]);
+                const result_s = ctx.mkApp(state.stringRepeat, [state.asSymbolic(base), ctx.mkRealToInt(num_repeats)]);
                 return new ConcolicValue(result, result_s); 
             }
         ));
@@ -736,7 +736,7 @@ function BuildModels(state) {
 
                 state.pushCondition(
                     ctx.mkSeqInRe(state.asSymbolic(base),
-										Z3.Regex(ctx, /^[^A-Z]+$/).ast),
+                        Z3.Regex(ctx, /^[^A-Z]+$/).ast),
                     true
                 );
 

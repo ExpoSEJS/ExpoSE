@@ -88,16 +88,27 @@ class SymbolicState {
     _setupSmtFunctions() {
 
         this.slv.fromString("(define-fun-rec str.repeat ((a String) (b Int)) String (if (<= b 0) \"\" (str.++ a (str.repeat a (- b 1)))))");
-        this.stringRepeat = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.repeat"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkStringSort());
+
+        this.stringRepeat = this.ctx.mkRecFunc(this.ctx.mkStringSymbol("str.repeat"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkStringSort());
+
+        const a = this.ctx.mkStringVar();
+        const b = this.ctx.mkIntVar();
+
+        const recursiveBody = this.ctx.mkIte(this.ctx.mkLt(b, this.ctx.mkIntVal(0)),
+            a,
+            this.ctx.mkSeqConcat([a, this.ctx.mkApp(this.stringRepeat, [a, this.ctx.mkSub(b, this.ctx.mkIntVal(1))])])
+        );
+
+        this.ctx.mkRecFuncDef(this.stringRepeat, [a, b], recursiveBody);
 
         /** Set up trim methods **/
-        this.slv.fromString( 
-            "(define-fun str.isWhite ((c String)) Bool (= c \" \"))\n" + /** TODO: Make this reflect all the possible types of whitespace */
+        /*        this.slv.fromString( 
+            "(define-fun str.isWhite ((c String)) Bool (= c \" \"))\n" + //TODO: Only handles  
             "(define-fun-rec str.whiteLeft ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteLeft s (+ i 1)) i))\n" +
             "(define-fun-rec str.whiteRight ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteRight s (- i 1)) i))\n");
  
-        this.whiteLeft = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.whiteLeft"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkIntSort());
-        this.whiteRight = this.ctx.mkFunc(this.ctx.mkStringSymbol("str.whiteRight"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkIntSort());
+        this.whiteLeft = this.ctx.mkRecFunc(this.ctx.mkStringSymbol("str.whiteLeft"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkIntSort());
+        this.whiteRight = this.ctx.mkRecFunc(this.ctx.mkStringSymbol("str.whiteRight"), [this.ctx.mkStringSort(), this.ctx.mkIntSort()], this.ctx.mkIntSort());*/
     }
 
     pushCondition(cnd, binder) {
