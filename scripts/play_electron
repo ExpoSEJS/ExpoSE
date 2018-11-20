@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 export ELECTRON_ENABLE_LOGGING=1
 export ELECTRON_ENABLE_STACK_DUMPING=true
+ulimit -s unlimited
 (cd Browser && $(npm bin)/electron --js-flags="--stack-size 500000" . "${@:1}")
