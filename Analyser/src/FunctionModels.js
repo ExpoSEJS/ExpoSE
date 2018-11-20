@@ -735,7 +735,8 @@ function BuildModels(state) {
                 base = coerceToString(base);
 
                 state.pushCondition(
-                    ctx.mkSeqInRe(state.asSymbolic(base), Z3.Regex(ctx, /^[^A-Z]+$/).ast),
+                    ctx.mkSeqInRe(state.asSymbolic(base),
+										Z3.Regex(ctx, /^[^A-Z]+$/).ast),
                     true
                 );
 

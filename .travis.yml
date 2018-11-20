@@ -18,5 +18,5 @@ before_install:
 language: node_js
 node_js: "8.12.0"
 
-install: npm install --clang=1
+install: travis_wait 5 npm install --clang=1
 script: npm test
