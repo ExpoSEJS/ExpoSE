@@ -16,81 +16,81 @@ const CONDITIONAL_FALSE = 0x4;
 
 class Coverage {
 
-    /**
+  /**
      * Creates an instance of Coverage.
      * @param {any} sandbox The Jalangi sandbox
      * _branches is an array of coverages for a given sid where the sid is branches[sid+1]
      * @memberOf Coverage
      */
-    constructor(sandbox) {
-        this._sandbox = sandbox;
-        this._branches = [];
-        this._branchFilenameMap = [];
-        this._lastIid = 0; //Store the last IID touched for search strategizer
-    }
+  constructor(sandbox) {
+    this._sandbox = sandbox;
+    this._branches = [];
+    this._branchFilenameMap = [];
+    this._lastIid = 0; //Store the last IID touched for search strategizer
+  }
 
-    end() {
-        const payload = {};
+  end() {
+    const payload = {};
 
-        for (let i = 0; i < this._branches.length; i++) {
+    for (let i = 0; i < this._branches.length; i++) {
             
-            //SID are indexed from 1 not 0
-            const localSid = i + 1;
+      //SID are indexed from 1 not 0
+      const localSid = i + 1;
 
-            if (this._branches[i] !== undefined) {
+      if (this._branches[i] !== undefined) {
 
-                //Deep copy the smap
-                const map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
+        //Deep copy the smap
+        const map = JSON.parse(JSON.stringify(this._sandbox.smap[localSid]));
 
-                //Strip away any non SID related entities
-                for (const localIid in map) {
-                    if (isNaN(parseInt(localIid))) {
-                        delete map[localIid];
-                    } else {
-                        map[localIid] = iidToLocation(this._sandbox, localSid, localIid);
-                    }
-                }
-
-                payload[this._branchFilenameMap[i]] = {
-                    smap: map,
-                    branches: this._branches[i]
-                };
-            }
+        //Strip away any non SID related entities
+        for (const localIid in map) {
+          if (isNaN(parseInt(localIid))) {
+            delete map[localIid];
+          } else {
+            map[localIid] = iidToLocation(this._sandbox, localSid, localIid);
+          }
         }
 
-        payload[LAST_IID] = this._lastIid;
-
-        return payload;
+        payload[this._branchFilenameMap[i]] = {
+          smap: map,
+          branches: this._branches[i]
+        };
+      }
     }
 
-    getBranchInfo() {
+    payload[LAST_IID] = this._lastIid;
 
-        //-1 from 1-indexed sid to start from 0
-        const localIndex = this._sandbox.sid - 1;
-        let branchInfo = this._branches[localIndex];
+    return payload;
+  }
 
-        if (!branchInfo) {
-            branchInfo = {};
-            this._branches[localIndex] = branchInfo;
-            this._branchFilenameMap[localIndex] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
-        }
+  getBranchInfo() {
 
-        return branchInfo;
+    //-1 from 1-indexed sid to start from 0
+    const localIndex = this._sandbox.sid - 1;
+    let branchInfo = this._branches[localIndex];
+
+    if (!branchInfo) {
+      branchInfo = {};
+      this._branches[localIndex] = branchInfo;
+      this._branchFilenameMap[localIndex] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
     }
 
-    touch(iid) {
-        this.getBranchInfo()[iid] |= IS_TOUCHED;
-        this._lastIid = iid;
-    }
+    return branchInfo;
+  }
 
-    touch_cnd(iid, result) {
-        this.touch(iid);
-        this.getBranchInfo()[iid] |= (result ? CONDITIONAL_TRUE : CONDITIONAL_FALSE);
-    }
+  touch(iid) {
+    this.getBranchInfo()[iid] |= IS_TOUCHED;
+    this._lastIid = iid;
+  }
 
-    last() {
-        return this._lastIid || 0;
-    }
+  touch_cnd(iid, result) {
+    this.touch(iid);
+    this.getBranchInfo()[iid] |= (result ? CONDITIONAL_TRUE : CONDITIONAL_FALSE);
+  }
+
+  last() {
+    return this._lastIid || 0;
+  }
 }
 
 export default Coverage;

@@ -8,32 +8,32 @@ const url = require("url");
 let replays = [];
 
 function createReplay(file, input) {
-    let i = replays.length;
+  let i = replays.length;
 
-    let replay = new BrowserWindow({
-        width: 500,
-        height: 600
-    });
+  let replay = new BrowserWindow({
+    width: 500,
+    height: 600
+  });
 
-    replay.replayFile = file;
-    replay.replayInput = input;
+  replay.replayFile = file;
+  replay.replayInput = input;
 
-    // and load the index.html of the app.
-    replay.loadURL(url.format({
-        pathname: path.join(__dirname, "../content/replay.html"),
-        protocol: "file:",
-        slashes: true
-    }));
+  // and load the index.html of the app.
+  replay.loadURL(url.format({
+    pathname: path.join(__dirname, "../content/replay.html"),
+    protocol: "file:",
+    slashes: true
+  }));
 
-    replay.on("closed", function () {
-        replays[i] = null;
-    });
+  replay.on("closed", function () {
+    replays[i] = null;
+  });
 
-    replays[i] = replay;
+  replays[i] = replay;
 
-    replay.webContents.on("did-finish-load", function() {
-        replay.webContents.executeJavaScript("");
-    });
+  replay.webContents.on("did-finish-load", function() {
+    replay.webContents.executeJavaScript("");
+  });
 }
 
 module.exports = createReplay;

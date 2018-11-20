@@ -10,30 +10,30 @@ app.commandLine.appendSwitch("disable-web-security");
 let mainWindow;
 
 const createWindow = () => {
-    // Create the browser window.
-    mainWindow = new BrowserWindow({
-        title: `ExpoSE ${process.argv[process.argv.length - 2]} ${process.argv[process.argv.length - 1]}`,
-        width: 800,
-        height: 600,
-        webPreferences: {
-            webSecurity: false
-        }
-    });
+  // Create the browser window.
+  mainWindow = new BrowserWindow({
+    title: `ExpoSE ${process.argv[process.argv.length - 2]} ${process.argv[process.argv.length - 1]}`,
+    width: 800,
+    height: 600,
+    webPreferences: {
+      webSecurity: false
+    }
+  });
 
-    mainWindow.on("page-title-updated", (e) => {
-        e.preventDefault();
-    });
+  mainWindow.on("page-title-updated", (e) => {
+    e.preventDefault();
+  });
 
-    mainWindow.webContents.session.clearCache(function() {
-        mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
-            mainWindow.loadURL(process.argv[process.argv.length - 2]);
-        });
+  mainWindow.webContents.session.clearCache(function() {
+    mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
+      mainWindow.loadURL(process.argv[process.argv.length - 2]);
     });
+  });
 
-    // Emitted when the window is closed.
-    mainWindow.on("closed", () => {
-        mainWindow = null;
-    });
+  // Emitted when the window is closed.
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
 };
 
 // This method will be called when Electron has finished
@@ -43,6 +43,6 @@ app.on("ready", createWindow);
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
-    console.log("Window all closed");
-    app.quit();
+  console.log("Window all closed");
+  app.quit();
 });

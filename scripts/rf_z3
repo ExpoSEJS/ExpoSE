@@ -1,0 +1,6 @@
+#/usr/bin/env bash
+
+cd ../z3javascript
+npm build
+rm -rf ../ExpoSE/Analyser/node_modules/z3javascript/bin
+cp -r bin ../ExpoSE/Analyser/node_modules/z3javascript

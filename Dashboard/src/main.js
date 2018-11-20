@@ -12,36 +12,36 @@ app.setName("ExpoSE Dashboard");
 let mainWindow;
 
 function createWindow () {
-    // Create the browser window.
-    mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        minWidth: 800,
-        minHeight: 600
-    });
+  // Create the browser window.
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    minWidth: 800,
+    minHeight: 600
+  });
 
-    // and load the index.html of the app.
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "../content/index.html"),
-        protocol: "file:",
-        slashes: true
-    }));
+  // and load the index.html of the app.
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, "../content/index.html"),
+    protocol: "file:",
+    slashes: true
+  }));
 
-    mainWindow.on("closed", function () {
-        mainWindow = null;
-    });
+  mainWindow.on("closed", function () {
+    mainWindow = null;
+  });
 }
 
 app.on("ready", function() {
-    createWindow();
+  createWindow();
 });
 
 app.on("window-all-closed", function () {
-    app.quit();
+  app.quit();
 });
 
 app.on("activate", function () {
-    if (mainWindow === null) {
-        createWindow();
-    }
+  if (mainWindow === null) {
+    createWindow();
+  }
 });
