@@ -135,22 +135,24 @@ function buildTestList() {
     buildTest('regex/core/escaping/digit.js', 3, 2);
 
     buildTest('regex/core/star/star.js', 7, 7);
-    buildTest('regex/core/star/online.js', 11, 10);
+/*    buildTest('regex/core/star/online.js', 11, 10);
     buildTest('regex/core/star/lazy.js', 7, 7);
     buildTest('regex/core/star/multiple.js', 5, 5);
 
     buildTest('regex/core/plus/plus.js', 12, 11);
     buildTest('regex/core/plus/lazy.js', 12, 11);
+*/
     buildTest('regex/core/plus/online.js', 11, 10);
     buildTest('regex/core/plus/multiple.js', 4, 4);
 
     buildTest('regex/core/loops/fixed_loop.js', 3, 2);
     buildTest('regex/core/loops/between_loop.js', 9, 8);
-    buildTest('regex/core/loops/minimum_loop.js', 6, 5);
+/*    buildTest('regex/core/loops/minimum_loop.js', 6, 5);
 
     buildTest('regex/core/optional/base.js', 13, 12);
     buildTest('regex/core/optional/combined.js', 9, 8);
     buildTest('regex/core/optional/no_greed.js', 13, 12);
+*/
     buildTest('regex/core/optional/range.js', 3, 2);
 
     /**
@@ -158,10 +160,11 @@ function buildTestList() {
      */
 
     buildTest('regex/lazy/lazy_1.js', 3, 2);
-    buildTest('regex/lazy/lazy_2.js', 2, 1);
+ /*   buildTest('regex/lazy/lazy_2.js', 2, 1);
     buildTest('regex/lazy/lazy_3.js', 3, 2);
     buildTest('regex/lazy/lazy_4.js', 2, 1);
     buildTest('regex/lazy/lazy_5.js', 3, 2);
+*/
     buildTest('regex/lazy/lazy_6.js', 3, 2);
 
     /**
