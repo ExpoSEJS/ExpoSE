@@ -8,6 +8,26 @@ export default function(state, ctx, model, helpers) {
 	const symbolicHookRe = helpers.symbolicHookRe;
 	const coerceToString = helpers.coerceToString;
 
+	function DoesntMatch(l, r) {
+		if (l == undefined) {
+			const is_match = (r == "") || (r == undefined);
+			return !is_match;
+		} else {
+			return l == r;
+		} 
+	}
+
+	function Exists(array1, array2, pred) {
+
+		for (let i = 0; i < array1.length; i++) {
+			if (pred(array1[i], array2[i])) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	function EnableCaptures(regex, real, string_s) {
 
 		if (!Config.capturesEnabled) {
