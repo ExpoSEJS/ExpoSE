@@ -366,9 +366,7 @@ function BuildModels(state) {
 
 			function CheckFailed(model) {
 				const is_failed = !real.test(model.eval(string_s).asConstant(model));
-                
 				state.stats.seen("Regex Checks");
-                
 				if (!is_failed) {
 					state.stats.seen("Failed Regex Checks"); 
 				}
@@ -386,8 +384,8 @@ function BuildModels(state) {
 			});
 
 			/**
-             * Generate a fixed string refinement (c_0, c_n, ...) == (e_0, e_n, ...)
-             */
+       * Generate a fixed string refinement (c_0, c_n, ...) == (e_0, e_n, ...)
+       */
 			const CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
 				let real_match = real.exec(model.eval(string_s).asConstant(model));
 
@@ -395,7 +393,7 @@ function BuildModels(state) {
 					Log.log(`WARN: Broken regex detected ${regex.ast.toString()} vs ${real}`);
 					return [];
 				}
-                
+
 				real_match = real_match.map(match => match || "");
 
 				const query_list = regex.captures.map(
