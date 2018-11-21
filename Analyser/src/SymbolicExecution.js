@@ -11,7 +11,7 @@ import SymbolicState from "./SymbolicState";
 import Log from "./Utilities/Log";
 import NotAnErrorException from "./NotAnErrorException";
 import {isNative} from "./Utilities/IsNative";
-import ModelBuilder from "./FunctionModels";
+import ModelBuilder from "./Models/Models";
 import External from "./External";
 
 class SymbolicExecution {
