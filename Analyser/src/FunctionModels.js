@@ -76,7 +76,6 @@ function BuildModels(state) {
 	}
 
 	function coerceToString(symbol) {
-        
 		if (typeof state.getConcrete(symbol) !== "string") {
 			Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
 			return new ConcolicValue(
@@ -84,23 +83,21 @@ function BuildModels(state) {
 				state.asSymbolic("" + state.getConcrete(symbol))
 			);
 		}
-
 		return symbol;
 	}
 
-
 	/**
-     * Symbolic hook is a helper function which builds concrete results and then,
-     * if condition() -> true executes a symbolic helper specified by hook
-     * Both hook and condition are called with (context (SymbolicExecutor), f, base, args, result)
-     *
-     * A function which makes up the new function model is returned
-     */
+	 * Symbolic hook is a helper function which builds concrete results and then,
+	 * if condition() -> true executes a symbolic helper specified by hook
+	 * Both hook and condition are called with (context (SymbolicExecutor), f, base, args, result)
+	 *
+	 * A function which makes up the new function model is returned
+	 */
 	function symbolicHook(f, condition, hook, concretize = true, featureDisabled = false) {
 		return function(base, args) {
 
 			let thrown = undefined;
-            
+
 			let result;
 
 			//Defer throw until after hook has run
@@ -151,9 +148,9 @@ function BuildModels(state) {
 		function mkIndexSymbol(op) {
 			return ctx.mkIntVar(`_${op}_${indexOfCounter++})`);
 		}
-        
+
 		let funcCounter = 0;
-        
+
 		function mkFunctionName(fn) {
 			return ctx.mkStringSymbol(`_fn_${fn}_${funcCounter++}_`);
 		}
@@ -434,11 +431,49 @@ function BuildModels(state) {
 			return new ConcolicValue(in_c, in_s);
 		}
 
+		function RegexExec(real, string, result) {
+			const regex = Z3.Regex(ctx, real);
+			const in_regex = RegexTest(regex, real, string, true);
+			state.conditional(in_regex);
+
+			if (Config.capturesEnabled && state.getConcrete(in_regex)) {
+				const rewrittenResult = result.map((current_c, idx) => {
+					//TODO: This is really nasty, current_c should be a
+					const current_rewrite = current_c === undefined ? "" : current_c;
+					return new ConcolicValue(current_rewrite, regex.captures[idx]);
+				});
+
+				rewrittenResult.index = new ConcolicValue(result.index, regex.startIndex);
+				rewrittenResult.input = string;
+
+				result = rewrittenResult;
+			}
+
+			return result;
+		}
+
+		function RegexMatch(real, string, result) {
+
+			if (real.global) {
+
+				let results = [];
+				
+				while (true) {
+					const next = RegexExec(real, string, result);
+					results.push(next);
+				}
+
+				result = results; 
+			} else {
+				return RegexExec(real, string, result);
+			}
+		}
+
 		function RegexSearch(real, string, result) {
 
 			const regex = Z3.Regex(ctx, real);
 			const in_regex = RegexTest(regex, real, string, true);
-            
+
 			const search_in_re = ctx.mkIte(
 				state.asSymbolic(in_regex),
 				regex.startIndex,
@@ -448,37 +483,10 @@ function BuildModels(state) {
 			return new ConcolicValue(result, search_in_re);
 		}
 
-		function RegexMatch(real, string, result) {
-
-			if (real.global) {
-				result = String.prototype.secret_global_match.call(string, real);
-			} else {
-
-				const regex = Z3.Regex(ctx, real);
-				const in_regex = RegexTest(regex, real, string, true);
-				state.conditional(in_regex);
-
-				if (Config.capturesEnabled && state.getConcrete(in_regex)) {
-					const rewrittenResult = result.map((current_c, idx) => {
-						//TODO: This is really nasty, current_c should be a
-						const current_rewrite = current_c === undefined ? "" : current_c;
-						return new ConcolicValue(current_rewrite, regex.captures[idx]);
-					});
-
-					rewrittenResult.index = new ConcolicValue(result.index, regex.startIndex);
-					rewrittenResult.input = string;
-
-					result = rewrittenResult;
-				}
-			}
-
-			return result;
-		}
-
 		/**
-         * In JavaScript slice and substr can be given a negative index to indicate addressing from the end of the array
-         * We need to rewrite the SMT to handle these cases
-         */
+		 * In JavaScript slice and substr can be given a negative index to indicate addressing from the end of the array
+		 * We need to rewrite the SMT to handle these cases
+		 */
 		function substringHandleNegativeLengths(base_s, index_s) {
 
 			//Index s is negative to adding will get us to the right start
@@ -532,10 +540,10 @@ function BuildModels(state) {
 		}
 
 		/**
-         * Applies the rules for a sticky flag to a regex operation
-         */
+		 * Applies the rules for a sticky flag to a regex operation
+		 */
 		function rewriteTestSticky(real, target, _result) {
-            
+
 			if (real.sticky || real.global) {
 
 				state.stats.seen("Sticky / Global Regex");
@@ -648,7 +656,7 @@ function BuildModels(state) {
 		model.add(RegExp.prototype.exec, symbolicHookRe(
 			RegExp.prototype.exec,
 			(base, args) => base instanceof RegExp && state.isSymbolic(args[0]),
-			(base, args, result) => RegexMatch(base, args[0], result)
+			(base, args, result) => RegexExec(base, args[0], result)
 		));
 
 		model.add(RegExp.prototype.test, symbolicHookRe(
@@ -747,9 +755,9 @@ function BuildModels(state) {
 	function BuildMathModels(state, ctx, model) {
 
 		/** 
-         * TODO: Floor and Ceil should -1 or +1 if args[0] > or < the result
-         */
-        
+		 * TODO: Floor and Ceil should -1 or +1 if args[0] > or < the result
+		 */
+
 		model.add(Math.floor, symbolicHook(
 			Math.floor,
 			(base, args) => state.isSymbolic(args[0]),
@@ -789,34 +797,6 @@ function BuildModels(state) {
 			}
 		));
 
-		/*
-        TODO: Fix this model
-        models[Number.prototype.toFixed] = symbolicHook(
-            (c, _f, base, args, _r) => c.state.isSymbolic(base) || c.state.isSymbolic(args[0]),
-            (c, _f, base, args, result) => {
-                const toFix = c.state.asSymbolic(base);
-                const requiredDigits = c.state.asSymbolic(args[0]);
-                const gte0 = c.state.ctx.mkGe(requiredDigits, c.state.ctx.mkIntVal(0));
-                const lte20 = c.state.ctx.mkLe(requiredDigits, c.state.ctx.mkIntVal(20));
-                const validRequiredDigitsSymbolic = c.state.ctx.mkAnd(lte20, gte0);
-                const validRequiredDigits = c.state.getConcrete(args[0]) >= 0 && c.state.getConcrete(args[0]) <= 20;
-
-                c.state.conditional(new ConcolicValue(!!validRequiredDigits, validRequiredDigitsSymbolic));
-
-                if (validRequiredDigits) {
-                    //TODO: Need to coerce result to string
-
-                    // const pow = c.state.ctx.mkPower(c.state.asSymbolic(10), requiredDigits)
-                    // const symbolicValue = c.state.ctx.mkDiv(c.state.ctx.mkInt2Real(c.state.ctx.mkReal2Int(c.state.ctx.mkMul(pow, toFix))), c.state.asSymbolic(10.0))
-                    //return new ConcolicValue(result, symbolicValue);
-                    return result;
-                }
-                // f.Apply() will throw ifthis fails
-            }
-        );
-        */
-	}
-
 	BuildMathModels(state, ctx, model);
 	BuildStringModels(state, ctx, model);
 	BuildArrayModels(state, ctx, model);
@@ -836,8 +816,8 @@ function BuildModels(state) {
 	model.add(Function.prototype.bind, ConcretizeIfNative(Function.prototype.bind));
 
 	/**
-     * Models for methods on Object
-     */
+	 * Models for methods on Object
+	 */
 	model.add(Object, function(base, args) {
 		const concrete = state.concretizeCall(Object, base, args, false);
 		let result = Object.apply(concrete.base, concrete.args);
@@ -850,8 +830,8 @@ function BuildModels(state) {
 	});
 
 	/**
-     * Secret _expose hooks for symbols.js
-     */
+	 * Secret _expose hooks for symbols.js
+	 */
 
 	Object._expose = {};
 	Object._expose.makeSymbolic = function(name, initial) { return state.createSymbolicValue(name, initial); };
