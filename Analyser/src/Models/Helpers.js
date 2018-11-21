@@ -104,7 +104,7 @@ export default function(state, ctx) {
 		return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexOrZero);
 	}
 
-	function substringHelper(base, args, result) {
+	function substringHelper(base, args) {
 		state.stats.seen("Symbolic Substrings");
 
 		const target = state.asSymbolic(base);
@@ -141,7 +141,7 @@ export default function(state, ctx) {
 				substr_s
 				);
 
-		return new ConcolicValue(result, result_s);
+		return new ConcolicValue(state.getConcrete(base).substring(state.getConcrete(args[0])), result_s);
 	}
 
 	return {

@@ -115,172 +115,128 @@ trueCheck: [],
 				});
 
 		const CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
-			const existing_queries = query.expr.slice(0);
-			const not_eq = ctx.mkNot(ctx.mkEq(string_s, model.eval(string_s)));
-			return [new Z3.Query(existing_queries.concat([not_eq]))];
+			const not = ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model))));
+			return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckNotIn])];
 		});
 
 		return {
 			trueCheck: [NotMatch, CheckFixed],
-			//falseCheck: [CheckNotIn]
+			falseCheck: [CheckNotIn]
 		};
 	}
 
-	function RegexBuiltInExec(regex, string) {
+	/** As an optimization we implement test differently, this allows us to not generated extra paths when not needed on usage **/
+	function RegexpBuiltinTest(regex, string) {
 
-		if (real.sticky || real.global) {
+		const is_match_c = regex.test(state.getConcrete(string));
+
+		if (regex.sticky || regex.global) {
+			stats.seen('Sticky (RegexBuiltinExec)');
 			//Cut at regex.lastIndex
+			string = helpers.substring(string, [regex.lastIndex]);
 		}
 
+		const regexEncoded = Z3.Regex(ctx, regex);
 
+		const is_match_s = ctx.mkSeqInRe(state.asSymbolic(string), regexEncoded.ast);
 
+		EnableCaptures(regexEncoded, regex, state.asSymbolic(string));
+		const checks = BuildRefinements(regexEncoded, regex, state.asSymbolic(string));
+		is_match_s.checks.trueCheck = checks.trueCheck;
+		is_match_s.checks.falseCheck = checks.falseCheck;
+
+		return {
+			result: new ConcolicValue(is_match_c, is_match_s),
+			encodedRegex: regexEncoded,
+		}
 	}
 
-	function RegexTest(regex, real, string, careAboutCaptures) {
+	function RegexpBuiltinExec(regex, string) {
+		const test = RegexpBuiltinTest(regex, string);
+		state.conditional(test.result); //Fork on the str.in.re operation
 
-		if (real.sticky || real.global) {
+		const result_c = regex.exec(state.getConcrete(string));
 
+		if (Config.capturesEnabled && result_c) { //If str.in.re is success & captures are enabled then rewrite the capture results
+
+			for (let i = 0; i < result_c.length; i++) {
+				result_c[i] = new ConcolicValue(result_c[i], test.encodedRegex.captures[i]);
+			}
+
+			//Start Index can only be computed when we have captures enabled
+			result_c.index_c = new ConcolicValue(result_c.index, test.encodedRegex.startIndex);
+			result_c.input = string;
 		}
 
-		const in_s = ctx.mkSeqInRe(
-				state.asSymbolic(string),
-				regex.ast
-				);
-
-		const in_c = real.test(state.getConcrete(string));
-
-		if (regex.backreferences || careAboutCaptures) {
-			EnableCaptures(regex, real, state.asSymbolic(string));
-			const checks = BuildRefinements(regex, real, state.asSymbolic(string));
-			in_s.checks.trueCheck = checks.trueCheck;
-			in_s.checks.falseCheck = checks.falseCheck;
-		}
-
-		return new ConcolicValue(in_c, in_s);
+		return {
+			result: result_c,
+			encodedRegex: test.encodedRegex
+		};
 	}
 
-	function RegexExec(real, string, result) {
-		const regex = Z3.Regex(ctx, real);
-		const in_regex = RegexTest(regex, real, string, true);
-		state.conditional(in_regex);
+	function RegexpBuiltinMatch(regex, string) {
 
-		if (Config.capturesEnabled && state.getConcrete(in_regex)) {
-			const rewrittenResult = result.map((current_c, idx) => {
-					//TODO: This is really nasty, current_c should be a
-					const current_rewrite = current_c === undefined ? "" : current_c;
-					return new ConcolicValue(current_rewrite, regex.captures[idx]);
-					});
+		if (regex.global) {
 
-			rewrittenResult.index = new ConcolicValue(result.index, regex.startIndex);
-			rewrittenResult.input = string;
-
-			result = rewrittenResult;
-		}
-
-		return result;
-	}
-
-	function RegexMatch(real, string, result) {
-
-		if (real.global) {
+			//Remove g and y from regex
+			const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/"g|y"/g, "") + "y");
 
 			let results = [];
 
 			while (true) {
-				const next = RegexExec(real, string, result);
+				const next = RegexpBuiltinExec(rewrittenRe, string);
+				if (!next) {
+					break;
+				}
 				results.push(next);
 			}
 
-			result = results; 
+			return results; 
 		} else {
-			return RegexExec(real, string, result);
+			//Remove g and y from regex
+			const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/"g|y"/g, ""));
+			return RegexpBuiltinExec(rewrittenRe, string);
 		}
 	}
 
-	function RegexSearch(real, string, result) {
+	function RegexpBuiltinSearch(regex, string) {
 
-		const regex = Z3.Regex(ctx, real);
-		const in_regex = RegexTest(regex, real, string, true);
+		const test = RegexpBuiltinTest(regex, string);
 
 		const search_in_re = ctx.mkIte(
-				state.asSymbolic(in_regex),
-				regex.startIndex,
-				state.constantSymbol(-1)
-				);
+			state.asSymbolic(test.result),
+			test.encodedRegex.startIndex,
+			state.constantSymbol(-1)
+		);
 
-		return new ConcolicValue(result, search_in_re);
+		return new ConcolicValue(
+			state.getConcrete(string).search(regex),
+			search_in_re
+		);
 	}
-
-	/**
-	 * Applies the rules for a sticky flag to a regex operation
-	 */
-	function rewriteTestSticky(real, target, _result) {
-
-		if (real.sticky || real.global) {
-
-			state.stats.seen("Sticky / Global Regex");
-
-			const lastIndex = real.lastIndex;
-			const lastIndex_c = state.getConcrete(real.lastIndex);
-			real.lastIndex = lastIndex_c;
-
-			const realResult = real.exec(state.getConcrete(target));
-
-			if (lastIndex_c) {
-				const part_c = state.getConcrete(target);
-				const part_s = state.asSymbolic(target);
-
-				const real_cut = part_c.substring(lastIndex_c, part_c.length);
-
-				target = substringHelper(null, target,
-						[lastIndex, new ConcolicValue(part_c.length, part_s.getLength())],
-						real_cut
-						);
-			}
-
-			const matchResult = RegexMatch(real, target, realResult);
-
-			if (matchResult) {
-
-				const matchLength = new ConcolicValue(
-						state.getConcrete(matchResult[0]).length,
-						state.asSymbolic(matchResult[0]).getLength()
-						);
-
-				const currentIndex = state.binary("+", lastIndex, matchResult.index);
-				real.lastIndex = state.binary("+", currentIndex, matchLength);
-				return true;
-			}
-
-			return false;
-		} else {
-			return RegexTest(Z3.Regex(ctx, real), real, target, false);
-		}
-	}
-
 
 	model.add(String.prototype.search, symbolicHookRe(
 		String.prototype.search,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, result) => RegexSearch(args[0], base, result)
+		(base, args, result) => RegexpBuiltinSearch(args[0], base)
 	));
 
 	model.add(String.prototype.match, symbolicHookRe(
 		String.prototype.match,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, result) => RegexMatch(args[0], base, result)
+		(base, args, result) => RegexpBuiltinMatch(args[0], base)
 	));
 
 	model.add(RegExp.prototype.exec, symbolicHookRe(
 		RegExp.prototype.exec,
 		(base, args) => base instanceof RegExp && state.isSymbolic(args[0]),
-		(base, args, result) => RegexExec(base, args[0], result)
+		(base, args, result) => RegexpBuiltinExec(base, coerceToString(args[0])).result
 	));
 
 	model.add(RegExp.prototype.test, symbolicHookRe(
 		RegExp.prototype.test,
 		(_base, args) => state.isSymbolic(args[0]),
-		(base, args, result) => rewriteTestSticky(base, coerceToString(args[0]), result)
+		(base, args, result) => RegexpBuiltinTest(base, coerceToString(args[0])).result
 	));
 
 	//Replace model for replace regex by string. Does not model replace with callback.
