@@ -1,5 +1,6 @@
 import Config from "../Config";
 import { ConcolicValue } from "../Values/WrappedValue";
+import Log from "../Utilities/Log";
 
 const map = Array.prototype.map;
 

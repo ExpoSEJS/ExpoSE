@@ -155,17 +155,21 @@ trueCheck: [],
 		const test = RegexpBuiltinTest(regex, string);
 		state.conditional(test.result); //Fork on the str.in.re operation
 
-		const result_c = regex.exec(state.getConcrete(string));
+		let result_c = regex.exec(state.getConcrete(string));
 
 		if (Config.capturesEnabled && result_c) { //If str.in.re is success & captures are enabled then rewrite the capture results
 
+			let nr = [];
+
 			for (let i = 0; i < result_c.length; i++) {
-				result_c[i] = new ConcolicValue(result_c[i], test.encodedRegex.captures[i]);
+				nr.push(new ConcolicValue(result_c[i], test.encodedRegex.captures[i]));
 			}
 
 			//Start Index can only be computed when we have captures enabled
-			result_c.index_c = new ConcolicValue(result_c.index, test.encodedRegex.startIndex);
-			result_c.input = string;
+			nr.index = new ConcolicValue(result_c.index, test.encodedRegex.startIndex);
+			nr.input = string;
+
+			result_c = nr;
 		}
 
 		return {
@@ -224,25 +228,25 @@ trueCheck: [],
 	model.add(String.prototype.search, symbolicHookRe(
 		String.prototype.search,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, result) => RegexpBuiltinSearch(args[0], base).result
+		(base, args, _result) => RegexpBuiltinSearch(args[0], coerceToString(base)).result
 	));
 
 	model.add(String.prototype.match, symbolicHookRe(
 		String.prototype.match,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, result) => RegexpBuiltinMatch(args[0], base).result
+		(base, args, _result) => RegexpBuiltinMatch(args[0], coerceToString(base)).result
 	));
 
 	model.add(RegExp.prototype.exec, symbolicHookRe(
 		RegExp.prototype.exec,
 		(base, args) => base instanceof RegExp && state.isSymbolic(args[0]),
-		(base, args, result) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+		(base, args, _result) => RegexpBuiltinExec(base, coerceToString(args[0])).result
 	));
 
 	model.add(RegExp.prototype.test, symbolicHookRe(
 		RegExp.prototype.test,
-		(_base, args) => state.isSymbolic(args[0]),
-		(base, args, result) => RegexpBuiltinTest(base, coerceToString(args[0])).result
+		(base, args) => base instanceof RegExp && state.isSymbolic(args[0]),
+		(base, args, _result) => RegexpBuiltinTest(base, coerceToString(args[0])).result
 	));
 
 	//Replace model for replace regex by string. Does not model replace with callback.
