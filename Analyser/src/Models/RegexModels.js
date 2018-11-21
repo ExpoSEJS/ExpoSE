@@ -191,11 +191,14 @@ trueCheck: [],
 				results.push(next.result[0]);
 			}
 
-			return results; 
+			return {
+				result: results
+			};
+
 		} else {
 			//Remove g and y from regex
 			const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/"g|y"/g, ""));
-			return RegexpBuiltinExec(rewrittenRe, string).result;
+			return RegexpBuiltinExec(rewrittenRe, string);
 		}
 	}
 
@@ -209,22 +212,25 @@ trueCheck: [],
 			state.constantSymbol(-1)
 		);
 
-		return new ConcolicValue(
-			state.getConcrete(string).search(regex),
-			search_in_re
-		);
+		return {
+			result: new ConcolicValue(
+				state.getConcrete(string).search(regex),
+				search_in_re
+			)
+		};
+
 	}
 
 	model.add(String.prototype.search, symbolicHookRe(
 		String.prototype.search,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, result) => RegexpBuiltinSearch(args[0], base)
+		(base, args, result) => RegexpBuiltinSearch(args[0], base).result
 	));
 
 	model.add(String.prototype.match, symbolicHookRe(
 		String.prototype.match,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, result) => RegexpBuiltinMatch(args[0], base)
+		(base, args, result) => RegexpBuiltinMatch(args[0], base).result
 	));
 
 	model.add(RegExp.prototype.exec, symbolicHookRe(
@@ -251,5 +257,4 @@ trueCheck: [],
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
 		(base, args, _result) => state.getConcrete(base).secret_split.apply(base, args)
 	));
-
 }
