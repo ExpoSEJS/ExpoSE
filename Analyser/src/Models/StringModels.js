@@ -1,20 +1,25 @@
+import { ConcolicValue } from "../Values/WrappedValue";
+
 export default function(state, ctx, model, helpers) {
 
 	const symbolicHook = helpers.symbolicHook;
+	const symbolicSubstring = helpers.substring;
+
 	/**
 	 * Stubs string constructor with our (flaky) coerceToString fn
 	 */
 	model.add(String, symbolicHook(
-				String,
-				(_base, args) => state.isSymbolic(args[0]),
-				(_base, args, _result) => coerceToString(args[0])
-				));
+		String,
+		(_base, args) => state.isSymbolic(args[0]),
+		(_base, args, _result) => coerceToString(args[0])
+	));
 
 	const substrModel = symbolicHook(
-			String.prototype.substr,
-			(base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
-			substringHelper
-			);
+		String.prototype.substr,
+		(base, args) => typeof state.getConcrete(base) === "string"
+			&& (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+		symbolicSubstring
+	);
 
 	model.add(String.prototype.substr, substrModel);
 	model.add(String.prototype.substring, substrModel);

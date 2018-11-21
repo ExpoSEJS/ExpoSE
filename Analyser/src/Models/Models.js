@@ -2,8 +2,6 @@
 
 
 import ObjectHelper from "../Utilities/ObjectHelper";
-import Log from "../Utilities/Log";
-import Z3 from "z3javascript";
 import NotAnErrorException from "../NotAnErrorException";
 import { isNative } from "../Utilities/IsNative";
 import { ConcolicValue } from "../Values/WrappedValue";
@@ -16,7 +14,6 @@ import FnModels from './FnModels';
 import RegexModels from './RegexModels';
 
 const find = Array.prototype.find;
-const map = Array.prototype.map;
 
 function Model() {
 	this._models = [];
@@ -42,7 +39,7 @@ function Model() {
 function BuildModels(state) {
 	const ctx = state.ctx;
 	const model = new Model();
-	const helpers = Helpers(state);
+	const helpers = Helpers(state, ctx);
 
 	MathModels(state, ctx, model, helpers);
 	StringModels(state, ctx, model, helpers);

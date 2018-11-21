@@ -1,3 +1,6 @@
+import { ConcolicValue } from "../Values/WrappedValue";
+import Log from "../Utilities/Log";
+
 export default function(state, ctx, model, helper) {
 
 	const symbolicHook = helper.symbolicHook;
