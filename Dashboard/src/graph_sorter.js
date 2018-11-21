@@ -3,35 +3,35 @@
 
 
 function toPercentage(aggregate) {
-  return (aggregate * 100).toFixed(2);
+	return (aggregate * 100).toFixed(2);
 }
 
 function internal(filename) {
-  return  filename.indexOf("/S$/") != -1 || filename.indexOf("/ExpoSE/lib/") != -1;
+	return  filename.indexOf("/S$/") != -1 || filename.indexOf("/ExpoSE/lib/") != -1;
 }
 
 function aggregateCoverage(job) {
-  let coveredBlocks = 0;
-  let totalBlocks = 0;
+	let coveredBlocks = 0;
+	let totalBlocks = 0;
 
-  let coveredLines = 0;
-  let totalLines = 0;
+	let coveredLines = 0;
+	let totalLines = 0;
 	
-  job.coverage.forEach(x => {
-    if (!internal(x.file)) {
-      coveredBlocks += x.terms.found;
-      totalBlocks += x.terms.total;
-      coveredLines += x.loc.found;
-      totalLines += x.loc.total;
-    }
-  });
+	job.coverage.forEach(x => {
+		if (!internal(x.file)) {
+			coveredBlocks += x.terms.found;
+			totalBlocks += x.terms.total;
+			coveredLines += x.loc.found;
+			totalLines += x.loc.total;
+		}
+	});
 
-  return {
-    terms: toPercentage(coveredBlocks / totalBlocks),
-    lines: toPercentage(coveredLines / totalLines)
-  };
+	return {
+		terms: toPercentage(coveredBlocks / totalBlocks),
+		lines: toPercentage(coveredLines / totalLines)
+	};
 }
 
 module.exports = {
-  aggregateCoverage: aggregateCoverage
+	aggregateCoverage: aggregateCoverage
 };

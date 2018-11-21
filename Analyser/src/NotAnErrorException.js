@@ -9,7 +9,7 @@
 function NotAnErrorException() {}
 
 NotAnErrorException.prototype.toString = function() {
-  return "NotAnErrorException";
+	return "NotAnErrorException";
 };
 
 export default NotAnErrorException;

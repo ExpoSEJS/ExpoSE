@@ -5,18 +5,18 @@ const REPLOTTER = "./scripts/replot";
 
 function BuildGraph(outFile, outType, coverageFiles, inRate, done) {
 
-  let args = [inRate.name, outFile, "", "", "", outType].concat(coverageFiles.map(x => x.name));
+	let args = [inRate.name, outFile, "", "", "", outType].concat(coverageFiles.map(x => x.name));
 
-  console.log("Calling replot with " + args);
+	console.log("Calling replot with " + args);
 
-  let prc = spawn(REPLOTTER, args, {
-    disconnected: false
-  });
+	let prc = spawn(REPLOTTER, args, {
+		disconnected: false
+	});
 
-  prc.stdout.on("close", function(c) {
-    this.running = false;
-    done(c);
-  }.bind(this));
+	prc.stdout.on("close", function(c) {
+		this.running = false;
+		done(c);
+	}.bind(this));
 }
 
 module.exports = BuildGraph;
