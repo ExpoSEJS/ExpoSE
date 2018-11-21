@@ -115,14 +115,14 @@ trueCheck: [],
 				});
 
 		const CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
-				const existing_queries = query.expr.slice(0);
-				const not_eq = ctx.mkNot(ctx.mkEq(string_s, model.eval(string_s)));
-				return [new Z3.Query(existing_queries.concat([not_eq]))];
-				});
+			const existing_queries = query.expr.slice(0);
+			const not_eq = ctx.mkNot(ctx.mkEq(string_s, model.eval(string_s)));
+			return [new Z3.Query(existing_queries.concat([not_eq]))];
+		});
 
 		return {
-trueCheck: [NotMatch, CheckFixed],
-					 falseCheck: [CheckNotIn]
+			trueCheck: [NotMatch, CheckFixed],
+			//falseCheck: [CheckNotIn]
 		};
 	}
 
