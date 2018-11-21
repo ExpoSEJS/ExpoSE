@@ -124,7 +124,7 @@ class SymbolicState {
 		} else {
 			Log.log("WARNING: Symbolic Conditional on non-bool, concretizing");
 		}
-        
+
 		return result_c;
 	}
 
