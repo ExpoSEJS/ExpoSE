@@ -13,6 +13,7 @@ import MathModels from './MathModels';
 import ArrayModels from './ArrayModels';
 import StringModels from './StringModels';
 import FnModels from './FnModels';
+import RegexModels from './RegexModels';
 
 const find = Array.prototype.find;
 const map = Array.prototype.map;
@@ -45,6 +46,7 @@ function BuildModels(state) {
 
 	MathModels(state, ctx, model, helpers);
 	StringModels(state, ctx, model, helpers);
+	RegexModels(state, ctx, model, helpers);
 	ArrayModels(state, ctx, model, helpers);
 	FnModels(state, ctx, model, helpers);
 
