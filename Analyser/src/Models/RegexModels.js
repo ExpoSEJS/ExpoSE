@@ -185,17 +185,17 @@ trueCheck: [],
 
 			while (true) {
 				const next = RegexpBuiltinExec(rewrittenRe, string);
-				if (!next) {
+				if (!next.result) {
 					break;
 				}
-				results.push(next);
+				results.push(next.result[0]);
 			}
 
 			return results; 
 		} else {
 			//Remove g and y from regex
 			const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/"g|y"/g, ""));
-			return RegexpBuiltinExec(rewrittenRe, string);
+			return RegexpBuiltinExec(rewrittenRe, string).result;
 		}
 	}
 
