@@ -1,6 +1,7 @@
 import Config from "../Config";
 import { ConcolicValue } from "../Values/WrappedValue";
 import Log from "../Utilities/Log";
+import ObjectHelper from "../Utilities/ObjectHelper";
 
 const map = Array.prototype.map;
 
@@ -136,13 +137,20 @@ export default function(state, ctx) {
 		//If the start index is greater than or equal to the length of the string the empty string is returned
 		const substr_s = ctx.mkSeqSubstr(target, start_off, len);
 		const empty_s = ctx.mkString("");
-		const result_s = ctx.mkIte(
-				ctx.mkGe(start_off, target.getLength()),
-				empty_s,
-				substr_s
-				);
+		const result_s = ctx.mkIte(ctx.mkGe(start_off, target.getLength()),
+			empty_s,
+			substr_s
+		);
 
-		return new ConcolicValue(state.getConcrete(base).substring(state.getConcrete(args[0])), result_s);
+		const result_c = String.prototype.substring.apply(
+			state.getConcrete(base),
+			[state.getConcrete(args[0]), state.getConcrete(args[1])]
+		);
+
+		return new ConcolicValue(
+			state.getConcrete(base).substring(state.getConcrete(args[0]), state.getConcrete(args[1])),
+			result_s
+		);
 	}
 
 	return {

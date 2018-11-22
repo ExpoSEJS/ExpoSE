@@ -121,7 +121,7 @@ trueCheck: [],
 
 		return {
 			trueCheck: [NotMatch, CheckFixed],
-			falseCheck: [CheckNotIn]
+			falseCheck: []
 		};
 	}
 
