@@ -162,7 +162,11 @@ trueCheck: [],
 			let nr = [];
 
 			for (let i = 0; i < result_c.length; i++) {
-				nr.push(new ConcolicValue(result_c[i], test.encodedRegex.captures[i]));
+				//TODO: Alias type symbolically for strings String = Undefined | String THIS IS BAD
+				nr.push(new ConcolicValue(
+					result_c[i] === undefined ? "" : result_c[i],
+					test.encodedRegex.captures[i])
+				);
 			}
 
 			//Start Index can only be computed when we have captures enabled
