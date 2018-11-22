@@ -7,6 +7,21 @@ const map = Array.prototype.map;
 
 export default function(state, ctx) {
 
+	function runMethod(f, base, args, concretize = true) {
+		let result, thrown;
+		
+		//Defer throw until after hook has run
+		try {
+			const c_base = concretize ? state.getConcrete(base) : base;
+			const c_args = concretize ? map.call(args, arg => state.getConcrete(arg)) : args;
+			result = f.apply(c_base, c_args);
+		} catch (e) {
+			thrown = e;
+		}
+
+		return [result, thrown];
+	}
+
 	/**
 	 * Symbolic hook is a helper function which builds concrete results and then,
 	 * if condition() -> true executes a symbolic helper specified by hook
@@ -16,17 +31,8 @@ export default function(state, ctx) {
 	 */
 	function symbolicHook(f, condition, hook, concretize = true, featureDisabled = false) {
 		return function(base, args) {
-			let thrown = undefined;
-			let result;
 
-			//Defer throw until after hook has run
-			try {
-				const c_base = concretize ? state.getConcrete(base) : base;
-				const c_args = concretize ? map.call(args, arg => state.getConcrete(arg)) : args;
-				result = f.apply(c_base, c_args);
-			} catch (e) {
-				thrown = e;
-			}
+			let [result, thrown] = runMethod(f, base, args, concretize);
 
 			Log.logMid(`Symbolic Testing ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)} and initial result ${ObjectHelper.asString(result)}`);
 
@@ -106,7 +112,7 @@ export default function(state, ctx) {
 		return ctx.mkIte(ctx.mkGe(index_s, ctx.mkIntVal(0)), index_s, indexOrZero);
 	}
 
-	function substringHelper(base, args) {
+	function substringHelper(base, args, result) {
 		state.stats.seen("Symbolic Substrings");
 
 		const target = state.asSymbolic(base);
@@ -125,9 +131,9 @@ export default function(state, ctx) {
 
 			//If the length is user-specified bound the length of the substring by the maximum size of the string ("123".slice(0, 8) === "123")
 			const exceedMax = ctx.mkGe(
-					ctx.mkAdd(start_off, len),
-					target.getLength()
-					);
+				ctx.mkAdd(start_off, len),
+				target.getLength()
+			);
 
 			len = ctx.mkIte(exceedMax, maxLength, len);
 		} else {
@@ -137,20 +143,13 @@ export default function(state, ctx) {
 		//If the start index is greater than or equal to the length of the string the empty string is returned
 		const substr_s = ctx.mkSeqSubstr(target, start_off, len);
 		const empty_s = ctx.mkString("");
+
 		const result_s = ctx.mkIte(ctx.mkGe(start_off, target.getLength()),
 			empty_s,
 			substr_s
 		);
 
-		const result_c = String.prototype.substring.apply(
-			state.getConcrete(base),
-			[state.getConcrete(args[0]), state.getConcrete(args[1])]
-		);
-
-		return new ConcolicValue(
-			state.getConcrete(base).substring(state.getConcrete(args[0]), state.getConcrete(args[1])),
-			result_s
-		);
+		return new ConcolicValue(result, result_s);
 	}
 
 	return {

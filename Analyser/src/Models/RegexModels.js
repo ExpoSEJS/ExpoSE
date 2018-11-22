@@ -133,7 +133,7 @@ trueCheck: [],
 		if (regex.sticky || regex.global) {
 			stats.seen('Sticky (RegexBuiltinExec)');
 			//Cut at regex.lastIndex
-			string = helpers.substring(string, [regex.lastIndex]);
+			string = models.get(String.prototype.substring)(string, [regex.lastIndex]);
 		}
 
 		const regexEncoded = Z3.Regex(ctx, regex);
