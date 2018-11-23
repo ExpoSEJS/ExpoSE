@@ -14,7 +14,7 @@ export default function(state, ctx, model, helpers) {
 			return !is_match;
 		} else {
 			return l == r;
-		} 
+		}
 	}
 
 	function Exists(array1, array2, pred) {
@@ -36,22 +36,21 @@ export default function(state, ctx, model, helpers) {
 
 		Log.logMid("Captures Enabled - Adding Implications");
 
-		const implies = ctx.mkImplies(ctx.mkSeqInRe(string_s, regex.ast),
-				ctx.mkEq(string_s, regex.implier));
+		const implies = ctx.mkImplies(
+				ctx.mkSeqInRe(string_s, regex.ast),
+				ctx.mkEq(string_s, regex.implier)
+		);
 
 		//Mock the symbolic conditional if (regex.test(/.../) then regex.match => true)
 		regex.assertions.forEach(binder => state.pushCondition(binder, true));
 		state.pushCondition(implies, true);
 	}
 
-	function BuildRefinements(regex, real, string_s) {
+	function BuildRefinements(regex, real, string_s, is_match_s) {
 
 		if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
 			Log.log("Refinements disabled - potential accuracy loss");
-			return {
-trueCheck: [],
-					 falseCheck: []
-			};
+			return [];
 		}
 
 		Log.log("Refinements Enabled - Adding checks");
@@ -59,70 +58,79 @@ trueCheck: [],
 		state.stats.seen("Regex Which May Need Checks");
 
 		function CheckCorrect(model) {
-			const real_match = real.exec(model.eval(string_s).asConstant(model));
-			const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
+			if (model.eval(is_match_s).asConstant(model)) { //Only apply this check if str.in.re .... was meant to be true
+				const real_match = real.exec(model.eval(string_s).asConstant(model));
+				const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
 
-			Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
+				Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
 
-			const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
+				const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
 
-			state.stats.seen("Regex Checks");	
+				state.stats.seen("Regex Checks");	
 
-			if (!is_correct) {
-				state.stats.seen("Failed Regex Checks");
+				if (!is_correct) {
+					state.stats.seen("Failed Regex Checks");
+				}
+
+				return is_correct;
+			} else {
+				return true;
 			}
-
-			return is_correct;
 		}
 
 		function CheckFailed(model) {
-			const is_failed = !real.test(model.eval(string_s).asConstant(model));
-			state.stats.seen("Regex Checks");
-			if (!is_failed) {
-				state.stats.seen("Failed Regex Checks"); 
-			}
+			if (!model.eval(is_match_s).asConstant(model)) {
+				state.stats.seen("Regex Checks");
 
-			return is_failed;
+				const is_failed = !real.test(model.eval(string_s).asConstant(model));
+
+				if (!is_failed) {
+					state.stats.seen("Failed Regex Checks"); 
+				}
+
+				return is_failed;
+			} else {
+				return true;
+			}
 		}
 
 		const NotMatch = Z3.Check(CheckCorrect, (query, model) => {
 
-				const not = ctx.mkNot(
-						ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model)))
-						);
+			const not = ctx.mkNot(
+				ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model)))
+			);
 
-				return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])];
-				});
+			return [
+				new Z3.Query(query.exprs.slice(0).concat([not]), [CheckFixed, NotMatch])
+			];
+		});
 
 		/**
 		 * Generate a fixed string refinement (c_0, c_n, ...) == (e_0, e_n, ...)
 		 */
 		const CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
-				let real_match = real.exec(model.eval(string_s).asConstant(model));
+			let real_match = real.exec(model.eval(string_s).asConstant(model));
 
-				if (!real_match) {
+			if (!real_match) {
 				Log.log(`WARN: Broken regex detected ${regex.ast.toString()} vs ${real}`);
 				return [];
-				}
+			}
 
-				real_match = real_match.map(match => match || "");
+			real_match = real_match.map(match => match || "");
 
-				const query_list = regex.captures.map(
-						(cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap)
-						);
+			const query_list = regex.captures.map(
+				(cap, idx) => ctx.mkEq(ctx.mkString(real_match[idx]), cap)
+			);
 
-				return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
-				});
+			return [new Z3.Query(query.exprs.slice(0).concat(query_list), [])];
+		});
 
 		const CheckNotIn = Z3.Check(CheckFailed, (query, model) => {
 			const not = ctx.mkNot(ctx.mkEq(string_s, ctx.mkString(model.eval(string_s).asConstant(model))));
 			return [new Z3.Query(query.exprs.slice(0).concat([not]), [CheckNotIn])];
 		});
 
-		return {
-			trueCheck: [NotMatch, CheckFixed],
-			falseCheck: []
-		};
+		return [CheckFixed, NotMatch, CheckNotIn];
 	}
 
 	/** As an optimization we implement test differently, this allows us to not generated extra paths when not needed on usage **/
@@ -141,9 +149,7 @@ trueCheck: [],
 		const is_match_s = ctx.mkSeqInRe(state.asSymbolic(string), regexEncoded.ast);
 
 		EnableCaptures(regexEncoded, regex, state.asSymbolic(string));
-		const checks = BuildRefinements(regexEncoded, regex, state.asSymbolic(string));
-		is_match_s.checks.trueCheck = checks.trueCheck;
-		is_match_s.checks.falseCheck = checks.falseCheck;
+		is_match_s.checks = BuildRefinements(regexEncoded, regex, state.asSymbolic(string), is_match_s);
 
 		return {
 			result: new ConcolicValue(is_match_c, is_match_s),

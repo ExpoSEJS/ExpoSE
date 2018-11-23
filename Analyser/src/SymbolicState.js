@@ -166,7 +166,7 @@ class SymbolicState {
 	_buildPC(childInputs, i, inputCallback) {
 
 		const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
-		const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks.trueCheck), []).concat(newPC.checks.trueCheck);
+		const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks), []).concat(newPC.checks);
 
 		Log.logMid(`Checking if ${newPC.toString()} is satisfiable`);
 
