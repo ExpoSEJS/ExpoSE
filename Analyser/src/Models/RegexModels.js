@@ -3,6 +3,8 @@ import { ConcolicValue } from "../Values/WrappedValue";
 import Config from "../Config";
 import Log from "../Utilities/Log";
 
+let isMatchCount = 0;
+
 export default function(state, ctx, model, helpers) {
 
 	const symbolicHookRe = helpers.symbolicHookRe;
@@ -13,7 +15,7 @@ export default function(state, ctx, model, helpers) {
 			const is_match = (r == "") || (r == undefined);
 			return !is_match;
 		} else {
-			return l == r;
+			return l !== r;
 		}
 	}
 
@@ -57,16 +59,21 @@ export default function(state, ctx, model, helpers) {
 
 		state.stats.seen("Regex Which May Need Checks");
 
+		//TODO: This is a workaround as calling asConstant on is_match_s doesn't work
+		//Remove when we get a reply from the Z3 guys
+		const isMatch =  ctx.mkBoolVar('IsMatch_' + real + '_' + isMatchCount++);
+		state.pushCondition(ctx.mkEq(is_match_s, isMatch), true);
+
 		function CheckCorrect(model) {
-			if (model.eval(is_match_s).asConstant(model)) { //Only apply this check if str.in.re .... was meant to be true
+			if (model.eval(isMatch).asConstant(model)) { //Only apply this check if str.in.re .... was meant to be true
+
+				state.stats.seen("Regex Checks");
+
 				const real_match = real.exec(model.eval(string_s).asConstant(model));
 				const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
 
 				Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
-
 				const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
-
-				state.stats.seen("Regex Checks");	
 
 				if (!is_correct) {
 					state.stats.seen("Failed Regex Checks");
@@ -79,7 +86,7 @@ export default function(state, ctx, model, helpers) {
 		}
 
 		function CheckFailed(model) {
-			if (!model.eval(is_match_s).asConstant(model)) {
+			if (!model.eval(isMatch).asConstant(model)) {
 				state.stats.seen("Regex Checks");
 
 				const is_failed = !real.test(model.eval(string_s).asConstant(model));
@@ -109,6 +116,7 @@ export default function(state, ctx, model, helpers) {
 		 * Generate a fixed string refinement (c_0, c_n, ...) == (e_0, e_n, ...)
 		 */
 		const CheckFixed = Z3.Check(CheckCorrect, (query, model) => {
+
 			let real_match = real.exec(model.eval(string_s).asConstant(model));
 
 			if (!real_match) {
