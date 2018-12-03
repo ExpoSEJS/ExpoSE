@@ -1,19 +1,18 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-//Tests a simple string search
-
 var S$ = require('S$');
-var nl = (S$.symbol('X', '')).search(/^abc$/);
+var x = S$.symbol("X", "hello");
 
-if (nl != -1) {
-	
-	if (nl != 0) {
-		//Locked by anchor to be 0
-		throw 'Unreachable';
-	}
+S$.assume(x.length == 5);
 
+if (x.substr(1, 1) == "w") {
 	throw 'Reachable';
-} else {
-	//b not in x
-	throw 'Reachable';
+}
+
+if (x.substr(1) == "what") {
+	throw 'Unreachable';
+}
+
+if (x.substr(1) == "phat") {
+	throw 'Reachable 2';
 }

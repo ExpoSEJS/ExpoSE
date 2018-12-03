@@ -3,34 +3,34 @@
 import path from "path";
 
 class Walker {
-    constructor(dir, fn) {
-        this.cbs = [];
-        this.dir = dir;
-        this.fn = fn;
-    }
+	constructor(dir, fn) {
+		this.cbs = [];
+		this.dir = dir;
+		this.fn = fn;
+	}
 
-    start() {
-        let absTestFilePath = path.resolve(this.dir + this.fn);
-        let fileList = require(absTestFilePath);
+	start() {
+		let absTestFilePath = path.resolve(this.dir + this.fn);
+		let fileList = require(absTestFilePath);
         
-        this.files = fileList.map(f => ({
-            path: this.dir + f.path,
-            expectErrors: f.expectErrors,
-            expectPaths: f.expectPaths
-        }));
+		this.files = fileList.map(f => ({
+			path: this.dir + f.path,
+			expectErrors: f.expectErrors,
+			expectPaths: f.expectPaths
+		}));
 
-        this.doneSearching();
-        return this;
-    }
+		this.doneSearching();
+		return this;
+	}
 
-    doneSearching() {
-        this.cbs.forEach(cb => cb(this.files));
-    }
+	doneSearching() {
+		this.cbs.forEach(cb => cb(this.files));
+	}
 
-    done(cb) {
-        this.cbs.push(cb);
-        return this;
-    }
+	done(cb) {
+		this.cbs.push(cb);
+		return this;
+	}
 }
 
 export default Walker;

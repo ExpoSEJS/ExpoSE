@@ -12,49 +12,49 @@ const EXPOSE_PATH = "expoSE";
 //Otherwise 1 change becomes 2
 function Executor(filepath, input, data, done) {
 
-    //Create tmp output file for the JSON
-    let jsonOutFile = tmp.fileSync();
+	//Create tmp output file for the JSON
+	let jsonOutFile = tmp.fileSync();
 
-    //Clone the current environment
-    let env = JSON.parse(JSON.stringify(process.env));
-    env.EXPOSE_JSON_PATH = jsonOutFile.name;
+	//Clone the current environment
+	let env = JSON.parse(JSON.stringify(process.env));
+	env.EXPOSE_JSON_PATH = jsonOutFile.name;
 
-    let args;
+	let args;
 
-    if (input) {
-        args = ["replay", filepath, input];
-    } else {
-        args = ["test", filepath];
-    }
+	if (input) {
+		args = ["replay", filepath, input];
+	} else {
+		args = ["test", filepath];
+	}
 
-    let prc = spawn(EXPOSE_PATH, args, {
-        stdio: ["ignore", "pipe", "pipe"],
-        env: env,
-        disconnected: false
-    });
+	let prc = spawn(EXPOSE_PATH, args, {
+		stdio: ["ignore", "pipe", "pipe"],
+		env: env,
+		disconnected: false
+	});
 
-    prc.final = "";
-    prc.running = true;
+	prc.final = "";
+	prc.running = true;
 
-    prc.stdout.on("data", function(d) {
-        this.final += d;
-        data(d);
-    }.bind(prc));
-    prc.stderr.on("data", data);
+	prc.stdout.on("data", function(d) {
+		this.final += d;
+		data(d);
+	}.bind(prc));
+	prc.stderr.on("data", data);
 
-    prc.stdout.on("close", () => {
-        fs.readFile(jsonOutFile.name, (err, data) => {
-            prc.running = false;
-            if (err) {
-                done(err);
-            } else {
-                jsonOutFile.removeCallback();
-                done(undefined, "" + data);
-            }
-        });
-    });
+	prc.stdout.on("close", () => {
+		fs.readFile(jsonOutFile.name, (err, data) => {
+			prc.running = false;
+			if (err) {
+				done(err);
+			} else {
+				jsonOutFile.removeCallback();
+				done(undefined, "" + data);
+			}
+		});
+	});
 
-    return prc;
+	return prc;
 }
 
 module.exports = Executor;
