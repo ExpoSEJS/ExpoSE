@@ -122,7 +122,7 @@ function buildTestList() {
     buildTest('regex/core/literals/empty_example.js', 2, 2);
     buildTest('regex/core/literals/mixed_escaped.js', 3, 3); //TODO: Should this be 2 */
     buildTest('regex/core/literals/non_alpha.js', 2, 2);
-    buildTest('regex/core/literals/multiple.js', 6, 6);
+    buildTest('regex/core/literals/multiple.js', 4, 4);
 
     /**
     *    TODO: Find out of unicode support is possible through some screwing with Z3 strings

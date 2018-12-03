@@ -174,7 +174,7 @@ class SymbolicState {
 
 		if (solution) {
 			this._addInput(newPC, solution, i, childInputs);
-			Log.logHigh(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
+			Log.logMid(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
 
 			if (inputCallback) {
 				inputCallback(childInputs);

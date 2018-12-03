@@ -6,7 +6,7 @@ var S$ = require('S$');
 
 function f(x, maxLen) {
     var s = x.match(/<([a-z]+)>(.*?)<\/\1>/);
-		console.log('S is ' + JSON.stringify(s));
+
     if (s) {
         if (s[2].length <= 0) {
             throw '*** Element Missing ***';
