@@ -34,10 +34,15 @@ $ expoSE ./tests/integers/infoflow
 
 Valid Options:
 
-* `setup`      - Clean and setup ExpoSE
-* `ui`         - Launch the ExpoSE Dashboard
 * `replay`     - Replay a test case with a specific input.
-* `test_suite` - Run the pre-push test suite.
+
+### ExpoSE Browser Support
+
+There is limited support for symbolic execution of webpages through a custom, Electron based, web browser. To execute ExpoSE on a website you use the same arguments as the CLI. Note: This also requires python3 and a modern version of mitmproxy to function correctly.
+
+```sh
+$ expoSE "https://google.com"
+```
 
 ### Configuration
 
