@@ -35,7 +35,7 @@ class SymbolicExecution {
 
 		} else { 
 			const process = External.load("process");
-            
+
 			//Bind any uncaught exceptions to the uncaught exception handler
 			process.on("uncaughtException", this._uncaughtException.bind(this));
 

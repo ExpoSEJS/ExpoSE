@@ -1,8 +1,11 @@
 var S$ = require('S$');
 var a = S$.symbol('A', '');
 
-S$.assume(a.length == 'iPhoneAndroid'.length);
+S$.assume(a.length < 20);
 
-if (a == 'iPhoneAndroid') {
-   throw 'iPhone Android'; 
+var res = a.match(/Tst/g);
+
+if (res) {
+	for (var i = 0; i < res.length; i++) {
+	}
 }

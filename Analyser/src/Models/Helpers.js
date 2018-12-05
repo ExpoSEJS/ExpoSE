@@ -79,15 +79,6 @@ export default function(state, ctx) {
 		return symbol;
 	}
 
-	//Hook for regex methods, will only hook if regex is enabled
-	function symbolicHookRe(f, condition, hook) {
-		return symbolicHook(f, condition, function() {
-			//Intercept the hook to do regex stats
-			state.stats.seen("Regex Function Model");
-			return hook.apply(this, arguments);
-		}, true, !Config.regexEnabled);
-	}
-
 	function NoOp(f) {
 		return function(base, args) {
 			Log.logMid(`NoOp ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)}`);
@@ -153,10 +144,10 @@ export default function(state, ctx) {
 	}
 
 	return {
+		runMethod: runMethod,
 		symbolicHook: symbolicHook,
 		ConcretizeIfNative: ConcretizeIfNative,
 		coerceToString: coerceToString,
-		symbolicHookRe: symbolicHookRe,
 		NoOp: NoOp,
 		substring: substringHelper
 	};
