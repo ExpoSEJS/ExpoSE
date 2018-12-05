@@ -248,6 +248,8 @@ function buildTestList() {
     buildTest('regex/match/greed/optionals.js', 3, 2);
     buildTest('regex/match/greed/related.js', 3, 2);
 
+		buildTest('regex/match/global/test1.js', 7, 2);
+
     /**
      * Replace application model tests
      */
