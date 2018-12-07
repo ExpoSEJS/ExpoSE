@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 480);
+			}, 1000 * 180);
 
 			console.log("Browser mode setup finished");
 
@@ -75,11 +75,11 @@ class SymbolicExecution {
 			console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
 		};
 
-		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
+		if (f && (f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
 			report(args[0].src);
 		}
 
-		if (f.name == "open") {
+		if (f && f.name == "open") {
 			report(args[1]);
 		}
 
@@ -87,11 +87,11 @@ class SymbolicExecution {
 		const needs_conc = !fn_model && isNative(f); 
 
 		/**
-         * Concretize the function if it is native and we do not have a custom model for it
-         * TODO: We force concretization on toString functions to avoid recursive call from the lookup into this.models
-         * TODO: This is caused by getField(obj) calling obj.toString()
-         * TODO: A better solution to this needs to be found
-         */
+		 * Concretize the function if it is native and we do not have a custom model for it
+		 * TODO: We force concretization on toString functions to avoid recursive call from the lookup into this.models
+		 * TODO: This is caused by getField(obj) calling obj.toString()
+		 * TODO: A better solution to this needs to be found
+		 */
 		if (needs_conc) {
 			const concretized = this.state.concretizeCall(f, base, args);
 			base = concretized.base;
@@ -99,8 +99,8 @@ class SymbolicExecution {
 		}
 
 		/**
-         * End of conc
-         */
+		 * End of conc
+		 */
 		return {
 			f: fn_model || f,
 			base: base,
@@ -110,8 +110,8 @@ class SymbolicExecution {
 	}
 
 	/**
-     * Called after a function completes execution
-     */
+	 * Called after a function completes execution
+	 */
 	invokeFun(iid, f, base, args, result, _isConstructor, _isMethod) {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
