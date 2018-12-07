@@ -223,10 +223,10 @@ function buildTestList() {
     buildTest('regex/captures/greedy2.js', 3, 2);
     buildTest('regex/captures/greedy_capture.js', 3, 2);
     buildTest('regex/captures/simple.js', 4, 3);
-/*    buildTest('regex/captures/anchors.js', 4, 3);
+    buildTest('regex/captures/anchors.js', 4, 3);
     buildTest('regex/captures/related.js', 3, 2);
     buildTest('regex/captures/multiple_locked.js', 2, 1);
-*/
+
     //buildTest('regex/exec/greed/anchors.js', 4, 3);
     //buildTest('regex/exec/greed/nested.js', 4, 3);
     //buildTest('regex/exec/greed/optionals.js', 3, 2);
@@ -239,50 +239,53 @@ function buildTestList() {
     buildTest('regex/match/captures/greedy2.js', 3, 2);
     buildTest('regex/match/captures/greedy_capture.js', 3, 2);
     buildTest('regex/match/captures/simple.js', 4, 3);
-/*    buildTest('regex/match/captures/anchors.js', 4, 3);
+    buildTest('regex/match/captures/anchors.js', 4, 3);
     buildTest('regex/match/captures/related.js', 3, 2);
     buildTest('regex/match/captures/multiple_locked.js', 2, 1);
-*/
+
     buildTest('regex/match/greed/anchors.js', 4, 3);
-    //buildTest('regex/match/greed/nested.js', 4, 3);
+    buildTest('regex/match/greed/nested.js', 4, 3);
     buildTest('regex/match/greed/optionals.js', 3, 2);
     buildTest('regex/match/greed/related.js', 3, 2);
+
+		buildTest('regex/match/global/test1.js', 7, 2);
 
     /**
      * Replace application model tests
      */
 
-     /*buildTest('regex/replace/single/single_replace.js', 5, 3);
+     buildTest('regex/replace/single/single_replace.js', 5, 3);
      buildTest('regex/replace/single/replace_2.js', 4, 3);
-     buildTest('regex/replace/single/replace_3.js', 5, 4);*/
+     buildTest('regex/replace/single/replace_3.js', 5, 4);
 
      /**
       * Split application model tests
       */
 
-     /*buildTest('regex/split/split_1', 14, 4);
+     buildTest('regex/split/split_1', 14, 4);
      buildTest('regex/split/split_2', 6, 0);
      buildTest('regex/split/split_3', 15, 3);
      buildTest('regex/split/split_4', 35, 0); //PC seems a bit high but the test works
-     buildTest('regex/split/split_hard', 8, 2);*/
+     buildTest('regex/split/split_hard', 8, 2);
 
     /**
      * Sticky model tests
      */
-    //buildTest('regex/test/flags/sticky', 3, 1);
-
+    buildTest('regex/test/flags/sticky', 3, 1);
+		buildTest('regex/test/flags/sticky2.js', 3, 2);
+ 
     /**
      * Search application model tests
      */
 
     buildTest('regex/search/simple.js', 2, 2);
     buildTest('regex/search/ambiguous1.js', 3, 2);
-    /*buildTest('regex/search/ambiguous2.js', 3, 1); //One extra path spawned by assume command
+    buildTest('regex/search/ambiguous2.js', 3, 1); //One extra path spawned by assume command
     buildTest('regex/search/ambiguous3.js', 3, 2); //One extra path spawned by assume command
     buildTest('regex/search/ambiguous4.js', 7, 3); //TODO: Weird results
     buildTest('regex/search/alt.js', 3, 3);
     buildTest('regex/search/not_at_start.js', 3, 3);
-    buildTest('regex/search/test_at_start.js', 5, 4);*/
+    buildTest('regex/search/test_at_start.js', 5, 4);
 
 
 

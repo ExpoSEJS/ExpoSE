@@ -7,8 +7,19 @@ let isMatchCount = 0;
 
 export default function(state, ctx, model, helpers) {
 
-	const symbolicHookRe = helpers.symbolicHookRe;
 	const coerceToString = helpers.coerceToString;
+
+	//Hook for regex methods, will only hook if regex is enabled
+	function symbolicHookRe(f, condition, hook) {
+		const runMethod = helpers.runMethod;
+		return function(base, args) {
+			if (condition(base, args)) {
+				return hook(base, args);
+			} else {
+				return runMethod(f, base, args);
+			}
+		}
+	}
 
 	function DoesntMatch(l, r) {
 		if (l == undefined) {
@@ -49,6 +60,9 @@ export default function(state, ctx, model, helpers) {
 	}
 
 	function BuildRefinements(regex, real, string_s, is_match_s) {
+
+		//The refinements operate on the remainder of the string so we no longer care about the sticky / global rules
+		real = new RegExp(real.source, real.flags.replace(/y|g/g, ""));
 
 		if (!(Config.capturesEnabled && Config.refinementsEnabled)) {
 			Log.log("Refinements disabled - potential accuracy loss");
@@ -120,7 +134,7 @@ export default function(state, ctx, model, helpers) {
 			let real_match = real.exec(model.eval(string_s).asConstant(model));
 
 			if (!real_match) {
-				Log.log(`WARN: Broken regex detected ${regex.ast.toString()} vs ${real}`);
+				Log.log(`WARN: Broken regex detected ${regex.ast.toString()} vs ${real} in ${model.eval(string_s).asConstant(model)}`);
 				return [];
 			}
 
@@ -144,20 +158,38 @@ export default function(state, ctx, model, helpers) {
 	/** As an optimization we implement test differently, this allows us to not generated extra paths when not needed on usage **/
 	function RegexpBuiltinTest(regex, string) {
 
+		let currentLastIndex = regex.lastIndex;
+		regex.lastIndex = state.getConcrete(regex.lastIndex);
+
 		const is_match_c = regex.test(state.getConcrete(string));
 
 		if (regex.sticky || regex.global) {
-			stats.seen('Sticky (RegexBuiltinExec)');
 			//Cut at regex.lastIndex
-			string = models.get(String.prototype.substring)(string, [regex.lastIndex]);
+			state.stats.seen('Sticky (RegexBuiltinExec)');
+			string = model.get(String.prototype.substring).call(string, currentLastIndex);
+			if (!regex.source[0] != '^') {
+				Log.log("In Sticky Mode We Insert ^");
+				regex = new RegExp('^' + regex.source, regex.flags);
+			}
 		}
 
 		const regexEncoded = Z3.Regex(ctx, regex);
-
 		const is_match_s = ctx.mkSeqInRe(state.asSymbolic(string), regexEncoded.ast);
 
 		EnableCaptures(regexEncoded, regex, state.asSymbolic(string));
 		is_match_s.checks = BuildRefinements(regexEncoded, regex, state.asSymbolic(string), is_match_s);
+
+		if (Config.capturesEnabled && (regex.sticky || regex.global)) {
+			Log.log('Captures enabled - symbolic lastIndex enabled');
+			regex.lastIndex = new ConcolicValue(
+				regex.lastIndex,
+				ctx.mkIte(
+					is_match_s,
+					ctx.mkAdd(state.asSymbolic(currentLastIndex), regexEncoded.captures[0].getLength()),
+					ctx.mkIntVal(0)
+				)
+			);
+		}
 
 		return {
 			result: new ConcolicValue(is_match_c, is_match_s),
@@ -166,7 +198,12 @@ export default function(state, ctx, model, helpers) {
 	}
 
 	function RegexpBuiltinExec(regex, string) {
+		
+		//Preserve the lastIndex property
+		let lastIndex = regex.lastIndex;
 		const test = RegexpBuiltinTest(regex, string);
+		regex.lastIndex = lastIndex;
+
 		state.conditional(test.result); //Fork on the str.in.re operation
 
 		let result_c = regex.exec(state.getConcrete(string));
@@ -201,15 +238,17 @@ export default function(state, ctx, model, helpers) {
 		if (regex.global) {
 
 			//Remove g and y from regex
-			const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/"g|y"/g, "") + "y");
+			const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "y");
 
 			let results = [];
 
 			while (true) {
 				const next = RegexpBuiltinExec(rewrittenRe, string);
+
 				if (!next.result) {
 					break;
 				}
+
 				results.push(next.result[0]);
 			}
 
@@ -243,40 +282,44 @@ export default function(state, ctx, model, helpers) {
 
 	}
 
+	function shouldBeSymbolic(regex, string) {
+		return regex instanceof RegExp && (state.isSymbolic(regex.lastIndex) || state.isSymbolic(string)); 
+	}
+
 	model.add(String.prototype.search, symbolicHookRe(
 		String.prototype.search,
-		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, _result) => RegexpBuiltinSearch(args[0], coerceToString(base)).result
+		(base, args) => shouldBeSymbolic(args[0], base),
+		(base, args) => RegexpBuiltinSearch(args[0], coerceToString(base)).result
 	));
 
 	model.add(String.prototype.match, symbolicHookRe(
 		String.prototype.match,
-		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, _result) => RegexpBuiltinMatch(args[0], coerceToString(base)).result
+		(base, args) => shouldBeSymbolic(args[0], base),
+		(base, args) => RegexpBuiltinMatch(args[0], coerceToString(base)).result
 	));
 
 	model.add(RegExp.prototype.exec, symbolicHookRe(
 		RegExp.prototype.exec,
-		(base, args) => base instanceof RegExp && state.isSymbolic(args[0]),
-		(base, args, _result) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
 	));
 
 	model.add(RegExp.prototype.test, symbolicHookRe(
 		RegExp.prototype.test,
-		(base, args) => base instanceof RegExp && state.isSymbolic(args[0]),
-		(base, args, _result) => RegexpBuiltinTest(base, coerceToString(args[0])).result
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinTest(base, coerceToString(args[0])).result
 	));
 
 	//Replace model for replace regex by string. Does not model replace with callback.
 	model.add(String.prototype.replace, symbolicHookRe(
 		String.prototype.replace,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === "string",
-		(base, args, _result) => state.getConcrete(base).secret_replace.apply(base, args)
+		(base, args) => state.getConcrete(base).secret_replace.apply(base, args)
 	));
 
 	model.add(String.prototype.split, symbolicHookRe(
 		String.prototype.split,
 		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args, _result) => state.getConcrete(base).secret_split.apply(base, args)
+		(base, args) => state.getConcrete(base).secret_split.apply(base, args)
 	));
 }

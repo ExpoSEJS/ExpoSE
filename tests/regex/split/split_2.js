@@ -2,6 +2,7 @@
 
 //Tests replace on a global regex
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var b = /(a)/;
 

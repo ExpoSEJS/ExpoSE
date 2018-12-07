@@ -2,6 +2,7 @@
 
 //Tests a simple string search
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 
 S$.assume(x.length < 7);
