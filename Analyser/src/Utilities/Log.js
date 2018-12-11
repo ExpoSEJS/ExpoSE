@@ -1,7 +1,5 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
-
 import Config from "../Config";
 const fs = require("fs");
 
@@ -28,15 +26,15 @@ const log_path = console.log;
 class Log {
 
     logHigh(msg) {
-        log_path("ExpoSE HIGH: " + msg);
+        log_path("[?] " + msg);
     }
 
     logMid(msg) {
-        log_path("ExpoSE MID: " + msg);
+        log_path("[?] " + msg);
     }
 
     log(msg) {
-        log_path("ExpoSE: " + msg);
+        log_path("[!] " + msg);
     }
 
     logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {

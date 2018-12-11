@@ -265,8 +265,7 @@ function buildTestList() {
      buildTest('regex/split/split_1', 14, 4);
      buildTest('regex/split/split_2', 6, 0);
      buildTest('regex/split/split_3', 15, 3);
-     buildTest('regex/split/split_4', 35, 0); //PC seems a bit high but the test works
-     buildTest('regex/split/split_hard', 8, 2);
+     buildTest('regex/split/split_4', 35, 0);
 
     /**
      * Sticky model tests

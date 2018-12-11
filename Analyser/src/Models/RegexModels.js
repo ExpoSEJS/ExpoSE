@@ -181,6 +181,12 @@ export default function(state, ctx, model, helpers) {
 
 		if (Config.capturesEnabled && (regex.sticky || regex.global)) {
 			Log.log('Captures enabled - symbolic lastIndex enabled');
+
+			regexEncoded.startIndex = ctx.mkAdd(
+				state.asSymbolic(currentLastIndex),
+				regexEncoded.startIndex
+			);
+
 			regex.lastIndex = new ConcolicValue(
 				regex.lastIndex,
 				ctx.mkIte(
@@ -286,32 +292,38 @@ export default function(state, ctx, model, helpers) {
 	function RegexpBuiltinSplit(regex, string) {
 
 		//Remove g and y from regex
-		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "y");
+		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "");
 
 		let results = [];
 		let lastIndex = 0;
 
+		//While there is still a match of regex in string add the area before it to results and
+		//then increase lastIndex by the size of the match + its start index
 		while (true) {
 
-			console.log('Step:', lastIndex, string, regex);
-
-			//Do the next step of search and explore both sides
-			const next = RegexpBuiltinExec(rewrittenRe, string).result;
+			//Grab the remaining portion of the string and call exec on it
+			const c_string = model.get(String.prototype.substring).call(string, lastIndex);
+			const next = RegexpBuiltinExec(rewrittenRe, c_string).result;
 
 			//Add the next step
 			if (next) {
-				console.log('SplitSubStr');
-				let part = model.get(String.prototype.substring).call(string, lastIndex, state.binary('-', next.index, lastIndex))
+
+				const entireMatchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
+				const part = model.get(String.prototype.substring).call(c_string, 0, next.index);
 				results.push(part);
-				console.log('PART:', part);
+
 				lastIndex = state.binary('+',
-					next.index,
-					new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength())
+					lastIndex,
+					entireMatchSize
 				);
+
 			} else {
 				break;
 			}
 		}
+
+		//After we have exhausted all instances of the re in string push the remainder to the result
+		results.push(model.get(String.prototype.substring).call(string, lastIndex));
 
 		return {
 			result: results
@@ -350,12 +362,12 @@ export default function(state, ctx, model, helpers) {
 	model.add(String.prototype.replace, symbolicHookRe(
 		String.prototype.replace,
 		(base, args) => shouldBeSymbolic(args[0], base),
-		(base, args) => RegexpBuiltinReplace(args[0], base) 
+		(base, args) => RegexpBuiltinReplace(args[0], base).result 
 	));
 
 	model.add(String.prototype.split, symbolicHookRe(
 		String.prototype.split,
 		(base, args) => shouldBeSymbolic(args[0], base),
-		(base, args) => RegexpBuiltinSplit(args[0], base)
+		(base, args) => RegexpBuiltinSplit(args[0], base).result
 	));
 }

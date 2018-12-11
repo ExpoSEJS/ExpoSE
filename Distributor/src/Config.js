@@ -49,6 +49,7 @@ export default {
 	jsonOut: getArgument("EXPOSE_JSON_PATH", "string", undefined), //By default ExpoSE does not generate JSON out
 	printPaths: getArgument("EXPOSE_PRINT_PATHS", "number", false), //By default do not print paths to stdout
 	printDeltaCoverage: getArgument("EXPOSE_PRINT_COVERAGE", "number", false),
+	printPathCondition: getArgument("EXPOSE_PRINT_PC", "number", false),
 	perCaseCoverage: getArgument("EXPOSE_CASE_COVERAGE", "number", false), /* Prints coverage information on the finished path */
 	analyseScript: getArgument("EXPOSE_PLAY_SCRIPT", "string", "./scripts/play")
 };
