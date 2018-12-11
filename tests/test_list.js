@@ -286,8 +286,6 @@ function buildTestList() {
     buildTest('regex/search/not_at_start.js', 3, 3);
     buildTest('regex/search/test_at_start.js', 5, 4);
 
-
-
     /**
      * End of regular expression feature tests
      */

@@ -309,8 +309,10 @@ export default function(state, ctx, model, helpers) {
 			if (next) {
 
 				const entireMatchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
-				const part = model.get(String.prototype.substring).call(c_string, 0, next.index);
-				results.push(part);
+				
+				results.push(
+					model.get(String.prototype.substring).call(c_string, 0, next.index)
+				);
 
 				lastIndex = state.binary('+',
 					lastIndex,
