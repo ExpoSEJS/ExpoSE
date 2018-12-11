@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
+import Internal from "./Internal";
 import Center from "./Center";
 import Config from "./Config";
 import CoverageMap from "./CoverageMap";
@@ -56,7 +56,7 @@ if (process.argv.length >= 3) {
 
 		done.forEach(item => {
 			const testStartSeconds = item.startTime - start;
-			console.log("*-- Test Case " + JSON.stringify(item.input) + " Path Condition: " + item.pc + " start " + formatSeconds(testStartSeconds) + " took " + formatSeconds(item.time) + "s");
+			console.log("*-- Test Case " + JSON.stringify(item.input) + " PC: " + item.pc + " start " + formatSeconds(testStartSeconds) + " took " + formatSeconds(item.time) + "s");
 
 			if (item.errors.length != 0) {
 				console.log("*-- Errors occured in test " + JSON.stringify(item.input));
@@ -70,6 +70,11 @@ if (process.argv.length >= 3) {
 		let totalLines = 0;
 
 		coverage.final().forEach(d => {
+
+			if (Internal(d.file)) {
+				return;
+			}
+
 			console.log(`*- File ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}% Lines Of Code: ${d.loc.all.length} -*`);
 			totalLines += d.loc.all.length;
 		});

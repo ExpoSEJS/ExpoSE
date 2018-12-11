@@ -87,11 +87,11 @@ class SymbolicExecution {
 		const needs_conc = !fn_model && isNative(f); 
 
 		/**
-         * Concretize the function if it is native and we do not have a custom model for it
-         * TODO: We force concretization on toString functions to avoid recursive call from the lookup into this.models
-         * TODO: This is caused by getField(obj) calling obj.toString()
-         * TODO: A better solution to this needs to be found
-         */
+		 * Concretize the function if it is native and we do not have a custom model for it
+		 * TODO: We force concretization on toString functions to avoid recursive call from the lookup into this.models
+		 * TODO: This is caused by getField(obj) calling obj.toString()
+		 * TODO: A better solution to this needs to be found
+		 */
 		if (needs_conc) {
 			const concretized = this.state.concretizeCall(f, base, args);
 			base = concretized.base;
@@ -99,8 +99,8 @@ class SymbolicExecution {
 		}
 
 		/**
-         * End of conc
-         */
+		 * End of conc
+		 */
 		return {
 			f: fn_model || f,
 			base: base,

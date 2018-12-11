@@ -12,6 +12,8 @@ x = x.split(b);
 
 if (x.length == 2) {
 
+	console.log('X: Length is 2');
+
 	if (x[0] == 'hello') {
 		throw 'Unreachable'; //Broken by the assumption on string length
 	}

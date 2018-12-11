@@ -265,7 +265,8 @@ export default function(state, ctx, model, helpers) {
 
 	function RegexpBuiltinSearch(regex, string) {
 
-		const test = RegexpBuiltinTest(regex, string);
+		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, ""));
+		const test = RegexpBuiltinTest(rewrittenRe, string);
 
 		const search_in_re = ctx.mkIte(
 			state.asSymbolic(test.result),
@@ -280,6 +281,41 @@ export default function(state, ctx, model, helpers) {
 			)
 		};
 
+	}
+
+	function RegexpBuiltinSplit(regex, string) {
+
+		//Remove g and y from regex
+		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "y");
+
+		let results = [];
+		let lastIndex = 0;
+
+		while (true) {
+
+			console.log('Step:', lastIndex, string, regex);
+
+			//Do the next step of search and explore both sides
+			const next = RegexpBuiltinExec(rewrittenRe, string).result;
+
+			//Add the next step
+			if (next) {
+				console.log('SplitSubStr');
+				let part = model.get(String.prototype.substring).call(string, lastIndex, state.binary('-', next.index, lastIndex))
+				results.push(part);
+				console.log('PART:', part);
+				lastIndex = state.binary('+',
+					next.index,
+					new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength())
+				);
+			} else {
+				break;
+			}
+		}
+
+		return {
+			result: results
+		};
 	}
 
 	function shouldBeSymbolic(regex, string) {
@@ -313,13 +349,13 @@ export default function(state, ctx, model, helpers) {
 	//Replace model for replace regex by string. Does not model replace with callback.
 	model.add(String.prototype.replace, symbolicHookRe(
 		String.prototype.replace,
-		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === "string",
-		(base, args) => state.getConcrete(base).secret_replace.apply(base, args)
+		(base, args) => shouldBeSymbolic(args[0], base),
+		(base, args) => RegexpBuiltinReplace(args[0], base) 
 	));
 
 	model.add(String.prototype.split, symbolicHookRe(
 		String.prototype.split,
-		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args) => state.getConcrete(base).secret_split.apply(base, args)
+		(base, args) => shouldBeSymbolic(args[0], base),
+		(base, args) => RegexpBuiltinSplit(args[0], base)
 	));
 }
