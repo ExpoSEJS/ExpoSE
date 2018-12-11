@@ -248,7 +248,7 @@ function buildTestList() {
     buildTest('regex/match/greed/optionals.js', 3, 2);
     buildTest('regex/match/greed/related.js', 3, 2);
 
-		buildTest('regex/match/global/test1.js', 7, 2);
+    buildTest('regex/match/global/test1.js', 7, 2);
 
     /**
      * Replace application model tests
@@ -271,7 +271,7 @@ function buildTestList() {
      * Sticky model tests
      */
     buildTest('regex/test/flags/sticky', 3, 1);
-		buildTest('regex/test/flags/sticky2.js', 3, 2);
+    buildTest('regex/test/flags/sticky2.js', 3, 2);
  
     /**
      * Search application model tests
