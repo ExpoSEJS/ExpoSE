@@ -367,7 +367,7 @@ export default function(state, ctx, model, helpers) {
 
 			if (next) {
 
-				console.log('NXT:', next);
+				console.log('NXT:', next, replacementString);
 
 				//Find out the match size
 				let matchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
@@ -376,14 +376,37 @@ export default function(state, ctx, model, helpers) {
 				let lhs = model.get(String.prototype.substring).call(string, 0, next.index);
 				let rhs = model.get(String.prototype.substring).call(string, state.binary('+', next.index, matchSize));
 
-				console.log('LHS', lhs);
-				console.log('RHS', rhs);
-				console.log('Replacement', replacementString);
+				typeof(state.getConcrete(replacementString))
+				console.log('RPLC:', replacementString);
 
 				if (typeof(state.getConcrete(replacementString)) === "function") {
 					string = state.binary('+', lhs, state.binary('+', replacementString.apply(null, next), rhs));
 				} else {
-					string = state.binary('+', lhs, state.binary('+', replacementString, rhs));
+					
+					Log.log('WARN: no support for symbolic replacement strings');
+
+					console.log(replacementString);
+
+					let remaining = state.getConcrete(replacementString);
+					let finalString = "";
+
+					let toreplace;
+
+					console.log(remaining);
+					//Simple (DEFINATELY NOT STANDARDS-COMPLAINT!!) substitution for replacement strings with things like $1, $2 in them
+					while ((toreplace = /\$[0-9]/.exec(remaining))) {
+						console.log('Doing me a replace');
+						const before = remaining.substr(0, toreplace.index);
+						console.log('TR', toreplace[0][1]);
+						const replaced = next[toreplace[0][1]];
+						console.log('Replacing with', before, '+', replaced);
+						finalString = state.binary('+', finalString, state.binary('+', before, replaced));
+						remaining = remaining.substr(toreplace.index + toreplace[0].length);
+					}
+
+					console.log('Did all replaces "' + finalString + '"');
+
+					string = state.binary('+', lhs, state.binary('+', finalString, rhs));
 				}
 
 				return {

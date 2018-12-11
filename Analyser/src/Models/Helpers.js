@@ -105,9 +105,6 @@ export default function(state, ctx) {
 
 	function substringHelper(base, args, result) {
 		state.stats.seen("Symbolic Substrings");
-
-		console.log('SUBSTR:', base, 'ARGS:', args);
-
 		const target = state.asSymbolic(base);
 
 		//The start offset is either the argument of str.len - the arguments
