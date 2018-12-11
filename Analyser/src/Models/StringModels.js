@@ -4,6 +4,7 @@ export default function(state, ctx, model, helpers) {
 
 	const symbolicHook = helpers.symbolicHook;
 	const symbolicSubstring = helpers.substring;
+	const coerceToString = helpers.coerceToString;
 
 	/**
 	 * Stubs string constructor with our (flaky) coerceToString fn

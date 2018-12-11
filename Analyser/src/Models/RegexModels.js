@@ -332,6 +332,73 @@ export default function(state, ctx, model, helpers) {
 		};
 	}
 
+
+	function RegexpBuiltinReplace(regex, string, replacementString) {
+
+		//Remove g and y from regex
+		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g/g, "") + "");
+
+		if (regex.flags.includes('g')) {
+
+			let replaced = true;
+			
+			//Global replace
+			while (true) {
+				const next = RegexpBuiltinReplace(rewrittenRe, string).result;
+
+				if (!next.replaced) {
+					break;
+				}
+
+				replaced = true;
+				string = next.result;
+			}
+
+			return {
+				result: string,
+				replaced: replaced
+			};
+
+		} else {
+			
+			console.log('Scanning for ', rewrittenRe, 'in', string);
+			//Single point replace
+			const next = RegexpBuiltinExec(rewrittenRe, string).result;
+
+			if (next) {
+
+				console.log('NXT:', next);
+
+				//Find out the match size
+				let matchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
+
+				//Collect the parts before and after the match
+				let lhs = model.get(String.prototype.substring).call(string, 0, next.index);
+				let rhs = model.get(String.prototype.substring).call(string, state.binary('+', next.index, matchSize));
+
+				console.log('LHS', lhs);
+				console.log('RHS', rhs);
+				console.log('Replacement', replacementString);
+
+				if (typeof(state.getConcrete(replacementString)) === "function") {
+					string = state.binary('+', lhs, state.binary('+', replacementString.apply(null, next), rhs));
+				} else {
+					string = state.binary('+', lhs, state.binary('+', replacementString, rhs));
+				}
+
+				return {
+					result: string,
+					replaced: true
+				};
+			} else {
+				return {
+					result: string,
+					replaced: false
+				};
+			}
+		}
+	}
+
 	function shouldBeSymbolic(regex, string) {
 		return regex instanceof RegExp && (state.isSymbolic(regex.lastIndex) || state.isSymbolic(string)); 
 	}
@@ -363,8 +430,8 @@ export default function(state, ctx, model, helpers) {
 	//Replace model for replace regex by string. Does not model replace with callback.
 	model.add(String.prototype.replace, symbolicHookRe(
 		String.prototype.replace,
-		(base, args) => shouldBeSymbolic(args[0], base),
-		(base, args) => RegexpBuiltinReplace(args[0], base).result 
+		(base, args) => shouldBeSymbolic(args[0], base) && typeof(state.getConcrete(args[1])) === "string",
+		(base, args) => RegexpBuiltinReplace(args[0], base, args[1]).result 
 	));
 
 	model.add(String.prototype.split, symbolicHookRe(

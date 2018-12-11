@@ -9,7 +9,7 @@ var b = /^...$/;
 x = x.replace(b, 'abdef');
 
 if (x == 'hello') {
-	throw 'Reachable';
+	throw 'Reachable 1';
 }
 
 if (x == 'abc') {
@@ -21,5 +21,5 @@ if (x == 'def') {
 }
 
 if (x == 'abdef') {
-	throw 'Reachable';
+	throw 'Reachable 2';
 }
