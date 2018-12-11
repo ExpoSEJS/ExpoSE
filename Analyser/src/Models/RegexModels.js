@@ -181,6 +181,12 @@ export default function(state, ctx, model, helpers) {
 
 		if (Config.capturesEnabled && (regex.sticky || regex.global)) {
 			Log.log('Captures enabled - symbolic lastIndex enabled');
+
+			regexEncoded.startIndex = ctx.mkAdd(
+				state.asSymbolic(currentLastIndex),
+				regexEncoded.startIndex
+			);
+
 			regex.lastIndex = new ConcolicValue(
 				regex.lastIndex,
 				ctx.mkIte(
@@ -265,7 +271,8 @@ export default function(state, ctx, model, helpers) {
 
 	function RegexpBuiltinSearch(regex, string) {
 
-		const test = RegexpBuiltinTest(regex, string);
+		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, ""));
+		const test = RegexpBuiltinTest(rewrittenRe, string);
 
 		const search_in_re = ctx.mkIte(
 			state.asSymbolic(test.result),
@@ -280,6 +287,135 @@ export default function(state, ctx, model, helpers) {
 			)
 		};
 
+	}
+
+	function RegexpBuiltinSplit(regex, string) {
+
+		//Remove g and y from regex
+		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "");
+
+		let results = [];
+		let lastIndex = 0;
+
+		//While there is still a match of regex in string add the area before it to results and
+		//then increase lastIndex by the size of the match + its start index
+		while (true) {
+
+			//Grab the remaining portion of the string and call exec on it
+			const c_string = model.get(String.prototype.substring).call(string, lastIndex);
+			const next = RegexpBuiltinExec(rewrittenRe, c_string).result;
+
+			//Add the next step
+			if (next) {
+
+				const entireMatchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
+				
+				results.push(
+					model.get(String.prototype.substring).call(c_string, 0, next.index)
+				);
+
+				lastIndex = state.binary('+',
+					lastIndex,
+					entireMatchSize
+				);
+
+			} else {
+				break;
+			}
+		}
+
+		//After we have exhausted all instances of the re in string push the remainder to the result
+		results.push(model.get(String.prototype.substring).call(string, lastIndex));
+
+		return {
+			result: results
+		};
+	}
+
+
+	function RegexpBuiltinReplace(regex, string, replacementString) {
+
+		//Remove g and y from regex
+		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g/g, "") + "");
+
+		if (regex.flags.includes('g')) {
+
+			let replaced = true;
+			
+			//Global replace
+			while (true) {
+				const next = RegexpBuiltinReplace(rewrittenRe, string).result;
+
+				if (!next.replaced) {
+					break;
+				}
+
+				replaced = true;
+				string = next.result;
+			}
+
+			return {
+				result: string,
+				replaced: replaced
+			};
+
+		} else {
+			
+			//Single point replace
+			const next = RegexpBuiltinExec(rewrittenRe, string).result;
+
+			if (next) {
+
+				//Find out the match size
+				let matchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
+
+				//Collect the parts before and after the match
+				let lhs = model.get(String.prototype.substring).call(string, 0, next.index);
+				let rhs = model.get(String.prototype.substring).call(string, state.binary('+', next.index, matchSize));
+
+				if (typeof(state.getConcrete(replacementString)) === "function") {
+					string = state.binary('+', lhs, state.binary('+', replacementString.apply(null, next), rhs));
+				} else {
+					
+					let finalString;
+
+					//Simple (DEFINATELY NOT STANDARDS-COMPLAINT!!) substitution for replacement strings with things like $1, $2 in them
+					if (state.getConcrete(replacementString).search(/\$[0-9]/) != -1) {
+						Log.log('WARN: no support for symbolic replacement strings');
+						let remaining = state.getConcrete(replacementString);
+						finalString = "";
+
+						let toreplace;
+
+						while ((toreplace = /\$[0-9]/.exec(remaining))) {
+							console.log('Doing me a replace');
+							const before = remaining.substr(0, toreplace.index);
+							console.log('TR', toreplace[0][1]);
+							const replaced = next[toreplace[0][1]];
+							console.log('Replacing with', before, '+', replaced);
+							finalString = state.binary('+', finalString, state.binary('+', before, replaced));
+							remaining = remaining.substr(toreplace.index + toreplace[0].length);
+						}
+
+						finalString = state.binary('+', finalString, remaining);
+					} else { //Short circuit if there are no substitution strings
+						finalString = replacementString;
+					}
+
+					string = state.binary('+', lhs, state.binary('+', finalString, rhs));
+				}
+
+				return {
+					result: string,
+					replaced: true
+				};
+			} else {
+				return {
+					result: string,
+					replaced: false
+				};
+			}
+		}
 	}
 
 	function shouldBeSymbolic(regex, string) {
@@ -313,13 +449,13 @@ export default function(state, ctx, model, helpers) {
 	//Replace model for replace regex by string. Does not model replace with callback.
 	model.add(String.prototype.replace, symbolicHookRe(
 		String.prototype.replace,
-		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp && typeof args[1] === "string",
-		(base, args) => state.getConcrete(base).secret_replace.apply(base, args)
+		(base, args) => shouldBeSymbolic(args[0], base) && typeof(state.getConcrete(args[1])) === "string",
+		(base, args) => RegexpBuiltinReplace(args[0], base, args[1]).result 
 	));
 
 	model.add(String.prototype.split, symbolicHookRe(
 		String.prototype.split,
-		(base, args) => state.isSymbolic(base) && args[0] instanceof RegExp,
-		(base, args) => state.getConcrete(base).secret_split.apply(base, args)
+		(base, args) => shouldBeSymbolic(args[0], base),
+		(base, args) => RegexpBuiltinSplit(args[0], base).result
 	));
 }

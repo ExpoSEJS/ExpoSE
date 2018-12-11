@@ -4,7 +4,7 @@
 
 var S$ = require('S$');
 var x = S$.symbol("X", '');
-var b = /(a)/;
+var b = /a/;
 
 S$.assume(x.length < 5);
 
