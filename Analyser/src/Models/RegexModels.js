@@ -300,10 +300,14 @@ export default function(state, ctx, model, helpers) {
 		//While there is still a match of regex in string add the area before it to results and
 		//then increase lastIndex by the size of the match + its start index
 		while (true) {
+			
+			console.log('Next Piece');
 
 			//Grab the remaining portion of the string and call exec on it
 			const c_string = model.get(String.prototype.substring).call(string, lastIndex);
 			const next = RegexpBuiltinExec(rewrittenRe, c_string).result;
+
+			console.log('NP', c_string, 'NXT', next);
 
 			//Add the next step
 			if (next) {
@@ -388,11 +392,8 @@ export default function(state, ctx, model, helpers) {
 						let toreplace;
 
 						while ((toreplace = /\$[0-9]/.exec(remaining))) {
-							console.log('Doing me a replace');
 							const before = remaining.substr(0, toreplace.index);
-							console.log('TR', toreplace[0][1]);
 							const replaced = next[toreplace[0][1]];
-							console.log('Replacing with', before, '+', replaced);
 							finalString = state.binary('+', finalString, state.binary('+', before, replaced));
 							remaining = remaining.substr(toreplace.index + toreplace[0].length);
 						}
