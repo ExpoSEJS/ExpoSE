@@ -38,7 +38,7 @@ function Model() {
 function BuildModels(state) {
 	const ctx = state.ctx;
 	const model = new Model();
-	const helpers = Helpers(state, ctx);
+	const helpers = Helpers(state, ctx, model);
 
 	MathModels(state, ctx, model, helpers);
 	StringModels(state, ctx, model, helpers);
