@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 480);
+			}, 1000 * 180);
 
 			console.log("Browser mode setup finished");
 
@@ -75,11 +75,11 @@ class SymbolicExecution {
 			console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
 		};
 
-		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
+		if (f && (f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
 			report(args[0].src);
 		}
 
-		if (f.name == "open") {
+		if (f && f.name == "open") {
 			report(args[1]);
 		}
 
@@ -110,8 +110,8 @@ class SymbolicExecution {
 	}
 
 	/**
-     * Called after a function completes execution
-     */
+	 * Called after a function completes execution
+	 */
 	invokeFun(iid, f, base, args, result, _isConstructor, _isMethod) {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);

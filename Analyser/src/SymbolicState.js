@@ -244,15 +244,19 @@ class SymbolicState {
 		return sort;
 	}
 
-	_deepConcrete(arg) {
+	_deepConcrete(arg, concreteCount) {
+		
 		/** TODO: Deep concretize shouldn't only conc if val is symbolic */
-		arg = this.getConcrete(arg);
+		if (this.isSymbolic(arg)) {
+			arg = this.getConcrete(arg);
+			concreteCount.val += 1;
+		}
 
 		if (arg instanceof Object) {
 			for (let i in arg) {
 				const property = Object.getOwnPropertyDescriptor(arg, i);
 				if (property && this.isSymbolic(property.value)) {
-					arg[i] = this._deepConcrete(arg[i]);
+					arg[i] = this._deepConcrete(arg[i], concreteCount);
 				}
 			}
 		}
@@ -260,19 +264,20 @@ class SymbolicState {
 		return arg;
 	}
 
-	concretizeCall(f, base, args, report = true) { 
+	concretizeCall(f, base, args, report = true) {
 
-		if (report) {
-			this.stats.set("Concretized Function Calls", f.name);
-			Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
-		} 
-
-		base = this._deepConcrete(base);
+		const numConcretizedProperties = { val: 0 };
+		base = this._deepConcrete(base, numConcretizedProperties); 
 
 		const n_args = Array(args.length);
 
 		for (let i = 0; i < args.length; i++) {
-			n_args[i] = this._deepConcrete(args[i]);
+			n_args[i] = this._deepConcrete(args[i], numConcretizedProperties);
+		}
+
+		if (report && numConcretizedProperties.val) {
+			this.stats.set("Concretized Function Calls", f.name);
+			Log.logMid(`Concrete function concretizing all inputs ${ObjectHelper.asString(f)} ${ObjectHelper.asString(base)} ${ObjectHelper.asString(args)}`);
 		}
 
 		return {
