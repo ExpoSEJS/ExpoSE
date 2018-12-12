@@ -90,7 +90,6 @@ class Coverage {
 		for (let i in file.smap) {
 			const lineNumber = file.smap[i][0];
 			totalLines.add(lineNumber);
-
 			if (file.branches[i] & IS_TOUCHED) {
 				touchedLines.add(lineNumber);
 			}

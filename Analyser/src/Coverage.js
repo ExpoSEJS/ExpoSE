@@ -79,6 +79,7 @@ class Coverage {
 	}
 
 	touch(iid) {
+		console.log("Touched", iid);
 		this.getBranchInfo()[iid] |= IS_TOUCHED;
 		this._lastIid = iid;
 	}

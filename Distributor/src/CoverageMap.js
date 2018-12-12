@@ -8,19 +8,19 @@ function generateCoverageMap(lineInfo, callback) {
 		if (!Internal(filename)) {
 			FileTransformer(filename).then(data => {
 
-				console.log(`*- Line Coverage for ${filename} `);
+				console.log(`[+] Line Coverage for ${filename} `);
 
 				const lines = data.split("\n");
 				const linesWithTouched = lines.map((line, idx) => {
 
-					const lineNumber = idx;
+					const lineNumber = idx + 1;
 
 					if (!lineInfo[filename].all.find(i => i == lineNumber)) {
-						return `s${line}`;
+						return `s^${line}\$`;
 					} else if (lineInfo[filename].touched.find(i => i == lineNumber)) {
-						return `+${line}`;
+						return `+^${line}\$`;
 					} else {
-						return `-${line}`;
+						return `-^${line}\$`;
 					}
 				});
 

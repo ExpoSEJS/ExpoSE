@@ -93,7 +93,7 @@ class Center {
 	}
 
 	_printStatus() {
-		Log("*** [" + this._done.length + " done /" + this._strategy.length() +" queued / " + this._running.length + " running / " + this._errors + " errors / " + this._coverage.current().loc.toFixed(2) * 100 + "% coverage ] ***");
+		Log("[" + this._done.length + " done /" + this._strategy.length() +" queued / " + this._running.length + " running / " + this._errors + " errors / " + this._coverage.current().loc.toFixed(2) * 100 + "% coverage ] ***");
 	}
 
 	_finishedTesting() {
