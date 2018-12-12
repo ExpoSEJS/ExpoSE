@@ -16,11 +16,11 @@ function generateCoverageMap(lineInfo, callback) {
 					const lineNumber = idx + 1;
 
 					if (!lineInfo[filename].all.find(i => i == lineNumber)) {
-						return `s^${line}\$`;
+						return `s^${line}$`;
 					} else if (lineInfo[filename].touched.find(i => i == lineNumber)) {
-						return `+^${line}\$`;
+						return `+^${line}$`;
 					} else {
-						return `-^${line}\$`;
+						return `-^${line}$`;
 					}
 				});
 
