@@ -2,10 +2,10 @@ import Config from "../Config";
 import { ConcolicValue } from "../Values/WrappedValue";
 import Log from "../Utilities/Log";
 import ObjectHelper from "../Utilities/ObjectHelper";
-
+import { isNative } from "../Utilities/IsNative";
 const map = Array.prototype.map;
 
-export default function(state, ctx) {
+export default function(state, ctx, model) {
 
 	function runMethod(f, base, args, concretize = true) {
 		let result, thrown;

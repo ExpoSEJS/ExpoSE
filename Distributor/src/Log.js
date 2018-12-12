@@ -56,4 +56,29 @@ const Logger = function(stream) {
 	return log;
 };
 
-export default Logger(process.stdout);
+const DefaultLogger = Logger(process.stdout);
+let lastStep = 0;
+
+function nextStep(i) {
+	switch (i) {
+	case 0: return "-";
+	case 1: return "\\";
+	case 2: return "|";
+	case 3: return "/";
+	case 4: return "-";
+	case 5: return "\\";
+	case 6: return "|";
+	case 7: return "/";
+	}
+}
+
+export default function(line) {
+	
+	//Log with the current step of the spinner
+	DefaultLogger(`[${nextStep(lastStep++)}] ${line}`);
+	
+	//Check for spinner reset
+	if (lastStep == 8) {
+		lastStep = 0;
+	}
+}
