@@ -13,7 +13,7 @@ function generateCoverageMap(lineInfo, callback) {
 				const lines = data.split("\n");
 				const linesWithTouched = lines.map((line, idx) => {
 
-					const lineNumber = idx + 1;
+					const lineNumber = idx;
 
 					if (!lineInfo[filename].all.find(i => i == lineNumber)) {
 						return `s${line}`;
