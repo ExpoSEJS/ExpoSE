@@ -82,7 +82,7 @@ if (process.argv.length >= 3) {
 			console.log("[+] EXPOSE_PRINT_COVERAGE=1 for line by line breakdown");
 		}
 
-		console.log(`[+] ExpoSE Finished. ${done.length} paths, ${errors.length} errors`);
+		console.log(`[+] ExpoSE Finished. ${done.length} paths, ${errors} errors`);
 
 		process.exitCode = errors;
 		clearTimeout(maxTimeout);
