@@ -17,6 +17,7 @@ function buildTestList() {
     buildTest('core/lamda.js', 1, 0);
     buildTest('core/conc_diff.js', 3, 2);
     buildTest('core/spaced name.js', 2, 1);
+		buildTest('core/dont_break_concrete_calls', 1, 0);
 
     //Booleans
     buildTest('bool/hello.js', 2, 0);
