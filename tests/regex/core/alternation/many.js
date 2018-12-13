@@ -2,7 +2,7 @@
 
 'use strict';
 var S$ = require('S$');
-var q = S$.symbol("q", '');
+var q = S$.symbol("q");
 
 if (/^(a|b|c)(c|d)([a-z]|[0-9])$/.test(q)) {
 
