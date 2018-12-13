@@ -16,7 +16,11 @@ export default function(state, ctx, model, helpers) {
 			if (condition(base, args)) {
 				return hook(base, args);
 			} else {
-				return runMethod(f, base, args);
+				const [result, thrown] = runMethod(f, base, args);
+				if (thrown) {
+					throw thrown;
+				}
+				return result;
 			}
 		}
 	}

@@ -15,13 +15,17 @@ function generateCoverageMap(lineInfo, callback) {
 
 					const lineNumber = idx + 1;
 
-					if (!lineInfo[filename].all.find(i => i == lineNumber)) {
-						return `s^${line}$`;
-					} else if (lineInfo[filename].touched.find(i => i == lineNumber)) {
-						return `+^${line}$`;
-					} else {
-						return `-^${line}$`;
+					let indicator = "s";
+
+					if (lineInfo[filename].all.find(i => i == lineNumber)) {
+						if (lineInfo[filename].touched.find(i => i == lineNumber)) {
+							indicator = "+";
+						} else {
+							indicator = "-";
+						}
 					}
+
+					return `${lineNumber}${indicator}^${line}$`;	
 				});
 
 				linesWithTouched.forEach(line => callback(line));
