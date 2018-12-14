@@ -24,7 +24,44 @@ export default function(state, ctx, model, helpers) {
 
 	model.add(String.prototype.substr, substrModel);
 	model.add(String.prototype.substring, substrModel);
-	model.add(String.prototype.slice, substrModel);
+	model.add(String.prototype.slice, symbolicHook(
+		String.prototype.slice,
+		(base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+		(base, args, result) => {
+
+			function relativeIndex(i) {
+				return new ConcolicValue(
+					state.getConcrete(i) < 0 ? state.getConcrete(base).length - state.getConcrete(i) : state.getConcrete(i),
+					ctx.mkIte(
+						ctx.mkLt(state.asSymbolic(i), ctx.mkIntVal(0)),
+						ctx.mkSub(state.asSymbolic(base).getLength(), ctx.mkMul(state.asSymbolic(i), ctx.mkIntVal(-1))),
+						state.asSymbolic(i)
+					)
+				);
+			}
+
+			const from = relativeIndex(args[0]); 
+	
+			let to;
+
+			if (args[1]) {	
+				to = relativeIndex(args[1]);
+			} else {
+				to = new ConcolicValue(state.getConcrete(base).length, state.asSymbolic(base).getLength());
+			}
+
+			const startIndex = ctx.mkRealToInt(state.asSymbolic(from));
+			const length = ctx.mkRealToInt(state.asSymbolic(state.binary('-', to, from)));
+
+			return new ConcolicValue(result,
+				ctx.mkSeqSubstr(
+					state.asSymbolic(base),
+					startIndex,
+					length
+				)
+			);
+		}
+	));
 
 	model.add(String.prototype.charAt, symbolicHook(
 				String.prototype.charAt,

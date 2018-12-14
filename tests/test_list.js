@@ -89,11 +89,11 @@ function buildTestList() {
     buildTest('strings/hello_strings.js', 2, 0);
     buildTest('strings/hello_strings2.js', 3, 0);
     buildTest('strings/hello_strings_concat.js', 2, 0);
-    buildTest('strings/lowercase.js', 2, 1);/*
+    buildTest('strings/lowercase.js', 2, 1);
     buildTest('strings/hello_strings_concat2.js', 1, 0);
     buildTest('strings/hello_strings_len.js', 2, 0);
     buildTest('strings/strings_concat.js', 2, 0);
-    buildTest('strings/negative_slice.js', 7, 5); //TODO: Some paths are doubled*/
+    buildTest('strings/negative_slice.js', 7, 5);
 
     buildTest('strings/simple_substr.js', 2, 1);
     buildTest('strings/complex_substr.js', 7, 5);
