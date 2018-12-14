@@ -296,36 +296,40 @@ export default function(state, ctx, model, helpers) {
 	function RegexpBuiltinSplit(regex, string) {
 
 		//Remove g and y from regex
-		const rewrittenRe = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "");
+		const re = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "");
 
 		let results = [];
 		let lastIndex = 0;
+
+		function rest() {
+			return model.get(String.prototype.substring)
+				.call(string, lastIndex);
+		}
 
 		//While there is still a match of regex in string add the area before it to results and
 		//then increase lastIndex by the size of the match + its start index
 		while (true) {
 
 			//Grab the remaining portion of the string and call exec on it
-			const c_string = model.get(String.prototype.substring).call(string, lastIndex);
-			const next = RegexpBuiltinExec(rewrittenRe, c_string).result;
+			const next = RegexpBuiltinExec(re, rest()).result;
 
-			//Add the next step
+			//While matches remain extract the bit before the match, add that to the result, update lastIndex and step
 			if (next) {
 
-				const entireMatchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
-
-				console.log('NI: ', next.index.toString());
-	
-				results.push(
-					model.get(String.prototype.substring).call(c_string, 0, next.index)
+				const matchSize = new ConcolicValue(
+					state.getConcrete(next[0]).length,
+					state.asSymbolic(next[0]).getLength()
 				);
+
+				const wordsBeforeSplit = model.get(String.prototype.substring)
+					.call(string, lastIndex, next.index);	
+				
+				results.push(wordsBeforeSplit);
 
 				lastIndex = state.binary('+',
 					lastIndex,
-					entireMatchSize
+					state.binary('+', next.index, matchSize)
 				);
-
-				console.log('NI2:', lastIndex.toString());
 
 			} else {
 				break;
@@ -333,7 +337,7 @@ export default function(state, ctx, model, helpers) {
 		}
 
 		//After we have exhausted all instances of the re in string push the remainder to the result
-		results.push(model.get(String.prototype.substring).call(string, lastIndex));
+		results.push(rest());
 
 		return {
 			result: results
