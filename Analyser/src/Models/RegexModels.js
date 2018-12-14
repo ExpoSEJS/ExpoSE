@@ -304,20 +304,18 @@ export default function(state, ctx, model, helpers) {
 		//While there is still a match of regex in string add the area before it to results and
 		//then increase lastIndex by the size of the match + its start index
 		while (true) {
-			
-			console.log('Next Piece');
 
 			//Grab the remaining portion of the string and call exec on it
 			const c_string = model.get(String.prototype.substring).call(string, lastIndex);
 			const next = RegexpBuiltinExec(rewrittenRe, c_string).result;
 
-			console.log('NP', c_string, 'NXT', next);
-
 			//Add the next step
 			if (next) {
 
 				const entireMatchSize = new ConcolicValue(state.getConcrete(next[0]).length, state.asSymbolic(next[0]).getLength());
-				
+
+				console.log('NI: ', next.index.toString());
+	
 				results.push(
 					model.get(String.prototype.substring).call(c_string, 0, next.index)
 				);
@@ -326,6 +324,8 @@ export default function(state, ctx, model, helpers) {
 					lastIndex,
 					entireMatchSize
 				);
+
+				console.log('NI2:', lastIndex.toString());
 
 			} else {
 				break;
