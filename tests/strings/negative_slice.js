@@ -5,8 +5,6 @@ var x = S$.symbol("X", "hello");
 
 S$.assume(x.length == 5);
 
-console.log('Sliced: ', x.slice(2));
-
 if (x.slice(1, 1) == "w") {
 	throw 'Unreachable';
 }
