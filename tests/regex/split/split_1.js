@@ -17,10 +17,10 @@ if (x.length == 2) {
 	}
 
 	if (x[1] == 'wh') {
-		throw 'Reachable';
+		throw 'Reachable 1';
 	}
 
 	if (x[0] == 'w') {
-		throw 'Reachable';
+		throw 'Reachable 1';
 	}
 }

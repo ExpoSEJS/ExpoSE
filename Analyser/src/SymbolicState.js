@@ -60,7 +60,6 @@ function BuildUnaryJumpTable(state) {
 class SymbolicState {
 	constructor(input, sandbox) {
 		this.ctx = new Z3.Context();
-        
 		this.slv = new Z3.Solver(this.ctx,
 			Config.incrementalSolverEnabled,
 			[
