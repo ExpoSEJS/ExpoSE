@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/ExpoSEJS/ExpoSE.svg?branch=master)](https://travis-ci.org/ExpoSEJS/ExpoSE)
 
-## ExpoSE.js
+## ExpoSE
 
-ExpoSE.js is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](http://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](http://www.cs.rhul.ac.uk/home/kinder/index.html). ExpoSE is based on Jalangi2 and the Z3 SMT solver.
+ExpoSE is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](http://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](http://www.cs.rhul.ac.uk/home/kinder/index.html). ExpoSE is based on Jalangi2 and the Z3 SMT solver.
 
 ### Requirements
 

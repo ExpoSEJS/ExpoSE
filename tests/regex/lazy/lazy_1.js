@@ -7,8 +7,7 @@ var b = /^a*?(a)?$/.exec(S$.symbol("X", ""));
 
 if (b != null) {
 
-	console.log(JSON.stringify(b));
-	
+
 	if (b[1] == 'a') {
 		throw 'Reachable';
 	} else if (!b[1]) {

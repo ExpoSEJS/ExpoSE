@@ -28,7 +28,7 @@ class Tester {
 		prc.stderr.on("data", data => this.out += data.toString());
 
 		const SECOND = 1000;
-		const TIME_WARNING = 30;
+		const TIME_WARNING = 60;
 		let longRunningMessage = setTimeout(() => console.log(`\rTEST WARNING: Test case ${this.file.path} is taking an excessive amount of time to complete (over ${TIME_WARNING}s)`), TIME_WARNING * SECOND);
 
 		prc.on("close", code => {

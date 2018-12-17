@@ -2,10 +2,10 @@ import Config from "../Config";
 import { ConcolicValue } from "../Values/WrappedValue";
 import Log from "../Utilities/Log";
 import ObjectHelper from "../Utilities/ObjectHelper";
-
+import { isNative } from "../Utilities/IsNative";
 const map = Array.prototype.map;
 
-export default function(state, ctx) {
+export default function(state, ctx, model) {
 
 	function runMethod(f, base, args, concretize = true) {
 		let result, thrown;
@@ -79,15 +79,6 @@ export default function(state, ctx) {
 		return symbol;
 	}
 
-	//Hook for regex methods, will only hook if regex is enabled
-	function symbolicHookRe(f, condition, hook) {
-		return symbolicHook(f, condition, function() {
-			//Intercept the hook to do regex stats
-			state.stats.seen("Regex Function Model");
-			return hook.apply(this, arguments);
-		}, true, !Config.regexEnabled);
-	}
-
 	function NoOp(f) {
 		return function(base, args) {
 			Log.logMid(`NoOp ${f.name} with base ${ObjectHelper.asString(base)} and ${ObjectHelper.asString(args)}`);
@@ -114,7 +105,6 @@ export default function(state, ctx) {
 
 	function substringHelper(base, args, result) {
 		state.stats.seen("Symbolic Substrings");
-
 		const target = state.asSymbolic(base);
 
 		//The start offset is either the argument of str.len - the arguments
@@ -153,10 +143,10 @@ export default function(state, ctx) {
 	}
 
 	return {
+		runMethod: runMethod,
 		symbolicHook: symbolicHook,
 		ConcretizeIfNative: ConcretizeIfNative,
 		coerceToString: coerceToString,
-		symbolicHookRe: symbolicHookRe,
 		NoOp: NoOp,
 		substring: substringHelper
 	};

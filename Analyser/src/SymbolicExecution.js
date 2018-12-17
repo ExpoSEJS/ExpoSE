@@ -204,7 +204,6 @@ class SymbolicExecution {
 
 		}
 
-		this.state.coverage.touch(iid);
 		Log.logHigh(`Get field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
 		//If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
@@ -263,7 +262,7 @@ class SymbolicExecution {
 	}
 
 	putField(iid, base, offset, val, _isComputed, _isOpAssign) {
-		this.state.coverage.touch(iid);
+
 		Log.logHigh(`PutField ${base.toString()} at ${offset}`);
 
 		if (base instanceof SymbolicObject) {
@@ -328,6 +327,7 @@ class SymbolicExecution {
 
 	_with(iid, val) {
 		this.state.coverage.touch(iid);
+		Log.logHigh("With {val}");
 		return { result: val };
 	}
 
@@ -359,7 +359,7 @@ class SymbolicExecution {
 	}
 
 	scriptEnter(iid, instrumentedFileName, originalFileName) {
-		this.state.coverage.touch(iid);
+		//this.state.coverage.touch(iid);
 
 		const enterString = `====== ENTERING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
 
@@ -373,7 +373,8 @@ class SymbolicExecution {
 	}
 
 	scriptExit(iid, wrappedExceptionVal) {
-		this.state.coverage.touch(iid);
+		//this.state.coverage.touch(iid);
+		
 		const originalFileName = this._removeScript();
 		const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
 
@@ -400,12 +401,12 @@ class SymbolicExecution {
 
 			//We also consider boxed primatives to be primative
 			const is_primative = typeof(left_c) != "object" || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
-			const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;  
+			const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;
 			const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
- 
+
 			//TODO: Work out how to check that boxed values are the same type
 			const is_same_type = typeof(left_c) === typeof(right_c) || (!is_null && left_c.valueOf() === right_c.valueOf());
-            
+
 			if (!is_same_type || !is_primative || is_null || !is_real) {
 				Log.log(`Concretizing binary ${op} on operands of differing types. Type coercion not yet implemented symbolically. (${ObjectHelper.asString(left_c)}, ${ObjectHelper.asString(right_c)}) (${typeof left_c}, ${typeof right_c})`);
 				left = left_c;
@@ -444,7 +445,6 @@ class SymbolicExecution {
 	}
 
 	unaryPre(iid, op, left) {
-		this.state.coverage.touch(iid);
 
 		// Don't evaluate natively when args are symbolic
 		return {
@@ -484,13 +484,8 @@ class SymbolicExecution {
 		return { result: code };
 	}
 
-	runInstrumentedFunctionBody(iid) {
-		this.state.coverage.touch(iid);
-	}
-
-	onReady(cb) {
-		cb();
-	}
+	/*runInstrumentedFunctionBody(iid) {}*/
+	onReady(cb) { cb(); }
 }
 
 export default SymbolicExecution;

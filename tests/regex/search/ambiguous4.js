@@ -2,6 +2,7 @@
 
 //Tests a simple string search
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
 var b = /[a-z]*/;
 var nl = x.search(b);
@@ -15,7 +16,7 @@ if (x == 'hello') {
 		throw 'Unreachable';
 	}
 
-	throw 'Reachable';
+	throw 'Reachable 1';
 }
 
 if (x == 'what') {
@@ -24,7 +25,7 @@ if (x == 'what') {
 		throw 'Unreachable';
 	}
 
-	throw 'Reachable';
+	throw 'Reachable 2';
 }
 
 if (x == '12345' && nl != 0) {

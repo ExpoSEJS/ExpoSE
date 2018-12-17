@@ -19,7 +19,7 @@ export default function(state, ctx, model, helper) {
 	));
 
 	model.add(Math.ceil, symbolicHook(
-		Math.floor,
+		Math.ceil,
 		(base, args) => state.isSymbolic(args[0]),
 		(base, args, r) => {
 			const intArg = ctx.mkRealToInt(state.asSymbolic(args[0]));
@@ -29,7 +29,7 @@ export default function(state, ctx, model, helper) {
 	));
 
 	model.add(Math.round, symbolicHook(
-		Math.floor,
+		Math.round,
 		(base, args) => state.isSymbolic(args[0]),
 		(base, args, r) => {
 			const intArg = ctx.mkRealToInt(state.asSymbolic(args[0]));

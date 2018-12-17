@@ -60,7 +60,6 @@ function BuildUnaryJumpTable(state) {
 class SymbolicState {
 	constructor(input, sandbox) {
 		this.ctx = new Z3.Context();
-        
 		this.slv = new Z3.Solver(this.ctx,
 			Config.incrementalSolverEnabled,
 			[
@@ -97,8 +96,8 @@ class SymbolicState {
 		/** Set up trim methods **/
 		this.slv.fromString( 
 			"(define-fun str.isWhite ((c String)) Bool (= c \" \"))\n" + //TODO: Only handles  
-            "(define-fun-rec str.whiteLeft ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteLeft s (+ i 1)) i))\n" +
-            "(define-fun-rec str.whiteRight ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteRight s (- i 1)) i))\n"
+			"(define-fun-rec str.whiteLeft ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteLeft s (+ i 1)) i))\n" +
+      "(define-fun-rec str.whiteRight ((s String) (i Int)) Int (if (str.isWhite (str.at s i)) (str.whiteRight s (- i 1)) i))\n"
 		);
 	}
 
@@ -143,7 +142,7 @@ class SymbolicState {
 				return prev;
 			} else {
 				return prev + (prev.length ? ", " : "") + this_line;
-			}    
+			}
 		}, "") : "";
 	}
 
@@ -168,13 +167,13 @@ class SymbolicState {
 		const newPC = this.ctx.mkNot(this.pathCondition[i].ast);
 		const allChecks = this.pathCondition.slice(0, i).reduce((last, next) => last.concat(next.ast.checks), []).concat(newPC.checks);
 
-		Log.logMid(`Checking if ${newPC.toString()} is satisfiable`);
+		Log.logMid(`Checking if ${newPC.simplify().toString()} is satisfiable`);
 
 		const solution = this._checkSat(newPC, i, allChecks);
 
 		if (solution) {
 			this._addInput(newPC, solution, i, childInputs);
-			Log.logHigh(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
+			Log.logMid(`Satisfiable. Remembering new input: ${ObjectHelper.asString(solution)}`);
 
 			if (inputCallback) {
 				inputCallback(childInputs);

@@ -2,8 +2,9 @@
 
 //Tests replace on a global regex
 
+var S$ = require('S$');
 var x = S$.symbol("X", '');
-var b = /(a)/;
+var b = /a/;
 
 S$.assume(x.length < 5);
 
@@ -16,10 +17,10 @@ if (x.length == 2) {
 	}
 
 	if (x[1] == 'wh') {
-		throw 'Reachable';
+		throw 'Reachable 1';
 	}
 
 	if (x[0] == 'w') {
-		throw 'Reachable';
+		throw 'Reachable 1';
 	}
 }

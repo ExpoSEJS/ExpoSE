@@ -6,11 +6,11 @@ var x = S$.symbol("X", "hello");
 S$.assume(x.length == 5);
 
 if (x.slice(1, 1) == "w") {
-	throw 'Reachable';
+	throw 'Unreachable';
 }
 
 if (x.slice(1) == "what") {
-	throw 'Unreachable';
+	throw 'Reachable 1';
 }
 
 if (x.slice(1) == "phat") {
