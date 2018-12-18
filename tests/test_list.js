@@ -262,7 +262,7 @@ function buildTestList() {
      buildTest('regex/replace/single/replace_3.js', 4, 3);
      buildTest('regex/replace/substitute/substitute.js', 2, 2);
 
-		 buildTest('regex/replace/global/global_cb.js', 5, 2);
+		 buildTest('regex/replace/global/global_cb.js', 10, 6);
 
      /**
       * Split application model tests

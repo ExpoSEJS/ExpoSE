@@ -356,7 +356,7 @@ export default function(state, ctx, model, helpers) {
 			
 			//Global replace
 			while (true) {
-				const next = RegexpBuiltinReplace(rewrittenRe, string, replacementString).result;
+				const next = RegexpBuiltinReplace(rewrittenRe, string, replacementString);
 
 				if (!next.replaced) {
 					break;
