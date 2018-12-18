@@ -356,7 +356,7 @@ export default function(state, ctx, model, helpers) {
 			
 			//Global replace
 			while (true) {
-				const next = RegexpBuiltinReplace(rewrittenRe, string).result;
+				const next = RegexpBuiltinReplace(rewrittenRe, string, replacementString).result;
 
 				if (!next.replaced) {
 					break;
@@ -386,12 +386,18 @@ export default function(state, ctx, model, helpers) {
 				let rhs = model.get(String.prototype.substring).call(string, state.binary('+', next.index, matchSize));
 
 				if (typeof(state.getConcrete(replacementString)) === "function") {
-					string = state.binary('+', lhs, state.binary('+', replacementString.apply(null, next), rhs));
+					string = state.binary('+',
+						lhs,
+						state.binary('+',
+							coerceToString(replacementString.apply(null, next)),
+							rhs
+						)
+					);
 				} else {
 					
 					let finalString;
 
-					//Simple (DEFINATELY NOT STANDARDS-COMPLAINT!!) substitution for replacement strings with things like $1, $2 in them
+					//Simple (NOT STANDARDS-COMPLAINT!!) substitution for replacement strings with things like $1, $2 in them
 					if (state.getConcrete(replacementString).search(/\$[0-9]/) != -1) {
 						Log.log('WARN: no support for symbolic replacement strings');
 						let remaining = state.getConcrete(replacementString);
@@ -455,10 +461,9 @@ export default function(state, ctx, model, helpers) {
 		(base, args) => RegexpBuiltinTest(base, coerceToString(args[0])).result
 	));
 
-	//Replace model for replace regex by string. Does not model replace with callback.
 	model.add(String.prototype.replace, symbolicHookRe(
 		String.prototype.replace,
-		(base, args) => shouldBeSymbolic(args[0], base) && typeof(state.getConcrete(args[1])) === "string",
+		(base, args) => shouldBeSymbolic(args[0], base) && (typeof(state.getConcrete(args[1])) === "string" || typeof(state.getConcrete(args[1])) === "function"),
 		(base, args) => RegexpBuiltinReplace(args[0], base, args[1]).result 
 	));
 

@@ -256,10 +256,13 @@ function buildTestList() {
      * Replace application model tests
      */
 
+		 buildTest('regex/replace/single/callback.js', 4, 2);
      buildTest('regex/replace/single/single_replace.js', 5, 3);
      buildTest('regex/replace/single/replace_2.js', 3, 2);
      buildTest('regex/replace/single/replace_3.js', 4, 3);
      buildTest('regex/replace/substitute/substitute.js', 2, 2);
+
+		 buildTest('regex/replace/global/global_cb.js', 5, 2);
 
      /**
       * Split application model tests
