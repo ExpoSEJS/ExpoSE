@@ -10,5 +10,5 @@ if [ -e ${Z3_PATH+x} ]; then
 	else
 		export Z3_PATH="./node_modules/z3javascript/bin/libz3.so"
 	fi
-	echo "Set Default Z3_PATH to $Z3_PATH"
+	#echo "Set Default Z3_PATH to $Z3_PATH"
 fi

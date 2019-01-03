@@ -13,10 +13,6 @@ function getArgument(name, type, dResult) {
 function maxConcurrent() {
 	const defaultCpuCores = os.cpus().length;
 	const fromArgOrDefault = getArgument("EXPOSE_MAX_CONCURRENT", "number", defaultCpuCores);
-
-	console.log(`Number of CPU cores: ${defaultCpuCores}`);
-	console.log(`Max concurrent: ${fromArgOrDefault} concurrent test cases`);
-
 	return fromArgOrDefault;
 }
 
