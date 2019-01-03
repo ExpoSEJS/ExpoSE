@@ -97,9 +97,9 @@ class SymbolicExecution {
 			base = concretized.base;
 			args = concretized.args;
 		} else if (fn_model) {
-			stats.seen('Modelled Function Call');
+			this.state.stats.seen("Modelled Function Call");
 		} else {
-			stats.seen('General Function Call');
+			this.state.stats.seen("General Function Call");
 		}
 
 		/**
