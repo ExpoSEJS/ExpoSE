@@ -1,5 +1,7 @@
 import { ConcolicValue } from "../Values/WrappedValue";
 
+let uniq_ctr = 0;
+
 export default function(state, ctx, model, helpers) {
 
 	const symbolicHook = helpers.symbolicHook;
@@ -22,6 +24,28 @@ export default function(state, ctx, model, helpers) {
 		symbolicSubstring
 	);
 
+  model.add(String.prototype.includes, symbolicHook(
+    String.prototype.includes,
+    (base, args) => typeof state.getConcrete(base) === "string" && state.isSymbolic(base) || state.isSymbolic(args[0]),
+    (base, args, result) => {
+
+      //Theory:
+      //base = string, args[0] coerced to string if not string
+      //If there exists some i such that substr(base, i, length args[0]) == args[0] then true
+      //Otherwise false
+
+      args[0] = coerceToString(args[0]);
+
+      let startPosition = ctx.mkIntVar('Includes_Start_' + uniq_ctr++);
+      let substringPart = ctx.mkSeqSubstr(
+        state.asSymbolic(base),
+        startPosition,
+        state.asSymbolic(args[0]).getLength()
+      );
+
+      return new ConcolicValue(result, ctx.mkEq(substringPart, state.asSymbolic(args[0])));
+    }
+  ));
 	model.add(String.prototype.substr, substrModel);
 	model.add(String.prototype.substring, substrModel);
 	model.add(String.prototype.slice, symbolicHook(
