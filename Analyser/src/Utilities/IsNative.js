@@ -1,10 +1,11 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
+import Log from './Log';
 
 /** 
  * Some code is from https://gist.github.com/jdalton/5e34d890105aca44399f by John-David Dalton
  */
+
 const toString = Object.prototype.toString;
 const fnToString = Function.prototype.toString;
 const reHostCtor = /^\[object .+?Constructor\]$/;
@@ -23,6 +24,10 @@ function isNativeCore(value) {
 }
 
 function isNative(v) {
+  Log.logMid('TODO: IsNative Uncached');
+  //TODO: Blake: IsNative uncached - somehow v can be null?!?
+  return isNativeCore(v);
+/*
     const type = typeof v;
     if (type && (type == "function" || type == "object")) {
 
@@ -42,6 +47,7 @@ function isNative(v) {
     } else {
         return false;
     }
+*/
 }
 
 export {isNative};

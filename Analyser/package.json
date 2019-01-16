@@ -5,6 +5,7 @@
   "author": "Blake Loring <blake@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
   "readme": "README.md",
   "dependencies": {
+    "babel-plugin-transform-remove-strict-mode": "0.0.2",
     "browserify": "^14.1.0",
     "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#ac094e63cfe3546f469dca76d3ce9ac0298ec9f2",
     "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#7e6dc2a92ebd7ac4a532ebb07beeb99ea2e3a88d"
