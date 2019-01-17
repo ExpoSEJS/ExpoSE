@@ -14,7 +14,14 @@ process.on("disconnect", function() {
 });
 
 if (process.argv.length >= 3) {
-	const target = process.argv[process.argv.length - 1];
+ 
+  let target = process.argv[process.argv.length - 1];
+  let initialInput = undefined;
+
+  if (process.argv.length == 4) {
+      target = process.argv[process.argv.length - 2];
+      initialInput = JSON.parse(process.argv[process.argv.length - 1]);
+  }
 
 	console.log(`[+] ExpoSE ${target} concurrent: ${Config.maxConcurrent} timeout: ${Config.maxTime} per-test: ${Config.testMaxTime}`);
 
@@ -86,7 +93,7 @@ if (process.argv.length >= 3) {
 
 		process.exitCode = errors;
 		clearTimeout(maxTimeout);
-	}).start(target);
+	}).start(target, initialInput);
 } else {
-	console.log(`USAGE: ${process.argv[0]} ${process.argv[1]} target`);
+	console.log(`USAGE: ${process.argv[0]} ${process.argv[1]} target (Optional: initial input)`);
 }
