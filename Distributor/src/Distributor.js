@@ -15,13 +15,13 @@ process.on("disconnect", function() {
 
 if (process.argv.length >= 3) {
  
-  let target = process.argv[process.argv.length - 1];
-  let initialInput = undefined;
+	let target = process.argv[process.argv.length - 1];
+	let initialInput = undefined;
 
-  if (process.argv.length == 4) {
-      target = process.argv[process.argv.length - 2];
-      initialInput = JSON.parse(process.argv[process.argv.length - 1]);
-  }
+	if (process.argv.length == 4) {
+		target = process.argv[process.argv.length - 2];
+		initialInput = JSON.parse(process.argv[process.argv.length - 1]);
+	}
 
 	console.log(`[+] ExpoSE ${target} concurrent: ${Config.maxConcurrent} timeout: ${Config.maxTime} per-test: ${Config.testMaxTime}`);
 
