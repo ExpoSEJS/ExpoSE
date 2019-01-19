@@ -1,9 +1,9 @@
 import { ConcolicValue } from "../Values/WrappedValue";
-
-let uniq_ctr = 0;
+import Log from '../Utilities/Log';
 
 export default function(state, ctx, model, helpers) {
 
+  const mkIndexSymbol = helpers.mkIndexSymbol;
 	const symbolicHook = helpers.symbolicHook;
 	const symbolicSubstring = helpers.substring;
 	const coerceToString = helpers.coerceToString;
@@ -37,7 +37,7 @@ export default function(state, ctx, model, helpers) {
 
       args[0] = coerceToString(args[0]);
 
-      let startPosition = ctx.mkIntVar('Includes_Start_' + uniq_ctr++);
+      let startPosition = mkIndexSymbol('Includes_Start');
       let substringPart = ctx.mkSeqSubstr(
         state.asSymbolic(base),
         startPosition,
@@ -129,18 +129,24 @@ export default function(state, ctx, model, helpers) {
 	(base, args, result) => {
 
       //Theory: Similar to indexOf
-      //n = indexOf s p
+      //n = indexOf s p q where q == args[1] || length(base)
       //n != -1 => Not (Exists n < i < length s s.t. indexOf s t  == i)
 
-		  const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
+		  const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(base).getLength();
 		  const off_s = ctx.mkRealToInt(off_real);
+      const actualIndex = mkIndexSymbol('LastIndexOf_Start_Position');
+      state.pushCondition(ctx.mkLe(actualIndex, off_s), true);
+
 		  const target_s = state.asSymbolic(coerceToString(args[0]));
-		  const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off_s);
+		  const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, actualIndex);
  
+      Log.log('WARN: lastIndexOf LOSS OF PRECISION does not guarentee last index');
+/*
       //Test for if there are later matches
       const intSort = ctx.mkIntSort();
       const i = ctx.mkBound(0, intSort);
       const notMatch = ctx.mkEq(ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, i), ctx.mkIntVal(-1));
+
       const bounds = ctx.mkPattern([
           ctx.mkLt(i, state.asSymbolic(base).getLength()),
           ctx.mkGt(i, seq_index)
@@ -148,6 +154,7 @@ export default function(state, ctx, model, helpers) {
 
 		  const noLaterMatches = ctx.mkForAll([mkFunctionName("lastIndexOf")], intSort, notMatch, [bounds]);
       state.pushCondition(noLaterMatches, true);
+*/
 
 		  return new ConcolicValue(result, seq_index);
 	}));
