@@ -147,8 +147,20 @@ class SymbolicState {
 	}
 
 	/**
-     * Returns the final PC as a string (if any symbols exist)
-     */
+   * Creates a full (up to date) solver instance and then calls toString on it to create an SMT2Lib problem
+   * TODO: This is a stop-gag implementation for the work with Ronny - not to be relied upon.
+   */
+	inlineToSMTLib() {
+		this.slv.push();
+		this.pathCondition.forEach(pcItem => this.slv.assert(pcItem.ast));
+		const resultString = this.slv.toString();
+		this.slv.pop();
+		return resultString;
+	}
+
+	/**
+    * Returns the final PC as a string (if any symbols exist)
+    */
 	finalPC() {
 		return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
 	}
