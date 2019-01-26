@@ -1,6 +1,20 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, session } = require("electron");
+
+const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
+
+session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+
+  function rif(offset, o2) {
+    if (TestCaseParameters[offset]) { details.requestHeaders[o2] = TestCaseParameters[offset]; }
+  }
+
+  rif('userAgent', 'User-Agent');
+  rif('cookie', 'Cookie');
+
+  callback({ cancel: false, requestHeaders: details.requestHeaders });
+});
 
 app.commandLine.appendSwitch("ignore-certificate-errors");
 app.commandLine.appendSwitch("disable-web-security");
