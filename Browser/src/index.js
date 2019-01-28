@@ -4,18 +4,6 @@ const { app, BrowserWindow, session } = require("electron");
 
 const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
 
-session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-
-  function rif(offset, o2) {
-    if (TestCaseParameters[offset]) { details.requestHeaders[o2] = TestCaseParameters[offset]; }
-  }
-
-  rif('userAgent', 'User-Agent');
-  rif('cookie', 'Cookie');
-
-  callback({ cancel: false, requestHeaders: details.requestHeaders });
-});
-
 app.commandLine.appendSwitch("ignore-certificate-errors");
 app.commandLine.appendSwitch("disable-web-security");
 
@@ -43,6 +31,18 @@ const createWindow = () => {
 			mainWindow.loadURL(process.argv[process.argv.length - 2]);
 		});
 	});
+
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
+
+	  function rif(offset, o2) {
+		  if (TestCaseParameters[offset]) { details.requestHeaders[o2] = TestCaseParameters[offset]; }
+	  }
+
+	  rif("userAgent", "User-Agent");
+	  rif("cookie", "Cookie");
+
+	  cb({ cancel: false, requestHeaders: details.requestHeaders });
+  });
 
 	// Emitted when the window is closed.
 	mainWindow.on("closed", () => {
