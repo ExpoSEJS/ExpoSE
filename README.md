@@ -2,7 +2,8 @@
 
 ## ExpoSE
 
-ExpoSE is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](https://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](http://www.cs.rhul.ac.uk/home/kinder/index.html). ExpoSE is based on Jalangi2 and the Z3 SMT solver.
+ExpoSE is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](https://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](http://www.cs.rhul.ac.uk/home/kinder/index.html). 
+ExpoSE supports symbolic execution of Node.js programs and JavaScript in the browser. ExpoSE is based on Jalangi2 and the Z3 SMT solver.
 
 ### Requirements
 
