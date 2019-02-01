@@ -98,11 +98,13 @@ class Coverage {
 		touchedLines = Array.from(touchedLines);
 		totalLines = Array.from(totalLines);
 
+		const highestLineNumber = totalLines.reduce((last, next) => Math.max(last, next), 0);
+
 		return {
 			touched: touchedLines,
 			all: totalLines,
 			found: touchedLines.length,
-			total: totalLines.length,
+			total: highestLineNumber,
 			coverage: touchedLines.length / totalLines.length
 		};
 	}
