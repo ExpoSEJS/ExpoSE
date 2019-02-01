@@ -2,6 +2,8 @@ import { ConcolicValue } from "../Values/WrappedValue";
 
 let uniq_ctr = 0;
 
+const find = Array.prototype.find;
+
 export default function(state, ctx, model, helpers) {
 
 	const symbolicHook = helpers.symbolicHook;

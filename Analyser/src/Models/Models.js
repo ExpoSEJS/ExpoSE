@@ -12,8 +12,6 @@ import StringModels from './StringModels';
 import FnModels from './FnModels';
 import RegexModels from './RegexModels';
 
-const find = Array.prototype.find;
-
 function Model() {
 	this._models = [];
 
