@@ -26,28 +26,12 @@ function isNativeCore(value) {
 function isNative(v) {
   Log.logMid('TODO: IsNative Uncached');
   //TODO: Blake: IsNative uncached - somehow v can be null?!?
-  return isNativeCore(v);
-/*
-    const type = typeof v;
-    if (type && (type == "function" || type == "object")) {
-
-        if (v[SECRET_CACHE_STR]) {
-            return v[SECRET_CACHE_STR]["isNative"];
-        }
-
-        let result = isNativeCore(v);
-        
-        try {
-            v[SECRET_CACHE_STR] = { isNative: result };
-        } catch (e) {
-            //TODO: We can't cache this result because non-enumerable? report
-        }
-
-        return result;
-    } else {
-        return false;
-    }
-*/
+  const type = typeof v;
+  if (type == "function" || type == "object") {
+	  return isNativeCore(v);
+  } else {
+		return false;
+	}
 }
 
 export {isNative};

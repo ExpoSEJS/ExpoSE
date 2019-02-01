@@ -177,6 +177,7 @@ export default function(state, ctx, model, helpers) {
 			}
 		}
 
+    state.stats.seen('Regex Encoded');
 		const regexEncoded = Z3.Regex(ctx, regex);
 		const is_match_s = ctx.mkSeqInRe(state.asSymbolic(string), regexEncoded.ast);
 

@@ -1,6 +1,8 @@
 import { ConcolicValue } from "../Values/WrappedValue";
 import Log from '../Utilities/Log';
 
+const find = Array.prototype.find;
+
 export default function(state, ctx, model, helpers) {
 
   const mkIndexSymbol = helpers.mkIndexSymbol;
