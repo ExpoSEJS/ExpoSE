@@ -70,8 +70,8 @@ if (process.argv.length >= 3) {
 				return;
 			}
 
-			console.log(`[+] ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}% Lines Of Code: ${d.loc.all.length} -*`);
-			totalLines += d.loc.all.length;
+			console.log(`[+] ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}% Lines Of Code: ${d.loc.total} -*`);
+			totalLines += d.loc.total;
 		});
 
 		console.log(`[+] Total Lines Of Code ${totalLines}`);
