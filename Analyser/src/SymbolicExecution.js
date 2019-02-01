@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 180);
+			}, 1000 * 90);
 
 			console.log("Browser mode setup finished");
 
