@@ -125,6 +125,10 @@ export default function(state, ctx, model, helpers) {
 		return new ConcolicValue(result, seq_index);
 	}));
 
+  //TODO: Fix LastIndexOf models
+  model.add(String.prototype.lastIndexOf, model.get(String.prototype.indexOf));
+
+  /*
 	model.add(String.prototype.lastIndexOf, symbolicHook(
 	String.prototype.lastIndexOf,
 	(base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
@@ -137,13 +141,12 @@ export default function(state, ctx, model, helpers) {
 		  const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(base).getLength();
 		  const off_s = ctx.mkRealToInt(off_real);
       const actualIndex = mkIndexSymbol('LastIndexOf_Start_Position');
-      state.pushCondition(ctx.mkLe(actualIndex, off_s), true);
 
 		  const target_s = state.asSymbolic(coerceToString(args[0]));
 		  const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, actualIndex);
  
       Log.log('WARN: lastIndexOf LOSS OF PRECISION does not guarentee last index');
-/*
+
       //Test for if there are later matches
       const intSort = ctx.mkIntSort();
       const i = ctx.mkBound(0, intSort);
@@ -156,11 +159,10 @@ export default function(state, ctx, model, helpers) {
 
 		  const noLaterMatches = ctx.mkForAll([mkFunctionName("lastIndexOf")], intSort, notMatch, [bounds]);
       state.pushCondition(noLaterMatches, true);
-*/
 
 		  return new ConcolicValue(result, seq_index);
 	}));
-
+*/
 	model.add(String.prototype.repeat, symbolicHook(
 				String.prototype.repeat,
 				(base, a) => state.isSymbolic(base) || state.isSymbolic(a[0]) 
