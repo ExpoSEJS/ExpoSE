@@ -2,6 +2,8 @@
 
 const { app, BrowserWindow } = require("electron");
 
+const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
+
 app.commandLine.appendSwitch("ignore-certificate-errors");
 app.commandLine.appendSwitch("disable-web-security");
 
@@ -28,6 +30,24 @@ const createWindow = () => {
 		mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
 			mainWindow.loadURL(process.argv[process.argv.length - 2]);
 		});
+	});
+
+	mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
+
+		function rif(offset, o2) {
+			if (TestCaseParameters[offset]) {
+				details.requestHeaders[o2] = TestCaseParameters[offset];
+				details.requestHeaders[o2.toLowerCase()] = TestCaseParameters[offset];
+			}
+		}
+
+		rif("userAgent", "User-Agent");
+		rif("cookie", "Cookie");
+		rif("lastModified", "Last-Modified");
+		rif("referer", "Referer");
+		rif("origin", "Origin");
+		rif("host", "Host");
+		cb({ cancel: false, requestHeaders: details.requestHeaders });
 	});
 
 	// Emitted when the window is closed.

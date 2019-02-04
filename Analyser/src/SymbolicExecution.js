@@ -82,7 +82,7 @@ class SymbolicExecution {
 
 		const report = (src) => { 
 			const sourceString = this.state.asSymbolic(src).toString();
-			console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
+			console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.inlineToSMTLib()}"!!! !!!"${sourceString}"!!!`);
 		};
 
 		if (f && (f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {

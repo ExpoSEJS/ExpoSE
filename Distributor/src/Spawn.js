@@ -4,10 +4,7 @@
 
 import {spawn} from "child_process";
 
-let StringDecoder = require("string_decoder").StringDecoder;
-let tmp = require("tmp");
-let decoder = new StringDecoder("utf8");
-
+const tmp = require("tmp");
 const fs = require("fs");
 const kill = require("tree-kill");
 
@@ -133,25 +130,17 @@ class Spawn {
 
 	start(done) {
 
-		function insertData(data) {
-			data = decoder.write(data);
-			if (this.options.log) {
-				process.stdout.write(data);
-			}
-		}
-
 		this._startTime = (new Date()).getTime();
 
 		try {
+			const stdio = this.options.log ? ["ignore", "inherit", "inherit"] : ["ignore", "ignore", "ignore"];
 			const prc = spawn(this.script, this.args, {
+				stdio: stdio,
 				env: this.env,
 				disconnected: false
 			});
-		
-			prc.stdout.on("data", insertData.bind(this));
-			prc.stderr.on("data", insertData.bind(this));
 
-			prc.stdout.on("close", code => {
+			prc.on("exit", code => {
 				clearTimeout(this._killTimeout);
 				this._processEnded(code, done);
 			});
