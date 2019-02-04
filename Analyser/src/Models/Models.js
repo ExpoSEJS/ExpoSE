@@ -11,6 +11,7 @@ import ArrayModels from './ArrayModels';
 import StringModels from './StringModels';
 import FnModels from './FnModels';
 import RegexModels from './RegexModels';
+import ObjectModels from './ObjectModels';
 
 function Model() {
 	this._models = [];
@@ -43,6 +44,7 @@ function BuildModels(state) {
 	RegexModels(state, ctx, model, helpers);
 	ArrayModels(state, ctx, model, helpers);
 	FnModels(state, ctx, model, helpers);
+  ObjectModels(state, ctx, model, helpers);
 
 	/**
 	 * Models for methods on Object

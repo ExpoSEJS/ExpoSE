@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+unset RECOMPILE
+
 ./scripts/build/build_all
 ./scripts/build/build_tester
 
