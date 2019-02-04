@@ -39,7 +39,7 @@ Valid Options:
 
 ### ExpoSE Browser Support
 
-There is limited support for symbolic execution of webpages through a custom, Electron based, web browser. To execute ExpoSE on a website you use the same arguments as the CLI. Note: This also requires python3 and a modern version of mitmproxy to function correctly.
+There is limited support for symbolic execution of webpages through a custom Electron based web browser. To execute ExpoSE on a website you use the same arguments as the CLI. Note: This also requires python3 and a modern version of mitmproxy to function correctly.
 
 ```sh
 $ expoSE "https://google.com"
