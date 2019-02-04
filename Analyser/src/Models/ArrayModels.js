@@ -4,19 +4,9 @@ import Log from "../Utilities/Log";
 export default function(state, ctx, model, helper) {
 
 	const symbolicHook = helper.symbolicHook;
+  const mkFunctionName = helper.mkFunctionName;
+  const mkIndexSymbol = helper.mkIndexSymbol;
 	const NoOp = helper.NoOp;
-
-	let indexOfCounter = 0;
-
-	function mkIndexSymbol(op) {
-		return ctx.mkIntVar(`_${op}_${indexOfCounter++})`);
-	}
-
-	let funcCounter = 0;
-
-	function mkFunctionName(fn) {
-		return ctx.mkStringSymbol(`_fn_${fn}_${funcCounter++}_`);
-	}
 
 	model.add(Array.prototype.push, function(base, args) {
 

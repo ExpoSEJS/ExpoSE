@@ -88,6 +88,7 @@ function buildTestList() {
     //Strings
     buildTest('strings/hello_strings.js', 2, 0);
     buildTest('strings/includes.js', 2, 1);
+    buildTest('strings/lastIndexOf.js', 2, 1);
     buildTest('strings/hello_strings2.js', 3, 0);
     buildTest('strings/hello_strings_concat.js', 2, 0);
     buildTest('strings/lowercase.js', 2, 1);
