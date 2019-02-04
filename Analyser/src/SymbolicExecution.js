@@ -31,6 +31,16 @@ class SymbolicExecution {
 				External.close();
 			}, 1000 * 90);
 
+			const storagePool = {};
+
+			window.localStorage.setItem = function(key, val) {
+				storagePool[key] = val;
+			};
+
+			window.localStorage.getItem = function(key) { 
+				return storagePool[key];
+			};
+
 			console.log("Browser mode setup finished");
 
 		} else { 
