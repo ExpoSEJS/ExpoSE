@@ -133,7 +133,7 @@ class Spawn {
 		this._startTime = (new Date()).getTime();
 
 		try {
-			const stdio = this.options.log ? [0, 1, 2] : [0, null, null];
+			const stdio = this.options.log ? ["ignore", "inherit", "inherit"] : ["ignore", "ignore", "ignore"];
 			const prc = spawn(this.script, this.args, {
 				stdio: stdio,
 				env: this.env,
