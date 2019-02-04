@@ -36,6 +36,7 @@ $ expoSE ./tests/integers/infoflow
 Valid Options:
 
 * `replay`     - Replay a test case with a specific input.
+* `ahg`        - Automatically generate a generic test harness for a specified NPM library.
 
 ### ExpoSE Browser Support
 
