@@ -16,7 +16,7 @@ class Center {
 		this.options = options;
 	}
 
-	start(file) {
+	start(file, baseInput) {
 
 		this._lastid = 0;
 		this._done = [];
@@ -28,7 +28,7 @@ class Center {
 		this._startTesting([{
 			id: this._nextID(),
 			path: file,
-			input: { _bound: 0 }
+			input: baseInput || { _bound: 0 }
 		}]);
 
 		return this;
