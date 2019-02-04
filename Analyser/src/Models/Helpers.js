@@ -141,7 +141,21 @@ export default function(state, ctx, model) {
 		return new ConcolicValue(result, result_s);
 	}
 
+	let indexOfCounter = 0;
+
+	function mkIndexSymbol(op) {
+		return ctx.mkIntVar(`_${op}_${indexOfCounter++})`);
+	}
+
+	let funcCounter = 0;
+
+	function mkFunctionName(fn) {
+		return ctx.mkStringSymbol(`_fn_${fn}_${funcCounter++}_`);
+	}
+
 	return {
+    mkFunctionName: mkFunctionName,
+    mkIndexSymbol: mkIndexSymbol,
 		runMethod: runMethod,
 		symbolicHook: symbolicHook,
 		ConcretizeIfNative: ConcretizeIfNative,

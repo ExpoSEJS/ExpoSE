@@ -106,6 +106,10 @@ class SymbolicExecution {
 			const concretized = this.state.concretizeCall(f, base, args);
 			base = concretized.base;
 			args = concretized.args;
+		} else if (fn_model) {
+			this.state.stats.set("Modeled Function Call", f.name);
+		} else {
+			this.state.stats.seen("General Function Call");
 		}
 
 		/**
