@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 90);
+			}, 1000 * 60 * 6);
 
 			const storagePool = {};
 
@@ -74,23 +74,24 @@ class SymbolicExecution {
 		});
 	}
 
+	_report(src) {
+		const sourceString = this.state.asSymbolic(src).toString();
+		console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
+	}
+		
+
 	invokeFunPre(iid, f, base, args, _isConstructor, _isMethod) {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
 		f = this.state.getConcrete(f);
 
-		const report = (src) => { 
-			const sourceString = this.state.asSymbolic(src).toString();
-			console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.inlineToSMTLib()}"!!! !!!"${sourceString}"!!!`);
-		};
-
 		if (f && (f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
-			report(args[0].src);
+			this._report(args[0].src);
 		}
 
 		if (f && f.name == "open") {
-			report(args[1]);
+			this._report(args[1]);
 		}
 
 		const fn_model = this.models.get(f);
@@ -266,6 +267,10 @@ class SymbolicExecution {
 	putFieldPre(iid, base, offset, val, _isComputed, _isOpAssign) {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
+
+		if (this.state.getConcrete(offset) === "src") {
+			this._report(val);
+		}
 
 		return {
 			base: base,
