@@ -35,8 +35,7 @@ export default function(state, ctx, model, helper) {
 					state.updateSymbolic(base, null);
 				}
 
-				state.getConcrete(base).push(args[0]);
-				return args[0];
+				return state.getConcrete(base).push(args[0]);
 			}
 	});
 

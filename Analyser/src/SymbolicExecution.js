@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 6);
+			}, 1000 * 60 * 4);
 
 			const storagePool = {};
 
@@ -77,8 +77,7 @@ class SymbolicExecution {
 	_report(src) {
 		const sourceString = this.state.asSymbolic(src).toString();
 		console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
-	}
-		
+	}	
 
 	invokeFunPre(iid, f, base, args, _isConstructor, _isMethod) {
 		this.state.coverage.touch(iid);
@@ -103,7 +102,12 @@ class SymbolicExecution {
 		 * TODO: This is caused by getField(obj) calling obj.toString()
 		 * TODO: A better solution to this needs to be found
 		 */
-		if (needs_conc) {
+		if (f.name == "parse") {
+			console.log("Parse " + base + args);
+			for (var i = 0; i < args.length; i++) {
+				console.log(args[i]);
+			}
+		} else if (needs_conc) {
 			const concretized = this.state.concretizeCall(f, base, args);
 			base = concretized.base;
 			args = concretized.args;
