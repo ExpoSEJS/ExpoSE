@@ -109,7 +109,6 @@ class SymbolicExecution {
 			args = concretized.args;
 		} else if (fn_model) {
 			this.state.stats.set("Modeled Function Call", f.name);
-			console.log("Modelz " + f.name);
 		} else {
 			this.state.stats.seen("General Function Call");
 		}
