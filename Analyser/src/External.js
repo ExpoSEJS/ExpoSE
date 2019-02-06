@@ -4,9 +4,16 @@ function is_external() {
 	return typeof window !== "undefined";
 }
 
+function calectron() {
+  if (!window._ELC) {
+    window._ELC = require("electron");
+  }
+  return window._ELC;
+}
+
 //Cache electron so require doesn't get rewritten
-const ld = is_external() ? require("electron").remote.require : require;
-const electronWindow = is_external() ? require("electron").remote.getCurrentWindow() : null;
+const ld = is_external() ? calectron().remote.require : require;
+const electronWindow = is_external() ? calectron().remote.getCurrentWindow() : null;
 
 export default {
 	load: function (library) {
