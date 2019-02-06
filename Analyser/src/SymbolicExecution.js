@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 4);
+			}, 1000 * 30);
 
 			const storagePool = {};
 
@@ -77,7 +77,17 @@ class SymbolicExecution {
 	_report(src) {
 		const sourceString = (this.state.asSymbolic(src) || (src.documentURI ? src.documentURI : src));
 		console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
-	}	
+	}
+
+	_reportFn(f, base, args) {	
+		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
+			this._report(args[0].src);
+		}
+
+		if (f.name == "open") {
+			this._report(args[1]);
+		}
+	}
 
 	invokeFunPre(iid, f, base, args, _isConstructor, _isMethod) {
 		this.state.coverage.touch(iid);
@@ -85,16 +95,7 @@ class SymbolicExecution {
 
 		f = this.state.getConcrete(f);
 
-		if (f && (f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
-			this._report(args[0].src);
-		}
-
-		if (f && f.name == "open") {
-			this._report(args[1]);
-		}
-
 		const fn_model = this.models.get(f);
-		const needs_conc = !fn_model && isNative(f); 
 
 		/**
 		 * Concretize the function if it is native and we do not have a custom model for it
@@ -102,12 +103,7 @@ class SymbolicExecution {
 		 * TODO: This is caused by getField(obj) calling obj.toString()
 		 * TODO: A better solution to this needs to be found
 		 */
-		if (f.name == "parse") {
-			console.log("Parse " + base + args);
-			for (var i = 0; i < args.length; i++) {
-				console.log(args[i]);
-			}
-		} else if (needs_conc) {
+		if (!fn_model && isNative(f)) {
 			const concretized = this.state.concretizeCall(f, base, args);
 			base = concretized.base;
 			args = concretized.args;
