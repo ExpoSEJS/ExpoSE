@@ -1,14 +1,16 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
+/* global window */
+
 function is_external() {
 	return typeof window !== "undefined";
 }
 
 function calectron() {
-  if (!window._ELC) {
-    window._ELC = require("electron");
-  }
-  return window._ELC;
+	if (!window._ELC) {
+		window._ELC = require("electron");
+	}
+	return window._ELC;
 }
 
 //Cache electron so require doesn't get rewritten
