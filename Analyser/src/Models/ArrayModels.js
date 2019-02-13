@@ -2,7 +2,7 @@ import { ConcolicValue } from "../Values/WrappedValue";
 import Log from "../Utilities/Log";
 
 export default function(state, ctx, model, helper) {
-
+	return;
 	const symbolicHook = helper.symbolicHook;
   const mkFunctionName = helper.mkFunctionName;
   const mkIndexSymbol = helper.mkIndexSymbol;

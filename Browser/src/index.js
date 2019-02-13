@@ -32,6 +32,11 @@ const createWindow = () => {
 		});
 	});
 
+	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
+		console.log("LOAD REQUEST: " + details.url);
+		callback({ cancel: false });
+	});
+
 	mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
 
 		function rif(offset, o2) {
