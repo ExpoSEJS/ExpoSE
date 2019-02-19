@@ -13,7 +13,7 @@ export default function(state, ctx, model, helpers) {
 	function symbolicHookRe(f, condition, hook) {
 		const runMethod = helpers.runMethod;
 		return function(base, args) {
-			if (condition(base, args)) {
+			if (Config.regexEnabled && condition(base, args)) {
 				return hook(base, args);
 			} else {
 				const [result, thrown] = runMethod(f, base, args);
