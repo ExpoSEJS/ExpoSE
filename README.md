@@ -7,7 +7,7 @@ ExpoSE supports symbolic execution of Node.js programs and JavaScript in the bro
 
 ### Requirements
 
-Requires `node` version v7.5.0 (other versions may work but are not tested), `npm`, `clang`, `clang++`, `gnuplot`, `make`, `python2` (as python in path).
+Requires `node` version v7.5.0 (other versions may work but are not tested), `npm`, `clang` (with `clang++`), `gnuplot` (for coverage graphs), `make`, `python2` (as python in path).
 
 `mitmproxy` (Depends libxml2-dev, libxslt-dev, libssl-dev) is required for electron analysis.
 
