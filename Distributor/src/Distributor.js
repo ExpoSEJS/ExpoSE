@@ -85,7 +85,7 @@ if (process.argv.length >= 3) {
 		});
 
 		console.log(`[+] Total Lines Of Code ${totalLines}`);
-		console.log(`[+] Total Coverage: ${Math.round((totalLinesFound / totalRealLines) * 100)}%`);
+		console.log(`[+] Total Coverage: ${Math.round((totalLinesFound / totalRealLines) * 10000) / 100}%`);
 
 		if (Config.printDeltaCoverage) {
 			CoverageMap(coverage.lines(), line => console.log(line));
