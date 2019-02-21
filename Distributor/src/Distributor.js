@@ -70,18 +70,23 @@ if (process.argv.length >= 3) {
 		console.log("[!] Done");
 
 		let totalLines = 0;
+		let totalRealLines = 0;
+		let totalLinesFound = 0;
 
 		coverage.final().forEach(d => {
 
 			if (Internal(d.file)) {
 				return;
 			}
-
+			console.log(JSON.stringify(d.loc));
 			console.log(`[+] ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}% Lines Of Code: ${d.loc.total} -*`);
 			totalLines += d.loc.total;
+			totalRealLines += d.loc.all.length;
+			totalLinesFound += d.loc.found;
 		});
 
 		console.log(`[+] Total Lines Of Code ${totalLines}`);
+		console.log(`[+] Total Coverage: ${Math.round((totalLinesFound / totalRealLines) * 100)}%`);
 
 		if (Config.printDeltaCoverage) {
 			CoverageMap(coverage.lines(), line => console.log(line));
