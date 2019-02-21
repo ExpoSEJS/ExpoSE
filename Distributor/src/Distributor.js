@@ -78,7 +78,6 @@ if (process.argv.length >= 3) {
 			if (Internal(d.file)) {
 				return;
 			}
-			console.log(JSON.stringify(d.loc));
 			console.log(`[+] ${d.file}. Coverage (Term): ${Math.round(d.terms.coverage * 100)}% Coverage (Decisions): ${Math.round(d.decisions.coverage * 100)}% Coverage (LOC): ${Math.round(d.loc.coverage * 100)}% Lines Of Code: ${d.loc.total} -*`);
 			totalLines += d.loc.total;
 			totalRealLines += d.loc.all.length;
