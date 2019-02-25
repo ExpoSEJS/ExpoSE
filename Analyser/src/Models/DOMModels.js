@@ -6,8 +6,13 @@ export default function(state, ctx, models, helper) {
 
 	models.add(encodeURI, function(base, args) {
 		const replace = models.get(String.prototype.replace);
-		return replace.call(/[^A-Za-z0-9;,/?:@&=+$-_.!~*'()#]/g, function(match) {
-			return state.binary('+', '%', match.charCodeAt(0));
+
+		const result = replace.call(args[0], /[^A-Za-z0-9;,/?:@&=+$-_.!~*'()#]/g, function(match) {
+			return `%${state.getConcrete(match).charCodeAt(0)}`;
 		});
+
+		console.log('ENCODE_URI_EVENT:', result.toString());
+
+		return result;
 	});
 }
