@@ -42,7 +42,7 @@ export default function(state, ctx, model, helpers) {
     } else if (typeof state.getConcrete(field) === "string") {
       return state.binary('+', '"', state.binary('+', field, '"'));
     } else {
-      return state.getConcrete(field);
+      return helpers.coerceToString(field);
     }
   }
 
