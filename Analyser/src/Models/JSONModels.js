@@ -34,7 +34,7 @@ export default function(state, ctx, model, helpers) {
         let encodedField = symbolicStringify(field[key]);
         let merged = state.binary('+', name, state.binary('+', ':', encodedField));
         rstr = state.binary('+', rstr, merged);
-        if (first) {
+        if (!first) {
           rstr = state.binary('+', rstr, ',');
         }
         first = false;
@@ -42,7 +42,7 @@ export default function(state, ctx, model, helpers) {
       rstr = state.binary('+', rstr, '}');
       return rstr;
     } else if (typeof state.getConcrete(field) === "string") {
-      return `"${field}"`;
+      return state.binary('+', '"', state.binary('+', field, '"'));
     } else {
       return state.getConcrete(field);
     }
