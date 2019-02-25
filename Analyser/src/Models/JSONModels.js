@@ -9,7 +9,6 @@ const find = Array.prototype.find;
 export default function(state, ctx, model, helpers) {
 
   function symbolicStringify(field) {
-    console.log('Field is', JSON.stringify(field));
     if (field === undefined) {
       return undefined;
     } else if (field === null) {
@@ -29,7 +28,6 @@ export default function(state, ctx, model, helpers) {
       let rstr = '{';
       let first = true;
       for (let key of Object.getOwnPropertyNames(field)) {
-        console.log('Field', JSON.stringify(field), ' key', key);
         let name = state.binary('+', '"', state.binary('+', key, '"'));
         let encodedField = symbolicStringify(field[key]);
         let merged = state.binary('+', name, state.binary('+', ':', encodedField));
