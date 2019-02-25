@@ -7,6 +7,6 @@ export default function(state, ctx, model, helpers) {
 	model.add(Function.prototype.call, ConcretizeIfNative(Function.prototype.call));
 	model.add(Function.prototype.bind, ConcretizeIfNative(Function.prototype.bind));
   model.add(console.log, function() {
-		console.log.call(this, arguments);
+		console.log.appl(this, arguments);
 	});
 }
