@@ -274,7 +274,6 @@ class SymbolicExecution {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
-		console.log("Put to " + offset);
 		if (this.state.getConcrete(offset) === "src") {
 			this._report(val);	
 			val = this.state.getConcrete(val);
