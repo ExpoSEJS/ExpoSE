@@ -76,12 +76,17 @@ class SymbolicExecution {
 
 	_report(sourceString) {
 
+		console.log("Processing " + sourceString);
+		console.log(JSON.stringify(sourceString));
+
 		if (!this.state.isSymbolic(sourceString)) {
 			sourceString = sourceString.documentURI ? ("" + sourceString.documentURI) : ("" + sourceString);
 			sourceString = this.state.asSymbolic(sourceString);
+		} else {
+			sourceString = this.state.asSymbolic(sourceString);
 		}
 
-		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${this.state.asSymbolic(sourceString).toString()}"!!!`);
+		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${sourceString ? sourceString.toString() : ("" + sourceString)}"!!!`);
 	}
 
 	_reportFn(f, base, args) {	

@@ -165,6 +165,19 @@ export default function(state, ctx, model, helper) {
 				}
 	));
 
+	model.add(Array.prototype.join, function(base, args) {
+		const sep = args[0] ? helper.coerceToString(args[0]) : ',';
+		let finalString = '';
+		for (let i = 0; i < base.length; i++) {
+			if (i > 0) {
+				finalString = state.binary('+', finalString, sep);
+			}
+			finalString = state.binary('+', finalString, base[i]);
+		}
+		console.log('Joined: ' + finalString.toString());
+		return finalString;
+	});
+
 	model.add(Array.prototype.keys, NoOp(Array.prototype.keys));
 	model.add(Array.prototype.concat, NoOp(Array.prototype.concat));
 	model.add(Array.prototype.forEach, NoOp(Array.prototype.forEach));
