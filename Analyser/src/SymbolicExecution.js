@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 4);
+			}, 1000 * 60 * 8);
 
 			const storagePool = {};
 
@@ -74,14 +74,20 @@ class SymbolicExecution {
 		});
 	}
 
-	_report(src) {
-		const sourceString = (this.state.asSymbolic(src) || (src.documentURI ? src.documentURI : src));
-		console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);
+	_report(sourceString) {
+
+		if (!this.state.isSymbolic(sourceString)) {
+			sourceString = sourceString.documentURI ? ("" + sourceString.documentURI) : ("" + sourceString);
+			sourceString = this.state.asSymbolic(sourceString);
+		}
+
+		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${this.state.asSymbolic(sourceString).toString()}"!!!`);
 	}
 
 	_reportFn(f, base, args) {	
 		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
 			this._report(args[0].src);
+			args[0].src = this.state.getConcrete(args[0].src);
 		}
 
 		if (f.name == "open") {
@@ -268,8 +274,10 @@ class SymbolicExecution {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
+		console.log("Put to " + offset);
 		if (this.state.getConcrete(offset) === "src") {
-			this._report(val);
+			this._report(val);	
+			val = this.state.getConcrete(val);
 		}
 
 		return {

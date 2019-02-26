@@ -31,10 +31,10 @@ export default function(state, ctx, model, helpers) {
         let name = state.binary('+', '"', state.binary('+', key, '"'));
         let encodedField = symbolicStringify(field[key]);
         let merged = state.binary('+', name, state.binary('+', ':', encodedField));
-        rstr = state.binary('+', rstr, merged);
         if (!first) {
           rstr = state.binary('+', rstr, ',');
         }
+				rstr = state.binary('+', rstr, merged);
         first = false;
       }
       rstr = state.binary('+', rstr, '}');
@@ -47,6 +47,8 @@ export default function(state, ctx, model, helpers) {
   }
 
   model.add(JSON.stringify, function(base, args) {
-    return symbolicStringify(args[0]);
+		const result = symbolicStringify(args[0]);
+		console.log('JSON stringified: ' + result.toString());
+		return result;
   });
 }

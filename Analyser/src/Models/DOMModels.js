@@ -1,3 +1,5 @@
+import { ConcolicValue } from '../Values/WrappedValue';
+
 export default function(state, ctx, models, helper) {
   if (typeof window !== "undefined") {
     models.add(Element.prototype.getAttribute, helper.NoOp(Element.prototype.getAttribute));
@@ -5,14 +7,8 @@ export default function(state, ctx, models, helper) {
   }
 
 	models.add(encodeURI, function(base, args) {
-		const replace = models.get(String.prototype.replace);
-
-		const result = replace.call(args[0], /[^A-Za-z0-9;,/?:@&=+$-_.!~*'()#]/g, function(match) {
-			return `%${state.getConcrete(match).charCodeAt(0)}`;
-		});
-
-		console.log('ENCODE_URI_EVENT:', result.toString());
-
-		return result;
+		return new ConcolicValue(encodeURI(state.getConcrete(args[0])), state.asSymbolic(args[0]));
 	});
+
+	models.add(encodeURIComponent, models.get(encodeURI));
 }
