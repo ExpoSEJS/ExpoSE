@@ -48,7 +48,7 @@ export default function(state, ctx, model, helpers) {
 
   model.add(JSON.stringify, function(base, args) {
 		const result = symbolicStringify(args[0]);
-		console.log('JSON stringified: ' + result.toString());
+		Log.logMid('JSON stringified: ' + result.toString());
 		return result;
   });
 }

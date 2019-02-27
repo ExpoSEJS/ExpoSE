@@ -1,4 +1,5 @@
 import { ConcolicValue } from '../Values/WrappedValue';
+import Log from '../Utilities/Log';
 
 export default function(state, ctx, models, helper) {
   if (typeof window !== "undefined") {
@@ -7,17 +8,14 @@ export default function(state, ctx, models, helper) {
   }
 
 	models.add(encodeURI, function(base, args) {
-		for (var i = 0; i < args.length; i++) {
-			console.log('EncURI args: ' + args[i].toString());
-		}
 		const result = new ConcolicValue(encodeURI.call(base, state.getConcrete(args[0])), state.asSymbolic(args[0]));
-		console.log('Encode URI result: ' + result.toString());
+		Log.logMid('Encode URI result: ' + result.toString());
 		return result;
 	});
 
 	models.add(encodeURIComponent, function(base, args) {
 		const result = new ConcolicValue(encodeURIComponent.call(base, state.getConcrete(args[0])), state.asSymbolic(args[0]));
-		console.log('Encode URI Component: ' + result.toString());
+		Log.logMid('Encode URI Component: ' + result.toString());
 		return result;
 	});
 }
