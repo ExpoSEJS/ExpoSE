@@ -35,8 +35,7 @@ export default function(state, ctx, model, helper) {
 					state.updateSymbolic(base, null);
 				}
 
-				state.getConcrete(base).push(args[0]);
-				return args[0];
+				return state.getConcrete(base).push(args[0]);
 			}
 	});
 
@@ -165,6 +164,18 @@ export default function(state, ctx, model, helper) {
 				return new ConcolicValue(result, result_s);
 				}
 	));
+
+	model.add(Array.prototype.join, function(base, args) {
+		const sep = args[0] ? helper.coerceToString(args[0]) : ',';
+		let finalString = '';
+		for (let i = 0; i < base.length; i++) {
+			if (i > 0) {
+				finalString = state.binary('+', finalString, sep);
+			}
+			finalString = state.binary('+', finalString, helper.coerceToString(base[i]));
+		}
+		return finalString;
+	});
 
 	model.add(Array.prototype.keys, NoOp(Array.prototype.keys));
 	model.add(Array.prototype.concat, NoOp(Array.prototype.concat));

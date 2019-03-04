@@ -32,23 +32,30 @@ const createWindow = () => {
 		});
 	});
 
-	mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
-
-		function rif(offset, o2) {
-			if (TestCaseParameters[offset]) {
-				details.requestHeaders[o2] = TestCaseParameters[offset];
-				details.requestHeaders[o2.toLowerCase()] = TestCaseParameters[offset];
-			}
-		}
-
-		rif("userAgent", "User-Agent");
-		rif("cookie", "Cookie");
-		rif("lastModified", "Last-Modified");
-		rif("referer", "Referer");
-		rif("origin", "Origin");
-		rif("host", "Host");
-		cb({ cancel: false, requestHeaders: details.requestHeaders });
+	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
+		console.log("LOAD REQUEST: " + details.url);
+		callback({ cancel: false });
 	});
+
+	if (process.env["PROPOGATE_ON_NETWORK"]) {
+		mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
+
+			function rif(offset, o2) {
+				if (TestCaseParameters[offset]) {
+					details.requestHeaders[o2] = TestCaseParameters[offset];
+					details.requestHeaders[o2.toLowerCase()] = TestCaseParameters[offset];
+				}
+			}
+
+			rif("userAgent", "User-Agent");
+			rif("cookie", "Cookie");
+			rif("lastModified", "Last-Modified");
+			rif("referer", "Referer");
+			rif("origin", "Origin");
+			rif("host", "Host");
+			cb({ cancel: false, requestHeaders: details.requestHeaders });
+		});
+	}
 
 	// Emitted when the window is closed.
 	mainWindow.on("closed", () => {

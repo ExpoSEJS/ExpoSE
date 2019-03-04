@@ -1,5 +1,8 @@
 import { ConcolicValue } from "../Values/WrappedValue";
-import Log from '../Utilities/Log';
+import Log from "../Utilities/Log";
+import External from "../External";
+
+const Z3 = External.load("z3javascript").default;
 
 const find = Array.prototype.find;
 
@@ -105,28 +108,39 @@ export default function(state, ctx, model, helpers) {
 				));
 
 	model.add(String.prototype.concat, symbolicHook(
-				String.prototype.concat,
-				(base, args) => state.isSymbolic(base) || find.call(args, arg => state.isSymbolic(arg)),
-				(base, args, result) => {
-				const arg_s_list = Array.prototype.map.call(args, arg => state.asSymbolic(arg));
-				const concat_s = ctx.mkSeqConcat([state.asSymbolic(base)].concat(arg_s_list));
-				return new ConcolicValue(result, concat_s);
-				}
-				));
+      String.prototype.concat,
+      (base, args) => state.isSymbolic(base) || find.call(args, arg => state.isSymbolic(arg)),
+      (base, args, result) => {
+      const arg_s_list = Array.prototype.map.call(args, arg => state.asSymbolic(arg));
+      const concat_s = ctx.mkSeqConcat([state.asSymbolic(base)].concat(arg_s_list));
+			return new ConcolicValue(result, concat_s);
+		}
+	));
 
 	model.add(String.prototype.indexOf, symbolicHook(
-	String.prototype.indexOf,
-	(base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
-	(base, args, result) => {
-		const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
-		const off_s = ctx.mkRealToInt(off_real);
-		const target_s = state.asSymbolic(coerceToString(args[0]));
-		const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off_s);
-		return new ConcolicValue(result, seq_index);
-	}));
+	  String.prototype.indexOf,
+	  (base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+	  (base, args, result) => {
+		  const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
+		  const off_s = ctx.mkRealToInt(off_real);
+		  const target_s = state.asSymbolic(coerceToString(args[0]));
+		  const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off_s);
+		  return new ConcolicValue(result, seq_index);
+	  }
+  ));
 
   //TODO: Fix LastIndexOf models
-  model.add(String.prototype.lastIndexOf, model.get(String.prototype.indexOf));
+  model.add(String.prototype.lastIndexOf, symbolicHook(
+	  String.prototype.lastIndexOf,
+	  (base, args) => typeof state.getConcrete(base) === "string" && (state.isSymbolic(base) || state.isSymbolic(args[0]) || state.isSymbolic(args[1])),
+	  (base, args, result) => {
+		  const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(0);
+		  const off_s = ctx.mkRealToInt(off_real);
+		  const target_s = state.asSymbolic(coerceToString(args[0]));
+		  const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, off_s);
+		  return new ConcolicValue(result, seq_index);
+	  }
+  ));
 
   /*
 	model.add(String.prototype.lastIndexOf, symbolicHook(

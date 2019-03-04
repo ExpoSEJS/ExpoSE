@@ -12,6 +12,7 @@ import StringModels from './StringModels';
 import FnModels from './FnModels';
 import RegexModels from './RegexModels';
 import DOMModels from './DOMModels';
+import JSONModels from './JSONModels';
 
 function Model() {
 	this._models = [];
@@ -45,6 +46,7 @@ function BuildModels(state) {
 	ArrayModels(state, ctx, model, helpers);
 	FnModels(state, ctx, model, helpers);
   DOMModels(state, ctx, model, helpers);
+  JSONModels(state, ctx, model, helpers);
 
 	/**
 	 * Models for methods on Object

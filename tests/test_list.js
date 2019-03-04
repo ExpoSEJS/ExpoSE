@@ -105,6 +105,8 @@ function buildTestList() {
     buildTest('strings/repeat.js', 3, 2);
     buildTest('strings/trim.js', 3, 1);
 
+		buildTest('strings/json_stringify', 2, 1);
+
     /**
      * Regular Expression Feature Test
      */
