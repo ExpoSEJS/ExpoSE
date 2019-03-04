@@ -172,9 +172,8 @@ export default function(state, ctx, model, helper) {
 			if (i > 0) {
 				finalString = state.binary('+', finalString, sep);
 			}
-			finalString = state.binary('+', finalString, base[i]);
+			finalString = state.binary('+', finalString, helper.coerceToString(base[i]));
 		}
-		console.log('Joined: ' + finalString.toString());
 		return finalString;
 	});
 

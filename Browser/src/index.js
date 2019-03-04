@@ -37,23 +37,25 @@ const createWindow = () => {
 		callback({ cancel: false });
 	});
 
-	mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
+	if (process.env["PROPOGATE_ON_NETWORK"]) {
+		mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
 
-		function rif(offset, o2) {
-			if (TestCaseParameters[offset]) {
-				details.requestHeaders[o2] = TestCaseParameters[offset];
-				details.requestHeaders[o2.toLowerCase()] = TestCaseParameters[offset];
+			function rif(offset, o2) {
+				if (TestCaseParameters[offset]) {
+					details.requestHeaders[o2] = TestCaseParameters[offset];
+					details.requestHeaders[o2.toLowerCase()] = TestCaseParameters[offset];
+				}
 			}
-		}
 
-		rif("userAgent", "User-Agent");
-		rif("cookie", "Cookie");
-		rif("lastModified", "Last-Modified");
-		rif("referer", "Referer");
-		rif("origin", "Origin");
-		rif("host", "Host");
-		cb({ cancel: false, requestHeaders: details.requestHeaders });
-	});
+			rif("userAgent", "User-Agent");
+			rif("cookie", "Cookie");
+			rif("lastModified", "Last-Modified");
+			rif("referer", "Referer");
+			rif("origin", "Origin");
+			rif("host", "Host");
+			cb({ cancel: false, requestHeaders: details.requestHeaders });
+		});
+	}
 
 	// Emitted when the window is closed.
 	mainWindow.on("closed", () => {

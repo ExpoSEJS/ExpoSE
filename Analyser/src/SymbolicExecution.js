@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 8);
+			}, 1000 * 60 * 3);
 
 			const storagePool = {};
 
