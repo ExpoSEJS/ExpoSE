@@ -29,7 +29,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 3);
+			}, 1000 * 60 * 8);
 
 			const storagePool = {};
 
@@ -75,9 +75,6 @@ class SymbolicExecution {
 	}
 
 	_report(sourceString) {
-
-		console.log("Processing " + sourceString);
-		console.log(JSON.stringify(sourceString));
 
 		if (!this.state.isSymbolic(sourceString)) {
 			sourceString = sourceString.documentURI ? ("" + sourceString.documentURI) : ("" + sourceString);
@@ -281,7 +278,7 @@ class SymbolicExecution {
 
 		if (this.state.getConcrete(offset) === "src") {
 			this._report(val);	
-			val = this.state.getConcrete(val);
+			//val = this.state.getConcrete(val);
 		}
 
 		return {
