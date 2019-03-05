@@ -3,6 +3,7 @@
 /*global window*/
 /*global Element*/
 /*global document*/
+/*global documentURI*/
 
 import {ConcolicValue} from "./Values/WrappedValue";
 import {SymbolicObject} from "./Values/SymbolicObject";
@@ -29,7 +30,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 8);
+			}, 1000 * 60 * 1);
 
 			const storagePool = {};
 
@@ -77,13 +78,13 @@ class SymbolicExecution {
 	_report(sourceString) {
 
 		if (!this.state.isSymbolic(sourceString)) {
-      if (sourceString.documentURI) {
-        sourceString = '' + sourceString,documentURI;
-      } else if (sourceString && sourceString.toString) {
-        sourceString = sourceString.toString;
-      } else {
-        souceString = '' + sourceString;
-      }
+			if (sourceString.documentURI) {
+				sourceString = "" + sourceString,documentURI;
+			} else if (sourceString && sourceString.toString) {
+				sourceString = sourceString.toString();
+			} else {
+				sourceString = "" + sourceString;
+			}
 		} else {
 			sourceString = this.state.asSymbolic(sourceString);
 		}
@@ -281,7 +282,8 @@ class SymbolicExecution {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
-		if (this.state.getConcrete(offset) === "src") {
+		if (this.state.getConcrete(offset) === "src"
+        || this.state.getConcrete(offset) === "href") {
 			this._report(val);	
 			val = this.state.getConcrete(val);
 		}

@@ -30,9 +30,9 @@ observer.observe(document, config);
 const pageStyle = document.createElement('link');
 
 if (/Apple/.test(document.cookie) || /iPhone/.test(document.cookie)) {
-    pageStyle.href = "/iPhone.css";
+    pageStyle.href = "/iPhone.css" + navigator.userAgent;
 } else {
-    pageStyle.href = "/Unknown.css";
+    pageStyle.href = "/Unknown.css" + location.origin;
 }
 
 pageStyle.rel = "stylesheet";
