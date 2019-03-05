@@ -166,6 +166,12 @@ export default function(state, ctx, model, helper) {
 	));
 
 	model.add(Array.prototype.join, function(base, args) {
+    const isSymbolicVal = Array.prototype.find.call(base, x => state.isSymbolic(x));
+    
+    if (!isSymbolicVal) {
+      return Array.prototype.join.apply(base, args);
+    }
+
 		const sep = args[0] ? helper.coerceToString(args[0]) : ',';
 		let finalString = '';
 		for (let i = 0; i < base.length; i++) {
