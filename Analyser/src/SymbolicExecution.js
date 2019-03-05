@@ -77,13 +77,18 @@ class SymbolicExecution {
 	_report(sourceString) {
 
 		if (!this.state.isSymbolic(sourceString)) {
-			sourceString = sourceString.documentURI ? ("" + sourceString.documentURI) : ("" + sourceString);
-			sourceString = this.state.asSymbolic(sourceString);
+      if (sourceString.documentURI) {
+        sourceString = '' + sourceString,documentURI;
+      } else if (sourceString && sourceString.toString) {
+        sourceString = sourceString.toString;
+      } else {
+        souceString = '' + sourceString;
+      }
 		} else {
 			sourceString = this.state.asSymbolic(sourceString);
 		}
 
-		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${sourceString ? sourceString.toString() : ("" + sourceString)}"!!!`);
+		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${sourceString}"!!!`);
 	}
 
 	_reportFn(f, base, args) {	
