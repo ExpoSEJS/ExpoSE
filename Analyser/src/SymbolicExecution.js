@@ -95,7 +95,7 @@ class SymbolicExecution {
 	_reportFn(f, base, args) {	
 		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
 			this._report(args[0].src);
-			args[0].src = this.state.getConcrete(args[0].src);
+			//args[0].src = this.state.getConcrete(args[0].src);
 		}
 
 		if (f.name == "open") {
@@ -285,7 +285,7 @@ class SymbolicExecution {
 		if (this.state.getConcrete(offset) === "src"
         || this.state.getConcrete(offset) === "href") {
 			this._report(val);	
-			val = this.state.getConcrete(val);
+			//val = this.state.getConcrete(val);
 		}
 
 		return {
@@ -324,7 +324,7 @@ class SymbolicExecution {
 				const tv = this.state.getConcrete(val);
 				if (typeof(tv) === "string" && tv.includes("src=")) {
 					const sourceString = this.state.asSymbolic(val).toString();
-					console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);   
+					console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!${sourceString}!!!`);   
 				}
 			}
 
