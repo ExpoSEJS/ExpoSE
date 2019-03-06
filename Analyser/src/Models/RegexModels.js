@@ -2,8 +2,7 @@ import { ConcolicValue } from "../Values/WrappedValue";
 import Config from "../Config";
 import Log from "../Utilities/Log";
 import External from "../External";
-
-const Z3 = External.load("z3javascript").default;
+import Z3 from "z3javascript";
 
 let isMatchCount = 0;
 
