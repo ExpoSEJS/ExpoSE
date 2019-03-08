@@ -10,6 +10,7 @@ import { SymbolicObject } from "./Values/SymbolicObject";
 import { WrappedValue, ConcolicValue } from "./Values/WrappedValue";
 import Stats from "Stats";
 import Z3 from "z3javascript";
+import Helpers from "./Models/Helpers";
 
 function BuildUnaryJumpTable(state) {
 	const ctx = state.ctx;
@@ -65,6 +66,8 @@ class SymbolicState {
 				{ name: "phase_selection", value: 5 }
 			]
 		);
+
+		this.helpers = new Helpers(this, this.ctx);
 
 		Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
@@ -490,17 +493,25 @@ class SymbolicState {
 	}
 
 	/** 
-     * Symbolic binary operation, expects two concolic values and an operator
-     */
+   * Symbolic binary operation, expects two concolic values and an operator
+   */
 	binary(op, left, right) {
+    
+		if (typeof this.getConcrete(left) === "string") {
+			console.log("Coerced");
+			right = this.helpers.coerceToString(right);
+		} else {
+			console.log("Not Coerced");
+		}
+
 		const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right));
 		const result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
 		return result_s ? new ConcolicValue(result_c, result_s) : result_c;
 	}
 
 	/**
-     * Symbolic field lookup - currently only has support for symbolic arrays / strings
-     */
+   * Symbolic field lookup - currently only has support for symbolic arrays / strings
+   */
 	symbolicField(base_c, base_s, field_c, field_s) {
 		this.stats.seen("Symbolic Field");
 
