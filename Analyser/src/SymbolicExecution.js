@@ -3,7 +3,6 @@
 /*global window*/
 /*global Element*/
 /*global document*/
-/*global documentURI*/
 
 import {ConcolicValue} from "./Values/WrappedValue";
 import {SymbolicObject} from "./Values/SymbolicObject";
@@ -79,11 +78,18 @@ class SymbolicExecution {
 
 		if (!this.state.isSymbolic(sourceString)) {
 			if (sourceString.documentURI) {
-				sourceString = "" + sourceString,documentURI;
+				sourceString = "" + sourceString.documentURI;
+			} else if (sourceString.baseURI) {
+				sourceString = "" + sourceString.baseURI;
 			} else if (sourceString && sourceString.toString) {
-				sourceString = sourceString.toString();
+				let tsourceString = sourceString.toString();
+				if (tsourceString.includes("Object]")) {
+					sourceString = ObjectHelper.asString(sourceString);
+				} else {
+					sourceString = tsourceString;
+				}
 			} else {
-				sourceString = "" + sourceString;
+				sourceString = ObjectHelper.asString(sourceString);
 			}
 		} else {
 			sourceString = this.state.asSymbolic(sourceString);
@@ -110,6 +116,8 @@ class SymbolicExecution {
 		f = this.state.getConcrete(f);
 
 		const fn_model = this.models.get(f);
+
+		if (fn_model) { console.log(f.name); }
 
 		/**
 		 * Concretize the function if it is native and we do not have a custom model for it
