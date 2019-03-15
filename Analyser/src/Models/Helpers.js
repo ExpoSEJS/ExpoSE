@@ -69,9 +69,7 @@ export default function(state, ctx, model) {
 	}
 
 	function coerceToString(symbol) {
-    console.log('Doing a mega coerce: ' + state.getConcrete(symbol) + ' : ' typeof(state.getConcrete(symbol)) + " " + state.asSymbolic(symbol).toString());
-		if (typeof state.getConcrete(symbol) !== "string") {
-			
+  	if (typeof state.getConcrete(symbol) !== "string") {			
       Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
 			return '' + state.getConcrete(symbol); 
 		}
