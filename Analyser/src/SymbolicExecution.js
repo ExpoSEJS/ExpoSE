@@ -92,7 +92,7 @@ class SymbolicExecution {
 				sourceString = ObjectHelper.asString(sourceString);
 			}
 		} else {
-			sourceString = this.state.asSymbolic(sourceString);
+			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
 		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${sourceString}"!!!`);
