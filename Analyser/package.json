@@ -8,7 +8,7 @@
     "babel-plugin-transform-remove-strict-mode": "0.0.2",
     "browserify": "^14.1.0",
     "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#ac094e63cfe3546f469dca76d3ce9ac0298ec9f2",
-    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#444d26223d3c5d8c07c30e85a3f53dc1f9231275"
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#13fe83510a4a031d645b66f89fb070d6f9545fbb"
   },
   "scripts": {
     "postinstall": "./scripts/postinstall"
