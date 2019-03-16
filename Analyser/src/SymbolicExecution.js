@@ -193,7 +193,9 @@ class SymbolicExecution {
 		offset = this.state.ToString(offset);   
 		const base_c = this.state.getConcrete(base);
 		for (const idx in base_c) {
-			this.state.pushCondition(this.state.binary("==", idx, offset));	
+			const is_this_idx = this.state.binary("==", idx, offset);
+			console.log("IsThis: " + ObjectHelper.asString(is_this_idx));
+			this.state.pushCondition(this.state.asSymbolic(is_this_idx));
 		}
 	}
 

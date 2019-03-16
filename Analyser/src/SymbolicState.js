@@ -128,10 +128,11 @@ class SymbolicState {
 	}
 
 	/**
-     *Formats PC to pretty string if length != 0
-     */
+    * Formats PC to pretty string if length != 0
+    */
 	_stringPC(pc) {
 		return pc.length ? pc.reduce((prev, current) => {
+			console.log("Current: " + current);
 			let this_line = current.simplify().toPrettyString().replace(/\s+/g, " ").replace(/not /g, "¬");
 
 			if (this_line.startsWith("(¬")) {
@@ -507,7 +508,7 @@ class SymbolicState {
 		const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right));
 		const result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
 		console.log("Result S:" + result_s);
-		return result_s ? new ConcolicValue(result_c, result_s) : result_c;
+		return typeof(result_s) !== undefined ? new ConcolicValue(result_c, result_s) : result_c;
 	}
 
 	/**
