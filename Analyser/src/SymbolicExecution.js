@@ -116,7 +116,6 @@ class SymbolicExecution {
 		f = this.state.getConcrete(f);
 
 		const fn_model = this.models.get(f);
-
 		if (fn_model) { console.log(f.name); }
 
 		/**
@@ -191,13 +190,10 @@ class SymbolicExecution {
 	}
 
 	_getFieldSymbolicOffset(base, offset) {
+		offset = this.state.ToString(offset);   
 		const base_c = this.state.getConcrete(base);
-		const offset_c = this.state.getConcrete(offset);
 		for (const idx in base_c) {
-			if (offset_c != base_c[idx]) {
-				const condition = this.state.binary("==", idx, offset);
-				this.state.pushCondition(this.state.ctx.mkNot(condition));
-			}
+			this.state.pushCondition(this.state.binary("==", idx, offset));	
 		}
 	}
 

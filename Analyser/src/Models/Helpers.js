@@ -69,12 +69,7 @@ export default function(state, ctx, model) {
 	}
 
 	function coerceToString(symbol) {
-  	if (typeof state.getConcrete(symbol) !== "string") {			
-      Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
-			return '' + state.getConcrete(symbol); 
-		}
-
-		return symbol;
+    return state.ToString(symbol);	
 	}
 
 	function NoOp(f) {

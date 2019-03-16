@@ -498,14 +498,15 @@ class SymbolicState {
 	binary(op, left, right) {
     
 		if (typeof this.getConcrete(left) === "string") {
-			console.log("Coerced");
-			right = this.helpers.coerceToString(right);
+			console.log("Coerced " + right);
+			right = this.ToString(right);
 		} else {
 			console.log("Not Coerced");
 		}
 
 		const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right));
 		const result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
+		console.log("Result S:" + result_s);
 		return result_s ? new ConcolicValue(result_c, result_s) : result_c;
 	}
 
@@ -600,6 +601,15 @@ class SymbolicState {
 			Log.log(`Unsupported symbolic operand: ${op} on ${left_c} symbolic ${left_s}`);
 			return undefined;
 		}
+	}
+
+	ToString(symbol) {
+		if (typeof this.getConcrete(symbol) !== "string") {			
+			Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${this.getConcrete(symbol)}`);
+			return "" + this.getConcrete(symbol); 
+		}
+
+		return symbol;
 	}
 
 	/**
