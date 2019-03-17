@@ -72,7 +72,8 @@ class Coverage {
 		if (!branchInfo) {
 			branchInfo = {};
 			this._branches[localIndex] = branchInfo;
-			this._branchFilenameMap[localIndex] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
+			const map = this._sandbox.smap[this._sandbox.sid];
+			this._branchFilenameMap[localIndex] = map ? map.originalCodeFileName : "Broken Filename";
 		}
 
 		return branchInfo;

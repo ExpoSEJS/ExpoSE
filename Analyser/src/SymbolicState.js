@@ -263,6 +263,7 @@ class SymbolicState {
 			concreteCount.val += 1;
 		}
 
+		/*
 		if (arg instanceof Object) {
 			for (let i in arg) {
 				const property = Object.getOwnPropertyDescriptor(arg, i);
@@ -270,7 +271,7 @@ class SymbolicState {
 					arg[i] = this._deepConcrete(arg[i], concreteCount);
 				}
 			}
-		}
+		}*/
 
 		return arg;
 	}
