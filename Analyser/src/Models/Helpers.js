@@ -55,9 +55,8 @@ export default function(state, ctx, model) {
 
 			base = state.getConcrete(base);
 			const fn_model = model.get(base);
-			const is_native = !fn_model && isNative(base);
 
-			if (is_native) {
+			if (!fn_model && isNative(base)) {
 				Log.logMid("WARNING: Concretizing model for " + f.toString() + " " + JSON.stringify(base));
 				const concretized = state.concretizeCall(f, base, args, false);
 				base = concretized.base;

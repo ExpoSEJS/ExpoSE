@@ -116,7 +116,7 @@ class SymbolicExecution {
 		f = this.state.getConcrete(f);
 
 		const fn_model = this.models.get(f);
-		if (fn_model) { console.log(f.name); }
+		Log.logMid(fn_model ? ("Exec Model: " + f.name + " " + (new Error()).stack) : "exec unmodeled");
 
 		/**
 		 * Concretize the function if it is native and we do not have a custom model for it
@@ -128,6 +128,7 @@ class SymbolicExecution {
 			const concretized = this.state.concretizeCall(f, base, args);
 			base = concretized.base;
 			args = concretized.args;
+			this.state.stats.set("Unmodeled Function Call", f.name);
 		} else if (fn_model) {
 			this.state.stats.set("Modeled Function Call", f.name);
 		} else {
