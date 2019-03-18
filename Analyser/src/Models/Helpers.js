@@ -54,16 +54,15 @@ export default function(state, ctx, model) {
 		return function(base, args) {
 
 			base = state.getConcrete(base);
-			const fn_model = model.get(base);
 
-			if (!fn_model && isNative(base)) {
-				Log.logMid("WARNING: Concretizing model for " + f.toString() + " " + JSON.stringify(base));
+			if (isNative(base)) {
+				Log.logMid('Concretized Fn Model Call');
 				const concretized = state.concretizeCall(f, base, args, false);
 				base = concretized.base;
 				args = concretized.args;
 			}
 
-			return f.apply(fn_model || base, args);
+			return f.apply(base, args);
 		};
 	}
 

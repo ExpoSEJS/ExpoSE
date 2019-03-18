@@ -105,6 +105,7 @@ class SymbolicExecution {
 		}
 
 		if (f.name == "open") {
+			console.log("REPORTING FN OPEN " + JSON.stringify(args));
 			this._report(args[1]);
 		}
 	}
@@ -114,6 +115,8 @@ class SymbolicExecution {
 		Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
 		f = this.state.getConcrete(f);
+
+		this._reportFn(f, base, args);
 
 		const fn_model = this.models.get(f);
 		Log.logMid(fn_model ? ("Exec Model: " + f.name + " " + (new Error()).stack) : "exec unmodeled");
