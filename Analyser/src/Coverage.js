@@ -1,9 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
-
-import iidToLocation from "./Utilities/iidToLocation";
-
+//import iidToLocation from "./Utilities/iidToLocation";
 const LAST_IID = "LAST_IID";
 
 /**
@@ -32,6 +29,7 @@ class Coverage {
 	end() {
 		const payload = {};
 
+		/*
 		for (let i = 0; i < this._branches.length; i++) {
             
 			//SID are indexed from 1 not 0
@@ -57,6 +55,7 @@ class Coverage {
 				};
 			}
 		}
+		*/
 
 		payload[LAST_IID] = this._lastIid;
 
