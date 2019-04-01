@@ -255,25 +255,30 @@ class SymbolicState {
 		return sort;
 	}
 
-	_deepConcrete(arg, concreteCount) {
-		
-		/** TODO: Deep concretize shouldn't only conc if val is symbolic */
-		if (this.isSymbolic(arg)) {
-			arg = this.getConcrete(arg);
-			concreteCount.val += 1;
-		}
+	_deepConcrete(start, concreteCount) {
+	  start = this.getConcrete(start);	
+    let worklist = [start];
+    let seen = [];
 
-		/*
-		if (arg instanceof Object) {
-			for (let i in arg) {
-				const property = Object.getOwnPropertyDescriptor(arg, i);
-				if (property && this.isSymbolic(property.value)) {
-					arg[i] = this._deepConcrete(arg[i], concreteCount);
-				}
-			}
-		}*/
+    while (worklist.length) {
+      const arg = worklist.pop();
+      const seenBefore = seen.find(x => x == arg);
+      
+      if (seenBefore) {
+        continue;
+      }
 
-		return arg;
+      seen.push(arg);
+
+		  if (arg instanceof Object) {
+			  for (let i in arg) {
+          arg[i] = this.getConcrete(arg[i]);
+				  worklist.push(arg[i]); 
+			  }
+		  }
+    }
+
+		return this.getConcrete(start);
 	}
 
 	concretizeCall(f, base, args, report = true) {
