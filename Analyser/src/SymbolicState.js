@@ -257,25 +257,21 @@ class SymbolicState {
 
 	_deepConcrete(start, concreteCount) {
 		start = this.getConcrete(start);	
-		let worklist = [start];
+		let worklist = [this.getConcrete(start)];
 		let seen = [];
 
 		while (worklist.length) {
 			const arg = worklist.pop();
-			const seenBefore = seen.find(x => x === arg);
-      
-			if (seenBefore) {
-				continue;
-			}
-
 			seen.push(arg);
 
-			if (arg instanceof Object) {
-				for (let i in arg) {
-					if (this.isSymbolic(arg[i])) {
-						arg[i] = this.getConcrete(arg[i]);
-						concreteCount.val += 1;
-					}
+			for (let i in arg) {
+				if (this.isSymbolic(arg[i])) {
+					arg[i] = this.getConcrete(arg[i]);
+					concreteCount.val += 1;
+				}
+
+				const seenBefore = !!seen.find(x => x === arg); 
+				if (arg[i] instanceof Object && !seenBefore) {
 					worklist.push(arg[i]); 
 				}
 			}
