@@ -24,6 +24,10 @@ export default function(state, ctx, model, helpers) {
 
     return Object.prototype.keys.apply(this.getConcrete(base), args);
   });
+
+  model.add(Object.assign, (base, args) => {
+    return Object.assign.call(base, this.getConcrete(args[0]), this.getConcrete(args[1]));
+  });
  
   model.add(console.log, function(base, args) {
 
