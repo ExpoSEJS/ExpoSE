@@ -296,7 +296,7 @@ export default function(state, ctx, model, helpers) {
 	}
 
 	function RegexpBuiltinSplit(regex, string) {
-
+ 
 		//Remove g and y from regex
 		const re = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "");
 
@@ -471,7 +471,7 @@ export default function(state, ctx, model, helpers) {
 
 	model.add(String.prototype.split, symbolicHookRe(
 		String.prototype.split,
-		(base, args) => shouldBeSymbolic(args[0], base),
-		(base, args) => RegexpBuiltinSplit(args[0], base).result
+		(base, args) => state.isSymbolic(base) && (args[0] instanceof RegExp || typeof(args[0]) === "string"),
+		(base, args) => RegexpBuiltinSplit(args[0] instanceof RegExp ? args[0] : new RegExp(args[0]), base).result
 	));
 }

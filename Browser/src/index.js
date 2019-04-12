@@ -7,10 +7,10 @@ const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
 app.commandLine.appendSwitch("ignore-certificate-errors");
 app.commandLine.appendSwitch("disable-web-security");
 
-const MITM_PORT = process.env['MITM_PORT'];
+const MITM_PORT = process.env["MITM_PORT"];
 
 if (!MITM_PORT) {
-  throw 'No MITM port set';
+	throw "No MITM port set";
 }
 
 // Keep a global reference of the window object, if you don't, the window will
