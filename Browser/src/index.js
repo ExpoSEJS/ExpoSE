@@ -39,7 +39,9 @@ const createWindow = () => {
 	});
 
 	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
-		console.log("LOAD REQUEST: " + details.url);
+		mainWindow.webContents.executeJavaScript("(function(){ try { return S$.sandbox.state.finalPC(); } catch (e) { return '' + e; } })()").then(pc => {
+			console.log(`CONCRETE_LOAD_EVENT !!!${pc}!!! !!!${details.url}!!!`);
+		});
 		callback({ cancel: false });
 	});
 
