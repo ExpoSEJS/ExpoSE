@@ -25,6 +25,8 @@ class SymbolicExecution {
 
 		if (typeof window !== "undefined") {
 
+			window._ExpoSE = this;
+
 			setTimeout(() => {
 				console.log("Finish timeout (callback)");
 				this.finished();
@@ -74,7 +76,7 @@ class SymbolicExecution {
 		});
 	}
 
-	_report(sourceString) {
+	report(sourceString) {
 
 		if (!this.state.isSymbolic(sourceString)) {
 			if (sourceString.documentURI) {
