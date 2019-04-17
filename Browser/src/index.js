@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-const { app, BrowserWindow } = require("electron");
+const { app, webContents, BrowserWindow } = require("electron");
 
 const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
 
@@ -11,6 +11,13 @@ const MITM_PORT = process.env["MITM_PORT"];
 
 if (!MITM_PORT) {
 	throw "No MITM port set";
+}
+
+const decoder = new TextDecoder("utf-8");
+const encoder = new TextEncoder();
+
+function instrumentResponse(evt) {
+  console.log('Instrument');
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -32,17 +39,22 @@ const createWindow = () => {
 		e.preventDefault();
 	});
 
+	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
+
+		mainWindow.webContents.executeJavaScript("(function(){ try { return S$.sandbox.state.finalPC(); } catch (e) { return '' + e; } })()").then(pc => {
+			console.log(`CONCRETE_LOAD_EVENT !!!${pc}!!! !!!${details.url}!!!`);
+		});
+
+    const filter = mainWindow.webContents.session.webRequest.filterResponseData(details.requestId);
+    filter.ondata = instrumentCode;
+
+		callback({ cancel: false });
+	});
+
 	mainWindow.webContents.session.clearCache(function() {
 		mainWindow.webContents.session.setProxy({ proxyRules: "http://localhost:" + MITM_PORT}, function () {
 			mainWindow.loadURL(process.argv[process.argv.length - 2]);
 		});
-	});
-
-	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
-		mainWindow.webContents.executeJavaScript("(function(){ try { return S$.sandbox.state.finalPC(); } catch (e) { return '' + e; } })()").then(pc => {
-			console.log(`CONCRETE_LOAD_EVENT !!!${pc}!!! !!!${details.url}!!!`);
-		});
-		callback({ cancel: false });
 	});
 
 	if (process.env["PROPOGATE_ON_NETWORK"]) {
