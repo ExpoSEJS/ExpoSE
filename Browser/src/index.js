@@ -1,6 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-const { app, webContents, BrowserWindow } = require("electron");
+const { app, BrowserWindow } = require("electron");
 
 const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
 
@@ -11,13 +11,6 @@ const MITM_PORT = process.env["MITM_PORT"];
 
 if (!MITM_PORT) {
 	throw "No MITM port set";
-}
-
-const decoder = new TextDecoder("utf-8");
-const encoder = new TextEncoder();
-
-function instrumentResponse(evt) {
-  console.log('Instrument');
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -43,9 +36,6 @@ const createWindow = () => {
 		mainWindow.webContents.executeJavaScript(`(function(){ try { window._ExpoSE.report("${details.url}"); } catch (e) { return '' + e; } })()`).then(() => {
 			console.log(`CONCRETE_LOAD_EVENT !!!${details.url}!!!`);
 		});
-
-    const filter = mainWindow.webContents.session.webRequest.filterResponseData(details.requestId);
-    filter.ondata = instrumentCode;
 
 		callback({ cancel: false });
 	});
