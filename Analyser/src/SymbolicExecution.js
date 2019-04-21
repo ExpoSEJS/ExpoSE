@@ -102,13 +102,13 @@ class SymbolicExecution {
 
 	_reportFn(f, base, args) {	
 		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
-			this._report(args[0].src);
+			this.report(args[0].src);
 			//args[0].src = this.state.getConcrete(args[0].src);
 		}
 
 		if (f.name == "open") {
 			console.log("REPORTING FN OPEN " + JSON.stringify(args));
-			this._report(args[1]);
+			this.report(args[1]);
 		}
 	}
 
@@ -297,7 +297,7 @@ class SymbolicExecution {
 
 		if (this.state.getConcrete(offset) === "src"
         || this.state.getConcrete(offset) === "href") {
-			this._report(val);	
+			this.report(val);	
 			//val = this.state.getConcrete(val);
 		}
 
