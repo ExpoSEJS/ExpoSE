@@ -487,7 +487,7 @@ export default function(state, ctx, model, helpers) {
 	model.add(Template[Symbol.search], symbolicHookRe(
 		Template[Symbol.search],
 		(base, args) => shouldBeSymbolic(base, args[0]),
-		(base, args) => RegexpBuiltinSearch(base, coerceToString(args[0]).result
+		(base, args) => RegexpBuiltinSearch(base, coerceToString(args[0])).result
 	));
 
 	model.add(Template[Symbol.exec], symbolicHookRe(
