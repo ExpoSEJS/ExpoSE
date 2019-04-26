@@ -210,7 +210,9 @@ export default function(state, ctx, model, helpers) {
 	}
 
 	function RegexpBuiltinExec(regex, string) {
-		
+
+    Log.logMid("RegexpExec Model");	
+	
 		//Preserve the lastIndex property
 		let lastIndex = regex.lastIndex;
 		const test = RegexpBuiltinTest(regex, string);
