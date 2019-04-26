@@ -97,7 +97,7 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.pcToSMT()}!!! !!!"${sourceString}"!!!`);
+		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!!`);
 	}
 
 	_reportFn(f, base, args) {	

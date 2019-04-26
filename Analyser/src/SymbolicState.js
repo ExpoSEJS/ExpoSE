@@ -146,10 +146,6 @@ class SymbolicState {
 		return this.pathCondition.filter(x => x.ast).map(x => x.ast);
 	}
 
-  pcToSMT() {
-    return this.finalPC().map(pc => `(assert ${x.toString()})\n`);
-  }
-
 	_addInput(pc, solution, pcIndex, childInputs) {
 		solution._bound = pcIndex + 1;
 		childInputs.push({
