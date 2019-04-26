@@ -97,7 +97,7 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${sourceString}"!!!`);
+		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.pcToSMT()}!!! !!!"${sourceString}"!!!`);
 	}
 
 	_reportFn(f, base, args) {	
@@ -337,7 +337,7 @@ class SymbolicExecution {
 				const tv = this.state.getConcrete(val);
 				if (typeof(tv) === "string" && tv.includes("src=")) {
 					const sourceString = this.state.asSymbolic(val).toString();
-					console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!${sourceString}!!!`);   
+          this.report(sourceString);
 				}
 			}
 
