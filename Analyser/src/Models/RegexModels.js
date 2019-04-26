@@ -459,18 +459,6 @@ export default function(state, ctx, model, helpers) {
 		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
 	));
 
-	model.add(Symbol.exec, symbolicHookRe(
-		Symbol.exec,
-		(base, args) => shouldBeSymbolic(base, args[0]),
-		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
-	));
-
-	model.add(Symbol.match, symbolicHookRe(
-		Symbol.match,
-		(base, args) => shouldBeSymbolic(base, args[0]),
-		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
-	));
-
 	model.add(RegExp.prototype.test, symbolicHookRe(
 		RegExp.prototype.test,
 		(base, args) => shouldBeSymbolic(base, args[0]),
@@ -488,4 +476,25 @@ export default function(state, ctx, model, helpers) {
 		(base, args) => state.isSymbolic(base) && (args[0] instanceof RegExp || typeof(args[0]) === "string"),
 		(base, args) => RegexpBuiltinSplit(args[0] instanceof RegExp ? args[0] : new RegExp(args[0]), base).result
 	));
+
+
+  /**
+   * Occasionally (Thanks James....) it appears developers may resolve the Symbol for the match method rather than use the API. Most interpreters use the same instance of the method for all constructs so we can add a model by creating a new RegExp, extracting the default match symbol and adding that to the models.
+   */
+
+  const Template = /DEFAULT/;
+
+	model.add(Template[Symbol.exec], symbolicHookRe(
+		Symbol.exec,
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+	));
+
+	model.add(Template[Symbol.match], symbolicHookRe(
+		Symbol.match,
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+	));
+
+
 }
