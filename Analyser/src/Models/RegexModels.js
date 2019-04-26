@@ -484,17 +484,28 @@ export default function(state, ctx, model, helpers) {
 
   const Template = /DEFAULT/;
 
+	model.add(Template[Symbol.search], symbolicHookRe(
+		Template[Symbol.search],
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinSearch(base, coerceToString(args[0]).result
+	));
+
 	model.add(Template[Symbol.exec], symbolicHookRe(
-		Symbol.exec,
+		Template[Symbol.exec],
 		(base, args) => shouldBeSymbolic(base, args[0]),
 		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
 	));
 
 	model.add(Template[Symbol.match], symbolicHookRe(
-		Symbol.match,
+		Template[Symbol.match],
 		(base, args) => shouldBeSymbolic(base, args[0]),
 		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
 	));
 
+	model.add(Template[Symbol.replace], symbolicHookRe(
+		Template[Symbol.replace],
+		(base, args) => shouldBeSymbolic(base, args[0]) && (typeof(state.getConcrete(args[1])) === "string" || typeof(state.getConcrete(args[1])) === "function"),
+		(base, args) => RegexpBuiltinReplace(base, args[0], args[1]).result
+	));
 
 }
