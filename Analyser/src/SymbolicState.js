@@ -128,25 +128,6 @@ class SymbolicState {
 	}
 
 	/**
-    * Formats PC to pretty string if length != 0
-    */
-	_stringPC(pc) {
-		return pc.length ? pc.reduce((prev, current) => {
-			let this_line = current.simplify().toPrettyString().replace(/\s+/g, " ").replace(/not /g, "¬");
-
-			if (this_line.startsWith("(¬")) {
-				this_line = this_line.substr(1, this_line.length - 2);
-			}
-
-			if (this_line == "true" || this_line == "false") {
-				return prev;
-			} else {
-				return prev + (prev.length ? ", " : "") + this_line;
-			}
-		}, "") : "";
-	}
-
-	/**
    * Creates a full (up to date) solver instance and then calls toString on it to create an SMT2Lib problem
    * TODO: This is a stop-gag implementation for the work with Ronny - not to be relied upon.
    */
@@ -162,7 +143,7 @@ class SymbolicState {
     * Returns the final PC as a string (if any symbols exist)
     */
 	finalPC() {
-		return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
+		return this.pathCondition.filter(x => x.ast).map(x => x.ast);
 	}
 
 	_addInput(pc, solution, pcIndex, childInputs) {
