@@ -298,7 +298,7 @@ class SymbolicExecution {
 		if (this.state.getConcrete(offset) === "src"
         || this.state.getConcrete(offset) === "href") {
 			this.report(val);	
-			//val = this.state.getConcrete(val);
+			val = this.state.getConcrete(val);
 		}
 
 		return {
