@@ -337,7 +337,7 @@ class SymbolicExecution {
 				const tv = this.state.getConcrete(val);
 				if (typeof(tv) === "string" && tv.includes("src=")) {
 					const sourceString = this.state.asSymbolic(val).toString();
-          this.report(sourceString);
+					this.report(sourceString);
 				}
 			}
 
