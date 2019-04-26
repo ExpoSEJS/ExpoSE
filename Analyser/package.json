@@ -7,7 +7,7 @@
   "dependencies": {
     "babel-plugin-transform-remove-strict-mode": "0.0.2",
     "browserify": "^14.1.0",
-    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#ac094e63cfe3546f469dca76d3ce9ac0298ec9f2",
+    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#93bba5577e00ab4042c5cf7e0f7cf718fa352073",
     "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#6c7fd2440f858eb371101dd603ead49554cf72a3"
   },
   "scripts": {

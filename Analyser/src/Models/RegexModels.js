@@ -457,6 +457,18 @@ export default function(state, ctx, model, helpers) {
 		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
 	));
 
+	model.add(Symbol.exec, symbolicHookRe(
+		Symbol.exec,
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+	));
+
+	model.add(Symbol.match, symbolicHookRe(
+		Symbol.match,
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+	));
+
 	model.add(RegExp.prototype.test, symbolicHookRe(
 		RegExp.prototype.test,
 		(base, args) => shouldBeSymbolic(base, args[0]),

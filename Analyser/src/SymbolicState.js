@@ -606,7 +606,10 @@ class SymbolicState {
 	}
 
 	ToString(symbol) {
-		if (typeof this.getConcrete(symbol) !== "string") {			
+		console.log(new Error().stack);
+
+
+		if (typeof this.getConcrete(symbol) !== "string") {
 			Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${this.getConcrete(symbol)}`);
 			return "" + this.getConcrete(symbol); 
 		}
