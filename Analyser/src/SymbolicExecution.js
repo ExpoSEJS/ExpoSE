@@ -121,7 +121,7 @@ class SymbolicExecution {
 		this._reportFn(f, base, args);
 
 		const fn_model = this.models.get(f);
-		Log.logMid(fn_model ? ("Exec Model: " + f.name + " " + (new Error()).stack) : "exec unmodeled");
+		Log.logMid(fn_model ? ("Exec Model: " + f.name + " " + (new Error()).stack) : f.name + " unmodeled");
 
 		/**
 		 * Concretize the function if it is native and we do not have a custom model for it
