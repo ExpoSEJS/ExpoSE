@@ -182,6 +182,8 @@ export default function(state, ctx, model, helpers) {
 		const regexEncoded = Z3.Regex(ctx, regex);
 		const is_match_s = ctx.mkSeqInRe(state.asSymbolic(string), regexEncoded.ast);
 
+    console.log(`|REGEX ENCODING| exec(${state.asSymbolic(string).toString()}) -> (${regexEncoded.captures.reduce((last, capture, idx) => last + (idx > 0 ? ',' : '') + capture.toString(), '')})`);
+
 		EnableCaptures(regexEncoded, regex, state.asSymbolic(string));
 		is_match_s.checks = BuildRefinements(regexEncoded, regex, state.asSymbolic(string), is_match_s);
 
