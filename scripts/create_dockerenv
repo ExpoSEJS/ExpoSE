@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+docker build -t expose .
+docker container stop exposed; docker container rm exposed
+docker run -d -p 1000:22 --name exposed --restart unless-stopped expose
+docker cp ~/.ssh/ exposed:/home/expose/.ssh/
