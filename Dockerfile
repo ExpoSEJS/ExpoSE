@@ -1,4 +1,5 @@
 FROM ubuntu:19.04
+RUN echo y | unminimize
 
 RUN echo "Installing dependencies"
 RUN apt update && apt upgrade && apt install --assume-yes git bash openssh-server clang build-essential vim curl
