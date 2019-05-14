@@ -42,6 +42,7 @@ export default {
 	maxConcurrent: maxConcurrent(), //max number of tests to run concurrently
 	maxTime: timeFrom("EXPOSE_MAX_TIME", "2h"),
 	testMaxTime: timeFrom("EXPOSE_TEST_TIMEOUT", "40m"),
+	testStrategy: getArgument("EXPOSE_TEST_STRATEGY", "default"),
 	jsonOut: getArgument("EXPOSE_JSON_PATH", "string", undefined), //By default ExpoSE does not generate JSON out
 	printPaths: getArgument("EXPOSE_PRINT_PATHS", "number", false), //By default do not print paths to stdout
 	printDeltaCoverage: getArgument("EXPOSE_PRINT_COVERAGE", "number", false),

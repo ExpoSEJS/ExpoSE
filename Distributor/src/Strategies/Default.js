@@ -9,7 +9,6 @@ class Strategy {
 
 		//Cache the length of the total remaining so we don't have to loop to identify len
 		this._totalQueued = 0;
-
 		this._totalEaten = 0;
 	}
 

@@ -3,7 +3,7 @@
 
 
 import Spawn from "./Spawn";
-import Strategy from "./Strategy";
+import Strategy from "./Strategies";
 import Coverage from "./CoverageAggregator";
 import Stats from "Stats";
 import Log from "./Log";
