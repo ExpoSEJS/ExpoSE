@@ -39,6 +39,6 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
-    "electron":"^4.0.0"
+    "electron":"^2.0.8"
   }
 }
