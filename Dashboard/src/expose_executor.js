@@ -1,7 +1,5 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
-
 const tmp = require("tmp");
 const fs = require("fs");
 const spawn = require("child_process").spawn;
@@ -24,7 +22,7 @@ function Executor(filepath, input, data, done) {
 	if (input) {
 		args = ["replay", filepath, input];
 	} else {
-		args = ["test", filepath];
+		args = [filepath];
 	}
 
 	let prc = spawn(EXPOSE_PATH, args, {
@@ -43,6 +41,7 @@ function Executor(filepath, input, data, done) {
 	prc.stderr.on("data", data);
 
 	prc.stdout.on("close", () => {
+		console.log("Closed to " + jsonOutFile.name);
 		fs.readFile(jsonOutFile.name, (err, data) => {
 			prc.running = false;
 			if (err) {

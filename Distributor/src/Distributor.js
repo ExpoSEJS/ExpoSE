@@ -39,6 +39,7 @@ if (process.argv.length >= 3) {
 	center.done((center, done, errors, coverage, stats) => {
 
 		if (Config.jsonOut) {
+			console.log("Writing JSON");
 			JsonWriter(Config.jsonOut, target, coverage, start, (new Date()).getTime(), done);
 		}
 
