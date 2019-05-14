@@ -1,9 +1,9 @@
 FROM ubuntu:19.04
 RUN echo y | unminimize
 
-RUN echo "Installing dependencies"
-RUN apt update && apt upgrade && apt install --assume-yes git bash openssh-server clang build-essential vim curl
-RUN echo "Configuring SSH"
+#Install SSH, Xvfb etc
+RUN apt update && apt install --assume-yes git bash openssh-server clang build-essential vim curl xvfb python3 python3-pip libgtk-3-0 tmux libxss1 libgconf-2-4 libnss3 libasound2
+RUN pip3 install mitmproxy==4.0.4
 RUN useradd --create-home --shell /bin/bash expose
 RUN echo 'expose:expose' | chpasswd
 RUN mkdir -p /run/sshd
@@ -13,14 +13,14 @@ ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 RUN ssh-keygen -A
 
-RUN echo "Installing ExpoSE"
+#Install ExpoSE into /source/
 ADD . /source
 RUN chown -R expose /source; chmod -R 777 /source/
 USER expose
 WORKDIR /source
 RUN ./scripts/docker_setup
-
-
+RUN nohup Xvfb :1 -screen 0 800x600x24 &
+ENV DISPLAY 1
 USER root
 
 #Setup Volumes
