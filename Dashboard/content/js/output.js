@@ -71,7 +71,7 @@ function loadOutput(page) {
 		fs.readFile('' + file + STDOUT_SUFFIX, (err, stdout) => {
 
 			if (err) {
-				throw err;
+        stdout = 'No stdout';
 			}
 
 			stdout = '' + stdout;
