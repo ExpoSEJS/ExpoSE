@@ -5,9 +5,10 @@
   "author": "Blake Loring <blake@parsed.uk>",
   "readme": "README.md",
   "dependencies": {
-    "walk": "*",
+    "colors": "^1.3.3",
     "tmp": "*",
-    "tree-kill": "*"
+    "tree-kill": "*",
+    "walk": "*"
   },
   "license": "Apache",
   "main": "bin/Distributor.js",
