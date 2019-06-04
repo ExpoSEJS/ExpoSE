@@ -11,9 +11,8 @@ function generateCoverageMap(lineInfo, callback) {
 
 				console.log(`[+] Line Coverage for ${filename} `);
 
-				const lines = data.split("\n");
+				const lines = data.trim().split("\n");
 				const linesWithTouched = lines.map((line, idx) => {
-
 					const lineNumber = idx + 1;
 
 					let indicator = "s";
@@ -26,9 +25,9 @@ function generateCoverageMap(lineInfo, callback) {
 						}
 					}
 
-					const outputLine = `${lineNumber}${indicator}^${line}$`;
-
-					return indicator == "-" ? outputLine.bgRed : outputLine.bgGreen;
+					const formattedLine = indicator == "-" ? line.bgRed : line.bgGreen;
+					const outputLine = `${lineNumber}${formattedLine}`;
+					return outputLine;
 				});
 
 				linesWithTouched.forEach(line => callback(line));
