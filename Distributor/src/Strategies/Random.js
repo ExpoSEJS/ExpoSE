@@ -12,7 +12,7 @@ class Strategy {
 
 	next() {
     const selected = Math.floor(Math.random() * this._tests.length);
-    return this._tests.splice(selected)[0];
+    return this._tests.splice(selected, selected)[0];
 	}
 
 	length() {
