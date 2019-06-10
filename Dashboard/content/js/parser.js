@@ -7,7 +7,7 @@ function toPercentage(aggregate) {
 }
 
 function toSeconds(v) {
-	return (v / 1000 / 1000).toFixed(2) + 's';
+	return (v / 1000).toFixed(2) + 's';
 }
 
 function averageList(list) {
