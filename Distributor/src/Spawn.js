@@ -47,7 +47,7 @@ class Spawn {
 	}
 
 	_recordEndTime() {
-		this._endTime = (new Date()).getTime();
+		this._endTime = Date.now();
 	}
 
 	_processEnded(code, done) {
@@ -130,7 +130,7 @@ class Spawn {
 
 	start(done) {
 
-		this._startTime = (new Date()).getTime();
+		this._startTime = Date.now();
 
 		try {
 			const stdio = this.options.log ? ["ignore", "inherit", "inherit"] : ["ignore", "ignore", "ignore"];
