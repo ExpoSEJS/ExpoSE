@@ -5,10 +5,10 @@
 const fs = require("fs");
 const tmp = require("tmp");
 const graph_sorter = require("./graph_sorter");
-const TIMESTEP = 1000 * 1000;
+const TIMESTEP = 1000;
 
 function toSeconds(v) {
-	return v / 1000 / 1000;
+	return v / 1000;
 }
 
 function timeutil(start, x) {
@@ -16,12 +16,9 @@ function timeutil(start, x) {
 }
 
 function handlePercentage(summary, outFile, mode, doneCb) {
-	let jobList = summary.jobs;
-
-	let time = timeutil.bind(this, jobList[0]);
-
+	const jobList = summary.jobs;
+	const time = timeutil.bind(this, jobList[0]);
 	let coverageLines = "0, 0\n";
-
 	let lastCoverage = 0;
 
 	jobList.forEach(x => {
@@ -49,7 +46,7 @@ function handlePerSecond(summary, outFile, doneCb) {
 
 function buildGraphData(summary, done) {
 
-	const COVERAGE_MODES = ["lines", "terms"];
+	const COVERAGE_MODES = ["lines"];
 
 	let coverageFiles = COVERAGE_MODES.map(() => tmp.fileSync());
 	let rateOutFile = tmp.fileSync();
