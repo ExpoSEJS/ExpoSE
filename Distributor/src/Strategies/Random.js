@@ -15,7 +15,7 @@ class Strategy {
     if (selected == 0) {
       return this._tests.shift();
     } else {
-      return  this._tests.splice(selected, selected)[0];
+      return  this._tests.splice(selected, 1)[0];
 	  }
   }
 
