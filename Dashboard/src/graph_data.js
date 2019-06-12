@@ -46,7 +46,7 @@ function handlePerSecond(summary, outFile, doneCb) {
 
 function buildGraphData(summary, done) {
 
-	const COVERAGE_MODES = ["lines"];
+	const COVERAGE_MODES = ["terms"];
 
 	let coverageFiles = COVERAGE_MODES.map(() => tmp.fileSync());
 	let rateOutFile = tmp.fileSync();

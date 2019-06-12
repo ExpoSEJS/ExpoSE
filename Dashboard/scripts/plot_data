@@ -38,7 +38,7 @@ echo "set grid"
 
 echo "set ylabel 'Coverage (\\%)'"
 echo "set xlabel ''"
-echo "set xrange [0:${XRANGE}]"
+#echo "set xrange [0:100]"
 echo "set yrange [0:100]"
 echo "set title '$TITLE'"
 
