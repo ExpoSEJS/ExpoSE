@@ -252,8 +252,10 @@ class SymbolicState {
 		return sort;
 	}
 
-	_deepConcrete(start, concreteCount) {
+	_deepConcrete(start, _concreteCount) {
 		start = this.getConcrete(start);	
+
+		/*
 		let worklist = [this.getConcrete(start)];
 		let seen = [];
 
@@ -273,8 +275,9 @@ class SymbolicState {
 				}
 			}
 		}
+    */
 
-		return this.getConcrete(start);
+		return start;
 	}
 
 	concretizeCall(f, base, args, report = true) {

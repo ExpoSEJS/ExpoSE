@@ -22,15 +22,15 @@ export default function(state, ctx, model, helpers) {
       args[i] = state.getConcrete(args[i]);
     }
 
-    return Object.prototype.keys.apply(this.getConcrete(base), args);
+    return Object.prototype.keys.apply(state.getConcrete(base), args);
   });
 
   model.add(Object.assign, (base, args) => {
-    return Object.assign.call(base, this.getConcrete(args[0]), this.getConcrete(args[1]));
+    return Object.assign.call(base, state.getConcrete(args[0]), state.getConcrete(args[1]));
   });
 
   model.add(Array.isArray, (base, args) => {
-    return Array.isArray.call(base, this.getConcrete(args[0]));
+    return Array.isArray.call(base, state.getConcrete(args[0]));
   });
  
   model.add(console.log, function(base, args) {

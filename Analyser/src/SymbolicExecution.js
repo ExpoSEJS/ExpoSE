@@ -100,15 +100,17 @@ class SymbolicExecution {
 		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!!`);
 	}
 
-	_reportFn(f, base, args) {	
-		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
-			this.report(args[0].src);
-			args[0].src = this.state.getConcrete(args[0].src);
-		}
-
-		if (f.name == "open") {
-			console.log("REPORTING FN OPEN " + JSON.stringify(args));
-			this.report(args[1]);
+	_reportFn(f, base, args) {
+		if (typeof(window) !== "undefined") {
+			if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
+				this.report(args[0].src);
+				args[0].src = this.state.getConcrete(args[0].src);
+			}
+      
+			if (f.name == "open") {
+				console.log("REPORTING FN OPEN " + JSON.stringify(args));
+				this.report(args[1]);
+			}
 		}
 	}
 
@@ -117,11 +119,12 @@ class SymbolicExecution {
 		Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
 		f = this.state.getConcrete(f);
-
 		this._reportFn(f, base, args);
 
+		const functionName = f ? f.name : "undefined";
+
 		const fn_model = this.models.get(f);
-		Log.logMid(fn_model ? ("Exec Model: " + f.name + " " + (new Error()).stack) : f.name + " unmodeled");
+		Log.logMid(fn_model ? ("Exec Model: " + functionName + " " + (new Error()).stack) : functionName + " unmodeled");
 
 		/**
 		 * Concretize the function if it is native and we do not have a custom model for it
@@ -134,10 +137,10 @@ class SymbolicExecution {
 			base = concretized.base;
 			args = concretized.args;
 			if (concretized.count > 0) {
-				this.state.stats.set("Unmodeled Function Call", f.name);
+				this.state.stats.set("Unmodeled Function Call", functionName);
 			}
 		} else if (fn_model) {
-			this.state.stats.set("Modeled Function Call", f.name);
+			this.state.stats.set("Modeled Function Call", functionName);
 		} else {
 			this.state.stats.seen("General Function Call");
 		}
