@@ -5,7 +5,7 @@
   "author": "Blake Loring <blake@parsed.uk>",
   "readme": "README.md",
   "dependencies": {},
-  "main": "bin/symbols.js",
+  "main": "src/symbols.js",
   "license": "Apache",
   "devDependencies": {
     "babel-cli": "^6.18.0",

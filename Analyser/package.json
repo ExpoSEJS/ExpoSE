@@ -5,25 +5,15 @@
   "author": "Blake Loring <blake@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
   "readme": "README.md",
   "dependencies": {
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-es2017": "^7.0.0-beta.53",
-    "babel-plugin-transform-remove-strict-mode": "0.0.2",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-latest": "^6.24.1",
+    "@babel/core": "^7.4.5",
     "browserify": "^14.1.0",
-    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#1ecd3c8cd0a4fbdff089931d0449c89d47b6d42a",
-    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#090678f0b725adf3662388b1bca6077e0cf09fdc"
+    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#9380a1e60362be20abf908bfa7cc02551cdaf871",
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#9a8738d2bccb016bbd9a255a0723f016d2e15198"
   },
   "scripts": {
     "postinstall": "./scripts/postinstall"
   },
   "license": "",
   "main": "src/SymbolicExecution.js",
-  "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-plugin-strip-function-call": "^1.0.2",
-    "babel-preset-babili": "0.0.9",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13"
-  }
+  "devDependencies": {}
 }

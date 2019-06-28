@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-(./scripts/build/build lib/S$ src bin)
-
-if [ $? -ne 0 ]; then
-	echo "S$ failed to build"
-	exit 1
-fi
-
 (./scripts/build/build lib/Stats src bin)
 
 if [ $? -ne 0 ]; then

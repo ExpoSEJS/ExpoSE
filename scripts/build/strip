@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-
+ROOT=$(pwd)
 (EXPOSE_LOG_LEVEL=$EXPOSE_LOG_LEVEL ./scripts/build/build_strip_rc) > $1/.babelrc
 cd $1
 mkdir -p $3
-node node_modules/babel-cli/bin/babel -d $3 $2/
+${ROOT}/node_modules/.bin/babel -d $3 $2/
 rm .babelrc
 exit $?
