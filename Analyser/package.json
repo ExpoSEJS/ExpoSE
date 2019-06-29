@@ -7,7 +7,7 @@
   "dependencies": {
     "browserify": "^14.1.0",
     "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#9380a1e60362be20abf908bfa7cc02551cdaf871",
-    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#9a8738d2bccb016bbd9a255a0723f016d2e15198"
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#66e31a499f77113d5e693d9dacaef6470f61a21e"
   },
   "scripts": {
     "postinstall": "./scripts/postinstall"
