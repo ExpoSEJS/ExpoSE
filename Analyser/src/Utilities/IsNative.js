@@ -18,18 +18,34 @@ var reNative = RegExp("^" +
 );
 
 function isNativeCore(value) {
-    var type = typeof value;
-    return type == "function" ? reNative.test(fnToString.call(value)) :
-        (value && type == "object" && reHostCtor.test(toString.call(value))) || false;
+
+		if (value.hasOwnProperty('toString')) {
+			Log.log('WARNING: IsNative will not work on custom toString methods. We assume nobody would overwrite core method toStrings');
+			return false;
+		}
+
+		if (typeof(value) === "function") {
+			return reNative.test(fnToString.call(value)); 
+		} else if (typeof(value) === "object") {
+			return reHostCtor.test(toString.call(value));
+		} else {
+			return false;
+		}
 }
 
 function isNative(v) {
   Log.logMid('TODO: IsNative Uncached');
-  //TODO: Blake: IsNative uncached - somehow v can be null?!?
   const type = typeof v;
-  if (type == "function" || type == "object") {
-	  return isNativeCore(v);
-  } else {
+
+	if (v === null || v === undefined) {
+		Log.logMid('IsNative on undef/nul');
+		return false;
+	}
+
+	if (typeof(v) === "function" || typeof(v) === "object") {
+		return isNativeCore(v);
+	} else {
+		Log.logMid('IsNative called on non fn/obj');
 		return false;
 	}
 }

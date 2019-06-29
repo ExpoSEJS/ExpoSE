@@ -7,6 +7,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+NODE_PATH="${NODE_PATH}:$(pwd)"
+
 ./scripts/build/build_libs
 
 if [ $? -ne 0 ]; then
@@ -24,7 +26,7 @@ fi
 #Build the actual analyser
 (EXPOSE_LOG_LEVEL=$EXPOSE_LOG_LEVEL ./scripts/build/strip Analyser src bin)
 (./scripts/build/build Analyser bin bin)
-(./scripts/build/bundle  Analyser "bin/Analyser.js" "bin/bundle.js")
+(./scripts/build/bundle Analyser "bin/Analyser.js" "bin/bundle.js")
 
 if [ $? -ne "0" ]; then
 	echo "Analyser failed to build"

@@ -6,6 +6,7 @@ obj-test/
 *_jalangi_*.js*
 *.d
 *.o
+*.un~
 *.dylib
 *.a
 *configure

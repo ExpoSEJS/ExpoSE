@@ -166,6 +166,12 @@ export default function(state, ctx, model, helper) {
 	));
 
 	model.add(Array.prototype.join, function(base, args) {
+    const isSymbolicVal = Array.prototype.find.call(base, x => state.isSymbolic(x));
+    
+    if (!isSymbolicVal) {
+      return Array.prototype.join.apply(base, args);
+    }
+
 		const sep = args[0] ? helper.coerceToString(args[0]) : ',';
 		let finalString = '';
 		for (let i = 0; i < base.length; i++) {
@@ -179,10 +185,11 @@ export default function(state, ctx, model, helper) {
 
 	model.add(Array.prototype.keys, NoOp(Array.prototype.keys));
 	model.add(Array.prototype.concat, NoOp(Array.prototype.concat));
-	model.add(Array.prototype.forEach, NoOp(Array.prototype.forEach));
-	model.add(Array.prototype.filter, NoOp(Array.prototype.filter));
-	model.add(Array.prototype.map, NoOp(Array.prototype.map));
+	model.add(Array.prototype.forEach, NoOp(Array.prototype.forEach)); //TODO: This should only be a no op if the function given as a forEach is not native
+	model.add(Array.prototype.filter, NoOp(Array.prototype.filter)); //TODO: This should only be a no op if the function given as a filter  is not native
+	model.add(Array.prototype.map, NoOp(Array.prototype.map)); // ^^
 	model.add(Array.prototype.shift, NoOp(Array.prototype.shift));
 	model.add(Array.prototype.unshift, NoOp(Array.prototype.unshift));
 	model.add(Array.prototype.fill, NoOp(Array.prototype.fill));
+  model.add(Array.prototype.reduce, NoOp(Array.prototype.reduce)); //TODO: This should only be a no-op if the function given as a reducer is not native 
 }

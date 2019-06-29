@@ -34,7 +34,7 @@ function handleOutput(err, stdout, done, page) {
         	Replay(done.source, JSON.stringify(input));
         }
 
-        done.jobs.forEach(x => view.testcase(JSON.stringify(x.input), (x.time / 1000 / 1000), x.alternatives, x.errors.length, replay.bind(this, x.input), page));
+        done.jobs.forEach(x => view.testcase(JSON.stringify(x.input), (x.time / 1000), x.alternatives, x.errors.length, replay.bind(this, x.input), page));
 
         done.jobs.forEach(x => {
             x.errors.forEach(r => {
@@ -71,7 +71,7 @@ function loadOutput(page) {
 		fs.readFile('' + file + STDOUT_SUFFIX, (err, stdout) => {
 
 			if (err) {
-				throw err;
+        stdout = 'No stdout';
 			}
 
 			stdout = '' + stdout;

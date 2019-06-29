@@ -7,6 +7,12 @@ const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
 app.commandLine.appendSwitch("ignore-certificate-errors");
 app.commandLine.appendSwitch("disable-web-security");
 
+const MITM_PORT = process.env["MITM_PORT"];
+
+if (!MITM_PORT) {
+	throw "No MITM port set";
+}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -26,15 +32,18 @@ const createWindow = () => {
 		e.preventDefault();
 	});
 
-	mainWindow.webContents.session.clearCache(function() {
-		mainWindow.webContents.session.setProxy({proxyRules:"http://localhost:8080"}, function () {
-			mainWindow.loadURL(process.argv[process.argv.length - 2]);
+	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
+		mainWindow.webContents.executeJavaScript(`(function(){ try { window._ExpoSE.report("${details.url}"); } catch (e) { return '' + e; } })()`).then(() => {
+			console.log(`CONCRETE_LOAD_EVENT !!!${details.url}!!!`);
 		});
+
+		callback({ cancel: false });
 	});
 
-	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
-		console.log("LOAD REQUEST: " + details.url);
-		callback({ cancel: false });
+	mainWindow.webContents.session.clearCache(function() {
+		mainWindow.webContents.session.setProxy({ proxyRules: "http://localhost:" + MITM_PORT}, function () {
+			mainWindow.loadURL(process.argv[process.argv.length - 2]);
+		});
 	});
 
 	if (process.env["PROPOGATE_ON_NETWORK"]) {

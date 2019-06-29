@@ -4,10 +4,11 @@ cd Analyser
 rm -rf cache
 
 MITM_FILE="$(mktemp /tmp/mitmlog.XXXXXXXXX)"
+MITM_PORT=$((((RANDOM<<15)|RANDOM) % 63001 + 2000 ))
 
 echo "" > "${MITM_FILE}"
 
-mitmdump --ssl-insecure -s "node_modules/jalangi2/scripts/proxy.py" --set args="--inlineIID --inlineSource --analysis bin/bundle.js" &> "${MITM_FILE}" &
+mitmdump --ssl-insecure -p "${MITM_PORT}" -s "node_modules/jalangi2/scripts/proxy.py" --set args="--inlineIID --inlineSource --analysis bin/bundle.js" &> "${MITM_FILE}" &
 
 MITM_PID="$!"
 
@@ -24,12 +25,9 @@ do
 	fi
 
 	if grep -q "Proxy server listening" "${MITM_FILE}"; then
-		echo "Listening."
 		break;
 	fi
 
 done 
-
-echo ${MITM_PID}
 
 cd ..

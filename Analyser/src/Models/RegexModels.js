@@ -2,8 +2,7 @@ import { ConcolicValue } from "../Values/WrappedValue";
 import Config from "../Config";
 import Log from "../Utilities/Log";
 import External from "../External";
-
-const Z3 = External.load("z3javascript").default;
+import Z3 from "z3javascript";
 
 let isMatchCount = 0;
 
@@ -183,6 +182,8 @@ export default function(state, ctx, model, helpers) {
 		const regexEncoded = Z3.Regex(ctx, regex);
 		const is_match_s = ctx.mkSeqInRe(state.asSymbolic(string), regexEncoded.ast);
 
+    console.log(`|REGEX ENCODING| ${regex}.exec(${state.asSymbolic(string).toString()}) -> (${regexEncoded.anchoredStart ? regexEncoded.anchoredStart.toString() : ''}, ${regexEncoded.anchoredEnd ? regexEncoded.anchoredEnd.toString() : ''}) (${regexEncoded.captures.reduce((last, capture, idx) => last + (idx > 0 ? ',' : '') + capture.toString(), '')})`);
+
 		EnableCaptures(regexEncoded, regex, state.asSymbolic(string));
 		is_match_s.checks = BuildRefinements(regexEncoded, regex, state.asSymbolic(string), is_match_s);
 
@@ -211,7 +212,9 @@ export default function(state, ctx, model, helpers) {
 	}
 
 	function RegexpBuiltinExec(regex, string) {
-		
+
+    Log.logMid("RegexpExec Model");	
+	
 		//Preserve the lastIndex property
 		let lastIndex = regex.lastIndex;
 		const test = RegexpBuiltinTest(regex, string);
@@ -297,7 +300,7 @@ export default function(state, ctx, model, helpers) {
 	}
 
 	function RegexpBuiltinSplit(regex, string) {
-
+ 
 		//Remove g and y from regex
 		const re = new RegExp(regex.source, regex.flags.replace(/g|y/g, "") + "");
 
@@ -472,7 +475,39 @@ export default function(state, ctx, model, helpers) {
 
 	model.add(String.prototype.split, symbolicHookRe(
 		String.prototype.split,
-		(base, args) => shouldBeSymbolic(args[0], base),
-		(base, args) => RegexpBuiltinSplit(args[0], base).result
+		(base, args) => state.isSymbolic(base) && (args[0] instanceof RegExp || typeof(args[0]) === "string"),
+		(base, args) => RegexpBuiltinSplit(args[0] instanceof RegExp ? args[0] : new RegExp(args[0]), base).result
 	));
+
+
+  /**
+   * Occasionally (Thanks James....) it appears developers may resolve the Symbol for the match method rather than use the API. Most interpreters use the same instance of the method for all constructs so we can add a model by creating a new RegExp, extracting the default match symbol and adding that to the models.
+   */
+
+  const Template = /DEFAULT/;
+
+	model.add(Template[Symbol.search], symbolicHookRe(
+		Template[Symbol.search],
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinSearch(base, coerceToString(args[0])).result
+	));
+
+	model.add(Template[Symbol.exec], symbolicHookRe(
+		Template[Symbol.exec],
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+	));
+
+	model.add(Template[Symbol.match], symbolicHookRe(
+		Template[Symbol.match],
+		(base, args) => shouldBeSymbolic(base, args[0]),
+		(base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result
+	));
+
+	model.add(Template[Symbol.replace], symbolicHookRe(
+		Template[Symbol.replace],
+		(base, args) => shouldBeSymbolic(base, args[0]) && (typeof(state.getConcrete(args[1])) === "string" || typeof(state.getConcrete(args[1])) === "function"),
+		(base, args) => RegexpBuiltinReplace(base, args[0], args[1]).result
+	));
+
 }

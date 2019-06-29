@@ -1,9 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
-
 import iidToLocation from "./Utilities/iidToLocation";
-
 const LAST_IID = "LAST_IID";
 
 /**
@@ -72,7 +69,8 @@ class Coverage {
 		if (!branchInfo) {
 			branchInfo = {};
 			this._branches[localIndex] = branchInfo;
-			this._branchFilenameMap[localIndex] = this._sandbox.smap[this._sandbox.sid].originalCodeFileName;
+			const map = this._sandbox.smap[this._sandbox.sid];
+			this._branchFilenameMap[localIndex] = map ? map.originalCodeFileName : "Broken Filename";
 		}
 
 		return branchInfo;

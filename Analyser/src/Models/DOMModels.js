@@ -14,8 +14,11 @@ export default function(state, ctx, models, helper) {
 	});
 
 	models.add(encodeURIComponent, function(base, args) {
-		const result = new ConcolicValue(encodeURIComponent.call(base, state.getConcrete(args[0])), state.asSymbolic(args[0]));
-		Log.logMid('Encode URI Component: ' + result.toString());
-		return result;
+    if (state.isSymbolic(args[0])) {
+      args[0] = helper.coerceToString(args[0]);
+		  const result = new ConcolicValue(encodeURIComponent.call(base, state.getConcrete(args[0])), state.asSymbolic(args[0]));
+	  	Log.logMid('Encode URI Component: ' + result.toString());
+		  return result;
+    }
 	});
 }

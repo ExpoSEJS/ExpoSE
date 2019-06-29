@@ -54,28 +54,20 @@ export default function(state, ctx, model) {
 		return function(base, args) {
 
 			base = state.getConcrete(base);
-			const fn_model = model.get(base);
-			const is_native = !fn_model && isNative(base);
 
-			if (is_native) {
-				Log.logMid("WARNING: Concretizing model for " + f.toString() + " " + JSON.stringify(base));
+			if (isNative(base)) {
+				Log.logMid('Concretized Fn Model Call');
 				const concretized = state.concretizeCall(f, base, args, false);
 				base = concretized.base;
 				args = concretized.args;
 			}
 
-			return f.apply(fn_model || base, args);
+			return f.apply(base, args);
 		};
 	}
 
 	function coerceToString(symbol) {
-
-		if (typeof state.getConcrete(symbol) !== "string") {
-			Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${state.getConcrete(symbol)}`);
-			return '' + state.getConcrete(symbol); 
-		}
-
-		return symbol;
+    return state.ToString(symbol);	
 	}
 
 	function NoOp(f) {

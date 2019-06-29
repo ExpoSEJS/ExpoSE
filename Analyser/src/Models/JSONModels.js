@@ -1,8 +1,7 @@
 import { ConcolicValue } from "../Values/WrappedValue";
 import Log from "../Utilities/Log";
 import External from "../External";
-
-const Z3 = External.load("z3javascript").default;
+import Z3 from "z3javascript";
 
 const find = Array.prototype.find;
 

@@ -25,11 +25,13 @@ class SymbolicExecution {
 
 		if (typeof window !== "undefined") {
 
+			window._ExpoSE = this;
+
 			setTimeout(() => {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 3);
+			}, 1000 * 60 * 1);
 
 			const storagePool = {};
 
@@ -74,29 +76,41 @@ class SymbolicExecution {
 		});
 	}
 
-	_report(sourceString) {
-
-		console.log("Processing " + sourceString);
-		console.log(JSON.stringify(sourceString));
+	report(sourceString) {
 
 		if (!this.state.isSymbolic(sourceString)) {
-			sourceString = sourceString.documentURI ? ("" + sourceString.documentURI) : ("" + sourceString);
-			sourceString = this.state.asSymbolic(sourceString);
+			if (sourceString.documentURI) {
+				sourceString = "" + sourceString.documentURI;
+			} else if (sourceString.baseURI) {
+				sourceString = "" + sourceString.baseURI;
+			} else if (sourceString && sourceString.toString) {
+				let tsourceString = sourceString.toString();
+				if (tsourceString.includes("Object]")) {
+					sourceString = ObjectHelper.asString(sourceString);
+				} else {
+					sourceString = tsourceString;
+				}
+			} else {
+				sourceString = ObjectHelper.asString(sourceString);
+			}
 		} else {
-			sourceString = this.state.asSymbolic(sourceString);
+			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.finalPC()}!!! !!!"${sourceString ? sourceString.toString() : ("" + sourceString)}"!!!`);
+		console.log(`OUTPUT_LOAD_EVENT: !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!!`);
 	}
 
-	_reportFn(f, base, args) {	
-		if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
-			this._report(args[0].src);
-			args[0].src = this.state.getConcrete(args[0].src);
-		}
-
-		if (f.name == "open") {
-			this._report(args[1]);
+	_reportFn(f, base, args) {
+		if (typeof(window) !== "undefined") {
+			if ((f.name == "appendChild" || f.name == "prependChild" || f.name == "insertBefore" || f.name == "replaceChild") && args[0] && (args[0].src || args[0].innerHTML.includes("src="))) {
+				this.report(args[0].src);
+				args[0].src = this.state.getConcrete(args[0].src);
+			}
+      
+			if (f.name == "open") {
+				console.log("REPORTING FN OPEN " + JSON.stringify(args));
+				this.report(args[1]);
+			}
 		}
 	}
 
@@ -105,8 +119,12 @@ class SymbolicExecution {
 		Log.logHigh(`Execute function ${ObjectHelper.asString(f)} at ${this._location(iid)}`);
 
 		f = this.state.getConcrete(f);
+		this._reportFn(f, base, args);
+
+		const functionName = f ? f.name : "undefined";
 
 		const fn_model = this.models.get(f);
+		Log.logMid(fn_model ? ("Exec Model: " + functionName + " " + (new Error()).stack) : functionName + " unmodeled");
 
 		/**
 		 * Concretize the function if it is native and we do not have a custom model for it
@@ -118,8 +136,11 @@ class SymbolicExecution {
 			const concretized = this.state.concretizeCall(f, base, args);
 			base = concretized.base;
 			args = concretized.args;
+			if (concretized.count > 0) {
+				this.state.stats.set("Unmodeled Function Call", functionName);
+			}
 		} else if (fn_model) {
-			this.state.stats.set("Modeled Function Call", f.name);
+			this.state.stats.set("Modeled Function Call", functionName);
 		} else {
 			this.state.stats.seen("General Function Call");
 		}
@@ -180,13 +201,11 @@ class SymbolicExecution {
 	}
 
 	_getFieldSymbolicOffset(base, offset) {
+		offset = this.state.ToString(offset);   
 		const base_c = this.state.getConcrete(base);
-		const offset_c = this.state.getConcrete(offset);
 		for (const idx in base_c) {
-			if (offset_c != base_c[idx]) {
-				const condition = this.state.binary("==", idx, offset);
-				this.state.pushCondition(this.state.ctx.mkNot(condition));
-			}
+			const is_this_idx = this.state.binary("==", idx, offset);
+			this.state.pushCondition(this.state.asSymbolic(is_this_idx));
 		}
 	}
 
@@ -279,8 +298,9 @@ class SymbolicExecution {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Put field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
-		if (this.state.getConcrete(offset) === "src") {
-			this._report(val);	
+		if (this.state.getConcrete(offset) === "src"
+        || this.state.getConcrete(offset) === "href") {
+			this.report(val);	
 			val = this.state.getConcrete(val);
 		}
 
@@ -320,7 +340,7 @@ class SymbolicExecution {
 				const tv = this.state.getConcrete(val);
 				if (typeof(tv) === "string" && tv.includes("src=")) {
 					const sourceString = this.state.asSymbolic(val).toString();
-					console.log(`OUTPUT_LOAD_EVENT: !!!"${this.state.finalPC()}"!!! !!!"${sourceString}"!!!`);   
+					this.report(sourceString);
 				}
 			}
 

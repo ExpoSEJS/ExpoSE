@@ -2,6 +2,7 @@
 
 import FileTransformer from "./FileTransformer";
 import Internal from "./Internal";
+require("colors");
 
 function generateCoverageMap(lineInfo, callback) {
 	for (const filename in lineInfo) {
@@ -10,9 +11,8 @@ function generateCoverageMap(lineInfo, callback) {
 
 				console.log(`[+] Line Coverage for ${filename} `);
 
-				const lines = data.split("\n");
+				const lines = data.trim().split("\n");
 				const linesWithTouched = lines.map((line, idx) => {
-
 					const lineNumber = idx + 1;
 
 					let indicator = "s";
@@ -25,7 +25,9 @@ function generateCoverageMap(lineInfo, callback) {
 						}
 					}
 
-					return `${lineNumber}${indicator}^${line}$`;	
+					const formattedLine = indicator == "-" ? line.bgRed : line.bgGreen;
+					const outputLine = `${lineNumber}${formattedLine}`;
+					return outputLine;
 				});
 
 				linesWithTouched.forEach(line => callback(line));

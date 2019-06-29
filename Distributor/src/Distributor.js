@@ -39,6 +39,7 @@ if (process.argv.length >= 3) {
 	center.done((center, done, errors, coverage, stats) => {
 
 		if (Config.jsonOut) {
+			console.log("Writing JSON");
 			JsonWriter(Config.jsonOut, target, coverage, start, (new Date()).getTime(), done);
 		}
 
@@ -47,7 +48,7 @@ if (process.argv.length >= 3) {
 		}
 
 		function formatSeconds(v) {
-			return round((v / 1000 / 1000), 4);
+			return round((v / 1000), 4);
 		}
 
 		console.log("");
@@ -83,9 +84,9 @@ if (process.argv.length >= 3) {
 			totalRealLines += d.loc.all.length;
 			totalLinesFound += d.loc.found;
 		});
-
+		Math.round((totalLinesFound / totalRealLines) * 10000) / 100;
 		console.log(`[+] Total Lines Of Code ${totalLines}`);
-		console.log(`[+] Total Coverage: ${Math.round((totalLinesFound / totalRealLines) * 10000) / 100}%`);
+		console.log(`[+] Total Coverage: ${totalLinesFound / totalRealLines}%`);
 
 		if (Config.printDeltaCoverage) {
 			CoverageMap(coverage.lines(), line => console.log(line));

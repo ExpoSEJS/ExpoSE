@@ -4,15 +4,13 @@
 import Log from "./Utilities/Log";
 import ObjectHelper from "./Utilities/ObjectHelper";
 import Coverage from "./Coverage";
-import External from "./External";
 import Config from "./Config";
 import SymbolicHelper from "./SymbolicHelper";
 import { SymbolicObject } from "./Values/SymbolicObject";
 import { WrappedValue, ConcolicValue } from "./Values/WrappedValue";
 import Stats from "Stats";
-
-//This is a bit ugly. If window is defined we require Electron RPC require rather than window level require to get z3javascript handle
-const Z3 = External.load("z3javascript").default;
+import Z3 from "z3javascript";
+import Helpers from "./Models/Helpers";
 
 function BuildUnaryJumpTable(state) {
 	const ctx = state.ctx;
@@ -68,6 +66,8 @@ class SymbolicState {
 				{ name: "phase_selection", value: 5 }
 			]
 		);
+
+		this.helpers = new Helpers(this, this.ctx);
 
 		Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
@@ -128,25 +128,6 @@ class SymbolicState {
 	}
 
 	/**
-     *Formats PC to pretty string if length != 0
-     */
-	_stringPC(pc) {
-		return pc.length ? pc.reduce((prev, current) => {
-			let this_line = current.simplify().toPrettyString().replace(/\s+/g, " ").replace(/not /g, "¬");
-
-			if (this_line.startsWith("(¬")) {
-				this_line = this_line.substr(1, this_line.length - 2);
-			}
-
-			if (this_line == "true" || this_line == "false") {
-				return prev;
-			} else {
-				return prev + (prev.length ? ", " : "") + this_line;
-			}
-		}, "") : "";
-	}
-
-	/**
    * Creates a full (up to date) solver instance and then calls toString on it to create an SMT2Lib problem
    * TODO: This is a stop-gag implementation for the work with Ronny - not to be relied upon.
    */
@@ -162,7 +143,23 @@ class SymbolicState {
     * Returns the final PC as a string (if any symbols exist)
     */
 	finalPC() {
-		return this._stringPC(this.pathCondition.filter(x => x.ast).map(x => x.ast));
+		return this.pathCondition.filter(x => x.ast).map(x => x.ast);
+	}
+
+	_stringPC(pc) {
+		return pc.length ? pc.reduce((prev, current) => {
+			let this_line = current.simplify().toPrettyString().replace(/\s+/g, " ").replace(/not /g, "¬");
+
+			if (this_line.startsWith("(¬")) {
+				this_line = this_line.substr(1, this_line.length - 2);
+			}
+
+			if (this_line == "true" || this_line == "false") {
+				return prev;
+			} else {
+				return prev + (prev.length ? ", " : "") + this_line;
+			}
+		}, "") : "";
 	}
 
 	_addInput(pc, solution, pcIndex, childInputs) {
@@ -255,24 +252,32 @@ class SymbolicState {
 		return sort;
 	}
 
-	_deepConcrete(arg, concreteCount) {
-		
-		/** TODO: Deep concretize shouldn't only conc if val is symbolic */
-		if (this.isSymbolic(arg)) {
-			arg = this.getConcrete(arg);
-			concreteCount.val += 1;
-		}
+	_deepConcrete(start, _concreteCount) {
+		start = this.getConcrete(start);	
 
-		if (arg instanceof Object) {
+		/*
+		let worklist = [this.getConcrete(start)];
+		let seen = [];
+
+		while (worklist.length) {
+			const arg = worklist.pop();
+			seen.push(arg);
+
 			for (let i in arg) {
-				const property = Object.getOwnPropertyDescriptor(arg, i);
-				if (property && this.isSymbolic(property.value)) {
-					arg[i] = this._deepConcrete(arg[i], concreteCount);
+				if (this.isSymbolic(arg[i])) {
+					arg[i] = this.getConcrete(arg[i]);
+					concreteCount.val += 1;
+				}
+
+				const seenBefore = !!seen.find(x => x === arg); 
+				if (arg[i] instanceof Object && !seenBefore) {
+					worklist.push(arg[i]); 
 				}
 			}
 		}
+    */
 
-		return arg;
+		return start;
 	}
 
 	concretizeCall(f, base, args, report = true) {
@@ -293,7 +298,8 @@ class SymbolicState {
 
 		return {
 			base: base,
-			args: n_args
+			args: n_args,
+			count: numConcretizedProperties.val
 		};
 	}
 
@@ -493,17 +499,22 @@ class SymbolicState {
 	}
 
 	/** 
-     * Symbolic binary operation, expects two concolic values and an operator
-     */
+   * Symbolic binary operation, expects two concolic values and an operator
+   */
 	binary(op, left, right) {
+    
+		if (typeof this.getConcrete(left) === "string") {
+			right = this.ToString(right);
+		}
+
 		const result_c = SymbolicHelper.evalBinary(op, this.getConcrete(left), this.getConcrete(right));
 		const result_s = this._symbolicBinary(op, this.getConcrete(left), this.asSymbolic(left), this.getConcrete(right), this.asSymbolic(right));
-		return result_s ? new ConcolicValue(result_c, result_s) : result_c;
+		return typeof(result_s) !== undefined ? new ConcolicValue(result_c, result_s) : result_c;
 	}
 
 	/**
-     * Symbolic field lookup - currently only has support for symbolic arrays / strings
-     */
+   * Symbolic field lookup - currently only has support for symbolic arrays / strings
+   */
 	symbolicField(base_c, base_s, field_c, field_s) {
 		this.stats.seen("Symbolic Field");
 
@@ -592,6 +603,18 @@ class SymbolicState {
 			Log.log(`Unsupported symbolic operand: ${op} on ${left_c} symbolic ${left_s}`);
 			return undefined;
 		}
+	}
+
+	ToString(symbol) {
+		console.log(new Error().stack);
+
+
+		if (typeof this.getConcrete(symbol) !== "string") {
+			Log.log(`TODO: Concretizing non string input ${symbol} reduced to ${this.getConcrete(symbol)}`);
+			return "" + this.getConcrete(symbol); 
+		}
+
+		return symbol;
 	}
 
 	/**
