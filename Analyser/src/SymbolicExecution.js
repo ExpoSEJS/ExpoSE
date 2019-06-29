@@ -448,7 +448,7 @@ class SymbolicExecution {
 		if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
  
 			const left_c  = this.state.getConcrete(left);
-		  const right_c = this.state.getConcrete(right);
+			const right_c = this.state.getConcrete(right);
 
 			//We also consider boxed primitives to be primitive
 			const is_primative = typeof(left_c) != "object" || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
