@@ -447,10 +447,10 @@ class SymbolicExecution {
 		//Concretise instead
 		if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
  
-			const left_c  = this.state.getConcrete(left),
-				right_c = this.state.getConcrete(right);
+			const left_c  = this.state.getConcrete(left);
+		  const right_c = this.state.getConcrete(right);
 
-			//We also consider boxed primatives to be primative
+			//We also consider boxed primitives to be primitive
 			const is_primative = typeof(left_c) != "object" || (left_c instanceof Number || left_c instanceof String || left_c instanceof Boolean);
 			const is_null = left_c === undefined || right_c === undefined || left_c === null || right_c === null;
 			const is_real = typeof(left_c) == "number" ? (Number.isFinite(left_c) && Number.isFinite(right_c)) : true;
