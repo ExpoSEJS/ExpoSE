@@ -5,10 +5,9 @@
   "author": "Blake Loring <blake@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
   "readme": "README.md",
   "dependencies": {
-    "@babel/core": "^7.4.5",
     "browserify": "^14.1.0",
-    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#9380a1e60362be20abf908bfa7cc02551cdaf871",
-    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#9a8738d2bccb016bbd9a255a0723f016d2e15198"
+    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#c1a2edb351e8056921ee3574013034297ed55e66",
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#7f781e8d3166b415aa3412e3c0df2c28c0f19634"
   },
   "scripts": {
     "postinstall": "./scripts/postinstall"
