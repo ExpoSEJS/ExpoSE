@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-(EXPOSE_LOG_LEVEL=$EXPOSE_LOG_LEVEL ./scripts/build/build_strip_rc) > .babelrc
-mkdir -p $1/$3
-npx babel -d $1/$3/ $1/$2/
+(EXPOSE_LOG_LEVEL=$EXPOSE_LOG_LEVEL ./scripts/build/build_strip_rc) > $1/.babelrc
+cd $1
+mkdir -p $3
+npx babel $2/ --out-dir $3/
 rm .babelrc
