@@ -300,6 +300,9 @@ function buildTestList() {
      * End of regular expression feature tests
      */
 
+    buildTest('es6/let.js', 1, 0);
+    buildTest('es6/const.js', 2, 1);
+
     return testList;
 }
 

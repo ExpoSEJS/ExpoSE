@@ -528,6 +528,7 @@ class SymbolicExecution {
 	}
 
 	instrumentCodePre(iid, code) {
+		console.log("Code", code);
 		return { code: code, skip: false };
 	}
 
