@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 
 unset RECOMPILE
+EXPOSE_LOG_LEVEL=0
 
-./scripts/build/build_all
-./scripts/build/build_tester
-
-if [ $? -ne 0 ]; then
-	exit 1
-fi
+. ./scripts/build/build_all
+. ./scripts/build/build_tester
 
 node --version
 node ./Tester/bin/TestRunner.js ./tests/ test_list

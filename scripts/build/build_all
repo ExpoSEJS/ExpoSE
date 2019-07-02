@@ -38,5 +38,3 @@ if [ $? -ne "0" ]; then
 fi
 
 rm babel.config.js
-
-exit $?
