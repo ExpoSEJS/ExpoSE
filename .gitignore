@@ -3,7 +3,7 @@ node_modules/
 temp_build/
 obj/
 obj-test/
-.babel.config.js
+babel.config.js
 *_jalangi_*.js*
 *.d
 *.o

@@ -14,7 +14,7 @@ if [ -z ${EXPOSE_LOG_LEVEL+x} ]; then
 	EXPOSE_LOG_LEVEL="1"
 fi
 
-. ./scripts/build/build_babelrc > babel.config.js
+. ./scripts/build/build_babelconfig > babel.config.js
 
 echo "Building Libs"
 . ./scripts/build/build_libs
