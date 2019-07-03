@@ -8,6 +8,7 @@ import {ConcolicValue} from "./Values/WrappedValue";
 import {SymbolicObject} from "./Values/SymbolicObject";
 import ObjectHelper from "./Utilities/ObjectHelper";
 import SymbolicState from "./SymbolicState";
+import SymbolicHelper from "./SymbolicHelper";
 import Log from "./Utilities/Log";
 import NotAnErrorException from "./NotAnErrorException";
 import {isNative} from "./Utilities/IsNative";
@@ -250,46 +251,46 @@ class SymbolicExecution {
 
 		Log.logHigh(`Get field ${ObjectHelper.asString(base)}[${ObjectHelper.asString(offset)}] at ${this._location(iid)}`);
 
-    let result = undefined;
+		let result = undefined;
 
 		if (base instanceof SymbolicObject) {
-      //If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
+			//If dealing with a SymbolicObject then concretize the offset and defer to SymbolicObject.getField
 			Log.logMid("Potential loss of precision, cocretize offset on SymbolicObject field lookups");
 			result = base.getField(this.state, this.state.getConcrete(offset));
 		} else if (!this.state.isSymbolic(base) && this.state.isSymbolic(offset) && typeof this.state.getConcrete(offset) == "string") {
-      //If we are evaluating a symbolic string offset on a concrete base then enumerate all fields
-      //Then return the concrete lookup
+			//If we are evaluating a symbolic string offset on a concrete base then enumerate all fields
+			//Then return the concrete lookup
 			this._getFieldSymbolicOffset(base, offset);
-      result = base[this.state.getConcrete(offset)];
+			result = base[this.state.getConcrete(offset)];
 		} else if (!this.state.isSymbolic(base) &&
              this.state.isSymbolic(offset) &&
              this.state.getConcrete(base) instanceof Array &&
              typeof this.state.getConcrete(offset) == "number") {
-      //If the array is a symbolic int and the base is a concrete array then enumerate all the indices
+			//If the array is a symbolic int and the base is a concrete array then enumerate all the indices
 			for (let i = 0; i < this.state.getConcrete(base).length; i++) {
 				this.state.assertEqual(i, offset); 
 			}
 
-      result = base[this.state.getConcrete(offset)];
+			result = base[this.state.getConcrete(offset)];
 		} else {
-      //Otherwise defer to symbolicField
-      const result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
-      const result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
-      result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
-    }
+			//Otherwise defer to symbolicField
+			const result_s = this.state.isSymbolic(base) ? this.state.symbolicField(this.state.getConcrete(base), this.state.asSymbolic(base), this.state.getConcrete(offset), this.state.asSymbolic(offset)) : undefined;
+			const result_c = this.state.getConcrete(base)[this.state.getConcrete(offset)];
+			result = result_s ? new ConcolicValue(result_c, result_s) : result_c;
+		}
 
     
-    if (this.state.isWrapped(base)) {
-      base.reduceAndDiscard(base, annotation => {
-        let [discard, result_a] = annotation.getField(base, offset, result);
-        result = result_a;
-        return discard;
-      });
-    }
+		if (this.state.isWrapped(base)) {
+			base.reduceAndDiscard(base, annotation => {
+				let [discard, result_a] = annotation.getField(base, offset, result);
+				result = result_a;
+				return discard;
+			});
+		}
 
-    return {
-      result: result
-    }
+		return {
+			result: result
+		};
 	}
 
 	putFieldPre(iid, base, offset, val, _isComputed, _isOpAssign) {
@@ -302,13 +303,13 @@ class SymbolicExecution {
 			val = this.state.getConcrete(val);
 		}
 
-    if (this.state.isWrapped(base)) {
-      base.reduceAndDiscard(annotation => {
-        let [discard, result_a] = annotation.putField(base, offset, val);
-        val = result_a;
-        return discard;
-      });
-    }
+		if (this.state.isWrapped(base)) {
+			base.reduceAndDiscard(annotation => {
+				let [discard, result_a] = annotation.putField(base, offset, val);
+				val = result_a;
+				return discard;
+			});
+		}
 
 		return {
 			base: base,
@@ -451,7 +452,7 @@ class SymbolicExecution {
  
 		//Don't do symbolic logic if the symbolic values are diff types
 		//Concretise instead
-		if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
+		if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
  
 			const left_c  = this.state.getConcrete(left);
 			const right_c = this.state.getConcrete(right);
@@ -471,7 +472,6 @@ class SymbolicExecution {
 			} else {
 				Log.logHigh("Not concretizing " + op + " " + left + " " + right + " " + typeof left_c + " " + typeof right_c);
 			}
-
 		}
 
 		// Don't evaluate natively when args are symbolic
@@ -492,8 +492,24 @@ class SymbolicExecution {
 
 		if (this.state.isSymbolic(left) || this.state.isSymbolic(right)) {
 			result = this.state.binary(op, left, right);
+		} else if (this.state.isWrapped(left) || this.state.isWrapped(right)) {
+			result = SymbolicHelper.evalBinary(op, this.state.getConcrete(left), this.state.getConcrete(right)); 
 		} else {
 			result = result_c;
+		}
+
+		let atBinary = annotation => {
+			let [discard, result_a] = annotation.binary(op, left, right, true, result);
+			result = result_a;
+			return discard;
+		};
+
+		if (this.state.isWrapped(left)) {
+			left.reduceAndDiscard(atBinary);
+		}
+
+		if (this.state.isWrapped(right)) {
+			right.reduceAndDiscard(atBinary);
 		}
 
 		return {
