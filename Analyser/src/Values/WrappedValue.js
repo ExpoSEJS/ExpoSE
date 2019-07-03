@@ -24,12 +24,12 @@
 class WrappedValue {
   constructor(concrete) {
     this.concrete = concrete;
-    this.rider = null;
+    this.annotations = null;
   }
 
   getAnnotations() {
-    if (this.rider) {
-      return this.rider.params();
+    if (this.annotations) {
+      return this.annotations.params();
     } else {
       return [];
     }
@@ -63,7 +63,7 @@ class WrappedValue {
   }
 
   toString() {
-    return "Wrapped(" + this.concrete + ", " + (this.rider ? this.rider.toString() : "") + ")";
+    return "Wrapped(" + this.concrete + ", " + (this.annotations ? this.annotations.toString() : "") + ")";
   }
 
   valueOf() {
