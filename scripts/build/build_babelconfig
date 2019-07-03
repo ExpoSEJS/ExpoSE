@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+PRESETS_PART="\"presets\":[[\"@babel/env\",{\"forceAllTransforms\": true, \"modules\":\"commonjs\"}]]"
+PLUGINS_PART="\"plugins\":[]"
+
+if [ $EXPOSE_LOG_LEVEL -lt 1 ]; then
+	PLUGINS_PART="\"plugins\":[[\"strip-function-call\",{\"strip\":[\"Log.logHigh\", \"Log.logMid\", \"Log.log\"]}]]"
+elif [ $EXPOSE_LOG_LEVEL -lt 2 ]; then
+	PLUGINS_PART="\"plugins\":[[\"strip-function-call\",{\"strip\":[\"Log.logHigh\", \"Log.logMid\"]}]]"
+elif [ $EXPOSE_LOG_LEVEL -lt 3 ]; then
+	PLUGINS_PART="\"plugins\":[[\"strip-function-call\",{\"strip\":[\"Log.logHigh\"]}]]"
+fi
+
+echo "module.exports = function(api) { api.cache(true); return {${PRESETS_PART},${PLUGINS_PART}}; };"

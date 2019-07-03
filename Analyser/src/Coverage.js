@@ -56,7 +56,6 @@ class Coverage {
 		}
 
 		payload[LAST_IID] = this._lastIid;
-
 		return payload;
 	}
 

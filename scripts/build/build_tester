@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-(./scripts/build/build Tester src bin)
+EXPOSE_LOG_LEVEL=0
+. ./scripts/build/build_babelconfig > babel.config.js
+. ./scripts/build/build Tester src bin
+rm babel.config.js
 
 if [ $? -ne "0" ]; then
 	echo "Tester failed to build"
