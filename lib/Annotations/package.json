@@ -1,0 +1,11 @@
+{
+  "name": "Annotations",
+  "version": "0.0.1",
+  "description": "Javascript value annotations",
+  "author": "Blake Loring <blake_l@parsed.uk>",
+  "readme": "README.md",
+  "dependencies": {},
+  "main": "bin/Traits.js",
+  "license": "Apache",
+  "devDependencies": {}
+}

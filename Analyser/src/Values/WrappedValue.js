@@ -21,71 +21,99 @@
  */
 // ES6 Translation / Blake Loring
 
-
 class WrappedValue {
+  constructor(concrete) {
+    this.concrete = concrete;
+    this.rider = null;
+  }
 
-    constructor(concrete) {
-        this.concrete = concrete;
+  getAnnotations() {
+    if (this.rider) {
+      return this.rider.params();
+    } else {
+      return [];
     }
+  }
 
-    clone() {
-        return new WrappedValue(this.concrete);
+  discardAnnotation(annotation) {
+    let index = this.getAnnotations().indexOf(annotation);
+    if (index != -1) {
+        this.getAnnotations().splice(index, 1);
+        annotation.discarded(this.concrete);
     }
+    return this;
+  }
 
-    toString() {
-        return "Wrapped(" + this.concrete + ", " + (this.rider ? this.rider.toString() : "") + ")";
-    }
+  _discardAnnotations(toRemove) {
+    toRemove.forEach(annotation => this.discardAnnotation(annotation));
+    return this;
+  }
 
-    valueOf() {
-        return this.concrete ? this.concrete.valueOf() : this.concrete;
-    }
+  _reduceAnnotations(fn) {
+    return this.getAnnotations().filter(annotation => fn(annotation));
+  }
 
-    getConcrete() {
-        return this.concrete;
-    }
+  reduceAndDiscard(fn) {
+    this._discardAnnotations(this._reduceAnnotations(fn));
+    return this;
+  }
+
+  clone() {
+    return new WrappedValue(this.concrete);
+  }
+
+  toString() {
+    return "Wrapped(" + this.concrete + ", " + (this.rider ? this.rider.toString() : "") + ")";
+  }
+
+  valueOf() {
+    return this.concrete ? this.concrete.valueOf() : this.concrete;
+  }
+
+  getConcrete() {
+    return this.concrete;
+  }
 }
 
 class ConcolicValue extends WrappedValue {
+  /**
+   * TODO: I'm not sure I like passing array type with concolic values to sanity check comparisons
+   */    
+  constructor(concrete, symbolic, arrayType = undefined) {
+    super(concrete);
+    this.symbolic = symbolic;
+    this._arrayType = arrayType;
+  }
 
-    /**
-     * TODO: I'm not sure I like passing array type with concolic values to sanity check comparisons
-     */    
-    constructor(concrete, symbolic, arrayType = undefined) {
-        super(concrete);
-        this.symbolic = symbolic;
-        this._arrayType = arrayType;
-    }
+  toString() {
+    return "Concolic(" + this.concrete + ", " + this.symbolic + ")";
+  }
 
-    toString() {
-        return "Concolic(" + this.concrete + ", " + this.symbolic + ")";
-    }
+  clone() {
+    return new ConcolicValue(this.concrete, this.symbolic);
+  }
 
-    clone() {
-        return new ConcolicValue(this.concrete, this.symbolic);
-    }
+  getConcrete() {
+    return this.concrete;
+  }
 
-    getConcrete() {
-        return this.concrete;
-    }
+  getSymbolic() {
+    return this.symbolic;
+  }
 
-    getSymbolic() {
-        return this.symbolic;
-    }
-
-    getArrayType() {
-        return this._arrayType;
-    }
-
+  getArrayType() {
+    return this._arrayType;
+  }
 }
 
 ConcolicValue.getSymbolic = function(val) {
-    return val instanceof ConcolicValue ? val.symbolic : undefined;
+  return val instanceof ConcolicValue ? val.symbolic : undefined;
 };
 
 ConcolicValue.setSymbolic = function(val, val_s) {
-    if (val instanceof ConcolicValue) {
-        val.symbolic = val_s;
-    }
+  if (val instanceof ConcolicValue) {
+    val.symbolic = val_s;
+  }
 };
 
 export {WrappedValue, ConcolicValue};

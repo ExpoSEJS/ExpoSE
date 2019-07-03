@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
 . ./scripts/build/build lib/Stats src bin
+. ./scripts/build/build lib/Annotations src bin
