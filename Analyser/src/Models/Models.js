@@ -70,6 +70,9 @@ function BuildModels(state) {
 	Object._expose.makeSymbolic = function(name, initial) { return state.createSymbolicValue(name, initial); };
 	Object._expose.notAnError = function() { return NotAnErrorException; };
 	Object._expose.pureSymbol = function(name) { return state.createPureSymbol(name); };
+  Object._expose.setRider = function(v, r) { v.rider = r; };
+  Object._expose.getRider = function(v, r) { return v.rider; };
+
 
 	return model;
 }
