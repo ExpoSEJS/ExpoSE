@@ -16,6 +16,7 @@ function makeid(count) {
 
 const path_dump_id = makeid(4);
 const log_path = console.log; 
+const PUUID = Math.random();
 
 /**
  * Class to handle logging
@@ -24,6 +25,10 @@ const log_path = console.log;
  */
  
 class Log {
+
+    logPID(msg) {
+      console.log(`PUUID: ${PUUID}, ${msg}`);
+    }
 
     logHigh(msg) {
         log_path("[?] " + msg);

@@ -182,7 +182,7 @@ export default function(state, ctx, model, helpers) {
 		const regexEncoded = Z3.Regex(ctx, regex);
 		const is_match_s = ctx.mkSeqInRe(state.asSymbolic(string), regexEncoded.ast);
 
-    console.log(`|REGEX ENCODING| ${regex}.exec(${state.asSymbolic(string).toString()}) -> (${regexEncoded.anchoredStart ? regexEncoded.anchoredStart.toString() : ''}, ${regexEncoded.anchoredEnd ? regexEncoded.anchoredEnd.toString() : ''}) (${regexEncoded.captures.reduce((last, capture, idx) => last + (idx > 0 ? ',' : '') + capture.toString(), '')})`);
+    Log.logPID(`|REGEX ENCODING| ${regex}.exec(${state.asSymbolic(string).toString()}) -> (${regexEncoded.anchoredStart ? regexEncoded.anchoredStart.toString() : ''}, ${regexEncoded.anchoredEnd ? regexEncoded.anchoredEnd.toString() : ''}) (${regexEncoded.captures.reduce((last, capture, idx) => last + (idx > 0 ? ',' : '') + capture.toString(), '')})`);
 
 		EnableCaptures(regexEncoded, regex, state.asSymbolic(string));
 		is_match_s.checks = BuildRefinements(regexEncoded, regex, state.asSymbolic(string), is_match_s);
