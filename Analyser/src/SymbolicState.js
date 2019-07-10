@@ -266,17 +266,20 @@ class SymbolicState {
 		while (worklist.length) {
 			const arg = worklist.pop();
 			seen.push(arg);
+      const descriptors = Object.getOwnPropertyDescriptors(arg);
 
-			for (let i in arg) {
-				if (this.isSymbolic(arg[i])) {
-					arg[i] = this.getConcrete(arg[i]);
-					concreteCount.val += 1;
-				}
-
-				const seenBefore = seen.includes(arg[i]); 
-				if (arg[i] instanceof Object && !seenBefore) {
-					worklist.push(arg[i]); 
-				}
+			for (i in descriptors) {
+        //If it is a data descriptor
+        if (!!descriptors[i].value) {
+				  if (this.isSymbolic(arg[i])) {
+				  	arg[i] = this.getConcrete(arg[i]);
+				  	concreteCount.val += 1;
+				  }
+				  const seenBefore = seen.includes(arg[i]); 
+				  if (arg[i] instanceof Object && !seenBefore) {
+				  	worklist.push(arg[i]); 
+				  }
+        }
 			}
 		}
 
