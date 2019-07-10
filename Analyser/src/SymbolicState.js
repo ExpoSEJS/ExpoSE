@@ -254,9 +254,9 @@ class SymbolicState {
 
 	_deepConcrete(start, concreteCount) {
 
-    if (this.isWrapped(start)) {
-      concreteCount.val += 1;
-    }
+		if (this.isWrapped(start)) {
+			concreteCount.val += 1;
+		}
 
 		start = this.getConcrete(start);	
 
@@ -273,7 +273,7 @@ class SymbolicState {
 					concreteCount.val += 1;
 				}
 
-				const seenBefore = !!seen.find(x => x === arg); 
+				const seenBefore = seen.includes(x); 
 				if (arg[i] instanceof Object && !seenBefore) {
 					worklist.push(arg[i]); 
 				}
