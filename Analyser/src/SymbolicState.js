@@ -273,7 +273,7 @@ class SymbolicState {
 					concreteCount.val += 1;
 				}
 
-				const seenBefore = seen.includes(x); 
+				const seenBefore = seen.includes(arg[i]); 
 				if (arg[i] instanceof Object && !seenBefore) {
 					worklist.push(arg[i]); 
 				}
