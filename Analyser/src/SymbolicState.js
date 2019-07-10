@@ -252,10 +252,14 @@ class SymbolicState {
 		return sort;
 	}
 
-	_deepConcrete(start, _concreteCount) {
+	_deepConcrete(start, concreteCount) {
+
+    if (this.isWrapped(start)) {
+      concreteCount.val += 1;
+    }
+
 		start = this.getConcrete(start);	
 
-		/*
 		let worklist = [this.getConcrete(start)];
 		let seen = [];
 
@@ -275,7 +279,6 @@ class SymbolicState {
 				}
 			}
 		}
-    */
 
 		return start;
 	}
