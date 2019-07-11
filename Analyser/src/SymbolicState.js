@@ -260,11 +260,13 @@ class SymbolicState {
 
 		start = this.getConcrete(start);
 
+    const worklist = [];
+
     if (start) {
-		  let worklist = [this.getConcrete(start)];
+		  worklist.push(this.getConcrete(start));
     }
 
-		let seen = [];
+		const seen = [];
 
 		while (worklist.length) {
 			const arg = worklist.pop();
