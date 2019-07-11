@@ -258,9 +258,12 @@ class SymbolicState {
 			concreteCount.val += 1;
 		}
 
-		start = this.getConcrete(start);	
+		start = this.getConcrete(start);
 
-		let worklist = [this.getConcrete(start)];
+    if (start) {
+		  let worklist = [this.getConcrete(start)];
+    }
+
 		let seen = [];
 
 		while (worklist.length) {
