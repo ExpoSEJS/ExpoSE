@@ -268,7 +268,7 @@ class SymbolicState {
 
 		const seen = [];
 
-		while (worklist.length) {
+		while (worklist.length && concreteCount.val < 10 /* TODO: This is here to avoid some weird cycle - needs a better solution */) {
 			const arg = worklist.pop();
 			seen.push(arg);
 			const descriptors = Object.getOwnPropertyDescriptors(arg);
