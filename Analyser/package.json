@@ -6,8 +6,8 @@
   "readme": "README.md",
   "dependencies": {
     "browserify": "^14.1.0",
-    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#d3c7e6c90cadd0f102c69542f9d97709fa3c63d7",
-    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#21d7979ae6aa3f01292b1b374a42b3e7cf68614d"
+    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#93bba5577e00ab4042c5cf7e0f7cf718fa352073",
+    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#376bd1d44ea5d96748b8ef81232c3cf1092278e6"
   },
   "scripts": {
     "postinstall": "./scripts/postinstall"

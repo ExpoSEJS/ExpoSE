@@ -61,7 +61,6 @@ class SymbolicState {
 		this.slv = new Z3.Solver(this.ctx,
 			Config.incrementalSolverEnabled,
 			[
-				{ name: "timeout", value: Config.maxSolverTime },
 				{ name: "random_seed", value: Math.floor(Math.random() * Math.pow(2, 32))},
 				{ name: "phase_selection", value: 5 }
 			]
@@ -259,7 +258,7 @@ class SymbolicState {
 		}
 
 		start = this.getConcrete(start);
-
+		/*
 		const worklist = [];
 		const seen = [];
 
@@ -272,7 +271,7 @@ class SymbolicState {
 		}
 
 		addWorklist(start);
-		while (worklist.length && concreteCount.val < 10 /* TODO: This is here to avoid some weird cycle - needs a better solution */) {
+		while (worklist.length && concreteCount.val < 10) {
 			const arg = worklist.pop();
 			const descriptors = Object.getOwnPropertyDescriptors(arg);
 			for (let i in descriptors) {
@@ -286,6 +285,7 @@ class SymbolicState {
 				}
 			}
 		}
+    */
 
 		return start;
 	}
