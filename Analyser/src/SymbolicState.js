@@ -252,30 +252,40 @@ class SymbolicState {
 		return sort;
 	}
 
-	_deepConcrete(start, _concreteCount) {
-		start = this.getConcrete(start);	
+	_deepConcrete(start, concreteCount) {
 
-		/*
-		let worklist = [this.getConcrete(start)];
-		let seen = [];
+		if (this.isWrapped(start)) {
+			concreteCount.val += 1;
+		}
 
-		while (worklist.length) {
+		start = this.getConcrete(start);
+
+		const worklist = [];
+		const seen = [];
+
+		function addWorklist(item) {
+			const seenBefore = seen.includes(item);
+			if (item && item instanceof Object && !seenBefore) {
+				worklist.push(item);
+				seen.push(item);
+			}
+		}
+
+		addWorklist(start);
+		while (worklist.length && concreteCount.val < 10 /* TODO: This is here to avoid some weird cycle - needs a better solution */) {
 			const arg = worklist.pop();
-			seen.push(arg);
-
-			for (let i in arg) {
-				if (this.isSymbolic(arg[i])) {
-					arg[i] = this.getConcrete(arg[i]);
-					concreteCount.val += 1;
-				}
-
-				const seenBefore = !!seen.find(x => x === arg); 
-				if (arg[i] instanceof Object && !seenBefore) {
-					worklist.push(arg[i]); 
+			const descriptors = Object.getOwnPropertyDescriptors(arg);
+			for (let i in descriptors) {
+				//If it is a data descriptor
+				if (descriptors[i].value) {
+					if (this.isWrapped(arg[i])) {
+						arg[i] = this.getConcrete(arg[i]);
+						concreteCount.val += 1;
+					}
+					addWorklist(arg[i]);	
 				}
 			}
 		}
-    */
 
 		return start;
 	}
