@@ -61,7 +61,6 @@ class SymbolicState {
 		this.slv = new Z3.Solver(this.ctx,
 			Config.incrementalSolverEnabled,
 			[
-				{ name: "timeout", value: Config.maxSolverTime },
 				{ name: "random_seed", value: Math.floor(Math.random() * Math.pow(2, 32))},
 				{ name: "phase_selection", value: 5 }
 			]

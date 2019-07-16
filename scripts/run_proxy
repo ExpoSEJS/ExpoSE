@@ -5,6 +5,7 @@ rm -rf cache
 
 MITM_FILE="$(mktemp /tmp/mitmlog.XXXXXXXXX)"
 MITM_PORT=$((((RANDOM<<15)|RANDOM) % 63001 + 2000 ))
+export NODE_PATH=${NODE_PATH}:$(pwd)/Analyser/node_modules
 
 echo "" > "${MITM_FILE}"
 

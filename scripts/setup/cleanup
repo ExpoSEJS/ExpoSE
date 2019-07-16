@@ -2,3 +2,4 @@
 echo "Cleaning $1"
 cd $1
 rm -rf node_modules
+rm package-lock.json
