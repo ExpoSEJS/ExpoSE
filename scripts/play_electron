@@ -4,7 +4,7 @@ export ELECTRON_ENABLE_STACK_DUMPING=true
 export NODE_PATH=$NODE_PATH:$(pwd)/Analyser/node_modules
 ulimit -s unlimited
 if [ -z $DISPLAY ]; then
-  (cd Browser && xvfb-run $(npm bin)/electron --js-flags="--stack-size 500000 --max_old_space_size=8192" . "${@:1}")
+  (cd Browser && xvfb-run npx electron --js-flags="--stack-size 500000 --max_old_space_size=8192" . "${@:1}")
 else
-  (cd Browser && $(npm bin)/electron --js-flags="--stack-size 500000 --max_old_space_size=8192" . "${@:1}")
+  (cd Browser && npx electron --js-flags="--stack-size 500000 --max_old_space_size=8192" . "${@:1}")
 fi
