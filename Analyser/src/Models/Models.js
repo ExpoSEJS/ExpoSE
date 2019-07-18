@@ -3,7 +3,7 @@
 
 import NotAnErrorException from "../NotAnErrorException";
 import { isNative } from "../Utilities/IsNative";
-import { ConcolicValue } from "../Values/WrappedValue";
+import { WrappedValue, ConcolicValue } from "../Values/WrappedValue";
 
 import Helpers from './Helpers';
 import MathModels from './MathModels';
@@ -83,7 +83,7 @@ function BuildModels(state) {
     if (state.isWrapped(v)) {
       return v.getAnnotations();
     } else {
-      return [];
+      return null;
     }
   };
 

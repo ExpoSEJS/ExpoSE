@@ -29,17 +29,20 @@ class WrappedValue {
 
   getAnnotations() {
     if (this.annotations) {
-      return this.annotations.params();
+      return this.annotations;
     } else {
       return [];
     }
   }
 
+  getAnParams() {
+    return this.getAnnotations().params();
+  }
+
   discardAnnotation(annotation) {
-    let index = this.getAnnotations().indexOf(annotation);
+    let index = this.getAnParams().indexOf(annotation);
     if (index != -1) {
-        this.getAnnotations().splice(index, 1);
-        annotation.discarded(this.concrete);
+        this.getAnParams().splice(index, 1);
     }
     return this;
   }
@@ -50,7 +53,7 @@ class WrappedValue {
   }
 
   _reduceAnnotations(fn) {
-    return this.getAnnotations().filter(annotation => fn(annotation));
+    return this.getAnParams().filter(annotation => fn(annotation));
   }
 
   reduceAndDiscard(fn) {

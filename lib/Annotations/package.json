@@ -5,7 +5,7 @@
   "author": "Blake Loring <blake_l@parsed.uk>",
   "readme": "README.md",
   "dependencies": {},
-  "main": "bin/Traits.js",
+  "main": "bin/Annotations.js",
   "license": "Apache",
   "devDependencies": {}
 }
