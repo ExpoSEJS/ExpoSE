@@ -2,7 +2,7 @@
 
 ## ExpoSE
 
-ExpoSE is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](https://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](http://www.cs.rhul.ac.uk/home/kinder/index.html). 
+ExpoSE is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](https://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](https://www.unibw.de/patch) (now at [Bundeswehr University Munich](https://www.unibw.de/)). 
 ExpoSE supports symbolic execution of Node.js programs and JavaScript in the browser. ExpoSE is based on Jalangi2 and the Z3 SMT solver.
 
 ### Requirements
@@ -66,6 +66,5 @@ NOTE: To improve performance logging instructions are removed from the output at
 
 ### Publications
 
-The following tool paper describes an early version of ExpoSE:
-
-* Blake Loring, Duncan Mitchell, and Johannes Kinder. [ExpoSE: Practical Symbolic Execution of Standalone JavaScript](http://www.cs.rhul.ac.uk/home/kinder/papers/spin17-expose.pdf). In _Proc. Int. SPIN Symp. Model Checking of Software (SPIN)_, pp. 196–199, ACM, 2017.
+* Blake Loring, Duncan Mitchell, and Johannes Kinder. [Sound Regular Expression Semantics for Dynamic Symbolic Execution of JavaScript](https://www.unibw.de/patch/papers/pldi19-regex.pdf). In _Proc. ACM SIGPLAN Conf. Programming Language Design and Implementation (PLDI)_, pp. 425–438, ACM, 2019.
+* Blake Loring, Duncan Mitchell, and Johannes Kinder. [ExpoSE: Practical Symbolic Execution of Standalone JavaScript](https://www.unibw.de/patch/papers/spin17-expose.pdf). In _Proc. Int. SPIN Symp. Model Checking of Software (SPIN)_, pp. 196–199, ACM, 2017.
