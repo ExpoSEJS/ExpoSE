@@ -303,6 +303,8 @@ function buildTestList() {
     buildTest('es6/let.js', 1, 0);
     buildTest('es6/const.js', 2, 1);
 
+    buildTest('annotations/ann.js', 1, 0);
+
     return testList;
 }
 

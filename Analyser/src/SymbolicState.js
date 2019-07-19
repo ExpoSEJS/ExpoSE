@@ -61,7 +61,6 @@ class SymbolicState {
 		this.slv = new Z3.Solver(this.ctx,
 			Config.incrementalSolverEnabled,
 			[
-				{ name: "timeout", value: Config.maxSolverTime },
 				{ name: "random_seed", value: Math.floor(Math.random() * Math.pow(2, 32))},
 				{ name: "phase_selection", value: 5 }
 			]
@@ -252,26 +251,37 @@ class SymbolicState {
 		return sort;
 	}
 
-	_deepConcrete(start, _concreteCount) {
-		start = this.getConcrete(start);	
+	_deepConcrete(start, concreteCount) {
 
+		if (this.isWrapped(start)) {
+			concreteCount.val += 1;
+		}
+
+		start = this.getConcrete(start);
 		/*
-		let worklist = [this.getConcrete(start)];
-		let seen = [];
+		const worklist = [];
+		const seen = [];
 
-		while (worklist.length) {
+		function addWorklist(item) {
+			const seenBefore = seen.includes(item);
+			if (item && item instanceof Object && !seenBefore) {
+				worklist.push(item);
+				seen.push(item);
+			}
+		}
+
+		addWorklist(start);
+		while (worklist.length && concreteCount.val < 10) {
 			const arg = worklist.pop();
-			seen.push(arg);
-
-			for (let i in arg) {
-				if (this.isSymbolic(arg[i])) {
-					arg[i] = this.getConcrete(arg[i]);
-					concreteCount.val += 1;
-				}
-
-				const seenBefore = !!seen.find(x => x === arg); 
-				if (arg[i] instanceof Object && !seenBefore) {
-					worklist.push(arg[i]); 
+			const descriptors = Object.getOwnPropertyDescriptors(arg);
+			for (let i in descriptors) {
+				//If it is a data descriptor
+				if (descriptors[i].value) {
+					if (this.isWrapped(arg[i])) {
+						arg[i] = this.getConcrete(arg[i]);
+						concreteCount.val += 1;
+					}
+					addWorklist(arg[i]);	
 				}
 			}
 		}
