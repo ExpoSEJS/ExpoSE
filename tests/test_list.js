@@ -303,7 +303,22 @@ function buildTestList() {
     buildTest('es6/let.js', 1, 0);
     buildTest('es6/const.js', 2, 1);
 
-    buildTest('annotations/ann.js', 1, 0);
+    /**
+     * Annotation Tests
+     */
+    buildTest('annotations/two-as.js', 1, 0);
+
+    /**
+     * As tests - we expect func, null, undefined to fail.
+     * In reference interpreter, annotation of these is unsupported.
+     */
+    buildTest('annotations/as/as-bool.js', 1, 0);
+    buildTest('annotations/as/as-func.js', 1, 1);
+    buildTest('annotations/as/as-null.js', 1, 1);
+    buildTest('annotations/as/as-num.js', 1, 0);
+    buildTest('annotations/as/as-string.js', 1, 0);
+    buildTest('annotations/as/as-undefined.js', 1, 1);
+    buildTest('annotations/as/as-as.js', 1, 0)
 
     return testList;
 }
