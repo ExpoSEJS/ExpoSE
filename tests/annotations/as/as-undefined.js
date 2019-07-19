@@ -1,7 +1,7 @@
 "use strict";
 var S$ = require('S$');
 
-var A = S$.SecAnn("A");
+var A = new (S$.SecAnn("A"))([]);
 var res = S$.annotate(undefined, A);
 
 S$.assert(res === undefined, "value lost");

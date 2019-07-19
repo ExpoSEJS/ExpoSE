@@ -1,8 +1,13 @@
 "use strict";
 var S$ = require('S$');
 
-var A = S$.SecAnn("A");
-var res = S$.annotate(function(x) { return x; }, A);
+var A = new (S$.SecAnn("A"))([]);
 
-//S$.assert(''+res === ''+(function(x) { return x; }), "value lost");
-S$.assert(S$.annotations(res) === "No annotations", "annotation incorrectly added to functions");
+var res;
+try {
+	res = S$.annotate(function(x) { return x; }, A);
+} catch (e) {
+	S$.assert(e === "NotAnnotatable", "Incorrect error");
+}
+
+S$.assert(res, "annotation incorrectly added to functions");

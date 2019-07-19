@@ -1,7 +1,7 @@
 "use strict";
 var S$ = require('S$');
 
-var A = S$.SecAnn("A");
+var A = new (S$.SecAnn("A"))([]);
 var res = S$.annotate("string", A);
 
 S$.assert(res === "string", "value lost");

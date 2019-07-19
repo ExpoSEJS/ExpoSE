@@ -2,8 +2,8 @@
 
 var S$ = require('S$');
 
-var A = S$.SecAnn("A");
-var B = S$.SecAnn("B");
+var A = new (S$.SecAnn("A"))([]);
+var B = new (S$.SecAnn("B"))([]);
 
 var res = S$.annotate(S$.annotate(true, A), B);
 
