@@ -320,6 +320,23 @@ function buildTestList() {
     buildTest('annotations/as/as-undefined.js', 1, 1);
     buildTest('annotations/as/as-as.js', 1, 0)
 
+    /**
+     * Drop tests
+     */
+    buildTest('annotations/drop/drop-nosubtyping-bool.js', 1, 0);
+    buildTest('annotations/drop/drop-subtyping-bool.js', 1, 0);
+    buildTest('annotations/drop/drop-subtyping-func.js', 1, 1);
+    buildTest('annotations/drop/drop-nosubtyping-func.js', 1, 1);
+    buildTest('annotations/drop/drop-subtyping-null.js', 1, 1);
+    buildTest('annotations/drop/drop-nosubtyping-null.js', 1, 1);
+    buildTest('annotations/drop/drop-subtyping-num.js', 1, 0);
+    buildTest('annotations/drop/drop-nosubtyping-num.js', 1, 0);
+    buildTest('annotations/drop/drop-subtyping-string.js', 1, 0);
+    buildTest('annotations/drop/drop-nosubtyping-string.js', 1, 0);
+    buildTest('annotations/drop/drop-subtyping-undefined.js', 1, 1);
+    buildTest('annotations/drop/drop-nosubtyping-undefined.js', 1, 1);
+    buildTest('annotations/drop/drop-drop.js', 1, 0)
+
     return testList;
 }
 

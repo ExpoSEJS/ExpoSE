@@ -1,11 +1,15 @@
 "use strict";
 var S$ = require('S$');
 
-var A = new (S$.SecAnn("A"))([]);
+var A = S$.SecAnn("A");
+var B = S$.SecAnn("B", A);
+var C = S$.SecAnn("C", B);
+A = new A([]);
+B = new B([]);
+C = new C([]);
 
-var res;
 try {
-	res = S$.annotate(undefined, A);
+	res = S$.drop(S$.annotate(undefined, C), B);
 } catch (e) {
 	S$.assert(e === "NotAnnotatable", "Incorrect error should be NotAnnotatable");
 }
