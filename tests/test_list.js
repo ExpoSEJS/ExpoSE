@@ -337,6 +337,30 @@ function buildTestList() {
     buildTest('annotations/drop/drop-nosubtyping-undefined.js', 1, 1);
     buildTest('annotations/drop/drop-drop.js', 1, 0)
 
+    /**
+     * cpAnn tests
+     * Since these check properties which fail in the reference interpreter,
+     * these should fail (other than the first three functionality checks).
+     */
+    buildTest('annotations/cpAnn/cp-ann-ann.js', 1, 0);     
+    buildTest('annotations/cpAnn/cp-noAnn-ann.js', 1, 0);
+    buildTest('annotations/cpAnn/cp-noAnn-noAnn.js', 1, 0);
+    buildTest('annotations/cpAnn/cp-ann-noAnn.js', 1, 0);
+    buildTest('annotations/cpAnn/cp-bool-x.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-function-x.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-null-x.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-num-x.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-obj-x.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-string-x.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-undefined-x.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-x-bool.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-x-function.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-x-null.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-x-num.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-x-obj.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-x-string.js', 1, 1);
+    buildTest('annotations/cpAnn/cp-x-undefined.js', 1, 1);
+
     return testList;
 }
 
