@@ -7,7 +7,7 @@ var res;
 try {
 	res = S$.annotate(null, A);
 } catch (e) {
-	S$.assert(e === "NotAnnotatable", "Incorrect error");
+	S$.assert(e === "NotAnnotatable", "Incorrect error should be NotAnnotatable");
 }
 
-S$.assert(res, "annotation incorrectly added to null");
+S$.assert(!res, "annotation incorrectly added to null");
