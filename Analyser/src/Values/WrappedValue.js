@@ -36,7 +36,11 @@ class WrappedValue {
   }
 
   getAnParams() {
-    return this.getAnnotations().params();
+    if (this.annotations) {
+      return this.getAnnotations().params();
+    } else {
+      return [];
+    }
   }
 
   discardAnnotation(annotation) {
