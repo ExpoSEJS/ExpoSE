@@ -305,7 +305,8 @@ class SymbolicExecution {
 
 		if (this.state.isWrapped(base)) {
 			base.reduceAndDiscard(annotation => {
-				let [discard, result_a] = annotation.putField(base, offset, val);
+				//changed from putField
+				let [discard, result_a] = annotation.setField(base, offset, val);
 				val = result_a;
 				return discard;
 			});
