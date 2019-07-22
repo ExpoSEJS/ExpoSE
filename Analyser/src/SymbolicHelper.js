@@ -33,7 +33,8 @@ const BinaryJumpTable = {
 
 	"^": function(l, r) { return l ^ r; },
 	"instanceof": function(l, r) { return l instanceof r; },
-	"in": function(l, r) { return l in r; }
+	"in": function(l, r) { return l in r; },
+	"delete": function(l, r) { return delete l[r]; }
 };
 
 const UnaryJumpTable = {
