@@ -12,7 +12,7 @@ let f = function(x) {
 }
 
 let obj = S$.annotate({field1: "val", field2: 1}, A);
-delete obj.field1
+delete obj['field1'];
 
 try {
 	let res = f(obj);

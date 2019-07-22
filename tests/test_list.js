@@ -388,7 +388,7 @@ function buildTestList() {
      */
     buildTest('annotations/objects/add-field.js', 1, 0);
     buildTest('annotations/objects/set-field.js', 1, 0);
-    //buildTest('annotations/objects/delete-field.js', 1, 0);
+    buildTest('annotations/objects/delete-field.js', 1, 0);
 
 
 
