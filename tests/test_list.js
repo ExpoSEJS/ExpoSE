@@ -361,6 +361,37 @@ function buildTestList() {
     buildTest('annotations/cpAnn/cp-x-string.js', 1, 1);
     buildTest('annotations/cpAnn/cp-x-undefined.js', 1, 1);
 
+    /**
+     * Testing enforcement (and lattice rules)
+     */
+    buildTest('annotations/enforce/bool-arg-fail.js', 1, 0);
+    buildTest('annotations/enforce/bool-arg-pass.js', 1, 0);
+    buildTest('annotations/enforce/func-arg-fail.js', 1, 0);
+    buildTest('annotations/enforce/func-arg-pass.js', 1, 0);
+    buildTest('annotations/enforce/null-arg-fail.js', 1, 0);
+    buildTest('annotations/enforce/null-arg-pass.js', 1, 0);
+    buildTest('annotations/enforce/obj-arg-fail.js', 1, 0);
+    buildTest('annotations/enforce/obj-arg-pass.js', 1, 0);
+    buildTest('annotations/enforce/string-arg-fail.js', 1, 0);
+    buildTest('annotations/enforce/string-arg-pass.js', 1, 0);
+    buildTest('annotations/enforce/undefined-arg-fail.js', 1, 0);
+    buildTest('annotations/enforce/undefined-arg-pass.js', 1, 0);
+    buildTest('annotations/enforce/depth.js', 1, 0);
+    buildTest('annotations/enforce/width.js', 1, 0);
+    buildTest('annotations/enforce/top.js', 1, 0);
+    buildTest('annotations/enforce/transitivity.js', 1, 0);
+    buildTest('annotations/enforce/reflexivity.js', 1, 0);
+    buildTest('annotations/enforce/permutation.js', 1, 0);
+
+    /**
+     * Testing Object semantics for annotations
+     */
+    buildTest('annotations/objects/add-field.js', 1, 0);
+    buildTest('annotations/objects/set-field.js', 1, 0);
+    //buildTest('annotations/objects/delete-field.js', 1, 0);
+
+
+
     return testList;
 }
 
