@@ -4,7 +4,7 @@
 /*global Element*/
 /*global document*/
 
-import {ConcolicValue} from "./Values/WrappedValue";
+import {ConcolicValue, WrappedValue} from "./Values/WrappedValue";
 import {SymbolicObject} from "./Values/SymbolicObject";
 import ObjectHelper from "./Utilities/ObjectHelper";
 import SymbolicState from "./SymbolicState";
@@ -14,6 +14,15 @@ import NotAnErrorException from "./NotAnErrorException";
 import {isNative} from "./Utilities/IsNative";
 import ModelBuilder from "./Models/Models";
 import External from "./External";
+
+/**
+ * Checks if something is a typed array in order to wrap it for crypto 
+ * property checking
+ */ 
+function isTypedArray(f, _isConstructor) {
+	let res = (f === Int8Array || f === Uint8Array || f === Int16Array || f === Uint16Array || f === Int32Array || f === Uint32Array);
+	return res;
+}
 
 class SymbolicExecution {
 
@@ -163,6 +172,9 @@ class SymbolicExecution {
 	invokeFun(iid, f, base, args, result, _isConstructor, _isMethod) {
 		this.state.coverage.touch(iid);
 		Log.logHigh(`Exit function (${ObjectHelper.asString(f)}) near ${this._location(iid)}`);
+		if (_isConstructor && isTypedArray(f)) { 
+			result = new WrappedValue(result); //autowrap TypedArrays
+		}
 		return { result: result };
 	}
 
