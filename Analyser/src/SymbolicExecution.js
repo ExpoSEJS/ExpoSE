@@ -97,7 +97,7 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-		Log.logPID(`OUTPUT_LOAD_EVENT: !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!! !!!"${document.cookie}"!!!`);
+		Log.logPID(`OUTPUT_LOAD_EVENT: !!!${this.state.pathCondition.length}!!! !!!${this.state.input._bound}!!! !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!! !!!"${document.cookie}"!!!`);
 	}
 
 	_reportFn(f, base, args) {
