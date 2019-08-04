@@ -134,17 +134,17 @@ export default function(state, ctx, model, helpers) {
 	  (base, args, result) => {
 		  const off_real = args[1] ? state.asSymbolic(args[1]) : state.asSymbolic(base).getLength();
 		  const off_s = ctx.mkRealToInt(off_real);
-			const actualIndex = mkIndexSymbol();
+      const actualIndex = mkIndexSymbol();
 		  const target_s = state.asSymbolic(coerceToString(args[0]));
 		  const seq_index = ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, actualIndex);
-			const noMatch = ctx.mkEq(ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, i), ctx.mkIntVal(-1));
+      const noMatch = ctx.mkEq(ctx.mkSeqIndexOf(state.asSymbolic(base), target_s, i), ctx.mkIntVal(-1));
       const bounds = ctx.mkPattern([
           ctx.mkLt(i, state.asSymbolic(base).getLength()),
           ctx.mkGt(i, seq_index)
       ]);
       state.pushCondition(noLaterMatches, true);
 		  return new ConcolicValue(result, seq_index);
-	  }
+    }
   ));
 	model.add(String.prototype.repeat, symbolicHook(
 				String.prototype.repeat,
