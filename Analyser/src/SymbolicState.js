@@ -163,6 +163,8 @@ class SymbolicState {
 
 	_addInput(pc, solution, pcIndex, childInputs) {
 		solution._bound = pcIndex + 1;
+		solution._forkID = this.pathCondition[pcIndex].forkIid;
+		solution._parentId = Log.logId();
 		childInputs.push({
 			input: solution,
 			pc: this._stringPC(pc),

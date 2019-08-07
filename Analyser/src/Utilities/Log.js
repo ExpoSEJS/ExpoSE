@@ -26,6 +26,10 @@ const PUUID = Math.floor(Math.random() * 100000);
  
 class Log {
 
+    logId() {
+      return PUUID;
+    }
+
     logPID(msg) {
       console.log(`PUUID: ${PUUID}, ${msg}`);
     }
