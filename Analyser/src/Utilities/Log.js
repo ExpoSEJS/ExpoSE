@@ -34,7 +34,7 @@ class Log {
     }
 
     logPID(msg) {
-      console.log(`PUUID: ${PUUID}, ${msg}`);
+      console.log(`PUUID: ${this.logId()}, ${msg}`);
     }
 
     logHigh(msg) {
