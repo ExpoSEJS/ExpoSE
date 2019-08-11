@@ -71,6 +71,7 @@ class SymbolicState {
 		Z3.Query.MAX_REFINEMENTS = Config.maxRefinements;
 
 		this.input = input;
+		Log.setLogId(this.input._testCaseId || 0);
 		this.inputSymbols = {};
 		this.pathCondition = [];
 
@@ -164,6 +165,7 @@ class SymbolicState {
 	_addInput(pc, solution, pcIndex, childInputs) {
 		solution._bound = pcIndex + 1;
 		solution._forkID = this.pathCondition[pcIndex].forkIid;
+		solution._testCaseId = Math.floor(Math.random() * 100000);
 		solution._parentId = Log.logId();
 		childInputs.push({
 			input: solution,
