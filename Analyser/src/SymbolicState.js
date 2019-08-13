@@ -101,11 +101,12 @@ class SymbolicState {
 		);
 	}
 
-	pushCondition(cnd, binder) {
+	pushCondition(cnd, binder, trueFalse) {
 		this.pathCondition.push({
 			ast: cnd,
 			binder: binder || false,
-			forkIid: this.coverage.last()
+			forkIid: this.coverage.last(),
+			thisPathTrue: !!trueFalse
 		});
 	}
 
@@ -116,10 +117,10 @@ class SymbolicState {
 
 		if (result_c === true) {
 			Log.logMid(`Concrete result was true, pushing ${result_s}`);
-			this.pushCondition(result_s);
+			this.pushCondition(result_s, false, true);
 		} else if (result_c === false) {
 			Log.logMid(`Concrete result was false, pushing not of ${result_s}`);
-			this.pushCondition(this.ctx.mkNot(result_s));
+			this.pushCondition(this.ctx.mkNot(result_s), false, false);
 		} else {
 			Log.log("WARNING: Symbolic Conditional on non-bool, concretizing");
 		}
@@ -167,10 +168,12 @@ class SymbolicState {
 		solution._forkID = this.pathCondition[pcIndex].forkIid;
 		solution._testCaseId = Math.floor(Math.random() * 100000);
 		solution._parentId = Log.logId();
+		solution._createdFrom = !this.pathCondition[pcIndex].thisPathTrue;
+
 		childInputs.push({
 			input: solution,
 			pc: this._stringPC(pc),
-			forkIid: this.pathCondition[pcIndex].forkIid
+			forkIid: this.pathCondition[pcIndex].forkIid,
 		});
 	}
 

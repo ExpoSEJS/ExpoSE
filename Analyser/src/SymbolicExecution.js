@@ -97,7 +97,14 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-		Log.logPID(`OUTPUT_LOAD_EVENT: !!!${this.state.pathCondition.length}!!! !!!${this.state.input._bound}!!! !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!! !!!"${document.cookie}"!!!`);
+    const loadInfo = {
+      depth: this.state.pathCondition.length,
+      createdFrom: this.state.input._createdFrom || 'N/A',
+      createdAtDepth: this.state.input._bound,
+      createdAtFork: this.state.input._forkID || -1
+    };
+
+		Log.logPID(`OUTPUT_LOAD_EVENT: !!!${JSON.stringify(loadInfo)}!!! !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!! !!!"${document.cookie}"!!!`);
 	}
 
 	_reportFn(f, base, args) {
