@@ -97,12 +97,12 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-    const loadInfo = {
-      depth: this.state.pathCondition.length,
-      createdFrom: this.state.input._createdFrom || 'N/A',
-      createdAtDepth: this.state.input._bound,
-      createdAtFork: this.state.input._forkID || -1
-    };
+		const loadInfo = {
+			depth: this.state.pathCondition.length,
+			createdFrom: this.state.input._createdFrom || "N/A",
+			createdAtDepth: this.state.input._bound,
+			createdAtFork: this.state.input._forkID || -1
+		};
 
 		Log.logPID(`OUTPUT_LOAD_EVENT: !!!${JSON.stringify(loadInfo)}!!! !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!! !!!"${document.cookie}"!!!`);
 	}
@@ -434,7 +434,11 @@ class SymbolicExecution {
 		//this.state.coverage.touch(iid);
 		
 		const originalFileName = this._removeScript();
-		const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
+		const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()}  ======`;
+
+		if (typeof(window) !== "undefined") {
+			console.log(`EXIT WITH COOKIE: ${SymbolicState.asSymbolic(document.cookie).toString()}`);
+		}
 
 		if (this._scriptDepth() > 0) {
 			Log.logMid(exitString);
