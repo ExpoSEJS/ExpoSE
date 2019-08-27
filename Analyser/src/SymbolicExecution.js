@@ -83,7 +83,9 @@ class SymbolicExecution {
 				sourceString = "" + sourceString.documentURI;
 			} else if (sourceString.baseURI) {
 				sourceString = "" + sourceString.baseURI;
-			} else if (sourceString && sourceString.toString) {
+			} else if (sourceString.formAction) {
+        sourceString = "" + sourceString.formAction;
+      } else if (sourceString && sourceString.toString) {
 				let tsourceString = sourceString.toString();
 				if (tsourceString.includes("Object]")) {
 					sourceString = ObjectHelper.asString(sourceString);
@@ -97,12 +99,12 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-    const loadInfo = {
-      depth: this.state.pathCondition.length,
-      createdFrom: this.state.input._createdFrom || 'N/A',
-      createdAtDepth: this.state.input._bound,
-      createdAtFork: this.state.input._forkID || -1
-    };
+		const loadInfo = {
+			depth: this.state.pathCondition.length,
+			createdFrom: this.state.input._createdFrom || "N/A",
+			createdAtDepth: this.state.input._bound,
+			createdAtFork: this.state.input._forkID || -1
+		};
 
 		Log.logPID(`OUTPUT_LOAD_EVENT: !!!${JSON.stringify(loadInfo)}!!! !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!! !!!"${document.cookie}"!!!`);
 	}
