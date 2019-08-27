@@ -436,7 +436,11 @@ class SymbolicExecution {
 		//this.state.coverage.touch(iid);
 		
 		const originalFileName = this._removeScript();
-		const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()} ======`;
+		const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()}  ======`;
+
+		if (typeof(window) !== "undefined") {
+			console.log(`EXIT WITH COOKIE: ${SymbolicState.asSymbolic(document.cookie).toString()}`);
+		}
 
 		if (this._scriptDepth() > 0) {
 			Log.logMid(exitString);
