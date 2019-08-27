@@ -616,7 +616,7 @@ class SymbolicState {
 	}
 
 	ToString(symbol) {
-		console.log(new Error().stack);
+		//console.log(new Error().stack);
 
 
 		if (typeof this.getConcrete(symbol) !== "string") {

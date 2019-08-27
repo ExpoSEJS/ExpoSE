@@ -71,11 +71,11 @@ function BuildModels(state) {
 	Object._expose.notAnError = function() { return NotAnErrorException; };
 	Object._expose.pureSymbol = function(name) { return state.createPureSymbol(name); };
 
-  Object._expose.setAnnotations = function(v, r) {
+  Object._expose.setAnnotations = function(v, ann) {
     if (!state.isWrapped(v)) {
       v = new WrappedValue(v);
     }
-    v.annotations = r;
+    v.annotations = ann;
     return v;
   };
 
