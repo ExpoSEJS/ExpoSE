@@ -99,6 +99,11 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
+    if (sourceString.startsWith("{")) {
+      Log.logPID(`UNKNOWN_LOAD_EVENT: !!!"${sourceString}"!!!`);
+      return;
+    }
+
 		const loadInfo = {
 			depth: this.state.pathCondition.length,
 			createdFrom: this.state.input._createdFrom || "N/A",
