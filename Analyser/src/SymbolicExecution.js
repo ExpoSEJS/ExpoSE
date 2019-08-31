@@ -444,7 +444,7 @@ class SymbolicExecution {
 		const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()}  ======`;
 
 		if (typeof(window) !== "undefined") {
-			console.log(`EXIT WITH COOKIE: ${SymbolicState.asSymbolic(document.cookie).toString()}`);
+			Log.logPID(`EXIT WITH COOKIE: ${SymbolicState.asSymbolic(document.cookie).toString()}`);
 		}
 
 		if (this._scriptDepth() > 0) {
