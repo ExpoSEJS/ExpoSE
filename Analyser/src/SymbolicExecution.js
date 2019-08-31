@@ -84,8 +84,8 @@ class SymbolicExecution {
 			} else if (sourceString.baseURI) {
 				sourceString = "" + sourceString.baseURI;
 			} else if (sourceString.formAction) {
-        sourceString = "" + sourceString.formAction;
-      } else if (sourceString && sourceString.toString) {
+				sourceString = "" + sourceString.formAction;
+			} else if (sourceString && sourceString.toString) {
 				let tsourceString = sourceString.toString();
 				if (tsourceString.includes("Object]")) {
 					sourceString = ObjectHelper.asString(sourceString);
@@ -99,10 +99,10 @@ class SymbolicExecution {
 			sourceString = this.state.asSymbolic(sourceString).simplify();
 		}
 
-    if (sourceString.startsWith("{")) {
-      Log.logPID(`UNKNOWN_LOAD_EVENT: !!!"${sourceString}"!!!`);
-      return;
-    }
+		if (sourceString.startsWith("{")) {
+			Log.logPID(`UNKNOWN_LOAD_EVENT: !!!"${sourceString}"!!!`);
+			return;
+		}
 
 		const loadInfo = {
 			depth: this.state.pathCondition.length,
@@ -444,7 +444,7 @@ class SymbolicExecution {
 		const exitString = `====== EXITING SCRIPT ${originalFileName} depth ${this._scriptDepth()}  ======`;
 
 		if (typeof(window) !== "undefined") {
-			console.log(`EXIT WITH COOKIE: ${SymbolicState.asSymbolic(document.cookie).toString()}`);
+			console.log(`EXIT WITH COOKIE: ${this.state.asSymbolic(document.cookie).toString()}`);
 		}
 
 		if (this._scriptDepth() > 0) {
