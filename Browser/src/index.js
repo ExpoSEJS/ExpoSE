@@ -6,6 +6,7 @@ const TestCaseParameters = JSON.parse(process.argv[process.argv.length - 1]);
 
 app.commandLine.appendSwitch("ignore-certificate-errors");
 app.commandLine.appendSwitch("disable-web-security");
+app.disableHardwareAcceleration();
 
 const MITM_PORT = process.env["MITM_PORT"];
 
@@ -39,6 +40,15 @@ const createWindow = () => {
 
 		callback({ cancel: false });
 	});
+  
+	mainWindow.webContents.session.webRequest.onHeadersReceived(
+		(e) => {
+			const cookie = e.responseHeaders.find((header) => header.name == "Set-Cookie");
+			if (cookie) {
+				console.log(`SET_COOKIE_EVENT: ${cookie.value}`);
+			}
+		} 
+	);
 
 	mainWindow.webContents.session.clearCache(function() {
 		mainWindow.webContents.session.setProxy({ proxyRules: "http://localhost:" + MITM_PORT}, function () {

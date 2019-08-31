@@ -31,7 +31,7 @@ class SymbolicExecution {
 				console.log("Finish timeout (callback)");
 				this.finished();
 				External.close();
-			}, 1000 * 60 * 1);
+			}, 1000 * 30);
 
 			const storagePool = {};
 
@@ -106,9 +106,10 @@ class SymbolicExecution {
 
 		const loadInfo = {
 			depth: this.state.pathCondition.length,
+			createdFromParent: this.state.input._parentID || "N/A",
 			createdFrom: this.state.input._createdFrom || "N/A",
 			createdAtDepth: this.state.input._bound,
-			createdAtFork: this.state.input._forkID || -1
+			createdAtFork: this.state.input._forkID || "N/A"
 		};
 
 		Log.logPID(`OUTPUT_LOAD_EVENT: !!!${JSON.stringify(loadInfo)}!!! !!!${this.state.inlineToSMTLib()}!!! !!!"${sourceString}"!!! !!!"${document.cookie}"!!!`);
