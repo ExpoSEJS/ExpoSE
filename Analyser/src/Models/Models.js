@@ -46,7 +46,7 @@ function BuildModels(state) {
 	ArrayModels(state, ctx, model, helpers);
 	FnModels(state, ctx, model, helpers);
   DOMModels(state, ctx, model, helpers);
-  JSONModels(state, ctx, model, helpers);
+  //JSONModels(state, ctx, model, helpers);
 
 	/**
 	 * Models for methods on Object
