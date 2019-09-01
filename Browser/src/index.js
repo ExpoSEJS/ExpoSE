@@ -42,11 +42,12 @@ const createWindow = () => {
 	});
   
 	mainWindow.webContents.session.webRequest.onHeadersReceived(
-		(e) => {
+		(e, callback) => {
 			const cookie = e.responseHeaders.find((header) => header.name == "Set-Cookie");
 			if (cookie) {
 				console.log(`SET_COOKIE_EVENT: ${cookie.value}`);
 			}
+			callback({ cancel: false });
 		} 
 	);
 
