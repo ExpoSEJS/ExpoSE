@@ -43,11 +43,12 @@ const createWindow = () => {
   
 	mainWindow.webContents.session.webRequest.onHeadersReceived(
 		(e, callback) => {
-			const cookie = e.responseHeaders.find((header) => header.name == "Set-Cookie");
-			if (cookie) {
-				console.log(`SET_COOKIE_EVENT: ${cookie.value}`);
+			const headers = e.responseHeaders;
+      console.log(`RESPONSE_HEADERS: ${JSON.stringify(headers)}`); 
+			if (headers["Set-Cookie"]) {
+				console.log(`SET_COOKIE: ${headers["Set-Cookie"]}`);
 			}
-			callback({ cancel: false });
+			callback({});
 		} 
 	);
 
