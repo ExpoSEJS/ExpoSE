@@ -43,6 +43,9 @@ class SymbolicExecution {
 				return storagePool[key];
 			};
 
+      this._cookie = {}; 
+      Log.log('Master Cookie Created');
+
 			console.log("Browser mode setup finished");
 
 		} else { 
@@ -54,7 +57,6 @@ class SymbolicExecution {
 			//Bind the exit handler to the exit callback supplied
 			process.on("exit", this.finished.bind(this));
 		}
-
 	}
 
 	finished() {
@@ -224,6 +226,33 @@ class SymbolicExecution {
 		}
 	}
 
+  cookieString() {
+    let totalCookie = '';
+    let cookieConc = this.getConcrete(this._cookie);
+    
+    for (let field in cookieConc) {
+      const field = this.state.binary('+',
+        this.state.binary('+', field, '='),
+        this.state.binary('+', cookieConc[field], ';')
+      );
+      totalCookie = this.state.binary('+', totalCookie, field); 
+    }
+
+    return this.state.binary('+',
+      totalCookie,
+      Object._expose.makeSymbolic('cookieExtra', '')
+    );
+  }
+
+  setCookie(val) {
+    const regexp = this.models.get(RegExp.prototype.exec);
+    const parts = regexp.call(/^(.+)=(.*);.*$/, val);
+    if (parts) {
+      this.cookie[parts[1]] = parts[2];
+    }
+    return this.cookieString();
+  }
+
 	/** 
      * GetField will be skipped if the base or offset is not wrapped (SymbolicObject or isSymbolic)
      */
@@ -240,9 +269,9 @@ class SymbolicExecution {
 			}
 
 			if (base == window.document) {
-				if (offset == "cookie") {
-					return { result: Object._expose.makeSymbolic(offset, "") };
-				}            
+        if (offset == "cookie") {
+          return this.cookieString(); 
+				} 
 
 				if (offset == "lastModified") {
 					return { result: Object._expose.makeSymbolic(offset, window.document.lastModified) };
@@ -330,6 +359,10 @@ class SymbolicExecution {
 	putField(iid, base, offset, val, _isComputed, _isOpAssign) {
 
 		Log.logHigh(`PutField ${base.toString()} at ${offset}`);
+
+    if (typeof(window) !== 'undefined' && base == document && offset == 'cookie') {
+      return this.setCookie(val);
+    }
 
 		if (base instanceof SymbolicObject) {
 			return {

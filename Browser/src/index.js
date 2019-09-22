@@ -44,7 +44,7 @@ const createWindow = () => {
 	mainWindow.webContents.session.webRequest.onHeadersReceived(
 		(e, callback) => {
 			const headers = e.responseHeaders;
-      console.log(`RESPONSE_HEADERS: ${JSON.stringify(headers)}`); 
+			console.log(`RESPONSE_HEADERS: ${JSON.stringify(headers)}`); 
 			if (headers["Set-Cookie"]) {
 				console.log(`SET_COOKIE: ${headers["Set-Cookie"]}`);
 			}
