@@ -228,7 +228,7 @@ class SymbolicExecution {
 
 	cookieString() {
 		let totalCookie = "";
-		let cookieConc = this.getConcrete(this._cookie);
+		let cookieConc = this.state.getConcrete(this._cookie);
     
 		for (let field in cookieConc) {
 			const fieldVal = this.state.binary("+",
