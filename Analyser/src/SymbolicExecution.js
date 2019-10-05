@@ -282,6 +282,27 @@ class SymbolicExecution {
 				} 
 			}
 
+      if (base == window.screen) {
+        if (offset == "width") {
+          return { result: Object._expose.makeSymbolic(offset, window.screen.width) };
+        }
+        if (offset == "height") {
+          return { result: Object._expose.makeSymbolic(offset, window.screen.height) };
+        }
+        if (offset == "availWidth") {
+          return { result: Object._expose.makeSymbolic(offset, window.screen.availWidth) };
+        }
+        if (offset == "availHeight") {
+          return { result: Object._expose.makeSymbolic(offset, window.screen.availHeight) };
+        }
+        if (offset == "colorDepth") {
+          return { result: Object._expose.makeSymbolic(offset, window.screen.colorDepth) };
+        }
+        if (offset == "pixelDepth") {
+          return { result: Object._expose.makeSymbolic(offset, window.screen.pixelDepth) };
+        }
+      }
+
 			if (base == window.location) {
 				if (offset == "origin") {
 					return { result: Object._expose.makeSymbolic(offset, window.location.origin) };
