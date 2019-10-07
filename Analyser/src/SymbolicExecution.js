@@ -22,7 +22,7 @@ class SymbolicExecution {
 		this.models = ModelBuilder(this.state);
 		this._fileList = new Array();
 		this._exitFn = exitFn;
-
+    Log.input = initialInput;
 		if (typeof window !== "undefined") {
 
 			window._ExpoSE = this;
