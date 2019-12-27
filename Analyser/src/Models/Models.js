@@ -62,6 +62,32 @@ function BuildModels(state) {
 		return result;
 	});
 
+  model.add(Date.prototype.getTimezoneOffset, function(base, args) {
+    return Object._expose.makeSymbolic('TimezoneOffset', (new Date()).getTimezoneOffset());
+  });
+
+  model.add(Date.prototype.getTime, function(base, args) {
+    return Object._expose.makeSymbolic('DateTime', (new Date()).getTime());
+  });
+
+  model.add(Date.prototype.valueOf, function(base, args) {
+    return Object._expose.makeSymbolic('DateTimeValueOf', (new Date()).valueOf());
+  });
+
+  model.add(Date.now, function(base, args) {
+    return Object._expose.makeSymbolic('DateNow', Date.now());
+  });
+
+  model.add(Math.random, function(base, args) {
+    return Object._expose.makeSymbolic('MathRandom', Math.random());
+  });
+
+  if (typeof(window) !== "undefined" && window.crypto) {
+    model.add(window.crypto.getRandomValues, function(base, args) {
+      return Object._expose.makeSymbolic('CryptoGetRandomValues', [0]);
+    }); 
+  }
+
 	/**
 	 * Secret _expose hooks for symbols.js
 	 */

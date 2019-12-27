@@ -266,6 +266,48 @@ class SymbolicExecution {
 				if (offset == "userAgent") {
 					return { result: Object._expose.makeSymbolic(offset, window.navigator.userAgent) };
 				}
+				if (offset == "platform") {
+					return { result: Object._expose.makeSymbolic(offset, window.navigator.platform) };
+				}
+			}
+
+			if (base == document.body) {
+				if (offset == "offsetWidth") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.offsetWidth) };
+				}
+				if (offset == "offsetHeight") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.offsetHeight) };
+				}
+				if (offset == "offsetLeft") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.offsetLeft) };
+				}
+				if (offset == "offsetTop") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.offsetTop) };
+				}
+				if (offset == "scrollWidth") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.scrollWidth) };
+				}
+				if (offset == "scrollHeight") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.scrollHeight) };
+				}
+				if (offset == "scrollLeft") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.scrollLeft) };
+				}
+				if (offset == "scrollTop") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.scrollTop) };
+				}
+				if (offset == "clientWidth") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.clientWidth) };
+				}
+				if (offset == "clientHeight") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.clientHeight) };
+				}
+				if (offset == "clientLeft") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.clientLeft) };
+				}
+				if (offset == "clientTop") {
+					return { result: Object._expose.makeSymbolic(offset, document.body.clientTop) };
+				}
 			}
 
 			if (base == window.document) {
