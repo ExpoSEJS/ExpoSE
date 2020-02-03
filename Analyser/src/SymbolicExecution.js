@@ -107,7 +107,7 @@ class SymbolicExecution {
 				args[0].src = this.state.getConcrete(args[0].src);
 			}
       
-			if (f.name == "open") {
+			if (f.name == "open" || f.name == "fetch") {
 				console.log("REPORTING FN OPEN " + JSON.stringify(args));
 				this.report(args[1]);
 			}
@@ -233,7 +233,7 @@ class SymbolicExecution {
 					return { result: Object._expose.makeSymbolic(offset, window.document.lastModified) };
 				}
 
-				if (offset == "referer") {
+				if (offset == "referrer") {
 					return { result: Object._expose.makeSymbolic(offset, window.document.referer) };
 				} 
 			}

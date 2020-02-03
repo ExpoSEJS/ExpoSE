@@ -22,9 +22,10 @@ export default function(state, ctx, model, helper) {
 		Math.ceil,
 		(base, args) => state.isSymbolic(args[0]),
 		(base, args, r) => {
-			const intArg = ctx.mkRealToInt(state.asSymbolic(args[0]));
+      const origin = state.asSymbolic(args[0]);
+			const intArg = ctx.mkRealToInt(origin);
 			const floored = ctx.mkIntToReal(intArg);
-			return new ConcolicValue(r, floored);
+      return new ConcolicValue(r, ctx.mkIte(ctx.mkEq(floored, origin), floored, ctx.mkAdd(floored, state.asSymbolic(1))));
 		}
 	));
 
@@ -32,9 +33,12 @@ export default function(state, ctx, model, helper) {
 		Math.round,
 		(base, args) => state.isSymbolic(args[0]),
 		(base, args, r) => {
-			const intArg = ctx.mkRealToInt(state.asSymbolic(args[0]));
-			const floored = ctx.mkIntToReal(intArg);
-			return new ConcolicValue(r, floored);
+      const originArg = state.asSymbolic(args[0]);
+      const intArg = ctx.mkRealToInt(originArg);
+      const floored = ctx.mkIntToReal(intArg);
+      const half = state.constantSymbol(0.5);
+      const whole = state.constantSymbol(1);
+      return new ConcolicValue(r, ctx.mkIte(ctx.mkLt(ctx.mkAdd(floored, half), originArg), ctx.mkAdd(floored, whole), floored));
 		}
 	));
 
