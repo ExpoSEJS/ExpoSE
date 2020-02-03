@@ -78,7 +78,7 @@ class SymbolicExecution {
 
 	report(sourceString) {
 
-		if (!this.state.isSymbolic(sourceString)) {
+		if (sourceString && !this.state.isSymbolic(sourceString)) {
 			if (sourceString.documentURI) {
 				sourceString = "" + sourceString.documentURI;
 			} else if (sourceString.baseURI) {
