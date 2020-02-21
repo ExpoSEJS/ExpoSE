@@ -1,5 +1,5 @@
 FROM ubuntu:19.04
-RUN echo y | unminimize
+RUN yes | unminimize
 
 #Install SSH, Xvfb etc
 RUN apt update && apt install --assume-yes git bash openssh-server clang build-essential vim curl xvfb python3 python3-pip libgtk-3-0 tmux libxss1 libgconf-2-4 libnss3 libasound2
