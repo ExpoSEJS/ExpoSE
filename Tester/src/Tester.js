@@ -34,7 +34,7 @@ class Tester {
 
 		let longRunningMessage = undefined;
 
-    let ref = this;
+		let ref = this;
 
 		function queueTimeout() {
 			longRunningMessage = setTimeout(() => {
