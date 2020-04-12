@@ -27,13 +27,25 @@ class Tester {
 		prc.stdout.on("data", data => this.out += data.toString());
 		prc.stderr.on("data", data => this.out += data.toString());
 
+		let startTime = Date.now();
+
 		const SECOND = 1000;
 		const TIME_WARNING = 60;
-		let longRunningMessage = setTimeout(() => console.log(`\rTEST WARNING: Test case ${this.file.path} is taking an excessive amount of time to complete (over ${TIME_WARNING}s)`), TIME_WARNING * SECOND);
+
+		let longRunningMessage = undefined;
+
+		function queueTimeout() {
+			longRunningMessage = setTimeout(() => {
+				console.log(`\r${this.file.path} has taken ${(Date.now() - startTime) / 1000}s to run`);
+				queueTimeout();
+			}, TIME_WARNING * SECOND);
+		}
+
+		queueTimeout();	
 
 		prc.on("close", code => {
 			clearTimeout(longRunningMessage);
-			done(code);
+			done(code, Date.now() - startTime);
 		});
 	}
 }

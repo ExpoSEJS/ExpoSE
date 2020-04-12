@@ -19,5 +19,5 @@ export default {
 	outFilePath: Default("OUT_PATH", undefined),
 	outCoveragePath: Default("COVERAGE_PATH", undefined),
 	outQueriesDir: Default("QUERY_DUMP", undefined),
-	stringSolver: Default("STRING_SOLVER", undefined)
+	stringSolver: Default("STRING_SOLVER", "seq")
 };

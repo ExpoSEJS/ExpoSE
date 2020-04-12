@@ -15,6 +15,7 @@ class Runner {
 	start(dir, fn) {
 		this._errors = 0;
 		this._running = 0;
+		this._times = [];
 		this.walker = new Walker(dir, fn).done(files => this.startTesting(files)).start();
 		return this;
 	}
@@ -71,10 +72,15 @@ class Runner {
 		console.log("*        " + this.done + " complete     *");
 		console.log("*        " + this._errors + " errors        *");
 		console.log("**************************");
+
+		this._times.forEach((time) => {
+			console.log(`* ${time}`);
+		});
+
 		this.cbs.forEach(cb => cb(this._errors));
 	}
 
-	_testFileDone(test, code, file) {
+	_testFileDone(test, code, time, file) {
 		this.done++;
 
 		if (code !== file.expectErrors) {
@@ -83,6 +89,8 @@ class Runner {
 			this._errors++;
 		}
 
+		this._times.push(`${file.path} took ${time / 1000}s`);
+
 		this.postTest();
 	}
 
@@ -90,7 +98,7 @@ class Runner {
 		this._running++;
 		let test = new Tester(file);
 		this._printStatus();
-		test.build(code => this._testFileDone(test, code, file));
+		test.build((code, time) => this._testFileDone(test, code, time, file));
 	}
 }
 
