@@ -34,9 +34,11 @@ class Tester {
 
 		let longRunningMessage = undefined;
 
+    let ref = this;
+
 		function queueTimeout() {
 			longRunningMessage = setTimeout(() => {
-				console.log(`\r${this.file.path} has taken ${(Date.now() - startTime) / 1000}s to run`);
+				console.log(`\r${ref.file.path} has taken ${(Date.now() - startTime) / 1000}s to run`);
 				queueTimeout();
 			}, TIME_WARNING * SECOND);
 		}
