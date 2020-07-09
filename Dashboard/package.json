@@ -8,7 +8,7 @@
     "start": "electron --js-flags=\"--max_old_space_size=8100\" ."
   },
   "dependencies": {
-    "electron": "^1.8.4",
+    "electron": "^9.1.0",
     "photon": "^2.0.0",
     "tmp": "0.0.31"
   }
