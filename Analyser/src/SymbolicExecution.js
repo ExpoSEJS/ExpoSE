@@ -16,6 +16,8 @@ import External from "./External";
 
 class SymbolicExecution {
 
+    var native_func = {"JSON_stringify": JSON.stringify};
+
 	constructor(sandbox, initialInput, exitFn) {
 		this._sandbox = sandbox;
 		this.state = new SymbolicState(initialInput, this._sandbox);
@@ -108,7 +110,7 @@ class SymbolicExecution {
 			}
       
 			if (f.name == "open" || f.name == "fetch") {
-				console.log("REPORTING FN OPEN " + JSON.stringify(args));
+				console.log("REPORTING FN OPEN " + native_func["JSON_stringify"](args));
 				this.report(args[1]);
 			}
 		}
