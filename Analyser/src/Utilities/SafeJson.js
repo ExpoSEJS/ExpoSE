@@ -6,14 +6,14 @@
  * we provide a wrapper to stringify to avoid this.
  */
 
-const stringify = JSON.stringify;
-const parse = JSON.parse;
+const safeStringify = JSON.stringify;
+const safeParse = JSON.parse;
 
 export function stringify() {
-  return stringify.apply(null, arguments);
+  return safeStringify.apply(null, arguments);
 }
 
 export function parse() {
-  return parse.apply(null, arguments);
+  return safeParse.apply(null, arguments);
 }
 

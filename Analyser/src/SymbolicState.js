@@ -9,7 +9,7 @@ import Config from "./Config";
 import SymbolicHelper from "./SymbolicHelper";
 import { SymbolicObject } from "./Values/SymbolicObject";
 import { WrappedValue, ConcolicValue } from "./Values/WrappedValue";
-import { stringify } from './Utilities/SafeJson';
+import { stringify } from "./Utilities/SafeJson";
 import Stats from "Stats";
 import Z3 from "z3javascript";
 import Helpers from "./Models/Helpers";
