@@ -29,4 +29,4 @@ RUN chown -R expose /work
 VOLUME ["/work"]
 
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/source/expoSE]

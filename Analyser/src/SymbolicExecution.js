@@ -1,22 +1,23 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2014@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
+// JALANGI DO NOT INSTRUMENT
+
 /*global window*/
 /*global Element*/
 /*global document*/
 
-import {ConcolicValue} from "./Values/WrappedValue";
-import {SymbolicObject} from "./Values/SymbolicObject";
+import { ConcolicValue } from "./Values/WrappedValue";
+import { SymbolicObject } from "./Values/SymbolicObject";
 import ObjectHelper from "./Utilities/ObjectHelper";
 import SymbolicState from "./SymbolicState";
 import Log from "./Utilities/Log";
 import NotAnErrorException from "./NotAnErrorException";
-import {isNative} from "./Utilities/IsNative";
+import { isNative } from "./Utilities/IsNative";
+import { stringify } from './Utilities/SafeJson';
 import ModelBuilder from "./Models/Models";
 import External from "./External";
 
 class SymbolicExecution {
-
-    var native_func = {"JSON_stringify": JSON.stringify};
 
 	constructor(sandbox, initialInput, exitFn) {
 		this._sandbox = sandbox;
@@ -110,7 +111,6 @@ class SymbolicExecution {
 			}
       
 			if (f.name == "open" || f.name == "fetch") {
-				console.log("REPORTING FN OPEN " + native_func["JSON_stringify"](args));
 				this.report(args[1]);
 			}
 		}

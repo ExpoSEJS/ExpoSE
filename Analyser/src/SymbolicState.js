@@ -1,5 +1,6 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
+// JALANGI DO NOT INSTRUMENT
 
 import Log from "./Utilities/Log";
 import ObjectHelper from "./Utilities/ObjectHelper";
@@ -8,6 +9,7 @@ import Config from "./Config";
 import SymbolicHelper from "./SymbolicHelper";
 import { SymbolicObject } from "./Values/SymbolicObject";
 import { WrappedValue, ConcolicValue } from "./Values/WrappedValue";
+import { stringify } from './Utilities/SafeJson';
 import Stats from "Stats";
 import Z3 from "z3javascript";
 import Helpers from "./Models/Helpers";
@@ -340,7 +342,7 @@ class SymbolicState {
      */
 	createSymbolicValue(name, concrete) {
 
-		Log.logMid(`Args ${JSON.stringify(arguments)} ${name} ${concrete}`);
+		Log.logMid(`Args ${stringify(arguments)} ${name} ${concrete}`);
 
 		this.stats.seen("Symbolic Values");
 
@@ -450,7 +452,7 @@ class SymbolicState {
 	_symbolicBinary(op, left_c, left_s, right_c, right_s) {
 		this.stats.seen("Symbolic Binary");
 
-		Log.logMid(`Symbolic Binary: ${JSON.stringify(arguments)}`);
+		Log.logMid(`Symbolic Binary: ${stringify(arguments)}`);
 
 		switch (op) {
 		case "===":
