@@ -29,4 +29,4 @@ RUN chown -R expose /work
 VOLUME ["/work"]
 
 EXPOSE 22
-CMD ["/source/expoSE]
+CMD ["/source/expoSE"]
