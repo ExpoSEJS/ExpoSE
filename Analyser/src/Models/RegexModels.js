@@ -1,6 +1,7 @@
 import { ConcolicValue } from "../Values/WrappedValue";
 import Config from "../Config";
 import Log from "../Utilities/Log";
+import { stringify } from "../Utilities/SafeJson";
 import External from "../External";
 import Z3 from "z3javascript";
 
@@ -91,7 +92,7 @@ export default function(state, ctx, model, helpers) {
 				const real_match = real.exec(model.eval(string_s).asConstant(model));
 				const sym_match = regex.captures.map(cap => model.eval(cap).asConstant(model));
 
-				Log.logMid(`Regex sanity check ${JSON.stringify(real_match)} vs ${JSON.stringify(sym_match)}`);
+				Log.logMid(`Regex sanity check ${stringify(real_match)} vs ${stringify(sym_match)}`);
 				const is_correct = real_match && !Exists(real_match, sym_match, DoesntMatch);
 
 				if (!is_correct) {

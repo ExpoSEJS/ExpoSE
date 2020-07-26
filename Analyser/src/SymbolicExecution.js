@@ -1,16 +1,18 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2014@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
+// JALANGI DO NOT INSTRUMENT
+
 /*global window*/
 /*global Element*/
 /*global document*/
 
-import {ConcolicValue} from "./Values/WrappedValue";
-import {SymbolicObject} from "./Values/SymbolicObject";
+import { ConcolicValue } from "./Values/WrappedValue";
+import { SymbolicObject } from "./Values/SymbolicObject";
 import ObjectHelper from "./Utilities/ObjectHelper";
 import SymbolicState from "./SymbolicState";
 import Log from "./Utilities/Log";
 import NotAnErrorException from "./NotAnErrorException";
-import {isNative} from "./Utilities/IsNative";
+import { isNative } from "./Utilities/IsNative";
 import ModelBuilder from "./Models/Models";
 import External from "./External";
 
@@ -108,7 +110,6 @@ class SymbolicExecution {
 			}
       
 			if (f.name == "open" || f.name == "fetch") {
-				console.log("REPORTING FN OPEN " + JSON.stringify(args));
 				this.report(args[1]);
 			}
 		}
