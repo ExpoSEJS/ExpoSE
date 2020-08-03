@@ -4,6 +4,9 @@
   "description": "",
   "main": "src/main.js",
   "author": "Blake Loring",
+  "engines": {
+    "node": "^8.0.0"
+  },
   "scripts": {
     "start": "./expoSE ui",
     "test": "./scripts/run_tests",
