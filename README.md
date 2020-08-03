@@ -30,7 +30,7 @@ Alternatively, you can invoke ExpoSE directly via the `expoSE` command line inte
 Example:
 
 ```sh
-$ expoSE ./tests/integers/infoflow
+$ expoSE ./tests/numbers/infoflow
 ```
 
 Valid Options:
