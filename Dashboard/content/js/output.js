@@ -52,15 +52,15 @@ function handleOutput(err, stdout, done, page) {
 
 const STDOUT_SUFFIX = '_stdout';
 
-function loadOutput(page) {
-	let file = dialog.showOpenDialog({properties: ['openFile']});
+async function loadOutput(page) {
+	const response = await dialog.showOpenDialog({properties: ['openFile']});
 
-	if (!file) {
+	if (response.canceled) {
 		console.log('No file selected');
 		return;
 	}
 
-	file = file[0];
+	const file = response.filePaths[0];
 
 	fs.readFile('' + file, (err, data) => {
 		
