@@ -5,15 +5,31 @@
 "use strict";
 
 {
-  let {html} = Xel.utils.element;
-  let {isDOMWhitespace, replaceAll} = Xel.utils.string;
+  // html helper taken from xel source as it is no longer exposed
+  let templateElement = document.createElement("template");
+  let html = (strings, ...expressions) => {
+    let parts = [];
 
-  let theme = document.querySelector('link[href*=".theme.css"]').getAttribute("href");
-  let counter = 0;
+    for (let i = 0; i < strings.length; i += 1) {
+      parts.push(strings[i]);
+      if (expressions[i] !== undefined) parts.push(expressions[i]);
+    }
+
+    let innerHTML = parts.join("");
+    templateElement.innerHTML = innerHTML;
+    let fragment = document.importNode(templateElement.content, true);
+
+    if (fragment.children.length === 1) {
+      return fragment.firstElementChild;
+    }
+    else {
+      return fragment;
+    }
+  };
 
   let shadowTemplate = html`
     <template>
-      <link rel="stylesheet" href="node_modules/xel/stylesheets/material.theme.css" data-vulcanize>
+      <link rel="stylesheet" href="node_modules/xel/themes/material.css" data-vulcanize>
 
       <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
       
