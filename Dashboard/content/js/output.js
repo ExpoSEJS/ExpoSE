@@ -82,21 +82,21 @@ async function loadOutput(page) {
 	});
 }
 
-function saveOutput(page) {
+async function saveOutput(page) {
 	
 	if (!current_stdout) {
 		console.log('There is no output');
 		return;
 	}
 
-	let file = dialog.showSaveDialog({properties: ['saveFile']});
-
+	const response = await dialog.showSaveDialog({properties: ['saveFile']});
+	const file = response.filePath
 	if (!file) {
 		return;
 	}
 
-	fs.writeFile('' + file, current_summary, function(err) {});
-	fs.writeFile('' + file + STDOUT_SUFFIX, current_stdout);
+	fs.writeFile('' + file, current_summary, (err) => { if (err) throw err });
+	fs.writeFile('' + file + STDOUT_SUFFIX, current_stdout, (err) => { if (err) throw err });
 }
 
 module.exports = {

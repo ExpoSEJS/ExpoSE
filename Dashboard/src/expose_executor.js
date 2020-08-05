@@ -1,13 +1,14 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
 const tmp = require("tmp");
+const path = require("path");
 const fs = require("fs");
 const spawn = require("child_process").spawn;
 
-const EXPOSE_PATH = "expoSE";
+const EXPOSE_PATH = path.resolve(__dirname, '../../expoSE');
 
 //TODO: Executor should use summary.jobs[n].replay to build replay for consistency
-//Otherwise 1 change becomes 2
+//Otherwise 1 change becomes 2expoSE
 function Executor(filepath, input, data, done) {
 
 	//Create tmp output file for the JSON
