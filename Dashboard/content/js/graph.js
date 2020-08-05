@@ -24,7 +24,8 @@ Graph.tex = function(page, summary, texFile) {
 }
 
 Graph.findFile = function(type) {
-	return dialog.showSaveDialog({properties: ['saveFile'], filters: type});
+	const response = dialog.showSaveDialogSync({properties: ['saveFile'], filters: type});
+	return response.filePaths[0]
 }
 
 Graph.saveSvg = function(page) {

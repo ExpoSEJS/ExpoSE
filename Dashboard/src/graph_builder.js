@@ -17,6 +17,9 @@ function BuildGraph(outFile, outType, coverageFiles, inRate, done) {
 		this.running = false;
 		done(c);
 	}.bind(this));
+
+	prc.stderr.pipe(process.stderr)
+
 }
 
 module.exports = BuildGraph;

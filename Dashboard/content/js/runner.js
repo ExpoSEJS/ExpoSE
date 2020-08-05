@@ -23,29 +23,31 @@ function kill() {
 	exec.stderr && exec.stderr.end();
 }
 
-function runExpoSE(page) {
+async function runExpoSE(page) {
 
 	if (running()) {
 		console.log('Already Running Something');
 		return;
 	}
 
-	let file = dialog.showOpenDialog({properties: ['openFile'], filters: [{name: 'JavaScript File', extensions: ['js']}]});
+	const response = await dialog.showOpenDialog({properties: ['openFile'], filters: [{name: 'JavaScript File', extensions: ['js']}]});
+	if (response.canceled) return
 
-	if (file) {
-		console.log('Preparing to  execute ' + file);
-		view.clear(page);
-		view.running(true, page);
-		summary(null, page);
-		timer.start(page);
-		exec = Executor(file, null, function(data) {
-			view.out('' + data, page);
-		}, function(err, jsonOut) {
-			view.running(false, page);
-			timer.stop(page);
-			output.handleOutput(err, exec.final, jsonOut, page);
-		});
-	}
+	const file = response.filePaths[0]
+	if (!file) return
+	
+	console.log('Preparing to  execute ' + file);
+	view.clear(page);
+	view.running(true, page);
+	summary(null, page);
+	timer.start(page);
+	exec = Executor(file, null, function(data) {
+		view.out('' + data, page);
+	}, function(err, jsonOut) {
+		view.running(false, page);
+		timer.stop(page);
+		output.handleOutput(err, exec.final, jsonOut, page);
+	});
 }
 
 module.exports = {
