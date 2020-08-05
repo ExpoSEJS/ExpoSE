@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ExpoSEJS/ExpoSE.svg?branch=master)](https://travis-ci.org/ExpoSEJS/ExpoSE)
+[![Build Status](https://travis-ci.com/ExpoSEJS/ExpoSE.svg?branch=master)](https://travis-ci.org/ExpoSEJS/ExpoSE)
 
 ## ExpoSE
 
