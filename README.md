@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.com/ExpoSEJS/ExpoSE.svg?branch=master)](https://travis-ci.org/ExpoSEJS/ExpoSE)
-
 ## ExpoSE
 
 ExpoSE is a dynamic symbolic execution engine for JavaScript, developed at Royal Holloway, University of London by [Blake Loring](https://www.parsed.uk), Duncan Mitchell, and [Johannes Kinder](https://www.unibw.de/patch) (now at [Bundeswehr University Munich](https://www.unibw.de/)). 
