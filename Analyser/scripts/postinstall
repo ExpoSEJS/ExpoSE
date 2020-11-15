@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-cd node_modules/jalangi2/
-npm install
+(cd node_modules/jalangi2/ && npm install)
+(git clone git@github.com:ExpoSEJS/z3javascript.git node_modules/z3javascript && cd node_modules/z3javascript && npm install)
+

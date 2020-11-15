@@ -5,8 +5,7 @@
   "author": "Blake Loring <blake@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
   "readme": "README.md",
   "dependencies": {
-    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#73c952258383a3d768a5bb8253cd4396468d7d53",
-    "z3javascript": "git+https://github.com/ExpoSEJS/z3javascript.git#c075f77"
+    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#73c952258383a3d768a5bb8253cd4396468d7d53"
   },
   "scripts": {
     "postinstall": "./scripts/postinstall"
