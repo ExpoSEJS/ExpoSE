@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const spawn = require("child_process").spawn;
 
-const EXPOSE_PATH = path.resolve(__dirname, '../../expoSE');
+const EXPOSE_PATH = path.resolve(__dirname, "../../expoSE");
 
 //TODO: Executor should use summary.jobs[n].replay to build replay for consistency
 //Otherwise 1 change becomes 2expoSE

@@ -18,7 +18,7 @@ function BuildGraph(outFile, outType, coverageFiles, inRate, done) {
 		done(c);
 	}.bind(this));
 
-	prc.stderr.pipe(process.stderr)
+	prc.stderr.pipe(process.stderr);
 
 }
 
