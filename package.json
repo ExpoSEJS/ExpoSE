@@ -2,7 +2,7 @@
   "name": "expose",
   "version": "1.0.0",
   "description": "",
-  "main": "src/main.js",
+  "main": "lib/S$/src/symbols.js",
   "author": "Blake Loring",
   "engines": {
     "node": "^10.22.0"
