@@ -5,7 +5,7 @@
   "main": "lib/S$/src/symbols.js",
   "author": "Blake Loring",
   "engines": {
-    "node": "^10.22.0"
+    "node": "^14.16.1"
   },
   "scripts": {
     "start": "./expoSE ui",
