@@ -638,12 +638,12 @@ class SymbolicState {
 		if (val && typeof(val) === "object") {
 			val = val.valueOf();
 		}
- 
+
 		switch (typeof(val)) {
 		case "boolean":
 			return val ? this.ctx.mkTrue() : this.ctx.mkFalse();
 		case "number":
-			return Math.round(val) === val ? this.ctx.mkReal(val, 1) : this.ctx.mkNumeral("" + val, this.ctx.mkRealSort());
+			return this.ctx.mkNumeral("" + val, this.ctx.mkRealSort());
 		case "string":
 			return this.ctx.mkString(val.toString());
 		default:
