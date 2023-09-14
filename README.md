@@ -11,7 +11,7 @@ Requires `node` version v14.16.1 (other versions may work but are not tested), `
 
 ### Installation
 
-Execute `./install' inside the ExpoSE directory for a clean installation.
+Execute `./install` inside the ExpoSE directory for a clean installation.
 
 ### ExpoSE GUI
 
