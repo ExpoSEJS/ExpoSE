@@ -5,7 +5,13 @@
   "author": "Blake Loring <blake@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
   "readme": "README.md",
   "dependencies": {
-    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#73c952258383a3d768a5bb8253cd4396468d7d53"
+    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#73c952258383a3d768a5bb8253cd4396468d7d53",
+    "browserify": "^14.1.0",
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babel-plugin-strip-function-call": "^1.0.2",
+    "babel-preset-2017": "0.0.0"
   },
   "scripts": {
     "postinstall": "./scripts/postinstall"
