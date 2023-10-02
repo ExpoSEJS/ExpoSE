@@ -32,13 +32,7 @@ if [[ ${RECOMPILE} && ${RECOMPILE-x} ]]; then
 
 fi
 
-if [ "$1" == "ui" ]; then #Launch the user interface
-
-    export PATH=$PATH:$(pwd)
-    (cd Dashboard && npm start);
-	exit $?
-
-elif [ "$1" == "ahg" ]; then
+if [ "$1" == "ahg" ]; then
 
 	NODE_PATH="$NODE_PATH:$ORIGIN_PATH/node_modules" EXPOSE_QUERY_DUMP=$EXPOSE_QUERY_DUMP EXPOSE_HARNESS_TARGET=$2 ./scripts/analyse ../lib/Harness/src/harness.js "${@:3}"
 

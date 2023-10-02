@@ -13,12 +13,15 @@ Requires `node` version v14.16.1 (other versions may work but are not tested), `
 
 Execute `./install` inside the ExpoSE directory for a clean installation.
 
-### ExpoSE GUI
+### Complete instructions (including installing NPM using fnm)
 
-In most cases you want to start by running the ExpoSE dashboard. The GUI provides detailed test case information, easy replay, and coverage graphs. Start the ExpoSE dashboard with
-
-```sh
-$ npm start
+```
+curl -fsSL https://fnm.vercel.app/install | bash
+eval $(fnm env)
+fnm install 14.16.1
+fnm use 14.16.1
+./install
+./expoSE ./tests/numbers/infoflow
 ```
 
 ### ExpoSE CLI
