@@ -13,7 +13,7 @@ Requires `node` version v14.16.1 (other versions may work but are not tested), `
 
 Execute `./install` inside the ExpoSE directory for a clean installation.
 
-### Complete instructions (including installing NPM using fnm)
+### Complete instructions (including installing Node.js and NPM using fnm)
 
 ```
 curl -fsSL https://fnm.vercel.app/install | bash
