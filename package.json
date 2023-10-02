@@ -9,18 +9,9 @@
   },
   "scripts": {
     "start": "./expoSE ui",
-    "test": "./scripts/run_tests",
-    "postinstall": "./scripts/setup/setup"
+    "test": "./scripts/run_tests"
   },
-  "dependencies": {
-    "browserify": "^14.1.0",
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "babel-plugin-strip-function-call": "^1.0.2",
-    "babel-preset-2017": "0.0.0",
-    "bash": "0.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "eslint": "^5.6.0"
   }

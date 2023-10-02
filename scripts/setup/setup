@@ -3,6 +3,9 @@
 echo "Setting up for Node"
 node --version
 
+echo "Installing top level"
+npm install
+
 echo "Setting Up Packages"
 ./scripts/setup/setup_packages
 
