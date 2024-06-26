@@ -5,7 +5,7 @@
   "author": "Blake Loring <blake@parsed.uk>, Johannes Kinder <johannes.kinder@rhul.ac.uk>",
   "readme": "README.md",
   "dependencies": {
-    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#73c952258383a3d768a5bb8253cd4396468d7d53",
+    "jalangi2": "git+https://github.com/ExpoSEJS/jalangi2.git#c2961c4374fa5f5fb35d114b98621cbe38b5c85f",
     "browserify": "^14.1.0",
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
