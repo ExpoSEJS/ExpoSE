@@ -1,5 +1,5 @@
-var S$ = require('S$');
+var S$ = require("S$");
 
-if (/^\D$/.test(S$.symbol('A', ''))) {
-	throw 'Reachable';
+if (/^\D$/.test(S$.symbol("A", ""))) {
+  throw "Reachable";
 }

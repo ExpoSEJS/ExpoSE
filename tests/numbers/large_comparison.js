@@ -2,11 +2,11 @@
 
 "use strict";
 
-var S$ = require('S$');
-var x = S$.symbol('X', 10);
+var S$ = require("S$");
+var x = S$.symbol("X", 10);
 
 if (x < 1634030713273) {
-	if (x > 75) {
-    throw 'I expect a riot';
-	}
+  if (x > 75) {
+    throw "I expect a riot";
+  }
 }

@@ -2,36 +2,35 @@
 
 //Test the + operator
 
-var S$ = require('S$');
-var x = S$.symbol("X", '');
+var S$ = require("S$");
+var x = S$.symbol("X", "");
 
 if (/^a+$/.test(x)) {
-	throw 'Reachable';
+  throw "Reachable";
 }
 
-if (x == 'a') {
-	throw 'Unreachable';
+if (x == "a") {
+  throw "Unreachable";
 }
 
 if (/^b+$/.test(x)) {
-	throw 'Reachable';
+  throw "Reachable";
 }
 
-if (x == 'b') {
-	throw 'Unreachable';
+if (x == "b") {
+  throw "Unreachable";
 }
 
 if (/^abc+$/.test(x)) {
+  if (x == "abcabc") {
+    throw "Unreachable";
+  }
 
-	if (x == 'abcabc') {
-		throw 'Unreachable';
-	}
-
-	throw 'Reachable';
+  throw "Reachable";
 }
 
-if (x == 'abc') {
-	throw 'Unreachable';
+if (x == "abc") {
+  throw "Unreachable";
 }
 
-throw 'Reachable';
+throw "Reachable";

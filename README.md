@@ -5,7 +5,7 @@ ExpoSE supports symbolic execution of Node.js programs and JavaScript in the bro
 
 ### Requirements
 
-Requires `node` version v14.16.1 (other versions may work but are not tested), `npm`, `clang` (with `clang++`), `gnuplot` (for coverage graphs), `make`, `python` (Python 3).
+Requires `node` version v21.7.2 (other versions may work but are not tested), `npm`, `clang` (with `clang++`), `gnuplot` (for coverage graphs), `make`, `python` (Python 3).
 
 `mitmproxy` (Depends libxml2-dev, libxslt-dev, libssl-dev) is required for electron analysis.
 
@@ -18,8 +18,8 @@ Execute `./install` inside the ExpoSE directory for a clean installation.
 ```
 curl -fsSL https://fnm.vercel.app/install | bash
 eval $(fnm env)
-fnm install 14.16.1
-fnm use 14.16.1
+fnm install 21.7.2
+fnm use 21.7.2
 ./install
 ./expoSE ./tests/numbers/infoflow
 ```
@@ -36,8 +36,8 @@ $ expoSE ./tests/numbers/infoflow
 
 Valid Options:
 
-* `replay`     - Replay a test case with a specific input.
-* `ahg`        - Automatically generate a generic test harness for a specified NPM library.
+- `replay` - Replay a test case with a specific input.
+- `ahg` - Automatically generate a generic test harness for a specified NPM library.
 
 ### ExpoSE Browser Support
 
@@ -55,17 +55,17 @@ ExpoSE is configured via environment variables. All work both with the ExpoSE GU
 $ EXPOSE_LOG_LEVEL=1 expoSE target/hello.js
 ```
 
-* `EXPOSE_MAX_TIME`         - The time (in milliseconds) to limit the total execution
-* `EXPOSE_TEST_TIMEOUT`     - The time (in milliseconds) a test case can run for before being timed out
-* `EXPOSE_PRINT_COVERAGE`   - Print out the files checked by an analysis and show the lines which where explored by the analyzer
-* `EXPOSE_PRINT_PATHS`      - Print the output of each test case to stdout
-* `EXPOSE_LOG_LEVEL`        - Level from 0 (None) to 3 (High)
-* `EXPOSE_MAX_CONCURRENT`   - The maximum number of test cases that can run concurrently
-* `RECOMPILE`               - Force ExpoSE to rebuild before executing scripts
+- `EXPOSE_MAX_TIME` - The time (in milliseconds) to limit the total execution
+- `EXPOSE_TEST_TIMEOUT` - The time (in milliseconds) a test case can run for before being timed out
+- `EXPOSE_PRINT_COVERAGE` - Print out the files checked by an analysis and show the lines which where explored by the analyzer
+- `EXPOSE_PRINT_PATHS` - Print the output of each test case to stdout
+- `EXPOSE_LOG_LEVEL` - Level from 0 (None) to 3 (High)
+- `EXPOSE_MAX_CONCURRENT` - The maximum number of test cases that can run concurrently
+- `RECOMPILE` - Force ExpoSE to rebuild before executing scripts
 
 NOTE: To improve performance logging instructions are removed from the output at compile time and so will not be updated if `NO_COMPILE` is set.
 
 ### Publications
 
-* Blake Loring, Duncan Mitchell, and Johannes Kinder. [Sound Regular Expression Semantics for Dynamic Symbolic Execution of JavaScript](https://www.unibw.de/patch/papers/pldi19-regex.pdf). In _Proc. ACM SIGPLAN Conf. Programming Language Design and Implementation (PLDI)_, pp. 425–438, ACM, 2019.
-* Blake Loring, Duncan Mitchell, and Johannes Kinder. [ExpoSE: Practical Symbolic Execution of Standalone JavaScript](https://www.unibw.de/patch/papers/spin17-expose.pdf). In _Proc. Int. SPIN Symp. Model Checking of Software (SPIN)_, pp. 196–199, ACM, 2017.
+- Blake Loring, Duncan Mitchell, and Johannes Kinder. [Sound Regular Expression Semantics for Dynamic Symbolic Execution of JavaScript](https://www.unibw.de/patch/papers/pldi19-regex.pdf). In _Proc. ACM SIGPLAN Conf. Programming Language Design and Implementation (PLDI)_, pp. 425–438, ACM, 2019.
+- Blake Loring, Duncan Mitchell, and Johannes Kinder. [ExpoSE: Practical Symbolic Execution of Standalone JavaScript](https://www.unibw.de/patch/papers/spin17-expose.pdf). In _Proc. Int. SPIN Symp. Model Checking of Software (SPIN)_, pp. 196–199, ACM, 2017.

@@ -2,20 +2,20 @@
 
 "use strict";
 
-var S$ = require('S$');
+var S$ = require("S$");
 
-console.log('Start');
+console.log("Start");
 
-var q = S$.symbol('Q', true);
+var q = S$.symbol("Q", true);
 
-console.log('Create');
+console.log("Create");
 
 if (!q) {
-	S$.assert(!q);
+  S$.assert(!q);
 }
 
 if (q) {
-	S$.assert(q);
+  S$.assert(q);
 }
 
-console.log('Path Finished');
+console.log("Path Finished");

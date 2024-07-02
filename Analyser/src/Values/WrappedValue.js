@@ -1,7 +1,5 @@
 /* Copyright (c) Royal Holloway, University of London | Contact Blake Loring (blake@parsed.uk), Duncan Mitchell (Duncan.Mitchell.2015@rhul.ac.uk), or Johannes Kinder (johannes.kinder@rhul.ac.uk) for details or support | LICENSE.md for license details */
 
-
-
 /*
  * Original Concolic Value License
  *
@@ -21,71 +19,73 @@
  */
 // ES6 Translation / Blake Loring
 
-
 class WrappedValue {
+  constructor(concrete) {
+    this.concrete = concrete;
+  }
 
-    constructor(concrete) {
-        this.concrete = concrete;
-    }
+  clone() {
+    return new WrappedValue(this.concrete);
+  }
 
-    clone() {
-        return new WrappedValue(this.concrete);
-    }
+  toString() {
+    return (
+      "Wrapped(" +
+      this.concrete +
+      ", " +
+      (this.rider ? this.rider.toString() : "") +
+      ")"
+    );
+  }
 
-    toString() {
-        return "Wrapped(" + this.concrete + ", " + (this.rider ? this.rider.toString() : "") + ")";
-    }
+  valueOf() {
+    return this.concrete ? this.concrete.valueOf() : this.concrete;
+  }
 
-    valueOf() {
-        return this.concrete ? this.concrete.valueOf() : this.concrete;
-    }
-
-    getConcrete() {
-        return this.concrete;
-    }
+  getConcrete() {
+    return this.concrete;
+  }
 }
 
 class ConcolicValue extends WrappedValue {
+  /**
+   * TODO: I'm not sure I like passing array type with concolic values to sanity check comparisons
+   */
+  constructor(concrete, symbolic, arrayType = undefined) {
+    super(concrete);
+    this.symbolic = symbolic;
+    this._arrayType = arrayType;
+  }
 
-    /**
-     * TODO: I'm not sure I like passing array type with concolic values to sanity check comparisons
-     */    
-    constructor(concrete, symbolic, arrayType = undefined) {
-        super(concrete);
-        this.symbolic = symbolic;
-        this._arrayType = arrayType;
-    }
+  toString() {
+    return "Concolic(" + this.concrete + ", " + this.symbolic + ")";
+  }
 
-    toString() {
-        return "Concolic(" + this.concrete + ", " + this.symbolic + ")";
-    }
+  clone() {
+    return new ConcolicValue(this.concrete, this.symbolic);
+  }
 
-    clone() {
-        return new ConcolicValue(this.concrete, this.symbolic);
-    }
+  getConcrete() {
+    return this.concrete;
+  }
 
-    getConcrete() {
-        return this.concrete;
-    }
+  getSymbolic() {
+    return this.symbolic;
+  }
 
-    getSymbolic() {
-        return this.symbolic;
-    }
-
-    getArrayType() {
-        return this._arrayType;
-    }
-
+  getArrayType() {
+    return this._arrayType;
+  }
 }
 
-ConcolicValue.getSymbolic = function(val) {
-    return val instanceof ConcolicValue ? val.symbolic : undefined;
+ConcolicValue.getSymbolic = function (val) {
+  return val instanceof ConcolicValue ? val.symbolic : undefined;
 };
 
-ConcolicValue.setSymbolic = function(val, val_s) {
-    if (val instanceof ConcolicValue) {
-        val.symbolic = val_s;
-    }
+ConcolicValue.setSymbolic = function (val, val_s) {
+  if (val instanceof ConcolicValue) {
+    val.symbolic = val_s;
+  }
 };
 
-export {WrappedValue, ConcolicValue};
+export { WrappedValue, ConcolicValue };

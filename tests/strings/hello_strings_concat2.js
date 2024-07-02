@@ -2,8 +2,8 @@
 
 "use strict";
 
-var S$ = require('S$');
-var a = S$.symbol("DOGS", 'HELL');
+var S$ = require("S$");
+var a = S$.symbol("DOGS", "HELL");
 var q = a + "DOGS666";
 
 S$.assert(q.length !== 6);

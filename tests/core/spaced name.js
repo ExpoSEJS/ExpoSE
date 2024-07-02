@@ -1,7 +1,7 @@
-var S$ = require('S$');
+var S$ = require("S$");
 
-var x = S$.symbol('X', false);
+var x = S$.symbol("X", false);
 
 if (x) {
-	throw 'Reachable';
+  throw "Reachable";
 }

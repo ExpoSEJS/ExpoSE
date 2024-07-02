@@ -1,7 +1,7 @@
-var a = {name: "myname"};
+var a = { name: "myname" };
 
-if(a.hasOwnProperty("name")) {
-    console.log('correct');
+if (a.hasOwnProperty("name")) {
+  console.log("correct");
 } else {
-    console.log('wrong');
+  console.log("wrong");
 }

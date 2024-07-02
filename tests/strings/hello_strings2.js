@@ -2,17 +2,17 @@
 
 "use strict";
 
-var S$ = require('S$');
-var a = S$.symbol("A", 'hello');
+var S$ = require("S$");
+var a = S$.symbol("A", "hello");
 
 if (a === "goodbye") {
-	console.log('PASS');
+  console.log("PASS");
 } else {
-	console.log('FAIL');
+  console.log("FAIL");
 }
 
 if (a === "derp") {
-	console.log('AND THEN SOME');
+  console.log("AND THEN SOME");
 } else {
-	console.log('NOT THEN SOME');
+  console.log("NOT THEN SOME");
 }

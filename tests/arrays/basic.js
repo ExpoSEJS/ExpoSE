@@ -2,13 +2,13 @@
 
 "use strict";
 
-var S$ = require('S$');
-var x = S$.symbol('X', ['A']);
+var S$ = require("S$");
+var x = S$.symbol("X", ["A"]);
 
 S$.assume(x.length < 4);
 
 for (var i = 0; i < x.length; i++) {
-	if (x[i] == 'What') {
-		throw 'Reachable';
-	}
+  if (x[i] == "What") {
+    throw "Reachable";
+  }
 }

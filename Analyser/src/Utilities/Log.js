@@ -5,62 +5,73 @@ import { stringify } from "./SafeJson";
 const fs = require("fs");
 
 function makeid(count) {
-    let text = "";
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let text = "";
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for (let i = 0; i < count; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
+  for (let i = 0; i < count; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
 
-    return text;
+  return text;
 }
 
 const path_dump_id = makeid(4);
-const log_path = console.log; 
+const log_path = console.log;
 
 /**
  * Class to handle logging
- * Structured this way for historical reasons, unneeded 
+ * Structured this way for historical reasons, unneeded
  * logs are now removed at compile for performance
  */
- 
+
 class Log {
+  logHigh(msg) {
+    log_path("[?] " + msg);
+  }
 
-    logHigh(msg) {
-        log_path("[?] " + msg);
+  logMid(msg) {
+    log_path("[?] " + msg);
+  }
+
+  log(msg) {
+    log_path("[!] " + msg);
+  }
+
+  logQuery(
+    clause,
+    solver,
+    checkCount,
+    startTime,
+    endTime,
+    model,
+    attempts,
+    hitMax,
+  ) {
+    if (!Config.outQueriesDir) {
+      return;
     }
 
-    logMid(msg) {
-        log_path("[?] " + msg);
-    }
+    const dumpData = {
+      clause: clause,
+      model: model,
+      attempts: attempts,
+      startTime: startTime,
+      endTime: endTime,
+      hitMaxRefinements: hitMax,
+      checkCount: checkCount,
+      containedRe: (solver + clause).includes("str.in.re"),
+    };
 
-    log(msg) {
-        log_path("[!] " + msg);
-    }
+    const dumpFileName = Config.outQueriesDir + "/" + path_dump_id;
 
-    logQuery(clause, solver, checkCount, startTime, endTime, model, attempts, hitMax) {
+    fs.appendFileSync(
+      dumpFileName,
+      stringify(dumpData) + "\nEXPOSE_QUERY_DUMP_SEPERATOR\n",
+    );
 
-        if (!Config.outQueriesDir) {
-            return;
-        }
-
-        const dumpData = {
-            clause: clause,
-            model: model,
-            attempts: attempts,
-            startTime: startTime,
-            endTime: endTime,
-            hitMaxRefinements: hitMax,
-            checkCount: checkCount,
-            containedRe: (solver + clause).includes("str.in.re")
-        };
-
-        const dumpFileName = Config.outQueriesDir + "/" + path_dump_id;
-
-        fs.appendFileSync(dumpFileName, stringify(dumpData) + "\nEXPOSE_QUERY_DUMP_SEPERATOR\n");
-
-        this.log(`Wrote ${dumpFileName}`);
-    }
+    this.log(`Wrote ${dumpFileName}`);
+  }
 }
 
 export default new Log();

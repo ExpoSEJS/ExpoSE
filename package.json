@@ -5,7 +5,7 @@
   "main": "lib/S$/src/symbols.js",
   "author": "Blake Loring",
   "engines": {
-    "node": "^14.16.1"
+    "node": "^21.7.2"
   },
   "scripts": {
     "test": "./scripts/run_tests"
@@ -19,6 +19,6 @@
     "babel-preset-2017": "0.0.0"
   },
   "devDependencies": {
-    "eslint": "^5.6.0"
+    "prettier": "^3.3.2"
   }
 }

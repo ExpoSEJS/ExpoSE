@@ -2,8 +2,7 @@
 
 "use strict";
 
+var S$ = require("S$");
 
-var S$ = require('S$');
-
-var x = S$.symbol('X', 0);
+var x = S$.symbol("X", 0);
 S$.assume(x < 4);

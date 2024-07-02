@@ -2,11 +2,11 @@
 
 "use strict";
 
-var S$ = require('S$');
-var x = S$.symbol('X', 10);
+var S$ = require("S$");
+var x = S$.symbol("X", 10);
 
 if (x < 150) {
-	if (x > 75) {
-		console.log('Bye');
-	}
+  if (x > 75) {
+    console.log("Bye");
+  }
 }

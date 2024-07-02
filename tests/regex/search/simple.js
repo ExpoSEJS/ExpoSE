@@ -2,18 +2,17 @@
 
 //Tests a simple string search
 
-var S$ = require('S$');
-var nl = (S$.symbol('X', '')).search(/^abc$/);
+var S$ = require("S$");
+var nl = S$.symbol("X", "").search(/^abc$/);
 
 if (nl != -1) {
-	
-	if (nl != 0) {
-		//Locked by anchor to be 0
-		throw 'Unreachable';
-	}
+  if (nl != 0) {
+    //Locked by anchor to be 0
+    throw "Unreachable";
+  }
 
-	throw 'Reachable';
+  throw "Reachable";
 } else {
-	//b not in x
-	throw 'Reachable';
+  //b not in x
+  throw "Reachable";
 }

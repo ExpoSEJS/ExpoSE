@@ -24,37 +24,40 @@ Log.log("Intial Input " + input);
 
 process.title = "ExpoSE Play " + input;
 
-process.on("disconnect", function() {
-	Log.log("Premature termination - Parent exit");
-	process.exit();
+process.on("disconnect", function () {
+  Log.log("Premature termination - Parent exit");
+  process.exit();
 });
 
-J$.analysis = new SymbolicExecution(J$, JSON.parse(input), (state, coverage) => {
+J$.analysis = new SymbolicExecution(
+  J$,
+  JSON.parse(input),
+  (state, coverage) => {
+    Log.log("Finished play with PC " + state.pathCondition.map((x) => x.ast));
 
-	Log.log("Finished play with PC " + state.pathCondition.map(x => x.ast));
+    if (Config.outCoveragePath) {
+      fs.writeFileSync(Config.outCoveragePath, JSON.stringify(coverage.end()));
+      Log.log("Wrote final coverage to " + Config.outCoveragePath);
+    } else {
+      Log.log("No final coverage path supplied");
+    }
 
-	if (Config.outCoveragePath) {
-		fs.writeFileSync(Config.outCoveragePath, JSON.stringify(coverage.end()));
-		Log.log("Wrote final coverage to " + Config.outCoveragePath);
-	} else {
-		Log.log("No final coverage path supplied");
-	}
+    //We record the alternatives list as the results develop to make the output tool more resilient to SMT crashes
+    state.alternatives((current) => {
+      const finalOut = {
+        pc: state.finalPC(),
+        input: state.input,
+        errors: state.errors,
+        alternatives: current,
+        stats: state.stats.export(),
+      };
 
-	//We record the alternatives list as the results develop to make the output tool more resilient to SMT crashes
-	state.alternatives((current) => {
-		const finalOut = {
-			pc: state.finalPC(),
-			input: state.input,
-			errors: state.errors,
-			alternatives: current,
-			stats: state.stats.export()
-		};
-
-		if (Config.outFilePath) {
-			fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
-			Log.log("Wrote final output to " + Config.outFilePath);
-		} else {
-			Log.log("No final output path supplied");
-		}
-	});
-});
+      if (Config.outFilePath) {
+        fs.writeFileSync(Config.outFilePath, JSON.stringify(finalOut));
+        Log.log("Wrote final output to " + Config.outFilePath);
+      } else {
+        Log.log("No final output path supplied");
+      }
+    });
+  },
+);

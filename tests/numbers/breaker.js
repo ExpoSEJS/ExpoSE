@@ -2,7 +2,7 @@
 
 "use strict";
 
-var S$ = require('S$');
+var S$ = require("S$");
 
-var loInput = S$.symbol('LO', 0);
+var loInput = S$.symbol("LO", 0);
 var result = loInput * 42;

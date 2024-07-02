@@ -3,30 +3,32 @@
 /* global window */
 
 function is_external() {
-	return typeof window !== "undefined";
+  return typeof window !== "undefined";
 }
 
 function calectron() {
-	if (!window._ELC) {
-		window._ELC = require("electron");
-	}
-	return window._ELC;
+  if (!window._ELC) {
+    window._ELC = require("electron");
+  }
+  return window._ELC;
 }
 
 //Cache electron so require doesn't get rewritten
 const ld = is_external() ? calectron().remote.require : require;
-const electronWindow = is_external() ? calectron().remote.getCurrentWindow() : null;
+const electronWindow = is_external()
+  ? calectron().remote.getCurrentWindow()
+  : null;
 
 export default {
-	load: function (library) {
-		return ld(library);
-	},
-	close: function() {
-		if (electronWindow) {
-			electronWindow.close();
-		} else {
-			process.exit(0);
-		}
-	},
-	is_external: is_external
+  load: function (library) {
+    return ld(library);
+  },
+  close: function () {
+    if (electronWindow) {
+      electronWindow.close();
+    } else {
+      process.exit(0);
+    }
+  },
+  is_external: is_external,
 };

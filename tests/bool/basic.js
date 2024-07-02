@@ -2,15 +2,16 @@
 
 "use strict";
 
-var S$ = require('S$');
+var S$ = require("S$");
 
-var A = S$.symbol('A', true);
-var B = S$.symbol('B', true);
+var A = S$.symbol("A", true);
+var B = S$.symbol("B", true);
 
 if (A) {
-	if (B) {
-		throw 'Ouch';
-	}
+  if (B) {
+    throw "Ouch";
+  }
 } else {
-	if (B) {}
+  if (B) {
+  }
 }

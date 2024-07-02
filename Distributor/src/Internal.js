@@ -1,3 +1,3 @@
-export default function(filename) {
-	return filename.includes("/lib/S$/");
+export default function (filename) {
+  return filename.includes("/lib/S$/");
 }

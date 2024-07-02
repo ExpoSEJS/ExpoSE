@@ -10,7 +10,7 @@ app.commandLine.appendSwitch("disable-web-security");
 const MITM_PORT = process.env["MITM_PORT"];
 
 if (!MITM_PORT) {
-	throw "No MITM port set";
+  throw "No MITM port set";
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -18,59 +18,70 @@ if (!MITM_PORT) {
 let mainWindow;
 
 const createWindow = () => {
-	// Create the browser window.
-	mainWindow = new BrowserWindow({
-		title: `ExpoSE ${process.argv[process.argv.length - 2]} ${process.argv[process.argv.length - 1]}`,
-		width: 800,
-		height: 600,
-		webPreferences: {
-			webSecurity: false,
-			nodeIntegration: true
-		}
-	});
+  // Create the browser window.
+  mainWindow = new BrowserWindow({
+    title: `ExpoSE ${process.argv[process.argv.length - 2]} ${process.argv[process.argv.length - 1]}`,
+    width: 800,
+    height: 600,
+    webPreferences: {
+      webSecurity: false,
+      nodeIntegration: true,
+    },
+  });
 
-	mainWindow.on("page-title-updated", (e) => {
-		e.preventDefault();
-	});
+  mainWindow.on("page-title-updated", (e) => {
+    e.preventDefault();
+  });
 
-	mainWindow.webContents.session.webRequest.onBeforeRequest((details, callback) => {
-		mainWindow.webContents.executeJavaScript(`(function(){ try { window._ExpoSE.report("${details.url}"); } catch (e) { return '' + e; } })()`).then(() => {
-			console.log(`CONCRETE_LOAD_EVENT !!!${details.url}!!!`);
-		});
+  mainWindow.webContents.session.webRequest.onBeforeRequest(
+    (details, callback) => {
+      mainWindow.webContents
+        .executeJavaScript(
+          `(function(){ try { window._ExpoSE.report("${details.url}"); } catch (e) { return '' + e; } })()`,
+        )
+        .then(() => {
+          console.log(`CONCRETE_LOAD_EVENT !!!${details.url}!!!`);
+        });
 
-		callback({ cancel: false });
-	});
+      callback({ cancel: false });
+    },
+  );
 
-	mainWindow.webContents.session.clearCache(function() {
-		mainWindow.webContents.session.setProxy({ proxyRules: "http://localhost:" + MITM_PORT}, function () {
-			mainWindow.loadURL(process.argv[process.argv.length - 2]);
-		});
-	});
+  mainWindow.webContents.session.clearCache(function () {
+    mainWindow.webContents.session.setProxy(
+      { proxyRules: "http://localhost:" + MITM_PORT },
+      function () {
+        mainWindow.loadURL(process.argv[process.argv.length - 2]);
+      },
+    );
+  });
 
-	if (process.env["PROPOGATE_ON_NETWORK"]) {
-		mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
+  if (process.env["PROPOGATE_ON_NETWORK"]) {
+    mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+      (details, cb) => {
+        function rif(offset, o2) {
+          if (TestCaseParameters[offset]) {
+            details.requestHeaders[o2] = TestCaseParameters[offset];
+            details.requestHeaders[o2.toLowerCase()] =
+              TestCaseParameters[offset];
+          }
+        }
 
-			function rif(offset, o2) {
-				if (TestCaseParameters[offset]) {
-					details.requestHeaders[o2] = TestCaseParameters[offset];
-					details.requestHeaders[o2.toLowerCase()] = TestCaseParameters[offset];
-				}
-			}
+        rif("userAgent", "User-Agent");
+        rif("cookie", "Cookie");
+        rif("lastModified", "Last-Modified");
+        rif("referer", "Referer");
+        rif("origin", "Origin");
+        rif("host", "Host");
+        cb({ cancel: false, requestHeaders: details.requestHeaders });
+      },
+    );
+  }
 
-			rif("userAgent", "User-Agent");
-			rif("cookie", "Cookie");
-			rif("lastModified", "Last-Modified");
-			rif("referer", "Referer");
-			rif("origin", "Origin");
-			rif("host", "Host");
-			cb({ cancel: false, requestHeaders: details.requestHeaders });
-		});
-	}
-
-	// Emitted when the window is closed.
-	mainWindow.on("closed", () => {
-		mainWindow = null;
-	});
+  // Emitted when the window is closed.
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
 };
 
 // This method will be called when Electron has finished
@@ -80,6 +91,6 @@ app.on("ready", createWindow);
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
-	console.log("Window all closed");
-	app.quit();
+  console.log("Window all closed");
+  app.quit();
 });

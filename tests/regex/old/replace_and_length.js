@@ -2,12 +2,11 @@
 
 "use strict";
 
-var x = S$.symbol("X", '');
+var x = S$.symbol("X", "");
 
-if (x == 'HELLO WORLD') {
-
+if (x == "HELLO WORLD") {
 }
 
-if (x.length > 4 && x.replace(/hello/g, '') === '') {
-	console.log('Aah');
+if (x.length > 4 && x.replace(/hello/g, "") === "") {
+  console.log("Aah");
 }

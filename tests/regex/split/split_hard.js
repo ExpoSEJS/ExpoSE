@@ -2,8 +2,8 @@
 
 //Tests replace on a global regex
 
-var S$ = require('S$');
-var x = S$.symbol("X", '');
+var S$ = require("S$");
+var x = S$.symbol("X", "");
 var b = /(a)/;
 
 x = x.split(b);
@@ -11,7 +11,7 @@ x = x.split(b);
 S$.assume(x.length < 100);
 
 if (x.length == 16) {
-	if (x[x.length - 1] == 'hello') {
-		throw 'Unreachable'; //Broken by the assumption on string length
-	}
+  if (x[x.length - 1] == "hello") {
+    throw "Unreachable"; //Broken by the assumption on string length
+  }
 }

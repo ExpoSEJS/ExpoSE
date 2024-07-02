@@ -3,7 +3,7 @@
 var me = {};
 
 me.q = function hi() {
-	console.log('Hi');
-}
+  console.log("Hi");
+};
 
 me.q();

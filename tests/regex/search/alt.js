@@ -2,24 +2,23 @@
 
 //Tests a simple string search
 
-var S$ = require('S$');
-var x = S$.symbol("X", '');
+var S$ = require("S$");
+var x = S$.symbol("X", "");
 var b = /^(a|b)$/;
 var nl = x.search(b);
 
 if (nl != -1) {
+  console.log("B is " + b);
 
-	console.log('B is ' + b);
-	
-	if (nl == 3) {
-		throw 'Unreachable';
-	}
+  if (nl == 3) {
+    throw "Unreachable";
+  }
 
-	if (x == 'a') throw 'Reachable';
-	if (x == 'b') throw 'Reachable';
+  if (x == "a") throw "Reachable";
+  if (x == "b") throw "Reachable";
 
-	throw 'Unreachable';
+  throw "Unreachable";
 } else {
-	//b not in x
-	throw 'Reachable';
+  //b not in x
+  throw "Reachable";
 }

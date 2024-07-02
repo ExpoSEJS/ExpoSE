@@ -2,17 +2,15 @@
 
 //Test the lastIndex property of the sticky flag
 
-var S$ = require('S$');
+var S$ = require("S$");
 var b = /^a*?(a)?$/.exec(S$.symbol("X", ""));
 
 if (b != null) {
+  if (b[1] == "a") {
+    throw "Reachable";
+  } else if (!b[1]) {
+    throw "Reachable";
+  }
 
-
-	if (b[1] == 'a') {
-		throw 'Reachable';
-	} else if (!b[1]) {
-		throw 'Reachable';
-	}
-
-	throw 'Unreachable';
+  throw "Unreachable";
 }

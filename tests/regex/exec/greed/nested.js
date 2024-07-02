@@ -2,18 +2,18 @@
 
 //Tests nested depth greedy (Ambiguous) regular expressions with captures
 
-var S$ = require('S$');
-var x = S$.symbol("X", '');
+var S$ = require("S$");
+var x = S$.symbol("X", "");
 var b = /^((.)(.))?$/.exec(x);
 
 if (b) {
-	if (b[0] == '') {
-		if (b[1]) throw 'Unreachable';
-		if (b[2]) throw 'Unreachable';
-		if (b[3]) throw 'Unreachable';
-		throw 'Reachable';
-	} else {
-		if (b[3] == b[2]) throw 'Reachable';
-		throw 'Reachable';
-	}
+  if (b[0] == "") {
+    if (b[1]) throw "Unreachable";
+    if (b[2]) throw "Unreachable";
+    if (b[3]) throw "Unreachable";
+    throw "Reachable";
+  } else {
+    if (b[3] == b[2]) throw "Reachable";
+    throw "Reachable";
+  }
 }

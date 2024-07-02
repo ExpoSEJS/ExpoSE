@@ -2,9 +2,9 @@
 
 "use strict";
 
-var S$ = require('S$');
-var q = S$.symbol("HI", 'HELLO');
+var S$ = require("S$");
+var q = S$.symbol("HI", "HELLO");
 
 if (q.length == 15) {
-	console.log('YES');
+  console.log("YES");
 }

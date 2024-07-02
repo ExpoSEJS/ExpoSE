@@ -2,12 +2,12 @@
 
 "use strict";
 
-var S$ = require('S$');
-var a = S$.symbol("HI", 'hello');
+var S$ = require("S$");
+var a = S$.symbol("HI", "hello");
 var q = a + "DOGS";
 
 if (q.length == 6) {
-	console.log('Hello World');
+  console.log("Hello World");
 } else {
-	console.log('Goodbye world');
+  console.log("Goodbye world");
 }

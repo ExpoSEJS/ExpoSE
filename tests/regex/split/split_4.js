@@ -2,8 +2,8 @@
 
 //Tests replace on a global regex
 
-var S$ = require('S$');
-var x = S$.symbol("X", '');
+var S$ = require("S$");
+var x = S$.symbol("X", "");
 var b = /(a)/;
 
 S$.assume(x.length < 5);
@@ -11,7 +11,7 @@ S$.assume(x.length < 5);
 x = x.split(b);
 
 for (var i = 0; i < x.length; i++) {
-	if (x[i] == 'a') {
-		throw 'Unreachable';
-	}
+  if (x[i] == "a") {
+    throw "Unreachable";
+  }
 }

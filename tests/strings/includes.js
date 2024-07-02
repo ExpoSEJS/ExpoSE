@@ -1,7 +1,7 @@
-var S$ = require('S$');
+var S$ = require("S$");
 
-var t = S$.symbol('X', '');
+var t = S$.symbol("X", "");
 
-if (t.includes('What')) {
-  throw 'Reachable 1';
+if (t.includes("What")) {
+  throw "Reachable 1";
 }

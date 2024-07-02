@@ -4,30 +4,30 @@
  */
 
 if ("Hello".substr(0, 0) !== "") {
-	throw 'Unreachable 1';
+  throw "Unreachable 1";
 }
 
-if (/^..$/.test('')) {
-	throw 'Unreachable 2';
+if (/^..$/.test("")) {
+  throw "Unreachable 2";
 }
 
-if (!/^..$/.test('ab')) {
-	throw 'Unreachable 3';
+if (!/^..$/.test("ab")) {
+  throw "Unreachable 3";
 }
 
-if (!"ab".includes('a')) {
-	throw 'Unreachable 4';
+if (!"ab".includes("a")) {
+  throw "Unreachable 4";
 }
 
-if ("ab".includes('c')) {
-	throw 'Unreachable 5';
+if ("ab".includes("c")) {
+  throw "Unreachable 5";
 }
 
 if (Math.round(5.5) != 6) {
-	console.log(Math.round(5.5));
-	throw 'Unreachable 6';
+  console.log(Math.round(5.5));
+  throw "Unreachable 6";
 }
 
 if (Math.round(5) != 5) {
-	throw 'Unreachable 7';
+  throw "Unreachable 7";
 }

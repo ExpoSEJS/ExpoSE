@@ -2,14 +2,14 @@
 
 "use strict";
 
-var S$ = require('S$');
+var S$ = require("S$");
 
-console.log('Fraction Test');
-console.log('Loading Symbols');
+console.log("Fraction Test");
+console.log("Loading Symbols");
 
-var x = S$.symbol('X', 0);
+var x = S$.symbol("X", 0);
 
-console.log('Made X');
+console.log("Made X");
 
 if (x > 0 && x < 1) {
   console.log("Bla");
