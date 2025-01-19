@@ -1,6 +1,8 @@
 // Dafny program example.dfy compiled into JavaScript
 // Copyright by the contributors to the Dafny Project
 // SPDX-License-Identifier: MIT
+var S$ = require("S$");
+var symbolicInput = S$.symbol("seed", 15);
 
 import "regenerator-runtime/runtime";
 
@@ -1278,8 +1280,5 @@ let _module = (function () {
   };
   return $module;
 })(); // end of module _module
-
-var S$ = require("S$");
-var symbolicInput = S$.symbol("seed", 15);
 
 _module.__default.CheckNumber(new BigNumber(symbolicInput));
