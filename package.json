@@ -5,18 +5,19 @@
   "main": "lib/S$/src/symbols.js",
   "author": "Blake Loring",
   "engines": {
-    "node": "^21.7.2"
+    "node": "^20.6.1"
   },
   "scripts": {
     "test": "./scripts/run_tests"
   },
   "dependencies": {
-    "browserify": "^14.1.0",
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "babel-plugin-strip-function-call": "^1.0.2",
-    "babel-preset-2017": "0.0.0"
+    "babel-preset-2017": "0.0.0",
+    "bignumber.js": "^9.1.2",
+    "browserify": "^14.1.0"
   },
   "devDependencies": {
     "prettier": "^3.3.2"

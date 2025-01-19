@@ -22,12 +22,12 @@ export default function (state, ctx, model, helpers) {
     return Object.prototype.hasOwnProperty.apply(state.getConcrete(base), args);
   });
 
-  model.add(Object.prototype.keys, function (base, args) {
+  model.add(Object.keys, function (base, args) {
     for (let i = 0; i < args.length; i++) {
       args[i] = state.getConcrete(args[i]);
     }
 
-    return Object.prototype.keys.apply(state.getConcrete(base), args);
+    return Object.keys.apply(state.getConcrete(base), args);
   });
 
   model.add(Object.assign, (base, args) => {

@@ -12,6 +12,7 @@ export default function (state, ctx, model, helpers) {
 
   //Hook for regex methods, will only hook if regex is enabled
   function symbolicHookRe(f, condition, hook) {
+    console.log("F for hook: ", f);
     const runMethod = helpers.runMethod;
     return function (base, args) {
       if (Config.regexEnabled && condition(base, args)) {
@@ -574,14 +575,14 @@ export default function (state, ctx, model, helpers) {
     ),
   );
 
-  model.add(
-    Template[Symbol.exec],
-    symbolicHookRe(
-      Template[Symbol.exec],
-      (base, args) => shouldBeSymbolic(base, args[0]),
-      (base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result,
-    ),
-  );
+  //model.add(
+  //  Template[Symbol.exec],
+  //  symbolicHookRe(
+  //    Template[Symbol.exec],
+  //    (base, args) => shouldBeSymbolic(base, args[0]),
+  //    (base, args) => RegexpBuiltinExec(base, coerceToString(args[0])).result,
+  //  ),
+  //);
 
   model.add(
     Template[Symbol.match],

@@ -15,7 +15,13 @@ export default function (state, ctx, model) {
       const c_args = concretize
         ? map.call(args, (arg) => state.getConcrete(arg))
         : args;
+
+      console.log(f);
+      if (f == undefined) {
+        throw "Trying to run an undefined function in a symbolic helper";
+      }
       result = f.apply(c_base, c_args);
+      console.log("Fin");
     } catch (e) {
       thrown = e;
     }
